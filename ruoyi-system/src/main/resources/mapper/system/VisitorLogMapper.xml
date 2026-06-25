@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.VisitorLogMapper">
+
+    <resultMap type="VisitorLog" id="VisitorLogResult">
+        <id     property="logId"           column="log_id"            />
+        <result property="appointmentId"   column="appointment_id"    />
+        <result property="visitorName"     column="visitor_name"      />
+        <result property="visitorPhone"    column="visitor_phone"     />
+        <result property="visitorIdCard"   column="visitor_id_card"   />
+        <result property="visitorCompany"  column="visitor_company"   />
+        <result property="visitReason"     column="visit_reason"      />
+        <result property="hostName"        column="host_name"         />
+        <result property="hostDept"        column="host_dept"         />
+        <result property="entryTime"       column="entry_time"        />
+        <result property="exitTime"        column="exit_time"         />
+        <result property="registerType"    column="register_type"     />
+        <result property="passCode"        column="pass_code"          />
+        <result property="hasCar"          column="has_car"            />
+        <result property="carPlate"        column="car_plate"          />
+        <result property="hasGoods"        column="has_goods"          />
+        <result property="goodsDesc"       column="goods_desc"         />
+        <result property="tenantId"        column="tenant_id"         />
+        <result property="createBy"        column="create_by"         />
+        <result property="createTime"      column="create_time"       />
+        <result property="updateBy"        column="update_by"         />
+        <result property="updateTime"      column="update_time"       />
+        <result property="remark"          column="remark"            />
+    </resultMap>
+
+    <sql id="selectLogVo">
+        select l.log_id, l.appointment_id, l.visitor_name, l.visitor_phone,
+               l.visitor_id_card, l.visitor_company, l.visit_reason, l.host_name,
+               l.host_dept, l.entry_time, l.exit_time, l.register_type, l.pass_code, l.has_car, l.car_plate, l.has_goods, l.goods_desc, l.tenant_id,
+               l.create_by, l.create_time, l.update_by, l.update_time, l.remark
+        from visitor_log l
+    </sql>
+
+    <select id="selectLogList" parameterType="VisitorLog" resultMap="VisitorLogResult">
+        <include refid="selectLogVo"/>
+        <where>
+            <if test="visitorName != null and visitorName != ''">
+                AND l.visitor_name like concat('%', #{visitorName}, '%')
+            </if>
+            <if test="visitorPhone != null and visitorPhone != ''">
+                AND l.visitor_phone like concat('%', #{visitorPhone}, '%')
+            </if>
+            <if test="visitorIdCard != null and visitorIdCard != ''">
+                AND l.visitor_id_card like concat('%', #{visitorIdCard}, '%')
+            </if>
+            <if test="hostName != null and hostName != ''">
+                AND l.host_name like concat('%', #{hostName}, '%')
+            </if>
+            <if test="registerType != null and registerType != ''">
+                AND l.register_type = #{registerType}
+            </if>
+            <if test="appointmentId != null">
+                AND l.appointment_id = #{appointmentId}
+            </if>
+            <if test="tenantId != null">
+                AND l.tenant_id = #{tenantId}
+            </if>
+            <if test="params.beginTime != null and params.beginTime != ''">
+                AND date_format(l.entry_time,'%Y%m%d') &gt;= date_format(#{params.beginTime},'%Y%m%d')
+            </if>
+            <if test="params.endTime != null and params.endTime != ''">
+                AND date_format(l.entry_time,'%Y%m%d') &lt;= date_format(#{params.endTime},'%Y%m%d')
+            </if>
+        </where>
+        order by l.create_time desc
+    </select>
+
+    <select id="selectLogById" parameterType="Long" resultMap="VisitorLogResult">
+        <include refid="selectLogVo"/>
+        where l.log_id = #{logId}
+    </select>
+
+    <insert id="insertLog" parameterType="VisitorLog" useGeneratedKeys="true" keyProperty="logId">
+        insert into visitor_log(
+            <if test="appointmentId != null">appointment_id,</if>
+            <if test="visitorName != null and visitorName != ''">visitor_name,</if>
+            <if test="visitorPhone != null and visitorPhone != ''">visitor_phone,</if>
+            <if test="visitorIdCard != null and visitorIdCard != ''">visitor_id_card,</if>
+            <if test="visitorCompany != null and visitorCompany != ''">visitor_company,</if>
+            <if test="visitReason != null and visitReason != ''">visit_reason,</if>
+            <if test="hostName != null and hostName != ''">host_name,</if>
+            <if test="hostDept != null and hostDept != ''">host_dept,</if>
+            <if test="entryTime != null">entry_time,</if>
+            <if test="exitTime != null">exit_time,</if>
+            <if test="registerType != null and registerType != ''">register_type,</if>
+            <if test="passCode != null and passCode != ''">pass_code,</if>
+            <if test="hasCar != null and hasCar != ''">has_car,</if>
+            <if test="carPlate != null and carPlate != ''">car_plate,</if>
+            <if test="hasGoods != null and hasGoods != ''">has_goods,</if>
+            <if test="goodsDesc != null and goodsDesc != ''">goods_desc,</if>
+            <if test="tenantId != null">tenant_id,</if>
+            <if test="createBy != null and createBy != ''">create_by,</if>
+            <if test="remark != null and remark != ''">remark,</if>
+            create_time
+        )values(
+            <if test="appointmentId != null">#{appointmentId},</if>
+            <if test="visitorName != null and visitorName != ''">#{visitorName},</if>
+            <if test="visitorPhone != null and visitorPhone != ''">#{visitorPhone},</if>
+            <if test="visitorIdCard != null and visitorIdCard != ''">#{visitorIdCard},</if>
+            <if test="visitorCompany != null and visitorCompany != ''">#{visitorCompany},</if>
+            <if test="visitReason != null and visitReason != ''">#{visitReason},</if>
+            <if test="hostName != null and hostName != ''">#{hostName},</if>
+            <if test="hostDept != null and hostDept != ''">#{hostDept},</if>
+            <if test="entryTime != null">#{entryTime},</if>
+            <if test="exitTime != null">#{exitTime},</if>
+            <if test="registerType != null and registerType != ''">#{registerType},</if>
+            <if test="passCode != null and passCode != ''">#{passCode},</if>
+            <if test="hasCar != null and hasCar != ''">#{hasCar},</if>
+            <if test="carPlate != null and carPlate != ''">#{carPlate},</if>
+            <if test="hasGoods != null and hasGoods != ''">#{hasGoods},</if>
+            <if test="goodsDesc != null and goodsDesc != ''">#{goodsDesc},</if>
+            <if test="tenantId != null">#{tenantId},</if>
+            <if test="createBy != null and createBy != ''">#{createBy},</if>
+            <if test="remark != null and remark != ''">#{remark},</if>
+            sysdate()
+        )
+    </insert>
+
+    <update id="updateLog" parameterType="VisitorLog">
+        update visitor_log
+        <set>
+            <if test="appointmentId != null">appointment_id = #{appointmentId},</if>
+            <if test="visitorName != null and visitorName != ''">visitor_name = #{visitorName},</if>
+            <if test="visitorPhone != null and visitorPhone != ''">visitor_phone = #{visitorPhone},</if>
+            <if test="visitorIdCard != null">visitor_id_card = #{visitorIdCard},</if>
+            <if test="visitorCompany != null">visitor_company = #{visitorCompany},</if>
+            <if test="visitReason != null">visit_reason = #{visitReason},</if>
+            <if test="hostName != null">host_name = #{hostName},</if>
+            <if test="hostDept != null">host_dept = #{hostDept},</if>
+            <if test="entryTime != null">entry_time = #{entryTime},</if>
+            <if test="exitTime != null">exit_time = #{exitTime},</if>
+            <if test="registerType != null and registerType != ''">register_type = #{registerType},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            update_time = sysdate()
+        </set>
+        where log_id = #{logId}
+    </update>
+
+    <select id="selectLogByPassCode" parameterType="String" resultMap="VisitorLogResult">
+        <include refid="selectLogVo"/>
+        where l.pass_code = #{passCode}
+    </select>
+
+</mapper>

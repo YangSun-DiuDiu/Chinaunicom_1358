@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.VisitorAppointmentMapper">
+
+    <resultMap type="VisitorAppointment" id="VisitorAppointmentResult">
+        <id     property="appointmentId"     column="appointment_id"      />
+        <result property="visitorName"       column="visitor_name"        />
+        <result property="visitorPhone"      column="visitor_phone"       />
+        <result property="visitorIdCard"     column="visitor_id_card"     />
+        <result property="visitorCompany"    column="visitor_company"     />
+        <result property="visitReason"       column="visit_reason"        />
+        <result property="hostName"          column="host_name"           />
+        <result property="hostDept"          column="host_dept"           />
+        <result property="hostPhone"         column="host_phone"          />
+        <result property="visitTime"         column="visit_time"          />
+        <result property="leaveTime"         column="leave_time"          />
+        <result property="status"            column="status"              />
+        <result property="approverId"        column="approver_id"         />
+        <result property="approveTime"       column="approve_time"        />
+        <result property="approveRemark"     column="approve_remark"      />
+        <result property="smsSent"           column="sms_sent"            />
+        <result property="smsContent"        column="sms_content"         />
+        <result property="passCode"          column="pass_code"           />
+        <result property="hasCar"            column="has_car"             />
+        <result property="carPlate"          column="car_plate"           />
+        <result property="hasGoods"          column="has_goods"           />
+        <result property="goodsDesc"         column="goods_desc"          />
+        <result property="tenantId"          column="tenant_id"           />
+        <result property="createBy"          column="create_by"           />
+        <result property="createTime"        column="create_time"         />
+        <result property="updateBy"          column="update_by"           />
+        <result property="updateTime"        column="update_time"         />
+        <result property="remark"            column="remark"              />
+    </resultMap>
+
+    <sql id="selectAppointmentVo">
+        select a.appointment_id, a.visitor_name, a.visitor_phone, a.visitor_id_card,
+               a.visitor_company, a.visit_reason, a.host_name, a.host_dept, a.host_phone,
+               a.visit_time, a.leave_time, a.status, a.approver_id, a.approve_time,
+               a.approve_remark, a.sms_sent, a.sms_content, a.pass_code, a.has_car, a.car_plate, a.has_goods, a.goods_desc, a.tenant_id,
+               a.create_by, a.create_time, a.update_by, a.update_time, a.remark
+        from visitor_appointment a
+    </sql>
+
+    <select id="selectAppointmentList" parameterType="VisitorAppointment" resultMap="VisitorAppointmentResult">
+        <include refid="selectAppointmentVo"/>
+        <where>
+            <if test="visitorName != null and visitorName != ''">
+                AND a.visitor_name like concat('%', #{visitorName}, '%')
+            </if>
+            <if test="visitorPhone != null and visitorPhone != ''">
+                AND a.visitor_phone like concat('%', #{visitorPhone}, '%')
+            </if>
+            <if test="status != null and status != ''">
+                AND a.status = #{status}
+            </if>
+            <if test="hostName != null and hostName != ''">
+                AND a.host_name like concat('%', #{hostName}, '%')
+            </if>
+            <if test="tenantId != null">
+                AND a.tenant_id = #{tenantId}
+            </if>
+            <if test="params.beginTime != null and params.beginTime != ''">
+                AND date_format(a.visit_time,'%Y%m%d') &gt;= date_format(#{params.beginTime},'%Y%m%d')
+            </if>
+            <if test="params.endTime != null and params.endTime != ''">
+                AND date_format(a.visit_time,'%Y%m%d') &lt;= date_format(#{params.endTime},'%Y%m%d')
+            </if>
+        </where>
+        order by a.create_time desc
+    </select>
+
+    <select id="selectAppointmentById" parameterType="Long" resultMap="VisitorAppointmentResult">
+        <include refid="selectAppointmentVo"/>
+        where a.appointment_id = #{appointmentId}
+    </select>
+
+    <select id="selectPendingList" resultMap="VisitorAppointmentResult">
+        <include refid="selectAppointmentVo"/>
+        where a.status = 'PENDING'
+        order by a.create_time asc
+    </select>
+
+    <insert id="insertAppointment" parameterType="VisitorAppointment" useGeneratedKeys="true" keyProperty="appointmentId">
+        insert into visitor_appointment(
+            <if test="visitorName != null and visitorName != ''">visitor_name,</if>
+            <if test="visitorPhone != null and visitorPhone != ''">visitor_phone,</if>
+            <if test="visitorIdCard != null and visitorIdCard != ''">visitor_id_card,</if>
+            <if test="visitorCompany != null and visitorCompany != ''">visitor_company,</if>
+            <if test="visitReason != null and visitReason != ''">visit_reason,</if>
+            <if test="hostName != null and hostName != ''">host_name,</if>
+            <if test="hostDept != null and hostDept != ''">host_dept,</if>
+            <if test="hostPhone != null and hostPhone != ''">host_phone,</if>
+            <if test="visitTime != null">visit_time,</if>
+            <if test="leaveTime != null">leave_time,</if>
+            <if test="status != null and status != ''">status,</if>
+            <if test="approverId != null">approver_id,</if>
+            <if test="approveTime != null">approve_time,</if>
+            <if test="approveRemark != null and approveRemark != ''">approve_remark,</if>
+            <if test="smsSent != null and smsSent != ''">sms_sent,</if>
+            <if test="smsContent != null and smsContent != ''">sms_content,</if>
+            <if test="passCode != null and passCode != ''">pass_code,</if>
+            <if test="hasCar != null and hasCar != ''">has_car,</if>
+            <if test="carPlate != null and carPlate != ''">car_plate,</if>
+            <if test="hasGoods != null and hasGoods != ''">has_goods,</if>
+            <if test="goodsDesc != null and goodsDesc != ''">goods_desc,</if>
+            <if test="tenantId != null">tenant_id,</if>
+            <if test="createBy != null and createBy != ''">create_by,</if>
+            <if test="remark != null and remark != ''">remark,</if>
+            create_time
+        )values(
+            <if test="visitorName != null and visitorName != ''">#{visitorName},</if>
+            <if test="visitorPhone != null and visitorPhone != ''">#{visitorPhone},</if>
+            <if test="visitorIdCard != null and visitorIdCard != ''">#{visitorIdCard},</if>
+            <if test="visitorCompany != null and visitorCompany != ''">#{visitorCompany},</if>
+            <if test="visitReason != null and visitReason != ''">#{visitReason},</if>
+            <if test="hostName != null and hostName != ''">#{hostName},</if>
+            <if test="hostDept != null and hostDept != ''">#{hostDept},</if>
+            <if test="hostPhone != null and hostPhone != ''">#{hostPhone},</if>
+            <if test="visitTime != null">#{visitTime},</if>
+            <if test="leaveTime != null">#{leaveTime},</if>
+            <if test="status != null and status != ''">#{status},</if>
+            <if test="approverId != null">#{approverId},</if>
+            <if test="approveTime != null">#{approveTime},</if>
+            <if test="approveRemark != null and approveRemark != ''">#{approveRemark},</if>
+            <if test="smsSent != null and smsSent != ''">#{smsSent},</if>
+            <if test="smsContent != null and smsContent != ''">#{smsContent},</if>
+            <if test="passCode != null and passCode != ''">#{passCode},</if>
+            <if test="hasCar != null and hasCar != ''">#{hasCar},</if>
+            <if test="carPlate != null and carPlate != ''">#{carPlate},</if>
+            <if test="hasGoods != null and hasGoods != ''">#{hasGoods},</if>
+            <if test="goodsDesc != null and goodsDesc != ''">#{goodsDesc},</if>
+            <if test="tenantId != null">#{tenantId},</if>
+            <if test="createBy != null and createBy != ''">#{createBy},</if>
+            <if test="remark != null and remark != ''">#{remark},</if>
+            sysdate()
+        )
+    </insert>
+
+    <update id="updateAppointment" parameterType="VisitorAppointment">
+        update visitor_appointment
+        <set>
+            <if test="visitorName != null and visitorName != ''">visitor_name = #{visitorName},</if>
+            <if test="visitorPhone != null and visitorPhone != ''">visitor_phone = #{visitorPhone},</if>
+            <if test="visitorIdCard != null">visitor_id_card = #{visitorIdCard},</if>
+            <if test="visitorCompany != null">visitor_company = #{visitorCompany},</if>
+            <if test="visitReason != null">visit_reason = #{visitReason},</if>
+            <if test="hostName != null">host_name = #{hostName},</if>
+            <if test="hostDept != null">host_dept = #{hostDept},</if>
+            <if test="hostPhone != null">host_phone = #{hostPhone},</if>
+            <if test="visitTime != null">visit_time = #{visitTime},</if>
+            <if test="leaveTime != null">leave_time = #{leaveTime},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="approverId != null">approver_id = #{approverId},</if>
+            <if test="approveTime != null">approve_time = #{approveTime},</if>
+            <if test="approveRemark != null">approve_remark = #{approveRemark},</if>
+            <if test="smsSent != null and smsSent != ''">sms_sent = #{smsSent},</if>
+            <if test="smsContent != null">sms_content = #{smsContent},</if>
+            <if test="passCode != null and passCode != ''">pass_code = #{passCode},</if>
+            <if test="hasCar != null and hasCar != ''">has_car = #{hasCar},</if>
+            <if test="carPlate != null">car_plate = #{carPlate},</if>
+            <if test="hasGoods != null and hasGoods != ''">has_goods = #{hasGoods},</if>
+            <if test="goodsDesc != null">goods_desc = #{goodsDesc},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            update_time = sysdate()
+        </set>
+        where appointment_id = #{appointmentId}
+    </update>
+
+    <delete id="deleteAppointmentById" parameterType="Long">
+        delete from visitor_appointment where appointment_id = #{appointmentId}
+    </delete>
+
+    <select id="selectAppointmentByPassCode" parameterType="String" resultMap="VisitorAppointmentResult">
+        <include refid="selectAppointmentVo"/>
+        where a.pass_code = #{passCode}
+    </select>
+
+</mapper>

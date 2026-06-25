@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.DevicePortMapper">
+
+    <resultMap type="DevicePort" id="DevicePortResult">
+        <id     property="portId"           column="port_id"            />
+        <result property="deviceId"         column="device_id"          />
+        <result property="portName"         column="port_name"          />
+        <result property="portType"         column="port_type"          />
+        <result property="portStatus"       column="port_status"        />
+        <result property="connectedDeviceId" column="connected_device_id" />
+        <result property="connectedPortId"  column="connected_port_id"  />
+        <result property="createBy"         column="create_by"          />
+        <result property="createTime"       column="create_time"        />
+        <result property="updateBy"         column="update_by"          />
+        <result property="updateTime"       column="update_time"        />
+        <result property="remark"           column="remark"             />
+    </resultMap>
+
+    <sql id="selectDevicePortVo">
+        select p.port_id, p.device_id, p.port_name, p.port_type, p.port_status,
+               p.connected_device_id, p.connected_port_id,
+               p.create_by, p.create_time, p.update_by, p.update_time, p.remark
+        from iot_device_port p
+    </sql>
+
+    <select id="selectPortList" parameterType="DevicePort" resultMap="DevicePortResult">
+        select p.port_id, p.device_id, p.port_name, p.port_type, p.port_status,
+               p.connected_device_id, p.connected_port_id,
+               p.create_by, p.create_time, p.update_by, p.update_time, p.remark
+        from iot_device_port p
+        <where>
+            <if test="portName != null and portName != ''">
+                AND p.port_name like concat('%', #{portName}, '%')
+            </if>
+            <if test="portType != null and portType != ''">
+                AND p.port_type = #{portType}
+            </if>
+            <if test="portStatus != null and portStatus != ''">
+                AND p.port_status = #{portStatus}
+            </if>
+            <if test="deviceId != null">
+                AND p.device_id = #{deviceId}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectPortById" parameterType="Long" resultMap="DevicePortResult">
+        <include refid="selectDevicePortVo"/>
+        where p.port_id = #{portId}
+    </select>
+
+    <select id="selectPortsByDeviceId" parameterType="Long" resultMap="DevicePortResult">
+        <include refid="selectDevicePortVo"/>
+        where p.device_id = #{deviceId}
+    </select>
+
+    <insert id="insertPort" parameterType="DevicePort" useGeneratedKeys="true" keyProperty="portId">
+        insert into iot_device_port(
+            <if test="deviceId != null">device_id,</if>
+            <if test="portName != null and portName != ''">port_name,</if>
+            <if test="portType != null and portType != ''">port_type,</if>
+            <if test="portStatus != null and portStatus != ''">port_status,</if>
+            <if test="connectedDeviceId != null">connected_device_id,</if>
+            <if test="connectedPortId != null">connected_port_id,</if>
+            <if test="createBy != null and createBy != ''">create_by,</if>
+            <if test="remark != null and remark != ''">remark,</if>
+            create_time
+        )values(
+            <if test="deviceId != null">#{deviceId},</if>
+            <if test="portName != null and portName != ''">#{portName},</if>
+            <if test="portType != null and portType != ''">#{portType},</if>
+            <if test="portStatus != null and portStatus != ''">#{portStatus},</if>
+            <if test="connectedDeviceId != null">#{connectedDeviceId},</if>
+            <if test="connectedPortId != null">#{connectedPortId},</if>
+            <if test="createBy != null and createBy != ''">#{createBy},</if>
+            <if test="remark != null and remark != ''">#{remark},</if>
+            sysdate()
+        )
+    </insert>
+
+    <update id="updatePort" parameterType="DevicePort">
+        update iot_device_port
+        <set>
+            <if test="deviceId != null">device_id = #{deviceId},</if>
+            <if test="portName != null and portName != ''">port_name = #{portName},</if>
+            <if test="portType != null and portType != ''">port_type = #{portType},</if>
+            <if test="portStatus != null and portStatus != ''">port_status = #{portStatus},</if>
+            <if test="connectedDeviceId != null">connected_device_id = #{connectedDeviceId},</if>
+            <if test="connectedPortId != null">connected_port_id = #{connectedPortId},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            update_time = sysdate()
+        </set>
+        where port_id = #{portId}
+    </update>
+
+    <delete id="deletePortById" parameterType="Long">
+        delete from iot_device_port where port_id = #{portId}
+    </delete>
+
+    <delete id="deletePortByDeviceId" parameterType="Long">
+        delete from iot_device_port where device_id = #{deviceId}
+    </delete>
+
+</mapper>

@@ -1,0 +1,202 @@
+// ============================================================
+// H5移动端适配样式 - SmartIoT管理系统
+// 兼容微信内置浏览器、手机端浏览、ElementUI移动端适配
+// ============================================================
+
+// 移动端断点
+$mobile-breakpoint: 992px;
+$small-mobile: 576px;
+
+// 移动端全局适配
+@media screen and (max-width: $mobile-breakpoint) {
+  // 侧边栏 - 移动端默认收起
+  .main-container {
+    margin-left: 0 !important;
+  }
+
+  .sidebar-container {
+    width: 0 !important;
+    overflow: hidden;
+    &.open {
+      width: 210px !important;
+    }
+  }
+
+  // 隐藏标签页（移动端不使用tabs导航）
+  .tags-view-container {
+    display: none !important;
+  }
+
+  // 顶部导航栏适配
+  .navbar {
+    .hamburger-container {
+      display: block !important;
+    }
+    .breadcrumb-container {
+      display: none;
+    }
+    .right-menu {
+      .screenfull,
+      .size-select,
+      .header-search,
+      .ruo-yi-doc,
+      .ruo-yi-git {
+        display: none !important;
+      }
+    }
+  }
+
+  // 表格容器横向滚动
+  .app-container {
+    padding: 10px !important;
+
+    .el-table {
+      font-size: 12px;
+
+      // 隐藏部分列在移动端
+      .mobile-hide {
+        display: none;
+      }
+    }
+
+    // 搜索表单适配
+    .el-form {
+      .el-form-item {
+        display: block;
+        width: 100%;
+        margin-right: 0;
+
+        .el-input,
+        .el-select {
+          width: 100%;
+        }
+      }
+    }
+
+    // 工具栏按钮适配
+    .el-row {
+      .right-toolbar {
+        float: none !important;
+        margin-top: 10px;
+      }
+    }
+  }
+
+  // 对话框全屏
+  .el-dialog {
+    width: 95% !important;
+    margin-top: 5vh !important;
+
+    .el-dialog__body {
+      padding: 10px !important;
+    }
+  }
+
+  // 卡片间距
+  .el-card {
+    margin-bottom: 10px;
+  }
+
+  // 按钮组适配
+  .el-button {
+    margin-bottom: 5px;
+  }
+
+  // 分页适配
+  .pagination-container {
+    .el-pagination {
+      text-align: center;
+      .el-pagination__sizes,
+      .el-pagination__jump {
+        display: none !important;
+      }
+    }
+  }
+
+  // 驾驶舱卡片
+  .dashboard {
+    .el-row {
+      .el-col {
+        margin-bottom: 10px;
+        width: 100% !important;
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+      }
+    }
+    .panel-group {
+      .card-panel-col {
+        margin-bottom: 10px;
+        width: 50% !important;
+      }
+    }
+  }
+
+  // 登录页适配
+  .login-container {
+    .login-form {
+      width: 90% !important;
+      max-width: 360px !important;
+    }
+  }
+}
+
+// 小屏手机适配
+@media screen and (max-width: $small-mobile) {
+  .app-container {
+    padding: 5px !important;
+  }
+
+  // 面板组卡片2列变1列
+  .panel-group {
+    .card-panel-col {
+      width: 100% !important;
+    }
+  }
+
+  // 表格操作按钮组换行
+  .el-table {
+    .el-button--mini,
+    .el-button--small {
+      padding: 3px 5px;
+      margin: 2px 1px;
+    }
+  }
+
+  // 隐藏非核心信息
+  .optional-info {
+    display: none !important;
+  }
+}
+
+// 微信浏览器特定适配
+@media screen and (max-width: $mobile-breakpoint) {
+  // 微信浏览器隐藏滚动条但保持可滚动
+  ::-webkit-scrollbar {
+    width: 2px;
+    height: 2px;
+  }
+
+  // 防止iOS橡皮筋效果影响操作
+  body {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: none;
+  }
+
+  // 防止微信浏览器长按菜单
+  * {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  input,
+  textarea {
+    -webkit-user-select: auto;
+    user-select: auto;
+  }
+
+  // 微信底部安全区域适配
+  .app-container {
+    padding-bottom: env(safe-area-inset-bottom, 10px);
+  }
+}

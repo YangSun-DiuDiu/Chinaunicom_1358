@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.DeviceRepairMapper">
+
+    <resultMap type="DeviceRepair" id="DeviceRepairResult">
+        <id     property="repairId"           column="repair_id"          />
+        <result property="repairNo"           column="repair_no"          />
+        <result property="deviceId"           column="device_id"          />
+        <result property="deviceName"         column="device_name"        />
+        <result property="deviceIp"           column="device_ip"          />
+        <result property="faultDescription"   column="fault_description"  />
+        <result property="originalResponsible" column="original_responsible"/>
+        <result property="originalPhone"      column="original_phone"     />
+        <result property="currentResponsible" column="current_responsible"/>
+        <result property="currentPhone"       column="current_phone"      />
+        <result property="status"             column="status"             />
+        <result property="transferFrom"       column="transfer_from"      />
+        <result property="transferTo"         column="transfer_to"        />
+        <result property="transferReason"     column="transfer_reason"    />
+        <result property="repairResult"       column="repair_result"      />
+        <result property="repairTime"         column="repair_time"        />
+        <result property="completeToken"      column="complete_token"     />
+        <result property="photoBefore"        column="photo_before"       />
+        <result property="photoAfter"         column="photo_after"        />
+        <result property="hasParts"           column="has_parts"          />
+        <result property="partsDesc"          column="parts_desc"         />
+        <result property="createBy"           column="create_by"          />
+        <result property="createTime"         column="create_time"        />
+        <result property="updateBy"           column="update_by"          />
+        <result property="updateTime"         column="update_time"        />
+        <result property="remark"             column="remark"             />
+    </resultMap>
+
+    <sql id="selectRepairVo">
+        select repair_id, repair_no, device_id, device_name, device_ip, fault_description,
+               original_responsible, original_phone, current_responsible, current_phone,
+               status, transfer_from, transfer_to, transfer_reason,
+               repair_result, repair_time, complete_token,
+               photo_before, photo_after, has_parts, parts_desc,
+               create_by, create_time, update_by, update_time, remark
+        from iot_device_repair
+    </sql>
+
+    <select id="selectRepairList" parameterType="DeviceRepair" resultMap="DeviceRepairResult">
+        <include refid="selectRepairVo"/>
+        <where>
+            <if test="deviceName != null and deviceName != ''">and device_name like concat('%', #{deviceName}, '%')</if>
+            <if test="status != null and status != ''">and status = #{status}</if>
+            <if test="currentResponsible != null and currentResponsible != ''">and current_responsible = #{currentResponsible}</if>
+            <if test="params.beginTime != null and params.beginTime != ''">and create_time &gt;= #{params.beginTime}</if>
+            <if test="params.endTime != null and params.endTime != ''">and create_time &lt;= #{params.endTime}</if>
+        </where>
+        order by repair_id desc
+    </select>
+
+    <select id="selectRepairById" parameterType="Long" resultMap="DeviceRepairResult">
+        <include refid="selectRepairVo"/> where repair_id = #{repairId}
+    </select>
+
+    <select id="selectRepairByToken" parameterType="String" resultMap="DeviceRepairResult">
+        <include refid="selectRepairVo"/> where complete_token = #{token}
+    </select>
+
+    <insert id="insertRepair" parameterType="DeviceRepair" useGeneratedKeys="true" keyProperty="repairId">
+        insert into iot_device_repair (
+            repair_no, device_id, device_name, device_ip, fault_description,
+            original_responsible, original_phone, current_responsible, current_phone,
+            status, transfer_from, transfer_to, transfer_reason,
+            complete_token,
+            create_by, create_time, remark
+        ) values (
+            #{repairNo}, #{deviceId}, #{deviceName}, #{deviceIp}, #{faultDescription},
+            #{originalResponsible}, #{originalPhone}, #{currentResponsible}, #{currentPhone},
+            #{status}, #{transferFrom}, #{transferTo}, #{transferReason},
+            #{completeToken},
+            #{createBy}, sysdate(), #{remark}
+        )
+    </insert>
+
+    <update id="updateRepair" parameterType="DeviceRepair">
+        update iot_device_repair
+        <set>
+            <if test="status != null">status = #{status},</if>
+            <if test="currentResponsible != null">current_responsible = #{currentResponsible},</if>
+            <if test="currentPhone != null">current_phone = #{currentPhone},</if>
+            <if test="transferFrom != null">transfer_from = #{transferFrom},</if>
+            <if test="transferTo != null">transfer_to = #{transferTo},</if>
+            <if test="transferReason != null">transfer_reason = #{transferReason},</if>
+            <if test="repairResult != null">repair_result = #{repairResult},</if>
+            <if test="repairTime != null">repair_time = #{repairTime},</if>
+            <if test="photoBefore != null">photo_before = #{photoBefore},</if>
+            <if test="photoAfter != null">photo_after = #{photoAfter},</if>
+            <if test="hasParts != null">has_parts = #{hasParts},</if>
+            <if test="partsDesc != null">parts_desc = #{partsDesc},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            update_time = sysdate()
+        </set>
+        where repair_id = #{repairId}
+    </update>
+
+    <delete id="deleteRepairById" parameterType="Long">
+        delete from iot_device_repair where repair_id = #{repairId}
+    </delete>
+
+    <insert id="insertPartsUsage">
+        insert into iot_parts_usage (repair_id, part_id, part_name, quantity, used_by, used_time, create_time)
+        values (#{repairId}, 0, #{partName}, 1, #{usedBy}, sysdate(), sysdate())
+    </insert>
+
+    <select id="selectWorkloadStats" resultType="java.util.HashMap">
+        select current_responsible as "name",
+               count(*) as "total",
+               sum(case when status = 'COMPLETED' then 1 else 0 end) as "completed",
+               sum(case when status in ('PENDING','ASSIGNED','ACCEPTED') then 1 else 0 end) as "inProgress",
+               sum(case when status = 'REJECTED' then 1 else 0 end) as "rejected"
+        from iot_device_repair
+        group by current_responsible
+        order by total desc
+    </select>
+</mapper>
