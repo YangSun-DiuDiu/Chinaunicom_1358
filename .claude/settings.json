@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ssh root@1.94.26.126 'cd /root/zhihuiyuanqu20260625 && bash stop-server.sh && bash start-server.sh && sleep 10 && curl -s -o /dev/null -w \"Backend: HTTP %{http_code}\" http://localhost:8090/ && echo \"\" && echo \"=== 测试字典接口 ===\" && curl -s http://localhost:8090/system/dict/data/type/sys_normal_disable | head -c 300')",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code}\" http://1.94.26.126:8090/)",
+      "Bash(curl -s http://1.94.26.126:8090/system/dict/data/type/sys_normal_disable)"
+    ]
+  }
+}
