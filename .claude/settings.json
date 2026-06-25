@@ -53,7 +53,14 @@
       "Bash(curl -s -o /tmp/test.jpg -w \"HTTP %{http_code}, Size: %{size_download}\\\\n\" http://1.94.26.126:80/profile/repair/045fc4f47084.jpg)",
       "Bash(ssh root@1.94.26.126 'rm -rf /usr/share/nginx/zhihuiyuanqu/dist && mkdir -p /usr/share/nginx/zhihuiyuanqu/dist')",
       "Bash(scp -r \"e:/gitee/production_release/RuoYi-Vue-master2026-06-24/ruoyi-ui/dist/\"* root@1.94.26.126:/usr/share/nginx/zhihuiyuanqu/dist/)",
-      "Bash(ssh root@1.94.26.126 'nginx -s reload && curl -s -o /dev/null -w \"Frontend: HTTP %{http_code}\\\\n\" http://localhost:80/repair-complete')"
+      "Bash(ssh root@1.94.26.126 'nginx -s reload && curl -s -o /dev/null -w \"Frontend: HTTP %{http_code}\\\\n\" http://localhost:80/repair-complete')",
+      "Bash(git ls-remote *)",
+      "Bash(awk '{print $1}')",
+      "Bash(mkdir -p \"e:\\\\gitee\\\\production_release\\\\RuoYi-Vue-master2026-06-24\\\\.claude\\\\skills\\\\zhihuiyuanqu-bugfix\")",
+      "Edit(/.claude/skills/zhihuiyuanqu-bugfix/**)"
+    ],
+    "additionalDirectories": [
+      "e:\\gitee\\production_release\\RuoYi-Vue-master2026-06-24\\.claude\\skills"
     ]
   }
 }
