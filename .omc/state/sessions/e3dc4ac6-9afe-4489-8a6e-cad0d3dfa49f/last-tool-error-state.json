@@ -1,7 +1,7 @@
 {
   "tool_name": "Bash",
-  "tool_input_preview": "{\"command\":\"# Try using Python to scp\\npython3 -c \\\"\\nimport subprocess, os\\n\\n# Write a temporary expect-like script using Python's pexpect or just pipe\\n# Actually, let's try sshpass via pip if avai...",
-  "error": "Exit code 49",
-  "timestamp": "2026-06-25T05:20:04.701Z",
+  "tool_input_preview": "{\"command\":\"ssh root@1.94.26.126 'cd /root/zhihuiyuanqu20260625 && bash stop-server.sh && bash start-server.sh && sleep 10 && curl -s -o /dev/null -w \\\"Backend: HTTP %{http_code}\\\" http://localhost:80...",
+  "error": "Exit code 7\n** WARNING: connection is not using a post-quantum key exchange algorithm.\r\n** This session may be vulnerable to \"store now, decrypt later\" attacks.\r\n** The server may need to be upgraded. See https://openssh.com/pq.html\r\nBackend stopped (PID: 1807729)\nBackend PID: 1815842\nBackend started on port 8090\nBackend: HTTP 000",
+  "timestamp": "2026-06-25T09:02:09.878Z",
   "retry_count": 1
 }
