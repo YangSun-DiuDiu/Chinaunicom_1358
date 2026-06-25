@@ -50,3 +50,7 @@
 {"t":0,"agent":"a4e4392","agent_type":"code-reviewer","event":"agent_stop","success":true,"duration_ms":77784}
 {"t":0,"agent":"system","event":"skill_invoked","skill_name":"playwright-cli"}
 {"t":0,"agent":"system","event":"skill_invoked","skill_name":"skill-creator"}
+{"t":0,"agent":"system","event":"skill_invoked","skill_name":"superpowers:brainstorming"}
+{"t":0,"agent":"system","event":"skill_invoked","skill_name":"superpowers:writing-plans"}
+{"t":0,"agent":"system","event":"skill_invoked","skill_name":"superpowers:subagent-driven-development"}
+{"t":0,"agent":"a4fab63","agent_type":"executor","event":"agent_start","parent_mode":"none"}
