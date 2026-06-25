@@ -3,7 +3,18 @@
     "allow": [
       "Bash(ssh root@1.94.26.126 'cd /root/zhihuiyuanqu20260625 && bash stop-server.sh && bash start-server.sh && sleep 10 && curl -s -o /dev/null -w \"Backend: HTTP %{http_code}\" http://localhost:8090/ && echo \"\" && echo \"=== 测试字典接口 ===\" && curl -s http://localhost:8090/system/dict/data/type/sys_normal_disable | head -c 300')",
       "Bash(curl -s -o /dev/null -w \"HTTP %{http_code}\" http://1.94.26.126:8090/)",
-      "Bash(curl -s http://1.94.26.126:8090/system/dict/data/type/sys_normal_disable)"
+      "Bash(curl -s http://1.94.26.126:8090/system/dict/data/type/sys_normal_disable)",
+      "Bash(mysql -h 1.94.26.126 -P 3306 -u sadmin -pChinaunicom@1358 ry101 -e \"SELECT config_key, config_value FROM sys_config WHERE config_key LIKE '%sms%' OR config_key LIKE '%tpl%' OR config_key LIKE '%repair%' ORDER BY config_key;\")",
+      "Bash(mysql -h 1.94.26.126 -P 3306 -u sadmin -pChinaunicom@1358 ry101 -e \"UPDATE sys_config SET config_value='http://1.94.26.126/repair-complete' WHERE config_key='sms.repair.callback.url'; SELECT config_key, config_value FROM sys_config WHERE config_key='sms.repair.callback.url';\")",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code}\" http://1.94.26.126:80/repair-complete)",
+      "Bash(mysql -h 1.94.26.126 -P 3306 -u sadmin -pChinaunicom@1358 ry101 -e \"SELECT repair_id, device_name, complete_token, status FROM iot_device_repair LIMIT 1;\")",
+      "Bash(mysql -h 1.94.26.126 -P 3306 -u sadmin -pChinaunicom@1358 ry101 -N -e \"SELECT complete_token FROM iot_device_repair LIMIT 1;\")",
+      "Bash(curl -s http://1.94.26.126:8090/device/repair/public/detail?token=__TRACKED_VAR__)",
+      "Bash(mysql -h 1.94.26.126 -P 3306 -u sadmin -pChinaunicom@1358 ry101 -e \"SHOW COLUMNS FROM iot_device_repair LIKE 'dept_id';\")",
+      "Bash(ssh root@1.94.26.126 'cd /root/zhihuiyuanqu20260625 && bash stop-server.sh && bash start-server.sh && sleep 12 && curl -s -o /dev/null -w \"HTTP %{http_code}\\\\n\" http://localhost:8090/')",
+      "Bash(ssh root@1.94.26.126 'cd /root/zhihuiyuanqu20260625 && bash stop-server.sh 2>/dev/null; bash start-server.sh')",
+      "Bash(curl -s -o /dev/null -w 'HTTP %{http_code}\\\\n' http://1.94.26.126:80/repair-complete?token=__CMDSUB_OUTPUT__)",
+      "Bash(curl -s http://1.94.26.126:8090/device/repair/public/complete -H 'Content-Type: application/json' -d '{\"token\":\"__CMDSUB_OUTPUT__\",\"repairResult\":\"已更换电源模块，设备恢复正常。\",\"photoBefore\":\"\",\"photoAfter\":\"\",\"hasParts\":\"0\",\"partsDesc\":\"\"}')"
     ]
   }
 }
