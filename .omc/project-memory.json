@@ -1,0 +1,412 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1782426911560,
+  "projectRoot": "e:\\gitee\\production_release\\RuoYi-Vue-master2026-06-24",
+  "techStack": {
+    "languages": [
+      {
+        "name": "Java",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "pom.xml"
+        ]
+      }
+    ],
+    "frameworks": [],
+    "packageManager": "maven",
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": null,
+    "testCommand": null,
+    "lintCommand": null,
+    "devCommand": null,
+    "scripts": {}
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": null
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [
+      "bin",
+      "docs"
+    ],
+    "gitBranches": null
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "bin": {
+      "path": "bin",
+      "purpose": "Executable scripts",
+      "fileCount": 3,
+      "lastAccessed": 1782426911408,
+      "keyFiles": [
+        "clean.bat",
+        "package.bat",
+        "run.bat"
+      ]
+    },
+    "deploy": {
+      "path": "deploy",
+      "purpose": null,
+      "fileCount": 5,
+      "lastAccessed": 1782426911409,
+      "keyFiles": [
+        "nginx.conf",
+        "README.md",
+        "ruoyi-admin.jar",
+        "start-server.bat",
+        "start-server.sh"
+      ]
+    },
+    "doc": {
+      "path": "doc",
+      "purpose": null,
+      "fileCount": 33,
+      "lastAccessed": 1782426911410,
+      "keyFiles": [
+        "01-项目概述.md",
+        "02-模块架构.md",
+        "03-ruoyi-common.md",
+        "04-ruoyi-framework.md",
+        "05-ruoyi-system.md"
+      ]
+    },
+    "docs": {
+      "path": "docs",
+      "purpose": "Documentation",
+      "fileCount": 0,
+      "lastAccessed": 1782426911411,
+      "keyFiles": []
+    },
+    "ruoyi-admin": {
+      "path": "ruoyi-admin",
+      "purpose": null,
+      "fileCount": 1,
+      "lastAccessed": 1782426911412,
+      "keyFiles": [
+        "pom.xml"
+      ]
+    },
+    "ruoyi-common": {
+      "path": "ruoyi-common",
+      "purpose": null,
+      "fileCount": 1,
+      "lastAccessed": 1782426911413,
+      "keyFiles": [
+        "pom.xml"
+      ]
+    },
+    "ruoyi-framework": {
+      "path": "ruoyi-framework",
+      "purpose": null,
+      "fileCount": 1,
+      "lastAccessed": 1782426911414,
+      "keyFiles": [
+        "pom.xml"
+      ]
+    },
+    "ruoyi-quartz": {
+      "path": "ruoyi-quartz",
+      "purpose": null,
+      "fileCount": 1,
+      "lastAccessed": 1782426911414,
+      "keyFiles": [
+        "pom.xml"
+      ]
+    },
+    "ruoyi-system": {
+      "path": "ruoyi-system",
+      "purpose": null,
+      "fileCount": 1,
+      "lastAccessed": 1782426911415,
+      "keyFiles": [
+        "pom.xml"
+      ]
+    },
+    "ruoyi-ui": {
+      "path": "ruoyi-ui",
+      "purpose": null,
+      "fileCount": 10,
+      "lastAccessed": 1782426911415,
+      "keyFiles": [
+        "babel.config.js",
+        "package-lock.json",
+        "package.json",
+        "README.md",
+        "vue.config.js"
+      ]
+    },
+    "sql": {
+      "path": "sql",
+      "purpose": null,
+      "fileCount": 18,
+      "lastAccessed": 1782426911416,
+      "keyFiles": [
+        "menu_reorg_batch1_device_visitor.sql",
+        "menu_reorg_batch2_smart_attendance_sms.sql",
+        "quartz.sql",
+        "ry-vue100-accounts.sql",
+        "ry-vue100-fix-columns.sql"
+      ]
+    },
+    "test-records": {
+      "path": "test-records",
+      "purpose": null,
+      "fileCount": 32,
+      "lastAccessed": 1782426911416,
+      "keyFiles": [
+        "01-测试计划总览.md",
+        "02-登录与认证模块测试.md",
+        "03-首页仪表盘测试.md",
+        "04-系统管理-用户管理测试.md",
+        "05-系统管理-角色管理测试.md"
+      ]
+    },
+    "tools": {
+      "path": "tools",
+      "purpose": null,
+      "fileCount": 1,
+      "lastAccessed": 1782426911418,
+      "keyFiles": [
+        "test_snmp.py"
+      ]
+    },
+    "zhihuiyuanqu20260625": {
+      "path": "zhihuiyuanqu20260625",
+      "purpose": null,
+      "fileCount": 5,
+      "lastAccessed": 1782426911420,
+      "keyFiles": [
+        "deploy.sh",
+        "nginx.conf",
+        "ruoyi-admin.jar",
+        "start-server.sh",
+        "stop-server.sh"
+      ]
+    },
+    "deploy\\dist": {
+      "path": "deploy\\dist",
+      "purpose": "Distribution/build output",
+      "fileCount": 4,
+      "lastAccessed": 1782426911422,
+      "keyFiles": [
+        "favicon.ico",
+        "index.html",
+        "index.html.gz"
+      ]
+    },
+    "ruoyi-admin\\src": {
+      "path": "ruoyi-admin\\src",
+      "purpose": "Source code",
+      "fileCount": 0,
+      "lastAccessed": 1782426911424,
+      "keyFiles": []
+    },
+    "ruoyi-common\\src": {
+      "path": "ruoyi-common\\src",
+      "purpose": "Source code",
+      "fileCount": 0,
+      "lastAccessed": 1782426911425,
+      "keyFiles": []
+    },
+    "ruoyi-framework\\src": {
+      "path": "ruoyi-framework\\src",
+      "purpose": "Source code",
+      "fileCount": 0,
+      "lastAccessed": 1782426911426,
+      "keyFiles": []
+    },
+    "ruoyi-quartz\\src": {
+      "path": "ruoyi-quartz\\src",
+      "purpose": "Source code",
+      "fileCount": 0,
+      "lastAccessed": 1782426911428,
+      "keyFiles": []
+    },
+    "ruoyi-system\\src": {
+      "path": "ruoyi-system\\src",
+      "purpose": "Source code",
+      "fileCount": 0,
+      "lastAccessed": 1782426911429,
+      "keyFiles": []
+    },
+    "ruoyi-ui\\bin": {
+      "path": "ruoyi-ui\\bin",
+      "purpose": "Executable scripts",
+      "fileCount": 3,
+      "lastAccessed": 1782426911429,
+      "keyFiles": [
+        "build.bat",
+        "package.bat",
+        "run-web.bat"
+      ]
+    },
+    "ruoyi-ui\\build": {
+      "path": "ruoyi-ui\\build",
+      "purpose": "Build output",
+      "fileCount": 1,
+      "lastAccessed": 1782426911430,
+      "keyFiles": [
+        "index.js"
+      ]
+    },
+    "ruoyi-ui\\dist": {
+      "path": "ruoyi-ui\\dist",
+      "purpose": "Distribution/build output",
+      "fileCount": 4,
+      "lastAccessed": 1782426911430,
+      "keyFiles": [
+        "favicon.ico",
+        "index.html",
+        "index.html.gz"
+      ]
+    },
+    "zhihuiyuanqu20260625\\dist": {
+      "path": "zhihuiyuanqu20260625\\dist",
+      "purpose": "Distribution/build output",
+      "fileCount": 4,
+      "lastAccessed": 1782426911432,
+      "keyFiles": [
+        "favicon.ico",
+        "index.html",
+        "index.html.gz"
+      ]
+    }
+  },
+  "hotPaths": [
+    {
+      "path": "",
+      "accessCount": 6,
+      "lastAccessed": 1782430278914,
+      "type": "directory"
+    },
+    {
+      "path": "ruoyi-admin\\src\\main\\java\\com\\ruoyi\\web\\controller\\smart\\SmartAccessController.java",
+      "accessCount": 4,
+      "lastAccessed": 1782430304429,
+      "type": "file"
+    },
+    {
+      "path": "ruoyi-quartz\\src\\main\\java\\com\\ruoyi\\quartz\\task\\DeviceHeartbeatTask.java",
+      "accessCount": 1,
+      "lastAccessed": 1782429831892,
+      "type": "file"
+    },
+    {
+      "path": "ruoyi-system\\src\\main\\java\\com\\ruoyi\\system\\service\\ISmsService.java",
+      "accessCount": 1,
+      "lastAccessed": 1782429832482,
+      "type": "file"
+    },
+    {
+      "path": "sql\\ry-vue100-v7-features.sql",
+      "accessCount": 1,
+      "lastAccessed": 1782429837861,
+      "type": "file"
+    },
+    {
+      "path": "ruoyi-admin\\src\\main\\java\\com\\ruoyi\\web\\controller\\smart\\SmartPermissionController.java",
+      "accessCount": 1,
+      "lastAccessed": 1782429839019,
+      "type": "file"
+    },
+    {
+      "path": "ruoyi-admin\\src\\main\\java\\com\\ruoyi\\web\\controller\\smart\\DeviceTestController.java",
+      "accessCount": 1,
+      "lastAccessed": 1782429840115,
+      "type": "file"
+    },
+    {
+      "path": "ruoyi-admin\\src\\main\\java\\com\\ruoyi\\web\\controller\\smart\\VideoStreamController.java",
+      "accessCount": 1,
+      "lastAccessed": 1782429840297,
+      "type": "file"
+    },
+    {
+      "path": "ruoyi-admin\\src\\main\\java\\com\\ruoyi\\web\\controller\\smart\\VideoStreamService.java",
+      "accessCount": 1,
+      "lastAccessed": 1782429840524,
+      "type": "file"
+    },
+    {
+      "path": "ruoyi-ui\\src\\views\\smart\\person-access\\device\\index.vue",
+      "accessCount": 1,
+      "lastAccessed": 1782429845326,
+      "type": "file"
+    },
+    {
+      "path": "ruoyi-ui\\src\\views\\smart\\vehicle-access\\device\\index.vue",
+      "accessCount": 1,
+      "lastAccessed": 1782429845786,
+      "type": "file"
+    },
+    {
+      "path": "ruoyi-ui\\src\\views\\smart\\video\\device\\index.vue",
+      "accessCount": 1,
+      "lastAccessed": 1782429846306,
+      "type": "file"
+    },
+    {
+      "path": "ruoyi-ui\\src\\views\\smart\\video\\preview\\index.vue",
+      "accessCount": 1,
+      "lastAccessed": 1782429846903,
+      "type": "file"
+    },
+    {
+      "path": "ruoyi-ui\\src\\views\\smart\\video\\map\\index.vue",
+      "accessCount": 1,
+      "lastAccessed": 1782429847452,
+      "type": "file"
+    },
+    {
+      "path": "ruoyi-ui\\src\\views\\smart\\person-access\\permission\\index.vue",
+      "accessCount": 1,
+      "lastAccessed": 1782429847890,
+      "type": "file"
+    },
+    {
+      "path": "ruoyi-ui\\src\\views\\smart\\vehicle-access\\permission\\index.vue",
+      "accessCount": 1,
+      "lastAccessed": 1782429848196,
+      "type": "file"
+    },
+    {
+      "path": "ruoyi-ui\\src\\views\\smart\\video\\mapBase\\index.vue",
+      "accessCount": 1,
+      "lastAccessed": 1782429848440,
+      "type": "file"
+    },
+    {
+      "path": "ruoyi-common\\src\\main\\java\\com\\ruoyi\\common\\utils\\PingUtil.java",
+      "accessCount": 1,
+      "lastAccessed": 1782429855798,
+      "type": "file"
+    },
+    {
+      "path": "docs\\superpowers\\specs\\2026-06-26-smart-device-ping-repair-design.md",
+      "accessCount": 1,
+      "lastAccessed": 1782430135925,
+      "type": "file"
+    },
+    {
+      "path": "docs\\superpowers\\plans\\2026-06-26-smart-device-ping-repair-plan.md",
+      "accessCount": 1,
+      "lastAccessed": 1782430181918,
+      "type": "file"
+    },
+    {
+      "path": ".superpowers\\sdd\\task-1-brief.md",
+      "accessCount": 1,
+      "lastAccessed": 1782430277024,
+      "type": "file"
+    }
+  ],
+  "userDirectives": []
+}
