@@ -122,7 +122,7 @@ export default {
     }
   },
   computed: {
-    baseUrl() { return '' },  // 图片直接Nginx服务，无需/prod-api前缀
+    baseUrl() { return window.location.origin },  // 绝对路径，通过Nginx /profile/ 代理访问后端资源
     canComplete() { return this.repair.status === 'PENDING' || this.repair.status === 'ASSIGNED' || this.repair.status === 'ACCEPTED' },
     statusLabel() {
       const m = { PENDING: '待处理', ASSIGNED: '已转派', ACCEPTED: '已接收', REJECTED: '已拒绝', COMPLETED: '已完成' }
