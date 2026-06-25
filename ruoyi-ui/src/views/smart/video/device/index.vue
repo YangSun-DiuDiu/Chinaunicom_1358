@@ -6,6 +6,7 @@
     </el-form>
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5"><el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd">新增</el-button></el-col>
+      <el-col :span="1.5"><el-button type="warning" icon="el-icon-video-play" @click="handlePingAll">一键检测</el-button></el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"/>
     </el-row>
     <el-table v-loading="loading" :data="list">
@@ -27,6 +28,7 @@
         <el-button size="mini" type="text" icon="el-icon-connection" @click="pingDevice(row)">在线测试</el-button>
         <el-button size="mini" type="text" icon="el-icon-video-play" @click="preview(row)">预览</el-button>
         <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDel(row)">删除</el-button>
+        <el-button v-if="row.status === 'OFFLINE'" type="warning" size="mini" icon="el-icon-warning" @click="handleRepair(row)">报修</el-button>
       </template></el-table-column>
     </el-table>
     <pagination :total="total" :page.sync="query.pageNum" :limit.sync="query.pageSize" @pagination="getList"/>
@@ -44,10 +46,86 @@
       </el-form>
       <div slot="footer"><el-button type="primary" @click="submit">确定</el-button></div>
     </el-dialog>
+    <el-dialog title="设备报修" :visible.sync="repairOpen" width="400px">
+      <el-form label-width="100px">
+        <el-form-item label="设备名称">{{ repairDevice.device_name }}</el-form-item>
+        <el-form-item label="维修人手机号" required>
+          <el-input v-model="repairPhone" placeholder="请输入手机号" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer">
+        <el-button @click="repairOpen=false">取消</el-button>
+        <el-button type="primary" :disabled="!repairPhone" @click="submitRepair">确认报修</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
 import request from '@/utils/request'
 const B = '/smart/access/video-device'
-export default { data() { return { loading:false, showSearch:true, total:0, list:[], open:false, title:'', query:{ pageNum:1, pageSize:10, deviceName:undefined }, form:{ device_name:'', device_brand:'HIKVISION', ip_address:'', rtsp_port:554, rtsp_url:'', username:'admin', password:'', location:'' } } }, created() { this.getList() }, methods: { getList() { this.loading=true; request({url:B+'/list',method:'get',params:this.query}).then(r=>{this.list=r.rows;this.total=r.total;this.loading=false}) }, reset() { this.query={ pageNum:1, pageSize:10 }; this.getList() }, handleAdd() { this.form={ device_name:'', device_brand:'HIKVISION', ip_address:'', rtsp_port:554, rtsp_url:'', username:'admin', password:'', location:'' }; this.title='新增视频设备'; this.open=true }, handleEdit(r) { this.form={...r}; this.title='修改视频设备'; this.open=true }, handleDel(r) { this.$confirm('确认删除?').then(()=>request({url:B+'/'+r.device_id,method:'delete'}).then(()=>{this.$message.success('删除成功');this.getList()})).catch(()=>{}) }, submit() { const m=this.form.device_id?'put':'post'; request({url:B,method:m,data:this.form}).then(()=>{this.$message.success('操作成功');this.open=false;this.getList()}) }, preview(row) { const url = row.rtsp_url || 'rtsp://'+row.ip_address+':'+(row.rtsp_port||554)+'/Streaming/Channels/'+(row.channel||1)+'01'; this.$alert('RTSP地址: '+url, '预览提示', { confirmButtonText: '知道了' }) }, pingDevice(row) { const load = this.$loading({ text: 'Ping检测 '+row.ip_address+'...', target: '.app-container' }); request({ url: B+'/ping/'+row.device_id, method: 'post' }).then(res => { load.close(); const d = res.data || res; this.$alert((d.reachable?'在线':'离线')+' | '+d.ip+' | '+(d.latency||''), '检测结果', { type: d.reachable?'success':'error' }).then(()=>{ this.getList() }) }).catch(() => { load.close() }) } } }
+export default {
+  data() {
+    return {
+      loading: false, showSearch: true, total: 0, list: [], open: false, title: '',
+      repairOpen: false, repairDevice: {}, repairPhone: '',
+      query: { pageNum: 1, pageSize: 10, deviceName: undefined },
+      form: { device_name: '', device_brand: 'HIKVISION', ip_address: '', rtsp_port: 554, rtsp_url: '', username: 'admin', password: '', location: '' }
+    }
+  },
+  created() { this.getList() },
+  methods: {
+    getList() {
+      this.loading = true
+      request({ url: B + '/list', method: 'get', params: this.query }).then(r => {
+        this.list = r.rows; this.total = r.total; this.loading = false
+      })
+    },
+    reset() { this.query = { pageNum: 1, pageSize: 10 }; this.getList() },
+    handleAdd() {
+      this.form = { device_name: '', device_brand: 'HIKVISION', ip_address: '', rtsp_port: 554, rtsp_url: '', username: 'admin', password: '', location: '' }
+      this.title = '新增视频设备'; this.open = true
+    },
+    handleEdit(r) { this.form = { ...r }; this.title = '修改视频设备'; this.open = true },
+    handleDel(r) {
+      this.$confirm('确认删除?').then(() =>
+        request({ url: B + '/' + r.device_id, method: 'delete' }).then(() => {
+          this.$message.success('删除成功'); this.getList()
+        })
+      ).catch(() => {})
+    },
+    submit() {
+      const m = this.form.device_id ? 'put' : 'post'
+      request({ url: B, method: m, data: this.form }).then(() => {
+        this.$message.success('操作成功'); this.open = false; this.getList()
+      })
+    },
+    preview(row) {
+      const url = row.rtsp_url || 'rtsp://' + row.ip_address + ':' + (row.rtsp_port || 554) + '/Streaming/Channels/' + (row.channel || 1) + '01'
+      this.$alert('RTSP地址: ' + url, '预览提示', { confirmButtonText: '知道了' })
+    },
+    pingDevice(row) {
+      const load = this.$loading({ text: 'Ping检测 ' + row.ip_address + '...', target: '.app-container' })
+      request({ url: B + '/ping/' + row.device_id, method: 'post' }).then(res => {
+        load.close()
+        const d = res.data || res
+        this.$alert((d.reachable ? '在线' : '离线') + ' | ' + d.ip + ' | ' + (d.latency || ''), '检测结果', { type: d.reachable ? 'success' : 'error' }).then(() => { this.getList() })
+      }).catch(() => { load.close() })
+    },
+    handlePingAll() {
+      this.$modal.loading('正在检测设备...')
+      request({ url: B + '/ping-all', method: 'post' }).then(res => {
+        this.$modal.closeLoading()
+        this.$modal.msgSuccess('检测完成：' + res.data.online + '台在线，' + res.data.offline + '台离线')
+        this.getList()
+      }).catch(() => { this.$modal.closeLoading() })
+    },
+    handleRepair(r) { this.repairDevice = r; this.repairPhone = ''; this.repairOpen = true },
+    submitRepair() {
+      request({ url: '/smart/access/device-repair/video/' + this.repairDevice.device_id, method: 'post', data: { phone: this.repairPhone } }).then(() => {
+        this.$modal.msgSuccess('报修工单已创建，短信已发送')
+        this.repairOpen = false; this.getList()
+      })
+    }
+  }
+}
 </script>

@@ -282,27 +282,57 @@
   },
   "hotPaths": [
     {
+      "path": "ruoyi-admin\\src\\main\\java\\com\\ruoyi\\web\\controller\\smart\\SmartAccessController.java",
+      "accessCount": 10,
+      "lastAccessed": 1782430472832,
+      "type": "file"
+    },
+    {
+      "path": "ruoyi-ui\\src\\views\\smart\\vehicle-access\\device\\index.vue",
+      "accessCount": 10,
+      "lastAccessed": 1782430696043,
+      "type": "file"
+    },
+    {
       "path": "",
-      "accessCount": 6,
-      "lastAccessed": 1782430278914,
+      "accessCount": 9,
+      "lastAccessed": 1782430503383,
       "type": "directory"
     },
     {
-      "path": "ruoyi-admin\\src\\main\\java\\com\\ruoyi\\web\\controller\\smart\\SmartAccessController.java",
-      "accessCount": 4,
-      "lastAccessed": 1782430304429,
+      "path": "ruoyi-ui\\src\\views\\smart\\person-access\\device\\index.vue",
+      "accessCount": 8,
+      "lastAccessed": 1782430734514,
+      "type": "file"
+    },
+    {
+      "path": "ruoyi-ui\\src\\views\\smart\\video\\device\\index.vue",
+      "accessCount": 6,
+      "lastAccessed": 1782430730137,
+      "type": "file"
+    },
+    {
+      "path": ".superpowers\\sdd\\task-1-report.md",
+      "accessCount": 2,
+      "lastAccessed": 1782430380682,
+      "type": "file"
+    },
+    {
+      "path": "ruoyi-system\\src\\main\\java\\com\\ruoyi\\system\\service\\ISmsService.java",
+      "accessCount": 2,
+      "lastAccessed": 1782430433483,
+      "type": "file"
+    },
+    {
+      "path": ".superpowers\\sdd\\task-2-report.md",
+      "accessCount": 2,
+      "lastAccessed": 1782430511684,
       "type": "file"
     },
     {
       "path": "ruoyi-quartz\\src\\main\\java\\com\\ruoyi\\quartz\\task\\DeviceHeartbeatTask.java",
       "accessCount": 1,
       "lastAccessed": 1782429831892,
-      "type": "file"
-    },
-    {
-      "path": "ruoyi-system\\src\\main\\java\\com\\ruoyi\\system\\service\\ISmsService.java",
-      "accessCount": 1,
-      "lastAccessed": 1782429832482,
       "type": "file"
     },
     {
@@ -333,24 +363,6 @@
       "path": "ruoyi-admin\\src\\main\\java\\com\\ruoyi\\web\\controller\\smart\\VideoStreamService.java",
       "accessCount": 1,
       "lastAccessed": 1782429840524,
-      "type": "file"
-    },
-    {
-      "path": "ruoyi-ui\\src\\views\\smart\\person-access\\device\\index.vue",
-      "accessCount": 1,
-      "lastAccessed": 1782429845326,
-      "type": "file"
-    },
-    {
-      "path": "ruoyi-ui\\src\\views\\smart\\vehicle-access\\device\\index.vue",
-      "accessCount": 1,
-      "lastAccessed": 1782429845786,
-      "type": "file"
-    },
-    {
-      "path": "ruoyi-ui\\src\\views\\smart\\video\\device\\index.vue",
-      "accessCount": 1,
-      "lastAccessed": 1782429846306,
       "type": "file"
     },
     {
@@ -406,6 +418,36 @@
       "accessCount": 1,
       "lastAccessed": 1782430277024,
       "type": "file"
+    },
+    {
+      "path": ".superpowers\\sdd\\task-2-brief.md",
+      "accessCount": 1,
+      "lastAccessed": 1782430424664,
+      "type": "file"
+    },
+    {
+      "path": "ruoyi-system\\src\\main\\java\\com\\ruoyi\\system\\domain\\DeviceRepair.java",
+      "accessCount": 1,
+      "lastAccessed": 1782430436491,
+      "type": "file"
+    },
+    {
+      "path": ".superpowers\\sdd\\task-3-brief.md",
+      "accessCount": 1,
+      "lastAccessed": 1782430581072,
+      "type": "file"
+    },
+    {
+      "path": ".superpowers\\sdd\\task-3-report.md",
+      "accessCount": 1,
+      "lastAccessed": 1782430581487,
+      "type": "file"
+    },
+    {
+      "path": "ruoyi-ui\\src\\views\\smart",
+      "accessCount": 1,
+      "lastAccessed": 1782430734188,
+      "type": "directory"
     }
   ],
   "userDirectives": []
