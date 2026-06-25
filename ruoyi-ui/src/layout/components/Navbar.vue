@@ -10,6 +10,19 @@
     </template>
     <div class="right-menu">
       <template v-if="device!=='mobile'">
+        <el-dropdown v-if="isAdmin" @command="handleSwitchDept" class="right-menu-item hover-effect dept-dropdown" trigger="click">
+          <span class="dept-dropdown-trigger">
+            <svg-icon icon-class="tree" />
+            <span class="dept-name">{{ currentDeptName || '选择组织' }}</span>
+          </span>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item command="" icon="el-icon-refresh">清除组织上下文</el-dropdown-item>
+            <el-dropdown-item divided v-for="dept in deptOptions" :key="dept.id" :command="String(dept.id)" :style="{ paddingLeft: (dept.level * 16 + 20) + 'px' }">
+              {{ dept.label }}
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+
         <search id="header-search" class="right-menu-item" />
 
         <screenfull id="screenfull" class="right-menu-item hover-effect" />
@@ -54,6 +67,7 @@ import Hamburger from '@/components/Hamburger'
 import Screenfull from '@/components/Screenfull'
 import SizeSelect from '@/components/SizeSelect'
 import Search from '@/components/HeaderSearch'
+import { switchDeptContext, clearDeptContext, deptTreeSelect } from '@/api/system/dept'
 
 export default {
   components: {
@@ -66,12 +80,19 @@ export default {
     SizeSelect,
     Search
   },
+  data() {
+    return {
+      deptOptions: [],
+      currentDeptName: ''
+    }
+  },
   computed: {
     ...mapGetters([
       'sidebar',
       'avatar',
       'device',
-      'nickName'
+      'nickName',
+      'roles'
     ]),
     setting: {
       get() {
@@ -87,6 +108,9 @@ export default {
       get() {
         return this.$store.state.settings.sidebarLogo
       }
+    },
+    isAdmin() {
+      return this.roles.includes('admin')
     }
   },
   methods: {
@@ -112,6 +136,54 @@ export default {
           location.href = '/index'
         })
       }).catch(() => {})
+    },
+    /** 加载部门树下拉选项 */
+    loadDeptOptions() {
+      deptTreeSelect().then(response => {
+        this.deptOptions = this.flattenDeptTree(response.data)
+      })
+    },
+    /** 将部门树扁平化，记录层级用于缩进 */
+    flattenDeptTree(tree, level) {
+      if (!level) { level = 0 }
+      let result = []
+      if (Array.isArray(tree)) {
+        tree.forEach(item => {
+          result.push({ id: item.id, label: item.label, level: level })
+          if (item.children && item.children.length > 0) {
+            result = result.concat(this.flattenDeptTree(item.children, level + 1))
+          }
+        })
+      }
+      return result
+    },
+    /** 切换部门上下文 */
+    handleSwitchDept(deptId) {
+      if (deptId === '' || deptId === undefined || deptId === null) {
+        clearDeptContext().then(() => {
+          this.currentDeptName = ''
+          this.$modal.msgSuccess('已清除组织上下文')
+          this.refreshPage()
+        })
+      } else {
+        switchDeptContext(deptId).then(() => {
+          const dept = this.deptOptions.find(d => String(d.id) === String(deptId))
+          if (dept) {
+            this.currentDeptName = dept.label
+          }
+          this.$modal.msgSuccess('已切换组织上下文')
+          this.refreshPage()
+        })
+      }
+    },
+    /** 刷新当前页面 */
+    refreshPage() {
+      this.$router.go(0)
+    }
+  },
+  mounted() {
+    if (this.isAdmin) {
+      this.loadDeptOptions()
     }
   }
 }
@@ -194,6 +266,25 @@ export default {
 
         &:hover {
           background: rgba(0, 0, 0, .025)
+        }
+      }
+    }
+
+    .dept-dropdown {
+      font-size: 14px;
+
+      .dept-dropdown-trigger {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        cursor: pointer;
+        height: 100%;
+
+        .dept-name {
+          max-width: 120px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
         }
       }
     }

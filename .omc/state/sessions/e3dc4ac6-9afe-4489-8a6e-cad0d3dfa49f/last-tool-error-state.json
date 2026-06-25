@@ -1,7 +1,7 @@
 {
-  "tool_name": "mcp__plugin_oh-my-claudecode_t__lsp_diagnostics",
-  "tool_input_preview": "{\"file\":\"e:\\\\gitee\\\\production_release\\\\RuoYi-Vue-master2026-06-24\\\\ruoyi-ui\\\\src\\\\main.js\"}",
-  "error": "Language server 'typescript-language-server' not found.\nInstall with: npm install -g typescript-language-server typescript",
-  "timestamp": "2026-06-25T02:09:35.373Z",
-  "retry_count": 2
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"# Login as zhaojg (dept=101)\\nZHAO_TOKEN=$(curl -s http://localhost:8080/login -H \\\"Content-Type: application/json\\\" -d '{\\\"username\\\":\\\"zhaojg\\\",\\\"password\\\":\\\"admin123\\\",\\\"code\\\":\\\"0\\\",\\...",
+  "error": "Exit code 49\n=== zhaojg (dept=101) user info ===\n\n=== zhaojg device list (should be filtered by dept_id=101) ===",
+  "timestamp": "2026-06-25T03:15:39.904Z",
+  "retry_count": 1
 }

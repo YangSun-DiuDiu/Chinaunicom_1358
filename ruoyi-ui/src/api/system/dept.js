@@ -59,3 +59,27 @@ export function delDept(deptId) {
     method: 'delete'
   })
 }
+
+// 切换部门上下文
+export function switchDeptContext(deptId) {
+  return request({
+    url: '/system/dept/switchContext/' + deptId,
+    method: 'get'
+  })
+}
+
+// 清除部门上下文
+export function clearDeptContext() {
+  return request({
+    url: '/system/dept/clearContext',
+    method: 'get'
+  })
+}
+
+// 查询部门树结构下拉选项
+export function deptTreeSelect() {
+  return request({
+    url: '/system/dept/treeselect',
+    method: 'get'
+  })
+}

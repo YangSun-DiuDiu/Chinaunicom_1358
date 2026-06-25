@@ -35,6 +35,9 @@ public class MyBatisConfig
     @Autowired
     private Environment env;
 
+    @Autowired(required = false)
+    private org.apache.ibatis.plugin.Interceptor[] plugins;
+
     static final String DEFAULT_RESOURCE_PATTERN = "**/*.class";
 
     public static String setTypeAliasesPackage(String typeAliasesPackage)
@@ -127,6 +130,9 @@ public class MyBatisConfig
         sessionFactory.setTypeAliasesPackage(typeAliasesPackage);
         sessionFactory.setMapperLocations(resolveMapperLocations(StringUtils.split(mapperLocations, ",")));
         sessionFactory.setConfigLocation(new DefaultResourceLoader().getResource(configLocation));
+        if (plugins != null && plugins.length > 0) {
+            sessionFactory.setPlugins(plugins);
+        }
         return sessionFactory.getObject();
     }
 }

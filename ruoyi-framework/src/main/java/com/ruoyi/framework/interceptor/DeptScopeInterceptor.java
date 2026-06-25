@@ -71,8 +71,10 @@ public class DeptScopeInterceptor implements Interceptor {
             }
         }
 
-        // 检查是否已包含 dept_id 条件（避免重复添加）
-        if (originalSql.contains("dept_id")) {
+        // 检查 WHERE 子句中是否已包含 dept_id 条件（避免重复添加）
+        // 注意：不能简单 contains("dept_id")，因为 SELECT 列表中也包含 dept_id 列
+        int whereIdx = originalSql.indexOf("where");
+        if (whereIdx >= 0 && originalSql.substring(whereIdx).contains("dept_id")) {
             return invocation.proceed();
         }
 
