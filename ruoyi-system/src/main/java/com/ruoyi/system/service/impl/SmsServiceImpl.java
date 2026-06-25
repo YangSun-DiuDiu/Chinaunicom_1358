@@ -137,10 +137,10 @@ public class SmsServiceImpl implements ISmsService
     @Override
     public void sendRepairAlert(Device device)
     {
-        String content = buildSmsContent("REPAIR",
-                "【设备维修通知】设备「" + safeStr(device.getDeviceName()) + "」（IP: " + safeStr(device.getIpAddress())
-                + "，型号: " + safeStr(device.getModel()) + "）需要维修，负责人 " + safeStr(device.getResponsible())
-                + "（电话: " + safeStr(device.getResponsiblePhone()) + "）。");
+        // 此方法不再直接发送维修短信 — 改由 DeviceRepairController.createRepair 统一发送
+        // 保留方法以防其他调用方
+        String content = "设备离线告警，设备：" + safeStr(device.getDeviceName())
+                + "，已离线，请及时处理。";
         sendSms(device.getResponsible(), device.getResponsiblePhone(), content,
                 BIZ_TYPE_REPAIR, device.getDeviceId());
     }
