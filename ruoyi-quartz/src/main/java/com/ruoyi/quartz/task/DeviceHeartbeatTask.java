@@ -12,7 +12,9 @@ import com.ruoyi.common.utils.PingUtil;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.system.domain.Device;
 import com.ruoyi.system.domain.DeviceHeartbeatLog;
+import com.ruoyi.system.domain.DeviceRepair;
 import com.ruoyi.system.service.IDeviceHeartbeatLogService;
+import com.ruoyi.system.service.IDeviceRepairService;
 import com.ruoyi.system.service.IDeviceService;
 import com.ruoyi.system.service.ISmsService;
 
@@ -29,6 +31,7 @@ public class DeviceHeartbeatTask
 
     @Autowired private IDeviceService deviceService;
     @Autowired private IDeviceHeartbeatLogService heartbeatLogService;
+    @Autowired private IDeviceRepairService repairService;
     @Autowired private ISmsService smsService;
     @Autowired private JdbcTemplate jdbc;
 
@@ -92,10 +95,31 @@ public class DeviceHeartbeatTask
                 {
                     log.info("设备[{}]状态变更: {} -> {}", d.getDeviceName(), oldStatus, newStatus);
                     deviceService.updateDeviceStatus(d.getDeviceId(), newStatus);
-                    // 设备离线时发送告警短信
+                    // 设备离线时自动创建维修工单并发送短信（与手动报修模板一致）
                     if (OFFLINE.equals(newStatus)) {
-                        try { smsService.sendDeviceOfflineAlert(d); }
-                        catch (Exception ex) { log.error("发送离线告警短信失败: {}", d.getDeviceName(), ex); }
+                        try {
+                            if (StringUtils.isNotEmpty(d.getResponsiblePhone())) {
+                                DeviceRepair repair = new DeviceRepair();
+                                repair.setDeviceId(d.getDeviceId());
+                                repair.setDeviceName(d.getDeviceName());
+                                repair.setDeviceIp(d.getIpAddress());
+                                repair.setOriginalResponsible(d.getResponsible());
+                                repair.setOriginalPhone(d.getResponsiblePhone());
+                                repair.setCurrentResponsible(d.getResponsible());
+                                repair.setCurrentPhone(d.getResponsiblePhone());
+                                repair.setFaultDescription("设备自动检测离线，请及时维修");
+                                repair.setStatus("PENDING");
+                                repair.setCreateBy("SYSTEM");
+                                repair.setCreateTime(new Date());
+                                repair.setCompleteToken(java.util.UUID.randomUUID().toString().replace("-", ""));
+                                repair.setRepairNo(generateRepairNo());
+                                repairService.insertRepair(repair);
+                                smsService.sendSms(d.getResponsible(), d.getResponsiblePhone(),
+                                    "设备离线告警，设备：" + d.getDeviceName()
+                                    + "，已离线，请及时处理。设备登录码：" + repair.getCompleteToken(),
+                                    "REPAIR", repair.getRepairId());
+                            }
+                        } catch (Exception ex) { log.error("离线自动报修失败: {}", d.getDeviceName(), ex); }
                     }
                     c[3]++;
                 }
@@ -142,5 +166,14 @@ public class DeviceHeartbeatTask
             }
             catch (Exception e) { log.error("{}设备巡检异常: {}", label, e.getMessage()); }
         }
+    }
+
+    /** 生成工单编号 */
+    private String generateRepairNo() {
+        String today = new java.text.SimpleDateFormat("yyyyMMdd").format(new Date());
+        Integer count = jdbc.queryForObject(
+            "SELECT COUNT(*) FROM iot_device_repair WHERE DATE(create_time)=CURDATE()", Integer.class);
+        int seq = (count != null ? count : 0) + 1;
+        return today + String.format("%03d", seq);
     }
 }
