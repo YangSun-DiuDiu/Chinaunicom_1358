@@ -132,10 +132,10 @@ public class DeviceRepairController extends BaseController
         repair.setRepairNo(generateRepairNo());
         repairService.insertRepair(repair);
 
-        String callbackUrl = getRepairCallbackUrl() + "?token=" + repair.getCompleteToken();
+        String repairToken = repair.getCompleteToken();
         smsService.sendSms(device.getResponsible(), device.getResponsiblePhone(),
-            "【设备维修】设备「" + device.getDeviceName() + "」（IP:" + device.getIpAddress()
-            + "）离线故障，维修完成后请点击: " + callbackUrl,
+            "设备离线告警，设备：" + device.getDeviceName()
+            + "，已离线，请及时处理。设备登录码：" + repairToken,
             "REPAIR", repair.getRepairId());
         return success(repair);
     }
