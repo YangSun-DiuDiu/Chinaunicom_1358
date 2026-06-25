@@ -33,7 +33,7 @@
     </resultMap>
 
     <sql id="selectRepairVo">
-        select r.dept_id, repair_id, repair_no, device_id, device_name, device_ip, fault_description,
+        select dept_id, repair_id, repair_no, device_id, device_name, device_ip, fault_description,
                original_responsible, original_phone, current_responsible, current_phone,
                status, transfer_from, transfer_to, transfer_reason,
                repair_result, repair_time, complete_token,
