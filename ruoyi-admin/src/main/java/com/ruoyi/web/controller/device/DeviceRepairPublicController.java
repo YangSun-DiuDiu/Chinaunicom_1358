@@ -46,7 +46,7 @@ public class DeviceRepairPublicController extends BaseController
         try {
             if (file.isEmpty()) return error("文件为空");
             // 手动保存文件
-            String uploadDir = RuoYiConfig.getUploadPath() + "/repair";
+            String uploadDir = RuoYiConfig.getProfile() + "/repair";
             File dir = new File(uploadDir);
             if (!dir.exists()) dir.mkdirs();
             String originalName = file.getOriginalFilename();

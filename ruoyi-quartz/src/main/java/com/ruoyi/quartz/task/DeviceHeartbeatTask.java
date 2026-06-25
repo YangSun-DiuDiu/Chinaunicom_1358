@@ -14,6 +14,7 @@ import com.ruoyi.system.domain.Device;
 import com.ruoyi.system.domain.DeviceHeartbeatLog;
 import com.ruoyi.system.service.IDeviceHeartbeatLogService;
 import com.ruoyi.system.service.IDeviceService;
+import com.ruoyi.system.service.ISmsService;
 
 /**
  * 设备心跳检测定时任务——覆盖设备管理+智能化管理全部设备
@@ -28,6 +29,7 @@ public class DeviceHeartbeatTask
 
     @Autowired private IDeviceService deviceService;
     @Autowired private IDeviceHeartbeatLogService heartbeatLogService;
+    @Autowired private ISmsService smsService;
     @Autowired private JdbcTemplate jdbc;
 
     /** 任务入口 */
@@ -90,6 +92,11 @@ public class DeviceHeartbeatTask
                 {
                     log.info("设备[{}]状态变更: {} -> {}", d.getDeviceName(), oldStatus, newStatus);
                     deviceService.updateDeviceStatus(d.getDeviceId(), newStatus);
+                    // 设备离线时发送告警短信
+                    if (OFFLINE.equals(newStatus)) {
+                        try { smsService.sendDeviceOfflineAlert(d); }
+                        catch (Exception ex) { log.error("发送离线告警短信失败: {}", d.getDeviceName(), ex); }
+                    }
                     c[3]++;
                 }
             }

@@ -38,7 +38,11 @@
       "Bash(ssh -o *)",
       "Bash(curl -s -o /dev/null -w \"HTTP %{http_code}\\\\n\" --connect-timeout 10 http://1.94.26.126:3001/)",
       "Bash(curl -s --connect-timeout 10 \"http://1.94.26.126:80/prod-api/captchaImage\")",
-      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('captchaImage code:', d.get\\('code'\\)\\); print\\('uuid present:', 'uuid' in d\\)\")"
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('captchaImage code:', d.get\\('code'\\)\\); print\\('uuid present:', 'uuid' in d\\)\")",
+      "Bash(curl -s http://1.94.26.126:8090/device/repair/public/detail?token=__CMDSUB_OUTPUT__)",
+      "Bash(ssh root@1.94.26.126 'cd /root/zhihuiyuanqu20260625 && bash stop-server.sh 2>/dev/null; bash start-server.sh; mkdir -p /home/ruoyi/uploadPath/repair')",
+      "Bash(curl -s -o /dev/null -w \"Backend: HTTP %{http_code}\\\\n\" http://1.94.26.126:8090/)",
+      "Bash(curl -s http://1.94.26.126:8090/device/repair/public/upload -F \"file=@/dev/null\")"
     ]
   }
 }
