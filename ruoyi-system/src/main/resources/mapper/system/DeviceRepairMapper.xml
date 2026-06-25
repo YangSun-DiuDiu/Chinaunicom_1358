@@ -4,6 +4,7 @@
 
     <resultMap type="DeviceRepair" id="DeviceRepairResult">
         <id     property="repairId"           column="repair_id"          />
+        <result property="deptId"             column="dept_id"            />
         <result property="repairNo"           column="repair_no"          />
         <result property="deviceId"           column="device_id"          />
         <result property="deviceName"         column="device_name"        />
@@ -32,7 +33,7 @@
     </resultMap>
 
     <sql id="selectRepairVo">
-        select repair_id, repair_no, device_id, device_name, device_ip, fault_description,
+        select r.dept_id, repair_id, repair_no, device_id, device_name, device_ip, fault_description,
                original_responsible, original_phone, current_responsible, current_phone,
                status, transfer_from, transfer_to, transfer_reason,
                repair_result, repair_time, complete_token,
@@ -63,12 +64,14 @@
 
     <insert id="insertRepair" parameterType="DeviceRepair" useGeneratedKeys="true" keyProperty="repairId">
         insert into iot_device_repair (
+            <if test="deptId != null">dept_id,</if>
             repair_no, device_id, device_name, device_ip, fault_description,
             original_responsible, original_phone, current_responsible, current_phone,
             status, transfer_from, transfer_to, transfer_reason,
             complete_token,
             create_by, create_time, remark
         ) values (
+            <if test="deptId != null">#{deptId},</if>
             #{repairNo}, #{deviceId}, #{deviceName}, #{deviceIp}, #{faultDescription},
             #{originalResponsible}, #{originalPhone}, #{currentResponsible}, #{currentPhone},
             #{status}, #{transferFrom}, #{transferTo}, #{transferReason},

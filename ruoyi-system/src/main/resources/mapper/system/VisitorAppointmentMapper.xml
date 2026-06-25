@@ -6,6 +6,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <resultMap type="VisitorAppointment" id="VisitorAppointmentResult">
         <id     property="appointmentId"     column="appointment_id"      />
+        <result property="deptId"            column="dept_id"             />
         <result property="visitorName"       column="visitor_name"        />
         <result property="visitorPhone"      column="visitor_phone"       />
         <result property="visitorIdCard"     column="visitor_id_card"     />
@@ -36,7 +37,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectAppointmentVo">
-        select a.appointment_id, a.visitor_name, a.visitor_phone, a.visitor_id_card,
+        select a.appointment_id, a.dept_id, a.visitor_name, a.visitor_phone, a.visitor_id_card,
                a.visitor_company, a.visit_reason, a.host_name, a.host_dept, a.host_phone,
                a.visit_time, a.leave_time, a.status, a.approver_id, a.approve_time,
                a.approve_remark, a.sms_sent, a.sms_content, a.pass_code, a.has_car, a.car_plate, a.has_goods, a.goods_desc, a.tenant_id,
@@ -85,6 +86,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <insert id="insertAppointment" parameterType="VisitorAppointment" useGeneratedKeys="true" keyProperty="appointmentId">
         insert into visitor_appointment(
+            <if test="deptId != null">dept_id,</if>
             <if test="visitorName != null and visitorName != ''">visitor_name,</if>
             <if test="visitorPhone != null and visitorPhone != ''">visitor_phone,</if>
             <if test="visitorIdCard != null and visitorIdCard != ''">visitor_id_card,</if>
@@ -111,6 +113,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="remark != null and remark != ''">remark,</if>
             create_time
         )values(
+            <if test="deptId != null">#{deptId},</if>
             <if test="visitorName != null and visitorName != ''">#{visitorName},</if>
             <if test="visitorPhone != null and visitorPhone != ''">#{visitorPhone},</if>
             <if test="visitorIdCard != null and visitorIdCard != ''">#{visitorIdCard},</if>

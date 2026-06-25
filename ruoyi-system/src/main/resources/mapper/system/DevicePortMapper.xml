@@ -6,6 +6,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <resultMap type="DevicePort" id="DevicePortResult">
         <id     property="portId"           column="port_id"            />
+        <result property="deptId"           column="dept_id"            />
         <result property="deviceId"         column="device_id"          />
         <result property="portName"         column="port_name"          />
         <result property="portType"         column="port_type"          />
@@ -20,14 +21,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectDevicePortVo">
-        select p.port_id, p.device_id, p.port_name, p.port_type, p.port_status,
+        select p.port_id, p.dept_id, p.device_id, p.port_name, p.port_type, p.port_status,
                p.connected_device_id, p.connected_port_id,
                p.create_by, p.create_time, p.update_by, p.update_time, p.remark
         from iot_device_port p
     </sql>
 
     <select id="selectPortList" parameterType="DevicePort" resultMap="DevicePortResult">
-        select p.port_id, p.device_id, p.port_name, p.port_type, p.port_status,
+        select p.port_id, p.dept_id, p.device_id, p.port_name, p.port_type, p.port_status,
                p.connected_device_id, p.connected_port_id,
                p.create_by, p.create_time, p.update_by, p.update_time, p.remark
         from iot_device_port p
@@ -59,6 +60,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <insert id="insertPort" parameterType="DevicePort" useGeneratedKeys="true" keyProperty="portId">
         insert into iot_device_port(
+            <if test="deptId != null">dept_id,</if>
             <if test="deviceId != null">device_id,</if>
             <if test="portName != null and portName != ''">port_name,</if>
             <if test="portType != null and portType != ''">port_type,</if>
@@ -69,6 +71,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="remark != null and remark != ''">remark,</if>
             create_time
         )values(
+            <if test="deptId != null">#{deptId},</if>
             <if test="deviceId != null">#{deviceId},</if>
             <if test="portName != null and portName != ''">#{portName},</if>
             <if test="portType != null and portType != ''">#{portType},</if>

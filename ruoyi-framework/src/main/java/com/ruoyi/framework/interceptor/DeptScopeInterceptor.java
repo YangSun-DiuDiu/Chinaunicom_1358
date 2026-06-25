@@ -1,0 +1,169 @@
+package com.ruoyi.framework.interceptor;
+
+import com.ruoyi.common.constant.CacheConstants;
+import com.ruoyi.common.core.redis.RedisCache;
+import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.common.utils.spring.SpringUtils;
+import org.springframework.stereotype.Component;
+import org.apache.ibatis.executor.statement.StatementHandler;
+import org.apache.ibatis.mapping.BoundSql;
+import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.plugin.*;
+import org.apache.ibatis.reflection.DefaultReflectorFactory;
+import org.apache.ibatis.reflection.MetaObject;
+import org.apache.ibatis.reflection.SystemMetaObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.sql.Connection;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Properties;
+import java.util.Set;
+
+/**
+ * MyBatis 拦截器：自动为业务表 SELECT 查询添加组织(dept_id)过滤条件
+ *
+ * 白名单表（系统表/全局共享表）不添加过滤
+ * 管理员跳过过滤
+ */
+@Intercepts({
+    @Signature(type = StatementHandler.class, method = "prepare",
+               args = {Connection.class, Integer.class})
+})
+@Component
+public class DeptScopeInterceptor implements Interceptor {
+
+    private static final Logger log = LoggerFactory.getLogger(DeptScopeInterceptor.class);
+
+    /** 白名单：不需要组织过滤的表 */
+    private static final Set<String> WHITELIST_TABLES = new HashSet<>(Arrays.asList(
+        "sys_user", "sys_dept", "sys_role", "sys_menu", "sys_post",
+        "sys_user_role", "sys_role_menu", "sys_role_dept", "sys_user_post",
+        "sys_dict_type", "sys_dict_data",
+        "sys_config", "sys_notice", "sys_notice_read",
+        "sys_oper_log", "sys_logininfor",
+        "sys_job", "sys_job_log", "sys_sms_config"
+    ));
+
+    @Override
+    public Object intercept(Invocation invocation) throws Throwable {
+        StatementHandler statementHandler = (StatementHandler) invocation.getTarget();
+        MetaObject metaObject = MetaObject.forObject(statementHandler,
+            SystemMetaObject.DEFAULT_OBJECT_FACTORY,
+            SystemMetaObject.DEFAULT_OBJECT_WRAPPER_FACTORY,
+            new DefaultReflectorFactory());
+
+        MappedStatement mappedStatement = (MappedStatement) metaObject.getValue("delegate.mappedStatement");
+        String sqlCommandType = mappedStatement.getSqlCommandType().name();
+
+        // 只处理 SELECT 语句
+        if (!"SELECT".equalsIgnoreCase(sqlCommandType)) {
+            return invocation.proceed();
+        }
+
+        String originalSql = statementHandler.getBoundSql().getSql().toLowerCase();
+
+        // 检查是否包含白名单表（任一白名单表出现在 SQL 中则跳过）
+        for (String table : WHITELIST_TABLES) {
+            if (originalSql.contains(table)) {
+                return invocation.proceed();
+            }
+        }
+
+        // 检查是否已包含 dept_id 条件（避免重复添加）
+        if (originalSql.contains("dept_id")) {
+            return invocation.proceed();
+        }
+
+        try {
+            Long deptId = getCurrentDeptId();
+            if (deptId == null) {
+                return invocation.proceed();
+            }
+
+            // 管理员跳过
+            if (SecurityUtils.isAdmin() || SecurityUtils.hasRole("admin")) {
+                return invocation.proceed();
+            }
+
+            // 构造新的 SQL：在 WHERE 后追加 dept_id 条件
+            BoundSql boundSql = statementHandler.getBoundSql();
+            String newSql = appendDeptFilter(boundSql.getSql(), deptId);
+
+            MetaObject boundSqlMeta = MetaObject.forObject(boundSql,
+                SystemMetaObject.DEFAULT_OBJECT_FACTORY,
+                SystemMetaObject.DEFAULT_OBJECT_WRAPPER_FACTORY,
+                new DefaultReflectorFactory());
+            boundSqlMeta.setValue("sql", newSql);
+
+            log.debug("DeptScopeInterceptor: appended dept_id={} filter", deptId);
+        } catch (Exception e) {
+            log.warn("DeptScopeInterceptor: failed to get current deptId, skipping", e);
+        }
+
+        return invocation.proceed();
+    }
+
+    /**
+     * 获取当前用户的组织ID
+     * 优先读取 Redis 中的切换上下文，否则使用用户所属 dept
+     */
+    private Long getCurrentDeptId() {
+        try {
+            RedisCache redisCache = SpringUtils.getBean(RedisCache.class);
+            Long userId = SecurityUtils.getUserId();
+            if (userId != null) {
+                String cacheKey = CacheConstants.DEPT_CONTEXT_KEY + userId;
+                Long switchedDeptId = redisCache.getCacheObject(cacheKey);
+                if (switchedDeptId != null) {
+                    return switchedDeptId;
+                }
+            }
+            return SecurityUtils.getDeptId();
+        } catch (Exception e) {
+            return SecurityUtils.getDeptId();
+        }
+    }
+
+    /**
+     * 在 SQL 的 WHERE 子句后追加 dept_id 过滤条件
+     */
+    private String appendDeptFilter(String sql, Long deptId) {
+        StringBuilder sb = new StringBuilder(sql);
+        int whereIndex = sql.toLowerCase().indexOf("where");
+
+        if (whereIndex >= 0) {
+            // 已有 WHERE，追加 AND
+            int insertPos = whereIndex + 5;
+            sb.insert(insertPos, " dept_id = " + deptId + " AND ");
+        } else {
+            // 无 WHERE 子句的情况
+            int orderIndex = sql.toLowerCase().indexOf("order by");
+            int groupIndex = sql.toLowerCase().indexOf("group by");
+            int limitIndex = sql.toLowerCase().indexOf("limit");
+
+            int insertPos = sql.length();
+            if (orderIndex >= 0) insertPos = Math.min(insertPos, orderIndex);
+            if (groupIndex >= 0) insertPos = Math.min(insertPos, groupIndex);
+            if (limitIndex >= 0) insertPos = Math.min(insertPos, limitIndex);
+
+            sb.insert(insertPos, " WHERE dept_id = " + deptId + " ");
+        }
+
+        return sb.toString();
+    }
+
+    @Override
+    public Object plugin(Object target) {
+        if (target instanceof StatementHandler) {
+            return Plugin.wrap(target, this);
+        }
+        return target;
+    }
+
+    @Override
+    public void setProperties(Properties properties) {
+        // no-op
+    }
+}
