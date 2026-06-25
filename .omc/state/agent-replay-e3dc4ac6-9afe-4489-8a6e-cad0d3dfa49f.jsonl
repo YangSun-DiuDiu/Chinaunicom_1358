@@ -54,3 +54,11 @@
 {"t":0,"agent":"system","event":"skill_invoked","skill_name":"superpowers:writing-plans"}
 {"t":0,"agent":"system","event":"skill_invoked","skill_name":"superpowers:subagent-driven-development"}
 {"t":0,"agent":"a4fab63","agent_type":"executor","event":"agent_start","parent_mode":"none"}
+{"t":0,"agent":"a4fab63","agent_type":"executor","event":"agent_stop","success":true,"duration_ms":82214}
+{"t":0,"agent":"aab458b","agent_type":"executor","event":"agent_start","parent_mode":"none"}
+{"t":0,"agent":"aab458b","agent_type":"executor","event":"agent_stop","success":true,"duration_ms":117801}
+{"t":0,"agent":"ac4b5e3","agent_type":"executor","event":"agent_start","parent_mode":"none"}
+{"t":0,"agent":"ac4b5e3","agent_type":"executor","event":"agent_stop","success":true,"duration_ms":213375}
+{"t":0,"agent":"a6910b1","agent_type":"executor","event":"agent_start","parent_mode":"none"}
+{"t":0,"agent":"system","event":"skill_invoked","skill_name":"zhihuiyuanqu-deploy"}
+{"t":0,"agent":"a6910b1","agent_type":"executor","event":"agent_stop","success":true,"duration_ms":1689914}
