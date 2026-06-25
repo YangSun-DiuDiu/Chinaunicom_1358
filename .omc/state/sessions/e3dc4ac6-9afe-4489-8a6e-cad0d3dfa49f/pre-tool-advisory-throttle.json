@@ -2,11 +2,11 @@
   "version": 1,
   "entries": {
     "445ed27a3872b681d98190bae61ccb84954e1bc4e140df5370be958dee776b3a": {
-      "last_emitted_at_ms": 1782394567373,
+      "last_emitted_at_ms": 1782394917035,
       "message": "Verify changes work after editing. Test functionality before marking complete."
     },
     "79a93d4a2f8f50b95f852280616242fee1855dc99a3c75211917f55e72e95fae": {
-      "last_emitted_at_ms": 1782394536196,
+      "last_emitted_at_ms": 1782394880771,
       "message": "Use parallel execution for independent tasks. Use run_in_background for long operations (npm install, builds, tests)."
     },
     "459c54e5f35d6a58dcd90d2aecc21fa6d1f35d241bc5b134c506f87dc7b6d67b": {
@@ -22,5 +22,5 @@
       "message": "Mark todos in_progress BEFORE starting, completed IMMEDIATELY after finishing."
     }
   },
-  "updated_at": "2026-06-25T13:36:07.373Z"
+  "updated_at": "2026-06-25T13:41:57.035Z"
 }
