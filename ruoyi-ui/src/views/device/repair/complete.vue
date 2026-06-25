@@ -1,94 +1,106 @@
 <template>
   <div class="repair-complete-page">
-    <div class="header">
-      <div class="header-icon">🔧</div>
-      <h1>设备维修确认</h1>
-      <p>请确认维修结果并上传凭证</p>
+    <!-- Token 输入模式 -->
+    <div class="card" v-if="!token">
+      <div class="header-icon">🔑</div>
+      <h2>设备维修确认</h2>
+      <p style="color:#666;text-align:center;margin-bottom:16px">请输入短信中的设备登录码</p>
+      <el-input v-model="tokenInput" placeholder="请输入设备登录码" clearable size="medium" style="margin-bottom:12px" />
+      <el-button type="primary" size="medium" :disabled="!tokenInput" @click="submitToken" style="width:100%">提 交</el-button>
     </div>
 
-    <!-- 加载中 -->
-    <div class="card" v-if="loading">
-      <div class="loading-spin">⏳</div>
-      <p style="text-align:center;color:#666">加载工单信息...</p>
-    </div>
-
-    <!-- 错误 -->
-    <div class="card" v-else-if="error">
-      <div class="error-icon">❌</div>
-      <h3>{{ error }}</h3>
-    </div>
-
-    <!-- 已完成 -->
-    <div class="card" v-else-if="completed">
-      <div class="success-icon">✅</div>
-      <h2>维修确认成功</h2>
-      <p style="color:#666;text-align:center">您的维修结果已上报，感谢！</p>
-    </div>
-
-    <!-- 工单详情 + 提交 -->
-    <div class="card" v-else>
-      <div class="info-row"><span>设备名称</span><strong>{{ repair.deviceName }}</strong></div>
-      <div class="info-row"><span>IP地址</span><strong>{{ repair.deviceIp }}</strong></div>
-      <div class="info-row"><span>责任人</span><strong>{{ repair.currentResponsible }}</strong></div>
-      <div class="info-row"><span>状态</span><strong class="status-tag">{{ statusLabel }}</strong></div>
-
-      <div v-if="canComplete" style="margin-top:16px">
-
-        <!-- 维修前照片 -->
-        <div class="section">
-          <div class="form-label">📷 维修前照片</div>
-          <div class="photo-area" @click="$refs.beforeInput.click()">
-            <img v-if="photoBefore" :src="photoBefore" class="photo-preview" @error="onImgError" />
-            <div v-else class="photo-placeholder">
-              <i style="font-size:32px;color:#ccc;display:block;margin-bottom:4px">+</i>
-              <span style="font-size:11px;color:#999">点击上传维修前照片</span>
-            </div>
-          </div>
-          <input ref="beforeInput" type="file" accept="image/*" style="display:none" @change="uploadPhoto('before', $event)" />
-          <span style="font-size:11px;color:#4caf50" v-if="photoBefore">✅ 已上传</span>
-        </div>
-
-        <!-- 维修后照片 -->
-        <div class="section">
-          <div class="form-label">📸 维修完成照片</div>
-          <div class="photo-area" @click="$refs.afterInput.click()">
-            <img v-if="photoAfter" :src="photoAfter" class="photo-preview" @error="onImgError" />
-            <div v-else class="photo-placeholder">
-              <i style="font-size:32px;color:#ccc;display:block;margin-bottom:4px">+</i>
-              <span style="font-size:11px;color:#999">点击上传维修后照片</span>
-            </div>
-          </div>
-          <input ref="afterInput" type="file" accept="image/*" style="display:none" @change="uploadPhoto('after', $event)" />
-          <span style="font-size:11px;color:#4caf50" v-if="photoAfter">✅ 已上传</span>
-        </div>
-
-        <!-- 是否使用配件 -->
-        <div class="section">
-          <div class="form-label">🔩 是否使用了配件？</div>
-          <div class="radio-group">
-            <label class="radio-item" :class="{active: useParts}">
-              <input type="radio" v-model="useParts" :value="true" /> 是，使用了配件
-            </label>
-            <label class="radio-item" :class="{active: !useParts}">
-              <input type="radio" v-model="useParts" :value="false" /> 否，无需配件
-            </label>
-          </div>
-          <input v-if="useParts" v-model="partsDesc" class="result-input" placeholder="请输入使用的配件名称，多个用逗号分隔" style="margin-top:8px" />
-        </div>
-
-        <!-- 维修结果说明 -->
-        <div class="section">
-          <div class="form-label">📝 维修结果说明</div>
-          <textarea v-model="result" placeholder="请描述维修过程和结果" rows="3" class="result-input" maxlength="500"></textarea>
-        </div>
-
-        <button class="btn" :disabled="submitting" @click="submitComplete">
-          {{ submitting ? '提交中...' : '✅ 确认维修完成' }}
-        </button>
+    <!-- 原有逻辑: 有 token 参数时加载工单 -->
+    <div v-else>
+      <div class="header">
+        <div class="header-icon">🔧</div>
+        <h1>设备维修确认</h1>
+        <p>请确认维修结果并上传凭证</p>
       </div>
-    </div>
 
-    <div class="footer">智慧园区管理系统</div>
+      <!-- 加载中 -->
+      <div class="card" v-if="loading">
+        <div class="loading-spin">⏳</div>
+        <p style="text-align:center;color:#666">加载工单信息...</p>
+      </div>
+
+      <!-- 错误 -->
+      <div class="card" v-else-if="error">
+        <div class="error-icon">❌</div>
+        <h3>{{ error }}</h3>
+      </div>
+
+      <!-- 已完成 -->
+      <div class="card" v-else-if="completed">
+        <div class="success-icon">✅</div>
+        <h2>维修确认成功</h2>
+        <p style="color:#666;text-align:center">您的维修结果已上报，感谢！</p>
+      </div>
+
+      <!-- 工单详情 + 提交 -->
+      <div class="card" v-else>
+        <div class="info-row"><span>设备名称</span><strong>{{ repair.deviceName }}</strong></div>
+        <div class="info-row"><span>IP地址</span><strong>{{ repair.deviceIp }}</strong></div>
+        <div class="info-row"><span>责任人</span><strong>{{ repair.currentResponsible }}</strong></div>
+        <div class="info-row"><span>状态</span><strong class="status-tag">{{ statusLabel }}</strong></div>
+
+        <div v-if="canComplete" style="margin-top:16px">
+
+          <!-- 维修前照片 -->
+          <div class="section">
+            <div class="form-label">📷 维修前照片</div>
+            <div class="photo-area" @click="$refs.beforeInput.click()">
+              <img v-if="photoBefore" :src="photoBefore" class="photo-preview" @error="onImgError" />
+              <div v-else class="photo-placeholder">
+                <i style="font-size:32px;color:#ccc;display:block;margin-bottom:4px">+</i>
+                <span style="font-size:11px;color:#999">点击上传维修前照片</span>
+              </div>
+            </div>
+            <input ref="beforeInput" type="file" accept="image/*" style="display:none" @change="uploadPhoto('before', $event)" />
+            <span style="font-size:11px;color:#4caf50" v-if="photoBefore">✅ 已上传</span>
+          </div>
+
+          <!-- 维修后照片 -->
+          <div class="section">
+            <div class="form-label">📸 维修完成照片</div>
+            <div class="photo-area" @click="$refs.afterInput.click()">
+              <img v-if="photoAfter" :src="photoAfter" class="photo-preview" @error="onImgError" />
+              <div v-else class="photo-placeholder">
+                <i style="font-size:32px;color:#ccc;display:block;margin-bottom:4px">+</i>
+                <span style="font-size:11px;color:#999">点击上传维修后照片</span>
+              </div>
+            </div>
+            <input ref="afterInput" type="file" accept="image/*" style="display:none" @change="uploadPhoto('after', $event)" />
+            <span style="font-size:11px;color:#4caf50" v-if="photoAfter">✅ 已上传</span>
+          </div>
+
+          <!-- 是否使用配件 -->
+          <div class="section">
+            <div class="form-label">🔩 是否使用了配件？</div>
+            <div class="radio-group">
+              <label class="radio-item" :class="{active: useParts}">
+                <input type="radio" v-model="useParts" :value="true" /> 是，使用了配件
+              </label>
+              <label class="radio-item" :class="{active: !useParts}">
+                <input type="radio" v-model="useParts" :value="false" /> 否，无需配件
+              </label>
+            </div>
+            <input v-if="useParts" v-model="partsDesc" class="result-input" placeholder="请输入使用的配件名称，多个用逗号分隔" style="margin-top:8px" />
+          </div>
+
+          <!-- 维修结果说明 -->
+          <div class="section">
+            <div class="form-label">📝 维修结果说明</div>
+            <textarea v-model="result" placeholder="请描述维修过程和结果" rows="3" class="result-input" maxlength="500"></textarea>
+          </div>
+
+          <button class="btn" :disabled="submitting" @click="submitComplete">
+            {{ submitting ? '提交中...' : '✅ 确认维修完成' }}
+          </button>
+        </div>
+      </div>
+
+      <div class="footer">智慧园区管理系统</div>
+    </div>
   </div>
 </template>
 
@@ -101,6 +113,8 @@ export default {
   name: 'RepairComplete',
   data() {
     return {
+      token: this.$route.query.token || '',
+      tokenInput: '',
       loading: true, error: '', completed: false, submitting: false,
       result: '', repair: {},
       photoBefore: '', photoAfter: '',
@@ -109,16 +123,23 @@ export default {
   },
   computed: {
     baseUrl() { return '' },  // 图片直接Nginx服务，无需/prod-api前缀
-    token() { return this.$route.query.token || '' },
     canComplete() { return this.repair.status === 'PENDING' || this.repair.status === 'ASSIGNED' || this.repair.status === 'ACCEPTED' },
     statusLabel() {
       const m = { PENDING: '待处理', ASSIGNED: '已转派', ACCEPTED: '已接收', REJECTED: '已拒绝', COMPLETED: '已完成' }
       return m[this.repair.status] || this.repair.status
     }
   },
-  created() { this.loadDetail() },
+  watch: {
+    '$route.query.token'(val) { if (val) { this.token = val; this.loadRepair() } }
+  },
+  mounted() { if (this.token) { this.loadRepair() } },
   methods: {
-    loadDetail() {
+    submitToken() {
+      if (this.tokenInput) {
+        this.$router.replace({ path: '/repair-complete', query: { token: this.tokenInput } })
+      }
+    },
+    loadRepair() {
       if (!this.token) { this.error = '无效链接：缺少token参数'; this.loading = false; return }
       api.get('/device/repair/public/detail?token=' + this.token).then(res => {
         const d = res.data
