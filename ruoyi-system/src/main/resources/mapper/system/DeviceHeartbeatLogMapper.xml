@@ -6,6 +6,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <resultMap type="DeviceHeartbeatLog" id="DeviceHeartbeatLogResult">
         <id     property="logId"           column="log_id"            />
+        <result property="deptId"          column="dept_id"           />
         <result property="deviceId"        column="device_id"         />
         <result property="deviceName"      column="device_name"       />
         <result property="ipAddress"       column="ip_address"        />
@@ -20,14 +21,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectDeviceHeartbeatLogVo">
-        select l.log_id, l.device_id, l.device_name, l.ip_address,
+        select l.log_id, l.dept_id, l.device_id, l.device_name, l.ip_address,
                l.ping_result, l.ping_latency, l.detect_time,
                l.create_by, l.create_time, l.update_by, l.update_time, l.remark
         from iot_device_heartbeat_log l
     </sql>
 
     <select id="selectLogList" parameterType="DeviceHeartbeatLog" resultMap="DeviceHeartbeatLogResult">
-        select l.log_id, l.device_id, l.device_name, l.ip_address,
+        select l.log_id, l.dept_id, l.device_id, l.device_name, l.ip_address,
                l.ping_result, l.ping_latency, l.detect_time,
                l.create_by, l.create_time, l.update_by, l.update_time, l.remark
         from iot_device_heartbeat_log l
@@ -61,6 +62,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <insert id="insertLog" parameterType="DeviceHeartbeatLog" useGeneratedKeys="true" keyProperty="logId">
         insert into iot_device_heartbeat_log(
+            <if test="deptId != null">dept_id,</if>
             <if test="deviceId != null">device_id,</if>
             <if test="deviceName != null and deviceName != ''">device_name,</if>
             <if test="ipAddress != null and ipAddress != ''">ip_address,</if>
@@ -71,6 +73,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="remark != null and remark != ''">remark,</if>
             create_time
         )values(
+            <if test="deptId != null">#{deptId},</if>
             <if test="deviceId != null">#{deviceId},</if>
             <if test="deviceName != null and deviceName != ''">#{deviceName},</if>
             <if test="ipAddress != null and ipAddress != ''">#{ipAddress},</if>

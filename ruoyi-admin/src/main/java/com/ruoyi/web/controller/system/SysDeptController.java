@@ -15,11 +15,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.ruoyi.common.annotation.Log;
+import com.ruoyi.common.constant.CacheConstants;
 import com.ruoyi.common.constant.UserConstants;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysDept;
+import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.enums.BusinessType;
+import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.system.service.ISysDeptService;
 
@@ -34,6 +37,9 @@ public class SysDeptController extends BaseController
 {
     @Autowired
     private ISysDeptService deptService;
+
+    @Autowired
+    private RedisCache redisCache;
 
     /**
      * 获取部门列表
@@ -143,5 +149,37 @@ public class SysDeptController extends BaseController
         }
         deptService.checkDeptDataScope(deptId);
         return toAjax(deptService.deleteDeptById(deptId));
+    }
+
+    /**
+     * 管理员切换部门上下文
+     */
+    @PreAuthorize("@ss.hasRole('admin')")
+    @GetMapping("/switchContext/{deptId}")
+    public AjaxResult switchContext(@PathVariable Long deptId)
+    {
+        String key = CacheConstants.DEPT_CONTEXT_KEY + SecurityUtils.getUserId();
+        redisCache.setCacheObject(key, deptId);
+        return success();
+    }
+
+    @PreAuthorize("@ss.hasRole('admin')")
+    @GetMapping("/treeselect")
+    public AjaxResult treeselect()
+    {
+        List<SysDept> depts = deptService.selectDeptList(new SysDept());
+        return success(deptService.buildDeptTreeSelect(depts));
+    }
+
+    /**
+     * 管理员清除部门上下文
+     */
+    @PreAuthorize("@ss.hasRole('admin')")
+    @GetMapping("/clearContext")
+    public AjaxResult clearContext()
+    {
+        String key = CacheConstants.DEPT_CONTEXT_KEY + SecurityUtils.getUserId();
+        redisCache.deleteObject(key);
+        return success();
     }
 }

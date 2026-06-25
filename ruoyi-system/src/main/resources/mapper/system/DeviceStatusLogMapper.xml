@@ -6,6 +6,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <resultMap type="DeviceStatusLog" id="DeviceStatusLogResult">
         <id     property="logId"           column="log_id"            />
+        <result property="deptId"          column="dept_id"           />
         <result property="deviceId"        column="device_id"         />
         <result property="deviceName"      column="device_name"       />
         <result property="oldStatus"       column="old_status"        />
@@ -22,14 +23,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectDeviceStatusLogVo">
-        select l.log_id, l.device_id, l.device_name, l.old_status, l.new_status,
+        select l.log_id, l.dept_id, l.device_id, l.device_name, l.old_status, l.new_status,
                l.change_type, l.change_time, l.sms_sent, l.sms_recipient,
                l.create_by, l.create_time, l.update_by, l.update_time, l.remark
         from iot_device_status_log l
     </sql>
 
     <select id="selectLogList" parameterType="DeviceStatusLog" resultMap="DeviceStatusLogResult">
-        select l.log_id, l.device_id, l.device_name, l.old_status, l.new_status,
+        select l.log_id, l.dept_id, l.device_id, l.device_name, l.old_status, l.new_status,
                l.change_type, l.change_time, l.sms_sent, l.sms_recipient,
                l.create_by, l.create_time, l.update_by, l.update_time, l.remark
         from iot_device_status_log l
@@ -75,6 +76,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <insert id="insertLog" parameterType="DeviceStatusLog" useGeneratedKeys="true" keyProperty="logId">
         insert into iot_device_status_log(
+            <if test="deptId != null">dept_id,</if>
             <if test="deviceId != null">device_id,</if>
             <if test="deviceName != null and deviceName != ''">device_name,</if>
             <if test="oldStatus != null and oldStatus != ''">old_status,</if>
@@ -87,6 +89,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="remark != null and remark != ''">remark,</if>
             create_time
         )values(
+            <if test="deptId != null">#{deptId},</if>
             <if test="deviceId != null">#{deviceId},</if>
             <if test="deviceName != null and deviceName != ''">#{deviceName},</if>
             <if test="oldStatus != null and oldStatus != ''">#{oldStatus},</if>

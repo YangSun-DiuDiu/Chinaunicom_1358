@@ -6,6 +6,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <resultMap type="VisitorLog" id="VisitorLogResult">
         <id     property="logId"           column="log_id"            />
+        <result property="deptId"          column="dept_id"           />
         <result property="appointmentId"   column="appointment_id"    />
         <result property="visitorName"     column="visitor_name"      />
         <result property="visitorPhone"    column="visitor_phone"     />
@@ -31,7 +32,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectLogVo">
-        select l.log_id, l.appointment_id, l.visitor_name, l.visitor_phone,
+        select l.log_id, l.dept_id, l.appointment_id, l.visitor_name, l.visitor_phone,
                l.visitor_id_card, l.visitor_company, l.visit_reason, l.host_name,
                l.host_dept, l.entry_time, l.exit_time, l.register_type, l.pass_code, l.has_car, l.car_plate, l.has_goods, l.goods_desc, l.tenant_id,
                l.create_by, l.create_time, l.update_by, l.update_time, l.remark
@@ -79,6 +80,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <insert id="insertLog" parameterType="VisitorLog" useGeneratedKeys="true" keyProperty="logId">
         insert into visitor_log(
+            <if test="deptId != null">dept_id,</if>
             <if test="appointmentId != null">appointment_id,</if>
             <if test="visitorName != null and visitorName != ''">visitor_name,</if>
             <if test="visitorPhone != null and visitorPhone != ''">visitor_phone,</if>
@@ -100,6 +102,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="remark != null and remark != ''">remark,</if>
             create_time
         )values(
+            <if test="deptId != null">#{deptId},</if>
             <if test="appointmentId != null">#{appointmentId},</if>
             <if test="visitorName != null and visitorName != ''">#{visitorName},</if>
             <if test="visitorPhone != null and visitorPhone != ''">#{visitorPhone},</if>

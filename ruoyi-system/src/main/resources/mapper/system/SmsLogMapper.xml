@@ -6,6 +6,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <resultMap type="com.ruoyi.system.domain.SmsLog" id="SmsLogResult">
         <id     property="smsId"        column="sms_id"         />
+        <result property="deptId"       column="dept_id"        />
         <result property="recipient"    column="recipient"      />
         <result property="phoneNumber"  column="phone_number"   />
         <result property="content"      column="content"        />
@@ -21,7 +22,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectSmsLogVo">
-        select sms_id, recipient, phone_number, content, send_time, send_result, biz_type, biz_id, create_by, create_time, update_by, update_time, remark
+        select sms_id, dept_id, recipient, phone_number, content, send_time, send_result, biz_type, biz_id, create_by, create_time, update_by, update_time, remark
         from sys_sms_log
     </sql>
 
@@ -63,6 +64,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <insert id="insertSmsLog" parameterType="com.ruoyi.system.domain.SmsLog" useGeneratedKeys="true" keyProperty="smsId">
         insert into sys_sms_log(
+            <if test="deptId != null">dept_id,</if>
             <if test="recipient != null and recipient != ''">recipient,</if>
             <if test="phoneNumber != null and phoneNumber != ''">phone_number,</if>
             <if test="content != null and content != ''">content,</if>
@@ -74,6 +76,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="remark != null and remark != ''">remark,</if>
             create_time
         ) values (
+            <if test="deptId != null">#{deptId},</if>
             <if test="recipient != null and recipient != ''">#{recipient},</if>
             <if test="phoneNumber != null and phoneNumber != ''">#{phoneNumber},</if>
             <if test="content != null and content != ''">#{content},</if>

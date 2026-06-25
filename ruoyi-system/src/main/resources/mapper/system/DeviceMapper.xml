@@ -6,6 +6,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <resultMap type="Device" id="DeviceResult">
         <id     property="deviceId"         column="device_id"          />
+        <result property="deptId"          column="dept_id"           />
         <result property="deviceName"       column="device_name"        />
         <result property="deviceType"       column="device_type"        />
         <result property="ipAddress"        column="ip_address"         />
@@ -30,7 +31,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectDeviceVo">
-        select d.device_id, d.device_name, d.device_type, d.ip_address, d.mac_address,
+        select d.device_id, d.dept_id, d.device_name, d.device_type, d.ip_address, d.mac_address,
                d.model, d.location, d.port_info, d.status, d.snmp_community, d.snmp_port,
                d.snmp_version, d.ping_interval, d.responsible, d.responsible_phone, d.tenant_id, d.parent_id,
                d.create_by, d.create_time, d.update_by, d.update_time, d.remark
@@ -38,7 +39,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </sql>
 
     <select id="selectDeviceList" parameterType="Device" resultMap="DeviceResult">
-        select d.device_id, d.device_name, d.device_type, d.ip_address, d.mac_address,
+        select d.device_id, d.dept_id, d.device_name, d.device_type, d.ip_address, d.mac_address,
                d.model, d.location, d.port_info, d.status, d.snmp_community, d.snmp_port,
                d.snmp_version, d.responsible, d.responsible_phone, d.tenant_id, d.parent_id,
                d.create_by, d.create_time, d.update_by, d.update_time, d.remark
@@ -94,6 +95,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="pingInterval != null">ping_interval,</if>
             <if test="responsible != null and responsible != ''">responsible,</if>
             <if test="responsiblePhone != null and responsiblePhone != ''">responsible_phone,</if>
+            <if test="deptId != null">dept_id,</if>
             <if test="tenantId != null">tenant_id,</if>
             <if test="parentId != null">parent_id,</if>
             <if test="createBy != null and createBy != ''">create_by,</if>
@@ -114,6 +116,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="pingInterval != null">#{pingInterval},</if>
             <if test="responsible != null and responsible != ''">#{responsible},</if>
             <if test="responsiblePhone != null and responsiblePhone != ''">#{responsiblePhone},</if>
+            <if test="deptId != null">#{deptId},</if>
             <if test="tenantId != null">#{tenantId},</if>
             <if test="parentId != null">#{parentId},</if>
             <if test="createBy != null and createBy != ''">#{createBy},</if>
