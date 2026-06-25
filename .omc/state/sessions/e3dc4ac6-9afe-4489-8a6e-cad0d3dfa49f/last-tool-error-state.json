@@ -1,7 +1,7 @@
 {
-  "tool_name": "Bash",
-  "tool_input_preview": "{\"command\":\"ssh root@1.94.26.126 'cd /root/zhihuiyuanqu20260625 && bash stop-server.sh && bash start-server.sh && sleep 10 && curl -s -o /dev/null -w \\\"Backend: HTTP %{http_code}\\\" http://localhost:80...",
-  "error": "Exit code 7\n** WARNING: connection is not using a post-quantum key exchange algorithm.\r\n** This session may be vulnerable to \"store now, decrypt later\" attacks.\r\n** The server may need to be upgraded. See https://openssh.com/pq.html\r\nBackend stopped (PID: 1807729)\nBackend PID: 1815842\nBackend started on port 8090\nBackend: HTTP 000",
-  "timestamp": "2026-06-25T09:02:09.878Z",
+  "tool_name": "mcp__plugin_oh-my-claudecode_t__lsp_diagnostics",
+  "tool_input_preview": "{\"file\":\"e:\\\\gitee\\\\production_release\\\\RuoYi-Vue-master2026-06-24\\\\ruoyi-admin\\\\src\\\\main\\\\resources\\\\application.yml\"}",
+  "error": "Language server 'yaml-language-server' not found.\nInstall with: npm install -g yaml-language-server",
+  "timestamp": "2026-06-25T11:23:42.611Z",
   "retry_count": 1
 }
