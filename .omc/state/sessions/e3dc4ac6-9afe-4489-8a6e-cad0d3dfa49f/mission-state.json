@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-06-25T02:01:02.609Z",
+  "updatedAt": "2026-06-25T02:08:58.243Z",
   "missions": [
     {
       "id": "session:e3dc4ac6-9afe-4489-8a6e-cad0d3dfa49f:none",
@@ -7,15 +7,15 @@
       "name": "none",
       "objective": "Session mission",
       "createdAt": "2026-06-25T01:33:27.870Z",
-      "updatedAt": "2026-06-25T02:01:02.609Z",
+      "updatedAt": "2026-06-25T02:08:58.243Z",
       "status": "running",
-      "workerCount": 7,
+      "workerCount": 11,
       "taskCounts": {
-        "total": 7,
+        "total": 11,
         "pending": 0,
         "blocked": 0,
         "inProgress": 1,
-        "completed": 6,
+        "completed": 10,
         "failed": 0
       },
       "agents": [
@@ -83,37 +83,77 @@
           "name": "executor:a27c1de",
           "role": "executor",
           "ownership": "a27c1de8bed89828b",
+          "status": "done",
+          "currentStep": null,
+          "latestUpdate": "completed",
+          "completedSummary": null,
+          "updatedAt": "2026-06-25T02:02:42.511Z"
+        },
+        {
+          "name": "code-reviewer:a01bffd",
+          "role": "code-reviewer",
+          "ownership": "a01bffdbee8c4489f",
+          "status": "done",
+          "currentStep": null,
+          "latestUpdate": "completed",
+          "completedSummary": null,
+          "updatedAt": "2026-06-25T02:06:49.553Z"
+        },
+        {
+          "name": "executor:ad4e53a",
+          "role": "executor",
+          "ownership": "ad4e53af2399ccf3f",
+          "status": "done",
+          "currentStep": null,
+          "latestUpdate": "completed",
+          "completedSummary": null,
+          "updatedAt": "2026-06-25T02:07:53.739Z"
+        },
+        {
+          "name": "executor:ac85598",
+          "role": "executor",
+          "ownership": "ac85598ea9d9cf2e6",
+          "status": "done",
+          "currentStep": null,
+          "latestUpdate": "completed",
+          "completedSummary": null,
+          "updatedAt": "2026-06-25T02:08:51.889Z"
+        },
+        {
+          "name": "executor:af4be99",
+          "role": "executor",
+          "ownership": "af4be9928e930f4c1",
           "status": "running",
           "currentStep": null,
           "latestUpdate": null,
           "completedSummary": null,
-          "updatedAt": "2026-06-25T02:01:02.609Z"
+          "updatedAt": "2026-06-25T02:08:58.243Z"
         }
       ],
       "timeline": [
         {
-          "id": "session-start:a06f634c1008eb111:2026-06-25T01:59:49.056Z",
-          "at": "2026-06-25T01:59:49.056Z",
+          "id": "session-start:ac85598ea9d9cf2e6:2026-06-25T02:08:02.167Z",
+          "at": "2026-06-25T02:08:02.167Z",
           "kind": "update",
-          "agent": "code-reviewer:a06f634",
-          "detail": "started code-reviewer:a06f634",
-          "sourceKey": "session-start:a06f634c1008eb111"
+          "agent": "executor:ac85598",
+          "detail": "started executor:ac85598",
+          "sourceKey": "session-start:ac85598ea9d9cf2e6"
         },
         {
-          "id": "session-stop:a06f634c1008eb111:2026-06-25T02:00:39.715Z",
-          "at": "2026-06-25T02:00:39.715Z",
+          "id": "session-stop:ac85598ea9d9cf2e6:2026-06-25T02:08:51.889Z",
+          "at": "2026-06-25T02:08:51.889Z",
           "kind": "completion",
-          "agent": "code-reviewer:a06f634",
+          "agent": "executor:ac85598",
           "detail": "completed",
-          "sourceKey": "session-stop:a06f634c1008eb111"
+          "sourceKey": "session-stop:ac85598ea9d9cf2e6"
         },
         {
-          "id": "session-start:a27c1de8bed89828b:2026-06-25T02:01:02.609Z",
-          "at": "2026-06-25T02:01:02.609Z",
+          "id": "session-start:af4be9928e930f4c1:2026-06-25T02:08:58.243Z",
+          "at": "2026-06-25T02:08:58.243Z",
           "kind": "update",
-          "agent": "executor:a27c1de",
-          "detail": "started executor:a27c1de",
-          "sourceKey": "session-start:a27c1de8bed89828b"
+          "agent": "executor:af4be99",
+          "detail": "started executor:af4be99",
+          "sourceKey": "session-start:af4be9928e930f4c1"
         }
       ]
     }

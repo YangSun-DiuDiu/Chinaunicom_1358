@@ -1,7 +1,7 @@
 {
   "tool_name": "mcp__plugin_oh-my-claudecode_t__lsp_diagnostics",
-  "tool_input_preview": "{\"file\":\"e:\\\\gitee\\\\production_release\\\\RuoYi-Vue-master2026-06-24\\\\ruoyi-common\\\\src\\\\main\\\\java\\\\com\\\\ruoyi\\\\common\\\\core\\\\controller\\\\BaseCrudController.java\"}",
-  "error": "Language server 'jdtls' not found.\nInstall with: Install from https://github.com/eclipse/eclipse.jdt.ls",
-  "timestamp": "2026-06-25T02:02:19.418Z",
-  "retry_count": 1
+  "tool_input_preview": "{\"file\":\"e:\\\\gitee\\\\production_release\\\\RuoYi-Vue-master2026-06-24\\\\ruoyi-ui\\\\src\\\\main.js\"}",
+  "error": "Language server 'typescript-language-server' not found.\nInstall with: npm install -g typescript-language-server typescript",
+  "timestamp": "2026-06-25T02:09:35.373Z",
+  "retry_count": 2
 }
