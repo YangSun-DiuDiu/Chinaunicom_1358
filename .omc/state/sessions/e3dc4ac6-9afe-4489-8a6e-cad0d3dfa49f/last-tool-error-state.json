@@ -1,7 +1,7 @@
 {
-  "tool_name": "Bash",
-  "tool_input_preview": "{\"command\":\"ssh -o StrictHostKeyChecking=no root@1.94.26.126 \\\"mysql -u root -pChinaunicom@1358 -N -e 'SELECT complete_token FROM ruoyi_vue.iot_device_repair WHERE status != \\\\\\\"COMPLETED\\\\\\\" LIMIT 1'...",
-  "error": "Exit code 1\n** WARNING: connection is not using a post-quantum key exchange algorithm.\r\n** This session may be vulnerable to \"store now, decrypt later\" attacks.\r\n** The server may need to be upgraded. See https://openssh.com/pq.html\r\nmysql: [Warning] Using a password on the command line interface can be insecure.\nERROR 1049 (42000) at line 1: Unknown database 'ruoyi_vue'",
-  "timestamp": "2026-06-25T12:06:19.024Z",
+  "tool_name": "mcp__plugin_oh-my-claudecode_t__lsp_diagnostics",
+  "tool_input_preview": "{\"file\":\"e:\\\\gitee\\\\production_release\\\\RuoYi-Vue-master2026-06-24\\\\ruoyi-admin\\\\src\\\\main\\\\java\\\\com\\\\ruoyi\\\\web\\\\controller\\\\smart\\\\SmartAccessController.java\"}",
+  "error": "Language server 'jdtls' not found.\nInstall with: Install from https://github.com/eclipse/eclipse.jdt.ls",
+  "timestamp": "2026-06-25T23:31:47.420Z",
   "retry_count": 1
 }

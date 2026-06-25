@@ -1,6 +1,7 @@
 package com.ruoyi.web.controller.smart;
 
 import java.util.List;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -230,5 +231,42 @@ public class SmartAccessController extends BaseController
         java.util.Map<String, Object> r = new java.util.LinkedHashMap<>();
         r.put("total", devices.size()); r.put("online", online); r.put("offline", offline);
         return success(r);
+    }
+
+    // ==================== 批量Ping ====================
+    @PostMapping("/person-device/ping-all")
+    public AjaxResult pingAllPersonDevices() {
+        return pingAllFromTable("iot_person_access_device");
+    }
+
+    @PostMapping("/vehicle-device/ping-all")
+    public AjaxResult pingAllVehicleDevices() {
+        return pingAllFromTable("iot_vehicle_access_device");
+    }
+
+    /** 批量Ping指定表中的所有设备 */
+    private AjaxResult pingAllFromTable(String table) {
+        List<Map<String, Object>> devices = jdbc.queryForList(
+            "SELECT device_id, device_name, ip_address FROM " + table + " WHERE ip_address IS NOT NULL AND ip_address != ''");
+        int total = 0, online = 0, offline = 0;
+        for (Map<String, Object> row : devices) {
+            Long id = ((Number) row.get("device_id")).longValue();
+            String ip = String.valueOf(row.get("ip_address"));
+            total++;
+            try {
+                boolean reachable = java.net.InetAddress.getByName(ip).isReachable(3000);
+                String newStatus = reachable ? "ONLINE" : "OFFLINE";
+                if (reachable) online++; else offline++;
+                jdbc.update("UPDATE " + table + " SET status=? WHERE device_id=?", newStatus, id);
+            } catch (Exception e) {
+                offline++;
+                jdbc.update("UPDATE " + table + " SET status='OFFLINE' WHERE device_id=?", id);
+            }
+        }
+        AjaxResult result = AjaxResult.success();
+        result.put("total", total);
+        result.put("online", online);
+        result.put("offline", offline);
+        return result;
     }
 }

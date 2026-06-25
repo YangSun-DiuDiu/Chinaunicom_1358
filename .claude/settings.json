@@ -57,7 +57,9 @@
       "Bash(git ls-remote *)",
       "Bash(awk '{print $1}')",
       "Bash(mkdir -p \"e:\\\\gitee\\\\production_release\\\\RuoYi-Vue-master2026-06-24\\\\.claude\\\\skills\\\\zhihuiyuanqu-bugfix\")",
-      "Edit(/.claude/skills/zhihuiyuanqu-bugfix/**)"
+      "Edit(/.claude/skills/zhihuiyuanqu-bugfix/**)",
+      "Bash(bash \"C:\\\\Users\\\\Administrator\\\\.claude\\\\plugins\\\\cache\\\\superpowers-marketplace\\\\superpowers\\\\6.0.3\\\\skills\\\\subagent-driven-development\\\\scripts\\\\task-brief\" \"e:\\\\gitee\\\\production_release\\\\RuoYi-Vue-master2026-06-24\\\\docs\\\\superpowers\\\\plans\\\\2026-06-26-smart-device-ping-repair-plan.md\" 1)",
+      "Bash(mvn clean *)"
     ],
     "additionalDirectories": [
       "e:\\gitee\\production_release\\RuoYi-Vue-master2026-06-24\\.claude\\skills"
