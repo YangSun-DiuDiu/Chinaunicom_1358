@@ -10,6 +10,7 @@ import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.system.service.ISmsService;
 
 /**
  * 智能化管理 - 人员/车辆通行设备与权限管理通用控制器
@@ -20,6 +21,9 @@ public class SmartAccessController extends BaseController
 {
     @Autowired
     private JdbcTemplate jdbc;
+
+    @Autowired
+    private ISmsService smsService;
 
     // ==================== 通用 CRUD ====================
     private TableDataInfo listTable(String table, String where, Object... params) {
@@ -268,5 +272,67 @@ public class SmartAccessController extends BaseController
         result.put("online", online);
         result.put("offline", offline);
         return result;
+    }
+
+    /** 智能设备通用报修端点 */
+    @PostMapping("/device-repair/{table}/{deviceId}")
+    public AjaxResult repairSmartDevice(@PathVariable String table, @PathVariable Long deviceId,
+                                         @RequestBody Map<String, String> body) {
+        String phone = body.get("phone");
+        if (phone == null || phone.isEmpty()) return error("手机号不能为空");
+
+        // 映射 table 参数到实际表名
+        String actualTable;
+        switch (table) {
+            case "person": actualTable = "iot_person_access_device"; break;
+            case "vehicle": actualTable = "iot_vehicle_access_device"; break;
+            case "video": actualTable = "iot_video_device"; break;
+            default: return error("无效的设备类型: " + table);
+        }
+
+        Map<String, Object> dev = null;
+        try { dev = jdbc.queryForMap("SELECT device_name, ip_address FROM " + actualTable + " WHERE device_id=?", deviceId); }
+        catch (Exception e) { return error("设备不存在"); }
+
+        String deviceName = String.valueOf(dev.getOrDefault("device_name", "未知设备"));
+        String ipAddress = String.valueOf(dev.getOrDefault("ip_address", ""));
+
+        // 创建维修工单
+        com.ruoyi.system.domain.DeviceRepair repair = new com.ruoyi.system.domain.DeviceRepair();
+        repair.setDeviceId(deviceId);
+        repair.setDeviceName(deviceName);
+        repair.setDeviceIp(ipAddress);
+        repair.setFaultDescription("智能设备离线故障，请及时维修");
+        repair.setStatus("PENDING");
+        repair.setCreateBy(getUsername());
+        repair.setCreateTime(new java.util.Date());
+        repair.setOriginalResponsible(getUsername());
+        repair.setOriginalPhone(phone);
+        repair.setCurrentResponsible(getUsername());
+        repair.setCurrentPhone(phone);
+        repair.setCompleteToken(java.util.UUID.randomUUID().toString().replace("-", ""));
+        repair.setRepairNo(generateSmartRepairNo());
+        jdbc.update("INSERT INTO iot_device_repair (device_id,device_name,device_ip,fault_description," +
+            "status,create_by,create_time,original_responsible,original_phone,current_responsible,current_phone," +
+            "complete_token,repair_no) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
+            repair.getDeviceId(), repair.getDeviceName(), repair.getDeviceIp(), repair.getFaultDescription(),
+            repair.getStatus(), repair.getCreateBy(), repair.getCreateTime(), repair.getOriginalResponsible(),
+            repair.getOriginalPhone(), repair.getCurrentResponsible(), repair.getCurrentPhone(),
+            repair.getCompleteToken(), repair.getRepairNo());
+
+        // 发送短信
+        smsService.sendSms(repair.getCurrentResponsible(), phone,
+            "设备离线告警，设备：" + deviceName + "，已离线，请及时处理。设备登录码：" + repair.getCompleteToken(),
+            "REPAIR", deviceId);
+
+        return success(repair.getCompleteToken());
+    }
+
+    private String generateSmartRepairNo() {
+        String today = new java.text.SimpleDateFormat("yyyyMMdd").format(new java.util.Date());
+        Integer count = jdbc.queryForObject(
+            "SELECT COUNT(*) FROM iot_device_repair WHERE DATE(create_time)=CURDATE()", Integer.class);
+        int seq = (count != null ? count : 0) + 1;
+        return today + String.format("%03d", seq);
     }
 }
