@@ -11,6 +11,7 @@
     </el-form>
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5"><el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd" v-hasPermi="['smart:personAccess:add']">新增</el-button></el-col>
+      <el-col :span="1.5"><el-button type="warning" icon="el-icon-video-play" @click="handlePingAll">一键检测</el-button></el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"/>
     </el-row>
     <el-table v-loading="loading" :data="list">
@@ -24,6 +25,7 @@
           <el-button size="mini" type="text" icon="el-icon-edit" @click="handleEdit(row)" v-hasPermi="['smart:personAccess:edit']">修改</el-button>
           <el-button size="mini" type="text" icon="el-icon-connection" @click="testDevice(row)">测试</el-button>
           <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDel(row)" v-hasPermi="['smart:personAccess:remove']">删除</el-button>
+          <el-button v-if="row.status === 'OFFLINE'" type="warning" size="mini" icon="el-icon-warning" @click="handleRepair(row)">报修</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -62,6 +64,18 @@
       </el-form>
       <div slot="footer"><el-button type="primary" @click="submit">确定</el-button><el-button @click="open=false">取消</el-button></div>
     </el-dialog>
+    <el-dialog title="设备报修" :visible.sync="repairOpen" width="400px">
+      <el-form label-width="100px">
+        <el-form-item label="设备名称">{{ repairDevice.device_name }}</el-form-item>
+        <el-form-item label="维修人手机号" required>
+          <el-input v-model="repairPhone" placeholder="请输入手机号" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer">
+        <el-button @click="repairOpen=false">取消</el-button>
+        <el-button type="primary" :disabled="!repairPhone" @click="submitRepair">确认报修</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -72,6 +86,7 @@ export default {
     return {
       loading: false, showSearch: true, total: 0, list: [], open: false, title: '',
       testOpen: false, testLoading: false, testResult: null,
+      repairOpen: false, repairDevice: {}, repairPhone: '',
       query: { pageNum: 1, pageSize: 10, deviceName: undefined, deviceBrand: undefined },
       form: { device_name:'', device_brand:'HIKVISION', ip_address:'', port:80, username:'admin', password:'', location:'' },
       rules: {
@@ -95,6 +110,23 @@ export default {
       request({ url: '/smart/device-test/connect', method: 'post', data: { ipAddress: row.ip_address, port: row.port || 80, deviceBrand: row.device_brand } }).then(res => {
         this.testResult = res.data || res; this.testLoading = false
       }).catch(() => { this.testLoading = false; this.$message.error('测试失败') })
+    },
+    handlePingAll() {
+      this.$modal.loading('正在检测设备...')
+      request({ url: '/smart/access/person-device/ping-all', method: 'post' }).then(res => {
+        this.$modal.closeLoading()
+        this.$modal.msgSuccess(`检测完成：${res.data.online}台在线，${res.data.offline}台离线`)
+        this.getList()
+      }).catch(() => { this.$modal.closeLoading() })
+    },
+    handleRepair(row) {
+      this.repairDevice = row; this.repairPhone = ''; this.repairOpen = true
+    },
+    submitRepair() {
+      request({ url: '/smart/access/device-repair/person/' + this.repairDevice.device_id, method: 'post', data: { phone: this.repairPhone } }).then(() => {
+        this.$modal.msgSuccess('报修工单已创建，短信已发送')
+        this.repairOpen = false; this.getList()
+      })
     }
   }
 }

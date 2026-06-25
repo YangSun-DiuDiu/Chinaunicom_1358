@@ -7,12 +7,13 @@
     </el-form>
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5"><el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd" v-hasPermi="['smart:vehicleAccess:add']">新增</el-button></el-col>
+      <el-col :span="1.5"><el-button type="warning" icon="el-icon-video-play" @click="handlePingAll">一键检测</el-button></el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"/>
     </el-row>
     <el-table v-loading="loading" :data="list">
       <el-table-column label="设备名称" prop="device_name" min-width="140" :show-overflow-tooltip="true"/><el-table-column label="品牌" prop="device_brand" min-width="90"/>
       <el-table-column label="IP地址" prop="ip_address" min-width="130"/><el-table-column label="端口" prop="port" min-width="70"/><el-table-column label="位置" prop="location" min-width="140" :show-overflow-tooltip="true"/>
-      <el-table-column label="操作" min-width="150"><template slot-scope="{row}"><el-button size="mini" type="text" icon="el-icon-edit" @click="handleEdit(row)">修改</el-button><el-button size="mini" type="text" icon="el-icon-delete" @click="handleDel(row)">删除</el-button></template></el-table-column>
+      <el-table-column label="操作" min-width="150"><template slot-scope="{row}"><el-button size="mini" type="text" icon="el-icon-edit" @click="handleEdit(row)">修改</el-button><el-button size="mini" type="text" icon="el-icon-delete" @click="handleDel(row)">删除</el-button><el-button v-if="row.status === 'OFFLINE'" type="warning" size="mini" icon="el-icon-warning" @click="handleRepair(row)">报修</el-button></template></el-table-column>
     </el-table>
     <pagination :total="total" :page.sync="query.pageNum" :limit.sync="query.pageSize" @pagination="getList"/>
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
@@ -27,10 +28,74 @@
       </el-form>
       <div slot="footer"><el-button type="primary" @click="submit">确定</el-button></div>
     </el-dialog>
+    <el-dialog title="设备报修" :visible.sync="repairOpen" width="400px">
+      <el-form label-width="100px">
+        <el-form-item label="设备名称">{{ repairDevice.device_name }}</el-form-item>
+        <el-form-item label="维修人手机号" required>
+          <el-input v-model="repairPhone" placeholder="请输入手机号" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer">
+        <el-button @click="repairOpen=false">取消</el-button>
+        <el-button type="primary" :disabled="!repairPhone" @click="submitRepair">确认报修</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
 import request from '@/utils/request'
 const B = '/smart/access/vehicle-device'
-export default { data() { return { loading:false, showSearch:true, total:0, list:[], open:false, title:'', query:{ pageNum:1, pageSize:10, deviceName:undefined, deviceBrand:undefined }, form:{ device_name:'', device_brand:'HIKVISION', ip_address:'', port:80, username:'admin', password:'', location:'' } } }, created() { this.getList() }, methods: { getList() { this.loading=true; request({url:B+'/list',method:'get',params:this.query}).then(r=>{this.list=r.rows;this.total=r.total;this.loading=false}) }, reset() { this.query={ pageNum:1, pageSize:10 }; this.getList() }, handleAdd() { this.form={ device_name:'', device_brand:'HIKVISION', ip_address:'', port:80, username:'admin', password:'', location:'' }; this.title='新增车辆通行设备'; this.open=true }, handleEdit(r) { this.form={...r}; this.title='修改车辆通行设备'; this.open=true }, handleDel(r) { this.$confirm('确认删除?').then(()=>request({url:B+'/'+r.device_id,method:'delete'}).then(()=>{this.$message.success('删除成功');this.getList()})).catch(()=>{}) }, submit() { const m=this.form.device_id?'put':'post'; request({url:B,method:m,data:this.form}).then(()=>{this.$message.success('操作成功');this.open=false;this.getList()}) } } }
+export default {
+  data() {
+    return {
+      loading: false, showSearch: true, total: 0, list: [], open: false, title: '',
+      repairOpen: false, repairDevice: {}, repairPhone: '',
+      query: { pageNum: 1, pageSize: 10, deviceName: undefined, deviceBrand: undefined },
+      form: { device_name: '', device_brand: 'HIKVISION', ip_address: '', port: 80, username: 'admin', password: '', location: '' }
+    }
+  },
+  created() { this.getList() },
+  methods: {
+    getList() {
+      this.loading = true
+      request({ url: B + '/list', method: 'get', params: this.query }).then(r => {
+        this.list = r.rows; this.total = r.total; this.loading = false
+      })
+    },
+    reset() { this.query = { pageNum: 1, pageSize: 10 }; this.getList() },
+    handleAdd() {
+      this.form = { device_name: '', device_brand: 'HIKVISION', ip_address: '', port: 80, username: 'admin', password: '', location: '' }
+      this.title = '新增车辆通行设备'; this.open = true
+    },
+    handleEdit(r) { this.form = { ...r }; this.title = '修改车辆通行设备'; this.open = true },
+    handleDel(r) {
+      this.$confirm('确认删除?').then(() =>
+        request({ url: B + '/' + r.device_id, method: 'delete' }).then(() => {
+          this.$message.success('删除成功'); this.getList()
+        })
+      ).catch(() => {})
+    },
+    submit() {
+      const m = this.form.device_id ? 'put' : 'post'
+      request({ url: B, method: m, data: this.form }).then(() => {
+        this.$message.success('操作成功'); this.open = false; this.getList()
+      })
+    },
+    handlePingAll() {
+      this.$modal.loading('正在检测设备...')
+      request({ url: '/smart/access/vehicle-device/ping-all', method: 'post' }).then(res => {
+        this.$modal.closeLoading()
+        this.$modal.msgSuccess('检测完成：' + res.data.online + '台在线，' + res.data.offline + '台离线')
+        this.getList()
+      }).catch(() => { this.$modal.closeLoading() })
+    },
+    handleRepair(r) { this.repairDevice = r; this.repairPhone = ''; this.repairOpen = true },
+    submitRepair() {
+      request({ url: '/smart/access/device-repair/vehicle/' + this.repairDevice.device_id, method: 'post', data: { phone: this.repairPhone } }).then(() => {
+        this.$modal.msgSuccess('报修工单已创建，短信已发送')
+        this.repairOpen = false; this.getList()
+      })
+    }
+  }
+}
 </script>
