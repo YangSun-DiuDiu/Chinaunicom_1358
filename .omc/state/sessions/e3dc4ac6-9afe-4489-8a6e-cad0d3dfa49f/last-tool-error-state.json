@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"cd \\\"e:\\\\gitee\\\\production_release\\\\RuoYi-Vue-master2026-06-24\\\" && git init && git add -A && git commit -m \\\"initial: RuoYi-Vue 智慧园区管理系统 v3.9.2 baseline\\\"\",\"description\":\"Initialize git r...",
+  "error": "Exit code 128\nInitialized empty Git repository in E:/gitee/production_release/RuoYi-Vue-master2026-06-24/.git/\nwarning: in the working copy of '.claude/settings.local.json', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of '.github/FUNDING.yml', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of '.omc/sessions/d63b7e3e-8633-4ded-9049-0d2c1f6e6abb.json', LF will be replaced by CRLF the next time Git touches it\nwarning: ...",
+  "timestamp": "2026-06-25T01:30:10.620Z",
+  "retry_count": 1
+}

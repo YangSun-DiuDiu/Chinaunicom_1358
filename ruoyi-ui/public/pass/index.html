@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>访客通行证</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif;background:#f5f7fa;min-height:100vh}
+.container{max-width:420px;margin:0 auto;padding:16px}
+/* 上半部分 - 访客详情卡片 */
+.info-card{background:#fff;border-radius:12px;padding:20px;box-shadow:0 2px 12px rgba(0,0,0,.08);margin-bottom:16px}
+.header{text-align:center;margin-bottom:16px}
+.title{font-size:20px;font-weight:700;color:#303133}
+.subtitle{font-size:13px;color:#909399;margin-top:4px}
+.pass-code{font-size:36px;font-weight:900;color:#409eff;letter-spacing:8px;text-align:center;padding:12px;background:#ecf5ff;border-radius:8px;border:2px dashed #409eff;margin:16px 0}
+.row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f0f0f0;font-size:15px}
+.label{color:#909399;min-width:70px}.value{color:#303133;font-weight:500;text-align:right}
+.status-tag{display:inline-block;padding:3px 10px;border-radius:4px;font-size:12px;margin-top:10px}
+.approved{background:#e1f3d8;color:#67c23a}.visiting{background:#ecf5ff;color:#409eff}.completed{background:#f0f0f0;color:#909399}
+/* 下半部分 - 二维码 */
+.qr-card{background:#fff;border-radius:12px;padding:20px;box-shadow:0 2px 12px rgba(0,0,0,.08);text-align:center}
+.qr-title{font-size:16px;font-weight:600;color:#303133;margin-bottom:16px}
+.qr-box{width:200px;height:200px;margin:0 auto;padding:10px;background:#fff;border:1px solid #ebeef5;border-radius:8px}
+.qr-box canvas,.qr-box img{width:180px!important;height:180px!important}
+.expired{color:#f56c6c;font-size:16px;padding:40px;text-align:center}
+.expired .icon{font-size:48px;display:block;margin-bottom:10px}
+.footer{text-align:center;color:#c0c4cc;font-size:12px;padding:16px}
+.error{color:#f56c6c;text-align:center;padding:40px;font-size:16px}
+.loading{text-align:center;padding:40px;color:#909399}
+</style></head>
+<body>
+<div id="app" class="container">
+<div v-if="loading" class="loading">加载中...</div>
+<div v-else-if="error" class="error">{{error}}</div>
+<template v-else>
+<!-- 访客信息 -->
+<div class="info-card">
+<div class="header"><div class="title">访客通行证</div><div class="subtitle">SmartIoT 智慧园区</div></div>
+<div class="pass-code">{{info.passCode}}</div>
+<div class="row"><span class="label">访客姓名</span><span class="value">{{info.visitorName}}</span></div>
+<div class="row"><span class="label">访客电话</span><span class="value">{{info.visitorPhone}}</span></div>
+<div class="row"><span class="label">访客单位</span><span class="value">{{info.visitorCompany||'-'}}</span></div>
+<div class="row"><span class="label">被访人</span><span class="value">{{info.hostName||'-'}}</span></div>
+<div class="row"><span class="label">被访部门</span><span class="value">{{info.hostDept||'-'}}</span></div>
+<div class="row"><span class="label">访问时间</span><span class="value">{{info.visitTime||info.entryTime||'-'}}</span></div>
+<span class="status-tag" :class="info.status==='APPROVED'?'approved':info.status==='COMPLETED'?'completed':'visiting'">
+{{info.status==='APPROVED'?'已审批':info.status==='COMPLETED'?'已完成':'来访中'}}</span>
+</div>
+<!-- 二维码 -->
+<div class="qr-card">
+<div class="qr-title">访客通行二维码</div>
+<div v-if="info.status==='COMPLETED'" class="expired"><span class="icon">&#10060;</span>二维码已失效<br><small style="color:#909399">来访已完成</small></div>
+<div v-else class="qr-box" id="qrcode"></div>
+<div style="margin-top:10px;color:#909399;font-size:12px">请出示二维码给工作人员验证</div>
+</div>
+<div class="footer">SmartIoT 智慧园区管理系统</div>
+</template>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.7.16/dist/vue.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<script>
+new Vue({el:'#app',data:{loading:true,error:'',info:{}},created(){
+var code=window.location.pathname.split('/pass/')[1];
+if(!code){this.error='缺少通行码';this.loading=false;return}
+var that=this;
+fetch('/dev-api/pass/'+code).then(function(r){return r.json()}).then(function(d){
+if(d.code===200){that.info=d.data||d;that.loading=false}
+else{that.error=d.msg||'通行码无效';that.loading=false}
+that.$nextTick(function(){
+if(that.info.passCode&&that.info.status!=='COMPLETED'){
+new QRCode(document.getElementById('qrcode'),{text:'PASS:'+(that.info.passCode||code),width:180,height:180,colorDark:'#303133',colorLight:'#ffffff'})
+}
+})
+}).catch(function(){that.error='网络异常';that.loading=false})
+}})
+</script>
+</body></html>

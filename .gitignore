@@ -1,0 +1,68 @@
+######################################################################
+# Build Tools
+
+.gradle
+/build/
+!gradle/wrapper/gradle-wrapper.jar
+
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+######################################################################
+# IDE
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### JRebel ###
+rebel.xml
+
+### NetBeans ###
+nbproject/private/
+build/*
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+######################################################################
+# Others
+*.log
+*.xml.versionsBackup
+*.swp
+
+!*/build/*.java
+!*/build/*.html
+!*/build/*.xml
+
+######################################################################
+# Deploy & Large Files
+deploy/ruoyi-admin.jar
+deploy/dist/
+*.jar
+!*sources.jar
+
+# Node
+ruoyi-ui/node_modules/
+ruoyi-ui/dist/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE (additional)
+.vscode/
+
+# Claude Code
+.claude/settings.local.json

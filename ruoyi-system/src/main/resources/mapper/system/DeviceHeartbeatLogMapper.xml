@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.DeviceHeartbeatLogMapper">
+
+    <resultMap type="DeviceHeartbeatLog" id="DeviceHeartbeatLogResult">
+        <id     property="logId"           column="log_id"            />
+        <result property="deviceId"        column="device_id"         />
+        <result property="deviceName"      column="device_name"       />
+        <result property="ipAddress"       column="ip_address"        />
+        <result property="pingResult"      column="ping_result"       />
+        <result property="pingLatency"     column="ping_latency"      />
+        <result property="detectTime"      column="detect_time"       />
+        <result property="createBy"        column="create_by"         />
+        <result property="createTime"      column="create_time"       />
+        <result property="updateBy"        column="update_by"         />
+        <result property="updateTime"      column="update_time"       />
+        <result property="remark"          column="remark"            />
+    </resultMap>
+
+    <sql id="selectDeviceHeartbeatLogVo">
+        select l.log_id, l.device_id, l.device_name, l.ip_address,
+               l.ping_result, l.ping_latency, l.detect_time,
+               l.create_by, l.create_time, l.update_by, l.update_time, l.remark
+        from iot_device_heartbeat_log l
+    </sql>
+
+    <select id="selectLogList" parameterType="DeviceHeartbeatLog" resultMap="DeviceHeartbeatLogResult">
+        select l.log_id, l.device_id, l.device_name, l.ip_address,
+               l.ping_result, l.ping_latency, l.detect_time,
+               l.create_by, l.create_time, l.update_by, l.update_time, l.remark
+        from iot_device_heartbeat_log l
+        <where>
+            <if test="deviceId != null">
+                AND l.device_id = #{deviceId}
+            </if>
+            <if test="deviceName != null and deviceName != ''">
+                AND l.device_name like concat('%', #{deviceName}, '%')
+            </if>
+            <if test="ipAddress != null and ipAddress != ''">
+                AND l.ip_address like concat('%', #{ipAddress}, '%')
+            </if>
+            <if test="pingResult != null and pingResult != ''">
+                AND l.ping_result = #{pingResult}
+            </if>
+            <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+                AND date_format(l.detect_time,'%Y%m%d') &gt;= date_format(#{params.beginTime},'%Y%m%d')
+            </if>
+            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+                AND date_format(l.detect_time,'%Y%m%d') &lt;= date_format(#{params.endTime},'%Y%m%d')
+            </if>
+        </where>
+        order by l.detect_time desc
+    </select>
+
+    <select id="selectLogById" parameterType="Long" resultMap="DeviceHeartbeatLogResult">
+        <include refid="selectDeviceHeartbeatLogVo"/>
+        where l.log_id = #{logId}
+    </select>
+
+    <insert id="insertLog" parameterType="DeviceHeartbeatLog" useGeneratedKeys="true" keyProperty="logId">
+        insert into iot_device_heartbeat_log(
+            <if test="deviceId != null">device_id,</if>
+            <if test="deviceName != null and deviceName != ''">device_name,</if>
+            <if test="ipAddress != null and ipAddress != ''">ip_address,</if>
+            <if test="pingResult != null and pingResult != ''">ping_result,</if>
+            <if test="pingLatency != null">ping_latency,</if>
+            <if test="detectTime != null">detect_time,</if>
+            <if test="createBy != null and createBy != ''">create_by,</if>
+            <if test="remark != null and remark != ''">remark,</if>
+            create_time
+        )values(
+            <if test="deviceId != null">#{deviceId},</if>
+            <if test="deviceName != null and deviceName != ''">#{deviceName},</if>
+            <if test="ipAddress != null and ipAddress != ''">#{ipAddress},</if>
+            <if test="pingResult != null and pingResult != ''">#{pingResult},</if>
+            <if test="pingLatency != null">#{pingLatency},</if>
+            <if test="detectTime != null">#{detectTime},</if>
+            <if test="createBy != null and createBy != ''">#{createBy},</if>
+            <if test="remark != null and remark != ''">#{remark},</if>
+            sysdate()
+        )
+    </insert>
+
+    <delete id="deleteLogByDeviceId" parameterType="Long">
+        delete from iot_device_heartbeat_log where device_id = #{deviceId}
+    </delete>
+
+</mapper>

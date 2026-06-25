@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SmsLogMapper">
+
+    <resultMap type="com.ruoyi.system.domain.SmsLog" id="SmsLogResult">
+        <id     property="smsId"        column="sms_id"         />
+        <result property="recipient"    column="recipient"      />
+        <result property="phoneNumber"  column="phone_number"   />
+        <result property="content"      column="content"        />
+        <result property="sendTime"     column="send_time"      />
+        <result property="sendResult"   column="send_result"    />
+        <result property="bizType"      column="biz_type"       />
+        <result property="bizId"        column="biz_id"         />
+        <result property="createBy"     column="create_by"      />
+        <result property="createTime"   column="create_time"    />
+        <result property="updateBy"     column="update_by"      />
+        <result property="updateTime"   column="update_time"    />
+        <result property="remark"       column="remark"         />
+    </resultMap>
+
+    <sql id="selectSmsLogVo">
+        select sms_id, recipient, phone_number, content, send_time, send_result, biz_type, biz_id, create_by, create_time, update_by, update_time, remark
+        from sys_sms_log
+    </sql>
+
+    <select id="selectSmsLogList" parameterType="com.ruoyi.system.domain.SmsLog" resultMap="SmsLogResult">
+        <include refid="selectSmsLogVo"/>
+        <where>
+            <if test="recipient != null and recipient != ''">
+                AND recipient like concat('%', #{recipient}, '%')
+            </if>
+            <if test="phoneNumber != null and phoneNumber != ''">
+                AND phone_number like concat('%', #{phoneNumber}, '%')
+            </if>
+            <if test="content != null and content != ''">
+                AND content like concat('%', #{content}, '%')
+            </if>
+            <if test="sendResult != null and sendResult != ''">
+                AND send_result = #{sendResult}
+            </if>
+            <if test="bizType != null and bizType != ''">
+                AND biz_type = #{bizType}
+            </if>
+            <if test="bizId != null">
+                AND biz_id = #{bizId}
+            </if>
+            <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+                AND send_time &gt;= #{params.beginTime}
+            </if>
+            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+                AND send_time &lt;= #{params.endTime}
+            </if>
+        </where>
+        order by sms_id desc
+    </select>
+
+    <select id="selectSmsLogById" parameterType="Long" resultMap="SmsLogResult">
+        <include refid="selectSmsLogVo"/>
+        where sms_id = #{smsId}
+    </select>
+
+    <insert id="insertSmsLog" parameterType="com.ruoyi.system.domain.SmsLog" useGeneratedKeys="true" keyProperty="smsId">
+        insert into sys_sms_log(
+            <if test="recipient != null and recipient != ''">recipient,</if>
+            <if test="phoneNumber != null and phoneNumber != ''">phone_number,</if>
+            <if test="content != null and content != ''">content,</if>
+            <if test="sendTime != null">send_time,</if>
+            <if test="sendResult != null and sendResult != ''">send_result,</if>
+            <if test="bizType != null and bizType != ''">biz_type,</if>
+            <if test="bizId != null">biz_id,</if>
+            <if test="createBy != null and createBy != ''">create_by,</if>
+            <if test="remark != null and remark != ''">remark,</if>
+            create_time
+        ) values (
+            <if test="recipient != null and recipient != ''">#{recipient},</if>
+            <if test="phoneNumber != null and phoneNumber != ''">#{phoneNumber},</if>
+            <if test="content != null and content != ''">#{content},</if>
+            <if test="sendTime != null">#{sendTime},</if>
+            <if test="sendResult != null and sendResult != ''">#{sendResult},</if>
+            <if test="bizType != null and bizType != ''">#{bizType},</if>
+            <if test="bizId != null">#{bizId},</if>
+            <if test="createBy != null and createBy != ''">#{createBy},</if>
+            <if test="remark != null and remark != ''">#{remark},</if>
+            sysdate()
+        )
+    </insert>
+
+</mapper>

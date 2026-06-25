@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.DeviceStatusLogMapper">
+
+    <resultMap type="DeviceStatusLog" id="DeviceStatusLogResult">
+        <id     property="logId"           column="log_id"            />
+        <result property="deviceId"        column="device_id"         />
+        <result property="deviceName"      column="device_name"       />
+        <result property="oldStatus"       column="old_status"        />
+        <result property="newStatus"       column="new_status"        />
+        <result property="changeType"      column="change_type"       />
+        <result property="changeTime"      column="change_time"       />
+        <result property="smsSent"         column="sms_sent"          />
+        <result property="smsRecipient"    column="sms_recipient"     />
+        <result property="createBy"        column="create_by"         />
+        <result property="createTime"      column="create_time"       />
+        <result property="updateBy"        column="update_by"         />
+        <result property="updateTime"      column="update_time"       />
+        <result property="remark"          column="remark"            />
+    </resultMap>
+
+    <sql id="selectDeviceStatusLogVo">
+        select l.log_id, l.device_id, l.device_name, l.old_status, l.new_status,
+               l.change_type, l.change_time, l.sms_sent, l.sms_recipient,
+               l.create_by, l.create_time, l.update_by, l.update_time, l.remark
+        from iot_device_status_log l
+    </sql>
+
+    <select id="selectLogList" parameterType="DeviceStatusLog" resultMap="DeviceStatusLogResult">
+        select l.log_id, l.device_id, l.device_name, l.old_status, l.new_status,
+               l.change_type, l.change_time, l.sms_sent, l.sms_recipient,
+               l.create_by, l.create_time, l.update_by, l.update_time, l.remark
+        from iot_device_status_log l
+        <where>
+            <if test="deviceId != null">
+                AND l.device_id = #{deviceId}
+            </if>
+            <if test="deviceName != null and deviceName != ''">
+                AND l.device_name like concat('%', #{deviceName}, '%')
+            </if>
+            <if test="changeType != null and changeType != ''">
+                AND l.change_type = #{changeType}
+            </if>
+            <if test="oldStatus != null and oldStatus != ''">
+                AND l.old_status = #{oldStatus}
+            </if>
+            <if test="newStatus != null and newStatus != ''">
+                AND l.new_status = #{newStatus}
+            </if>
+            <if test="smsSent != null and smsSent != ''">
+                AND l.sms_sent = #{smsSent}
+            </if>
+            <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+                AND date_format(l.change_time,'%Y%m%d') &gt;= date_format(#{params.beginTime},'%Y%m%d')
+            </if>
+            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+                AND date_format(l.change_time,'%Y%m%d') &lt;= date_format(#{params.endTime},'%Y%m%d')
+            </if>
+        </where>
+        order by l.change_time desc
+    </select>
+
+    <select id="selectLogById" parameterType="Long" resultMap="DeviceStatusLogResult">
+        <include refid="selectDeviceStatusLogVo"/>
+        where l.log_id = #{logId}
+    </select>
+
+    <select id="selectLogByDeviceId" parameterType="Long" resultMap="DeviceStatusLogResult">
+        <include refid="selectDeviceStatusLogVo"/>
+        where l.device_id = #{deviceId}
+        order by l.change_time desc
+    </select>
+
+    <insert id="insertLog" parameterType="DeviceStatusLog" useGeneratedKeys="true" keyProperty="logId">
+        insert into iot_device_status_log(
+            <if test="deviceId != null">device_id,</if>
+            <if test="deviceName != null and deviceName != ''">device_name,</if>
+            <if test="oldStatus != null and oldStatus != ''">old_status,</if>
+            <if test="newStatus != null and newStatus != ''">new_status,</if>
+            <if test="changeType != null and changeType != ''">change_type,</if>
+            <if test="changeTime != null">change_time,</if>
+            <if test="smsSent != null and smsSent != ''">sms_sent,</if>
+            <if test="smsRecipient != null and smsRecipient != ''">sms_recipient,</if>
+            <if test="createBy != null and createBy != ''">create_by,</if>
+            <if test="remark != null and remark != ''">remark,</if>
+            create_time
+        )values(
+            <if test="deviceId != null">#{deviceId},</if>
+            <if test="deviceName != null and deviceName != ''">#{deviceName},</if>
+            <if test="oldStatus != null and oldStatus != ''">#{oldStatus},</if>
+            <if test="newStatus != null and newStatus != ''">#{newStatus},</if>
+            <if test="changeType != null and changeType != ''">#{changeType},</if>
+            <if test="changeTime != null">#{changeTime},</if>
+            <if test="smsSent != null and smsSent != ''">#{smsSent},</if>
+            <if test="smsRecipient != null and smsRecipient != ''">#{smsRecipient},</if>
+            <if test="createBy != null and createBy != ''">#{createBy},</if>
+            <if test="remark != null and remark != ''">#{remark},</if>
+            sysdate()
+        )
+    </insert>
+
+</mapper>

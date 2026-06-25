@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -c \"import openpyxl; print\\('openpyxl available'\\)\")",
+      "Bash(python -c \"import openpyxl; print\\('openpyxl available'\\)\")",
+      "Bash(python doc/generate_dev_report.py)",
+      "Bash(python *)",
+      "Bash(mvn compile *)",
+      "Bash(java -version)",
+      "Bash(mvn -version)",
+      "Read(//d//**)",
+      "Bash(winget search *)",
+      "Bash(choco search *)",
+      "Bash(curl -sL \"https://api.adoptium.net/v3/assets/latest/17/hotspot?architecture=x64&image_type=jdk&os=windows\")",
+      "Bash(mkdir -p \"C:\\\\Program Files\\\\Java\\\\jdk-17\")",
+      "Bash(curl -L -o \"C:\\\\Program Files\\\\Java\\\\jdk-17.zip\" \"https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.19%2B10/OpenJDK17U-jdk_x64_windows_hotspot_17.0.19_10.zip\")",
+      "Bash(echo \"Download started in background, PID: $!\")",
+      "Bash(unzip -q \"C:\\\\Program Files\\\\Java\\\\jdk-17.zip\" -d \"C:\\\\Program Files\\\\Java\\\\jdk-17\")",
+      "Bash(rm -f \"C:\\\\Program Files\\\\Java\\\\jdk-17.zip\")",
+      "Bash(curl -L --retry 3 -o \"C:\\\\Program Files\\\\Java\\\\jdk-17.zip\" \"https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.19%2B10/OpenJDK17U-jdk_x64_windows_hotspot_17.0.19_10.zip\")",
+      "Bash(curl -L --connect-timeout 10 --max-time 600 -o \"E:\\\\gitee\\\\jdk17.zip\" \"https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.19%2B10/OpenJDK17U-jdk_x64_windows_hotspot_17.0.19_10.zip\")",
+      "Read(//e/gitee/**)",
+      "Bash(mysql -h 1.94.26.126 -P 3306 -u sadmin -pChinaunicom@1358 ry101 -e \"SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA='ry101' AND TABLE_NAME IN \\('iot_device','iot_device_repair','iot_device_port','iot_device_heartbeat_log','iot_device_status_log','visitor_appointment','visitor_log','sys_sms_log','attendance_callback_log'\\) ORDER BY TABLE_NAME;\")",
+      "Bash(mysql -h 1.94.26.126 -P 3306 -u sadmin -pChinaunicom@1358 ry101 -e \"SELECT TABLE_NAME, COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='ry101' AND TABLE_NAME IN \\('iot_device','iot_device_repair','iot_device_port','iot_device_heartbeat_log','iot_device_status_log','visitor_appointment','visitor_log','sys_sms_log','attendance_callback_log'\\) AND COLUMN_NAME='dept_id' ORDER BY TABLE_NAME;\")",
+      "Bash(mysql -h 1.94.26.126 -P 3306 -u sadmin -pChinaunicom@1358 ry101 -e ' *)"
+    ]
+  }
+}
