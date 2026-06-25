@@ -38,6 +38,9 @@ public class BaseEntity implements Serializable
     /** 备注 */
     private String remark;
 
+    /** 所属组织ID（多租户数据隔离） */
+    private Long deptId;
+
     /** 请求参数 */
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private Map<String, Object> params;
@@ -100,6 +103,16 @@ public class BaseEntity implements Serializable
     public void setRemark(String remark)
     {
         this.remark = remark;
+    }
+
+    public Long getDeptId()
+    {
+        return deptId;
+    }
+
+    public void setDeptId(Long deptId)
+    {
+        this.deptId = deptId;
     }
 
     public Map<String, Object> getParams()
