@@ -6,6 +6,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 	<resultMap type="SysOperLog" id="SysOperLogResult">
 		<id     property="operId"         column="oper_id"        />
+		<result property="deptId"         column="dept_id"        />
 		<result property="title"          column="title"          />
 		<result property="businessType"   column="business_type"  />
 		<result property="method"         column="method"         />

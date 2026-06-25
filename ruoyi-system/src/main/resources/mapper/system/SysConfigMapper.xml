@@ -6,6 +6,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
     <resultMap type="SysConfig" id="SysConfigResult">
     	<id     property="configId"      column="config_id"      />
+        <result property="deptId"        column="dept_id"        />
         <result property="configName"    column="config_name"    />
         <result property="configKey"     column="config_key"     />
         <result property="configValue"   column="config_value"   />

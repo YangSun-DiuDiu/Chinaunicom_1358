@@ -6,6 +6,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 	<resultMap type="SysPost" id="SysPostResult">
 		<id     property="postId"        column="post_id"       />
+		<result property="deptId"        column="dept_id"       />
 		<result property="postCode"      column="post_code"     />
 		<result property="postName"      column="post_name"     />
 		<result property="postSort"      column="post_sort"     />
