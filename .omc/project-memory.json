@@ -18,7 +18,7 @@
     "runtime": null
   },
   "build": {
-    "buildCommand": "cd \"e:/gitee/production_release/RuoYi-Vue-master2026-06-24/ruoyi-ui\" && npm run build:prod 2>&1",
+    "buildCommand": "cd e:/gitee/production_release/RuoYi-Vue-master2026-06-24/ruoyi-ui && npm run build:prod 2>&1",
     "testCommand": null,
     "lintCommand": null,
     "devCommand": null,
@@ -283,8 +283,8 @@
   "hotPaths": [
     {
       "path": "",
-      "accessCount": 58,
-      "lastAccessed": 1782454435046,
+      "accessCount": 63,
+      "lastAccessed": 1782467797419,
       "type": "directory"
     },
     {
@@ -312,21 +312,27 @@
       "type": "file"
     },
     {
+      "path": ".superpowers\\sdd\\task-1-report.md",
+      "accessCount": 7,
+      "lastAccessed": 1782466607297,
+      "type": "file"
+    },
+    {
+      "path": ".superpowers\\sdd\\task-4-report.md",
+      "accessCount": 7,
+      "lastAccessed": 1782468162973,
+      "type": "file"
+    },
+    {
       "path": "ruoyi-ui\\src\\views\\smart\\video\\device\\index.vue",
       "accessCount": 6,
       "lastAccessed": 1782430730137,
       "type": "file"
     },
     {
-      "path": ".superpowers\\sdd\\task-4-report.md",
+      "path": ".superpowers\\sdd\\task-3-report.md",
       "accessCount": 5,
-      "lastAccessed": 1782447944941,
-      "type": "file"
-    },
-    {
-      "path": ".superpowers\\sdd\\task-1-report.md",
-      "accessCount": 5,
-      "lastAccessed": 1782454206713,
+      "lastAccessed": 1782467313834,
       "type": "file"
     },
     {
@@ -336,39 +342,33 @@
       "type": "file"
     },
     {
-      "path": "ruoyi-system\\src\\main\\java\\com\\ruoyi\\system\\service\\ISmsService.java",
-      "accessCount": 3,
-      "lastAccessed": 1782436437375,
-      "type": "file"
-    },
-    {
-      "path": ".superpowers\\sdd\\task-3-report.md",
-      "accessCount": 3,
-      "lastAccessed": 1782447710530,
-      "type": "file"
-    },
-    {
       "path": ".superpowers\\sdd\\task-1-brief.md",
-      "accessCount": 3,
-      "lastAccessed": 1782454108594,
+      "accessCount": 4,
+      "lastAccessed": 1782466376317,
       "type": "file"
     },
     {
       "path": ".superpowers\\sdd\\task-2-brief.md",
-      "accessCount": 3,
-      "lastAccessed": 1782454254994,
+      "accessCount": 4,
+      "lastAccessed": 1782466652997,
       "type": "file"
     },
     {
       "path": ".superpowers\\sdd\\task-3-brief.md",
-      "accessCount": 3,
-      "lastAccessed": 1782454423233,
+      "accessCount": 4,
+      "lastAccessed": 1782467007287,
       "type": "file"
     },
     {
       "path": ".superpowers\\sdd\\task-4-brief.md",
+      "accessCount": 4,
+      "lastAccessed": 1782467404319,
+      "type": "file"
+    },
+    {
+      "path": "ruoyi-system\\src\\main\\java\\com\\ruoyi\\system\\service\\ISmsService.java",
       "accessCount": 3,
-      "lastAccessed": 1782454751081,
+      "lastAccessed": 1782436437375,
       "type": "file"
     },
     {
@@ -382,6 +382,12 @@
       "accessCount": 2,
       "lastAccessed": 1782447489321,
       "type": "file"
+    },
+    {
+      "path": "ruoyi-ui",
+      "accessCount": 2,
+      "lastAccessed": 1782467044323,
+      "type": "directory"
     },
     {
       "path": "ruoyi-quartz\\src\\main\\java\\com\\ruoyi\\quartz\\task\\DeviceHeartbeatTask.java",
@@ -562,12 +568,6 @@
       "accessCount": 1,
       "lastAccessed": 1782436451180,
       "type": "file"
-    },
-    {
-      "path": "ruoyi-ui",
-      "accessCount": 1,
-      "lastAccessed": 1782436457936,
-      "type": "directory"
     },
     {
       "path": "ruoyi-ui\\src\\views\\sms\\log\\index.vue",
