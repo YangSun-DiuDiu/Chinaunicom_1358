@@ -130,27 +130,49 @@ public class DeptScopeInterceptor implements Interceptor {
 
     /**
      * 在 SQL 的 WHERE 子句后追加 dept_id 过滤条件
+     * 自动检测 FROM 子句中的表别名，有 JOIN 时使用别名避免歧义
      */
     private String appendDeptFilter(String sql, Long deptId) {
+        // 提取主表别名：查找 "from table_name alias" 或 "FROM table_name alias"
+        String deptColumn = "dept_id";
+        String sqlLower = sql.toLowerCase();
+        int fromIdx = sqlLower.indexOf("from ");
+        if (fromIdx >= 0) {
+            // 从 FROM 后找到表名和别名，例如 "from meeting_booking b" → alias="b"
+            String afterFrom = sqlLower.substring(fromIdx + 5);
+            int joinIdx = afterFrom.indexOf(" join "); // 空格 + join + 空格
+            String firstTableClause = joinIdx > 0 ? afterFrom.substring(0, joinIdx) : afterFrom;
+            // 检查是否有 LEFT/RIGHT/INNER JOIN
+            if (sqlLower.contains(" join ")) {
+                // 有 JOIN: 提取主表别名
+                String[] parts = firstTableClause.trim().split("\\s+");
+                if (parts.length >= 2) {
+                    // parts[0] = table_name, parts[1] = alias
+                    String alias = parts[parts.length - 1];
+                    if (alias.length() <= 3 && !"join".equals(alias)) {
+                        deptColumn = alias + ".dept_id";
+                    }
+                }
+            }
+        }
+
         StringBuilder sb = new StringBuilder(sql);
-        int whereIndex = sql.toLowerCase().indexOf("where");
+        int whereIndex = sqlLower.indexOf("where");
 
         if (whereIndex >= 0) {
-            // 已有 WHERE，追加 AND
             int insertPos = whereIndex + 5;
-            sb.insert(insertPos, " dept_id = " + deptId + " AND ");
+            sb.insert(insertPos, " " + deptColumn + " = " + deptId + " AND ");
         } else {
-            // 无 WHERE 子句的情况
-            int orderIndex = sql.toLowerCase().indexOf("order by");
-            int groupIndex = sql.toLowerCase().indexOf("group by");
-            int limitIndex = sql.toLowerCase().indexOf("limit");
+            int orderIndex = sqlLower.indexOf("order by");
+            int groupIndex = sqlLower.indexOf("group by");
+            int limitIndex = sqlLower.indexOf("limit");
 
             int insertPos = sql.length();
             if (orderIndex >= 0) insertPos = Math.min(insertPos, orderIndex);
             if (groupIndex >= 0) insertPos = Math.min(insertPos, groupIndex);
             if (limitIndex >= 0) insertPos = Math.min(insertPos, limitIndex);
 
-            sb.insert(insertPos, " WHERE dept_id = " + deptId + " ");
+            sb.insert(insertPos, " WHERE " + deptColumn + " = " + deptId + " ");
         }
 
         return sb.toString();
