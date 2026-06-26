@@ -68,4 +68,13 @@ public interface IMeetingBookingService
      * @return 今日预约列表
      */
     public List<MeetingBooking> selectTodayByRoom(Long roomId);
+
+    /**
+     * 查询指定会议室指定日期的已占用时间段
+     *
+     * @param roomId 会议室ID
+     * @param date 日期 (yyyy-MM-dd)
+     * @return 预约列表
+     */
+    public List<MeetingBooking> selectSlots(Long roomId, String date);
 }

@@ -324,6 +324,12 @@
       "type": "file"
     },
     {
+      "path": ".superpowers\\sdd\\task-1-report.md",
+      "accessCount": 5,
+      "lastAccessed": 1782454206713,
+      "type": "file"
+    },
+    {
       "path": ".superpowers\\sdd\\task-2-report.md",
       "accessCount": 4,
       "lastAccessed": 1782446361043,
@@ -342,27 +348,21 @@
       "type": "file"
     },
     {
-      "path": ".superpowers\\sdd\\task-1-report.md",
-      "accessCount": 2,
-      "lastAccessed": 1782430380682,
+      "path": ".superpowers\\sdd\\task-1-brief.md",
+      "accessCount": 3,
+      "lastAccessed": 1782454108594,
+      "type": "file"
+    },
+    {
+      "path": ".superpowers\\sdd\\task-2-brief.md",
+      "accessCount": 3,
+      "lastAccessed": 1782454254994,
       "type": "file"
     },
     {
       "path": "ruoyi-common\\src\\main\\java\\com\\ruoyi\\common\\utils\\PingUtil.java",
       "accessCount": 2,
       "lastAccessed": 1782436438373,
-      "type": "file"
-    },
-    {
-      "path": ".superpowers\\sdd\\task-1-brief.md",
-      "accessCount": 2,
-      "lastAccessed": 1782445991571,
-      "type": "file"
-    },
-    {
-      "path": ".superpowers\\sdd\\task-2-brief.md",
-      "accessCount": 2,
-      "lastAccessed": 1782446116328,
       "type": "file"
     },
     {

@@ -37,3 +37,9 @@
 {"t":0,"agent":"a98cca0","agent_type":"executor","event":"agent_stop","success":true,"duration_ms":147985}
 {"t":0,"agent":"a0c0b3a","agent_type":"executor","event":"agent_start","parent_mode":"none"}
 {"t":0,"agent":"a0c0b3a","agent_type":"executor","event":"agent_stop","success":true,"duration_ms":327598}
+{"t":0,"agent":"system","event":"skill_invoked","skill_name":"superpowers:brainstorming"}
+{"t":0,"agent":"system","event":"skill_invoked","skill_name":"superpowers:writing-plans"}
+{"t":0,"agent":"system","event":"skill_invoked","skill_name":"superpowers:subagent-driven-development"}
+{"t":0,"agent":"a9ff138","agent_type":"executor","event":"agent_start","parent_mode":"none"}
+{"t":0,"agent":"a9ff138","agent_type":"executor","event":"agent_stop","success":true,"duration_ms":122622}
+{"t":0,"agent":"aadb00c","agent_type":"executor","event":"agent_start","parent_mode":"none"}

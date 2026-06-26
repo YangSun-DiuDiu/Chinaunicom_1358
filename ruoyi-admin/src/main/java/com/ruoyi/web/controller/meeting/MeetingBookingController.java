@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
@@ -180,5 +181,15 @@ public class MeetingBookingController extends BaseController
         booking.setStatus("CANCELLED");
         booking.setUpdateBy(SecurityUtils.getUsername());
         return toAjax(meetingBookingService.updateMeetingBooking(booking));
+    }
+
+    /**
+     * 获取指定会议室指定日期的已占用时间段
+     */
+    @GetMapping("/slots/{roomId}")
+    public AjaxResult slots(@PathVariable Long roomId, @RequestParam String date)
+    {
+        List<MeetingBooking> list = meetingBookingService.selectSlots(roomId, date);
+        return success(list);
     }
 }
