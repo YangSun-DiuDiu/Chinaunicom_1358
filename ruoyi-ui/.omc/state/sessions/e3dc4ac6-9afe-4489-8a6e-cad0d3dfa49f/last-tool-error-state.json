@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"echo \\\"=== Board API (room 1) ===\\\"\\ncurl -s http://1.94.26.126:8090/meeting/board/1 | python3 -c \\\"\\nimport sys,json\\nd=json.load(sys.stdin)\\ndata=d['data']\\nprint(f'Status: {data[\\\\\\\"cur...",
+  "error": "Exit code 49\n=== Board API (room 1) ===",
+  "timestamp": "2026-06-26T06:49:47.668Z",
+  "retry_count": 1
+}

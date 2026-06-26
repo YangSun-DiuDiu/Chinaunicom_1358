@@ -173,7 +173,12 @@ export default {
       this.title = '新增会议预约'; this.open = true
     },
     handleEdit(row) {
-      this.form = { ...row }; this.title = '修改会议预约'; this.open = true
+      this.form = {
+        bookingId: row.bookingId, roomId: row.roomId, title: row.title,
+        startTime: row.startTime, endTime: row.endTime,
+        hostName: row.hostName, hostPhone: row.hostPhone, attendees: row.attendees
+      }
+      this.title = '修改会议预约'; this.open = true
     },
     handleDel(row) {
       this.$confirm('确认删除会议预约「' + row.title + '」?', '提示', { type: 'warning' }).then(() =>
