@@ -148,8 +148,8 @@ public class DeptScopeInterceptor implements Interceptor {
                 String[] parts = firstTableClause.trim().split("\\s+");
                 if (parts.length >= 2) {
                     // parts[0] = table_name, parts[1] = alias
-                    String alias = parts[parts.length - 1];
-                    if (alias.length() <= 3 && !"join".equals(alias)) {
+                    String alias = parts[1];
+                    if (alias.length() <= 3 && !alias.equalsIgnoreCase("left") && !alias.equalsIgnoreCase("right") && !alias.equalsIgnoreCase("inner")) {
                         deptColumn = alias + ".dept_id";
                     }
                 }
