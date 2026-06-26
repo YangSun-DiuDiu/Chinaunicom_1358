@@ -199,7 +199,7 @@ export const staticRoutes = [
         path: 'approval',
         component: () => import('@/views/visitor/approval/index'),
         name: 'VisitorApproval',
-        meta: { title: '访客审批', icon: 'checkbox', permissions: ['visitor:appointment:pending'] }
+        meta: { title: '访客审批', icon: 'checkbox', permissions: ['visitor:approval:list'] }
       },
       {
         path: 'register',

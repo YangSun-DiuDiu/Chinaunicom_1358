@@ -1,7 +1,7 @@
 {
   "tool_name": "Bash",
-  "tool_input_preview": "{\"command\":\"ssh root@1.94.26.126 'systemctl restart ruoyi-admin 2>&1 || supervisorctl restart ruoyi-admin 2>&1'\",\"timeout\":30000,\"description\":\"Restart backend service on server\"}",
-  "error": "Exit code 127\n** WARNING: connection is not using a post-quantum key exchange algorithm.\r\n** This session may be vulnerable to \"store now, decrypt later\" attacks.\r\n** The server may need to be upgraded. See https://openssh.com/pq.html\r\nFailed to restart ruoyi-admin.service: Unit ruoyi-admin.service not found.\nbash: supervisorctl: command not found",
-  "timestamp": "2026-06-26T09:59:09.477Z",
+  "tool_input_preview": "{\"command\":\"echo \\\"=== zhaojg login and check permissions ===\\\"\\nZHAO_TOKEN=$(curl -s http://1.94.26.126:8090/login -H \\\"Content-Type: application/json\\\" -d '{\\\"username\\\":\\\"zhaojg\\\",\\\"password\\\":\\\"ad...",
+  "error": "Exit code 49\n=== zhaojg login and check permissions ===\n=== zhaojg getInfo ===\n\n=== zhaojg getRouters ===",
+  "timestamp": "2026-06-26T11:33:17.668Z",
   "retry_count": 1
 }
