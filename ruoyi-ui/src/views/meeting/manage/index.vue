@@ -42,7 +42,7 @@ export default {
     return {
       loading: false, total: 0, list: [], roomOptions: [],
       queryDate: todayStr(),
-      query: { pageNum: 1, pageSize: 10, roomId: undefined, status: 'APPROVED', startTime: todayStr(), endTime: todayStr() }
+      query: { pageNum: 1, pageSize: 10, roomId: undefined, status: undefined, startTime: todayStr(), endTime: todayStr() }
     }
   },
   created() {
@@ -66,7 +66,7 @@ export default {
     },
     reset() {
       this.queryDate = todayStr()
-      this.query = { pageNum: 1, pageSize: 10, roomId: undefined, status: 'APPROVED', startTime: todayStr(), endTime: todayStr() }
+      this.query = { pageNum: 1, pageSize: 10, roomId: undefined, status: undefined, startTime: todayStr(), endTime: todayStr() }
       this.getList()
     }
   }
