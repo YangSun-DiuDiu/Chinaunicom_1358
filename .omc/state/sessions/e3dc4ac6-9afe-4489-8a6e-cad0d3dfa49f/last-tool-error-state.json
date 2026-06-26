@@ -1,7 +1,7 @@
 {
   "tool_name": "mcp__plugin_oh-my-claudecode_t__lsp_diagnostics",
-  "tool_input_preview": "{\"file\":\"e:\\\\gitee\\\\production_release\\\\RuoYi-Vue-master2026-06-24\\\\ruoyi-system\\\\src\\\\main\\\\java\\\\com\\\\ruoyi\\\\system\\\\service\\\\impl\\\\MeetingBookingServiceImpl.java\"}",
-  "error": "Language server 'jdtls' not found.\nInstall with: Install from https://github.com/eclipse/eclipse.jdt.ls",
-  "timestamp": "2026-06-26T06:12:20.263Z",
-  "retry_count": 4
+  "tool_input_preview": "{\"file\":\"e:\\\\gitee\\\\production_release\\\\RuoYi-Vue-master2026-06-24\\\\ruoyi-ui\\\\src\\\\views\\\\meeting\\\\room\\\\index.vue\"}",
+  "error": "Language server 'vue-language-server' not found.\nInstall with: npm install -g @vue/language-server",
+  "timestamp": "2026-06-26T06:19:31.106Z",
+  "retry_count": 1
 }

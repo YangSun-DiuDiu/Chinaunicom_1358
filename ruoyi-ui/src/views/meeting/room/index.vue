@@ -32,6 +32,12 @@
         </template>
       </el-table-column>
       <el-table-column label="创建时间" prop="createTime" min-width="140" align="center"/>
+      <el-table-column label="平板地址" min-width="300">
+        <template slot-scope="{row}">
+          <el-input :value="'http://1.94.26.126:80/meeting/board?roomId='+row.roomId" size="mini" readonly style="width:240px"/>
+          <el-button size="mini" icon="el-icon-document-copy" style="margin-left:4px" @click="copyBoardUrl(row)">复制</el-button>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" min-width="120" fixed="right" align="center">
         <template slot-scope="{row}">
           <el-button size="mini" type="text" icon="el-icon-edit" @click="handleEdit(row)" v-hasPermi="['meeting:room:edit']">修改</el-button>
@@ -107,6 +113,10 @@ export default {
       this.$confirm('确认删除会议室「' + row.roomName + '」?', '提示', { type: 'warning' }).then(() =>
         request({ url: BASE + '/' + row.roomId, method: 'delete' }).then(() => { this.$message.success('删除成功'); this.getList() })
       ).catch(() => {})
+    },
+    copyBoardUrl(row) {
+      const url = 'http://1.94.26.126:80/meeting/board?roomId=' + row.roomId
+      navigator.clipboard.writeText(url).then(() => this.$message.success('已复制'))
     },
     submit() {
       this.$refs.form.validate(v => {

@@ -388,6 +388,12 @@ export const staticRoutes = [
         meta: { title: '会议预约', icon: 'edit', permissions: ['meeting:booking:list'] }
       },
       {
+        path: 'approval',
+        component: () => import('@/views/meeting/approval/index'),
+        name: 'MeetingApproval',
+        meta: { title: '会议审批', icon: 'checkbox', permissions: ['meeting:approval:list'] }
+      },
+      {
         path: 'manage',
         component: () => import('@/views/meeting/manage/index'),
         name: 'MeetingManage',

@@ -18,7 +18,7 @@
     "runtime": null
   },
   "build": {
-    "buildCommand": "cat > \"E:/gitee/production_release/RuoYi-Vue-master2026-06-24/.superpowers/sdd/task-6-report.md\" << 'EOF'\n# Task 6 Report: Build, Deploy, Verify, Commit, Push\n\n**Date:** 2026-06-26\n**Status:** COMPLETED\n\n## Step 1: Security Whitelist\n- `/meeting/board/**` already present in `SecurityConfig.java` line 103 `permitAll` chain\n- No changes needed -- whitelist was added in a prior task\n\n## Step 2: Build\n- **Backend:** `mvn clean package -DskipTests -q` -- SUCCESS (ruoyi-admin.jar, 93.6 MB)\n- **Frontend:** `npm run build:prod` -- SUCCESS (dist/ directory ready to deploy)\n\n## Step 3: Deploy\n- `scp ruoyi-admin.jar` to `root@1.94.26.126:/root/zhihuiyuanqu20260625/` -- OK\n- `scp -r ruoyi-ui/dist/*` to `root@1.94.26.126:/usr/share/nginx/zhihuiyuanqu/dist/` -- OK\n- `stop-server.sh && start-server.sh && nginx -s reload` -- Backend PID 1868637 started on port 8090\n\n## Step 4: Verification\n| Check | Endpoint | Result |\n|-------|----------|--------|\n| Backend health | `http://1.94.26.126:8090/` | HTTP 200 |\n| Frontend health | `http://1.94.26.126:80/` | HTTP 200 |\n| Board API (no auth) | `http://1.94.26.126:8090/meeting/board/1` | JSON `{\"msg\":\"会议室不存在\",\"code\":500}` (whitelist OK) |\n| Frontend board page | `http://1.94.26.126:80/meeting/board?roomId=1` | HTTP 200 |\n| Booking API (auth) | `POST /meeting/booking` with admin token | JSON `{\"msg\":\"会议室不存在\",\"code\":500}` (endpoint functional) |\n\n## Step 5: Commit & Push\n- **Commit:** `5329dbe` -- `chore: deploy meeting management feature` (23 files, +2946 lines)\n- **Push:** `b394413..5329dbe` pushed to `origin master` on `https://github.com/YangSun-DiuDiu/Chinaunicom_1358.git`\nEOF\necho \"Report written.\"",
+    "buildCommand": "cd \"e:/gitee/production_release/RuoYi-Vue-master2026-06-24/ruoyi-ui\" && npm run build:prod 2>&1",
     "testCommand": null,
     "lintCommand": null,
     "devCommand": null,
@@ -283,8 +283,14 @@
   "hotPaths": [
     {
       "path": "",
-      "accessCount": 56,
-      "lastAccessed": 1782447985259,
+      "accessCount": 58,
+      "lastAccessed": 1782454435046,
+      "type": "directory"
+    },
+    {
+      "path": "ruoyi-ui\\src\\router\\index.js",
+      "accessCount": 11,
+      "lastAccessed": 1782454619825,
       "type": "directory"
     },
     {
@@ -304,12 +310,6 @@
       "accessCount": 9,
       "lastAccessed": 1782447770066,
       "type": "file"
-    },
-    {
-      "path": "ruoyi-ui\\src\\router\\index.js",
-      "accessCount": 8,
-      "lastAccessed": 1782453165169,
-      "type": "directory"
     },
     {
       "path": "ruoyi-ui\\src\\views\\smart\\video\\device\\index.vue",
@@ -360,27 +360,27 @@
       "type": "file"
     },
     {
+      "path": ".superpowers\\sdd\\task-3-brief.md",
+      "accessCount": 3,
+      "lastAccessed": 1782454423233,
+      "type": "file"
+    },
+    {
+      "path": ".superpowers\\sdd\\task-4-brief.md",
+      "accessCount": 3,
+      "lastAccessed": 1782454751081,
+      "type": "file"
+    },
+    {
       "path": "ruoyi-common\\src\\main\\java\\com\\ruoyi\\common\\utils\\PingUtil.java",
       "accessCount": 2,
       "lastAccessed": 1782436438373,
       "type": "file"
     },
     {
-      "path": ".superpowers\\sdd\\task-3-brief.md",
-      "accessCount": 2,
-      "lastAccessed": 1782447460227,
-      "type": "file"
-    },
-    {
       "path": "ruoyi-admin\\src\\main\\resources\\application.yml",
       "accessCount": 2,
       "lastAccessed": 1782447489321,
-      "type": "file"
-    },
-    {
-      "path": ".superpowers\\sdd\\task-4-brief.md",
-      "accessCount": 2,
-      "lastAccessed": 1782447747474,
       "type": "file"
     },
     {
