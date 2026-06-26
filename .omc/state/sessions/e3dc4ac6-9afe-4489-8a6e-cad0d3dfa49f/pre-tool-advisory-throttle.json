@@ -1,46 +1,18 @@
 {
   "version": 1,
   "entries": {
-    "79a93d4a2f8f50b95f852280616242fee1855dc99a3c75211917f55e72e95fae": {
-      "last_emitted_at_ms": 1782432168242,
-      "message": "Use parallel execution for independent tasks. Use run_in_background for long operations (npm install, builds, tests)."
-    },
-    "4f7a67fba0a8473e9883d9e8dffbb2d72e00a4a1eeb4fa80cb14213b167dc90f": {
-      "last_emitted_at_ms": 1782432165450,
-      "message": "Mark todos in_progress BEFORE starting, completed IMMEDIATELY after finishing."
-    },
-    "2f6261f0f2a71abdbad0c6343f1d4a192eda06f5711af569a5c283dd7979ac6a": {
-      "last_emitted_at_ms": 1782430783037,
-      "message": "Spawning agent: oh-my-claudecode:executor (haiku) [BACKGROUND] | Task: Task 4: Build deploy verify"
-    },
     "459c54e5f35d6a58dcd90d2aecc21fa6d1f35d241bc5b134c506f87dc7b6d67b": {
-      "last_emitted_at_ms": 1782430733369,
+      "last_emitted_at_ms": 1782453158768,
       "message": "Combine searches in parallel when investigating multiple patterns."
     },
     "466399dafa2d20f60587180bad0a07358eb7f2bce724df0ff682f038ad33f5ad": {
-      "last_emitted_at_ms": 1782430580483,
+      "last_emitted_at_ms": 1782453040148,
       "message": "Read multiple files in parallel when possible for faster analysis."
     },
-    "5b5a5c89c8d908c882c40538fa48da2e7e65225e19b58b84eaa260a9661009ad": {
-      "last_emitted_at_ms": 1782430577666,
-      "message": "Spawning agent: oh-my-claudecode:executor (sonnet) | Task: Task 3: Frontend three pages"
-    },
-    "445ed27a3872b681d98190bae61ccb84954e1bc4e140df5370be958dee776b3a": {
-      "last_emitted_at_ms": 1782430445818,
-      "message": "Verify changes work after editing. Test functionality before marking complete."
-    },
-    "e78b18f67d812cf23c9a83c75619f6de753bea318e3d4db43240970d67efca26": {
-      "last_emitted_at_ms": 1782430421117,
-      "message": "Spawning agent: oh-my-claudecode:executor (haiku) | Task: Task 2: Add repair endpoint"
-    },
-    "5b4001fdd7fe55d9351b1916c2979340e38389bec125444eedea75d3c4ba500b": {
-      "last_emitted_at_ms": 1782430270542,
-      "message": "Spawning agent: oh-my-claudecode:executor (haiku) | Task: Task 1: Add ping-all endpoints"
-    },
-    "2ca68d31845c6ed379ccfca63d60e5985dd8d3399df18d5fa05a5d28099ff9e8": {
-      "last_emitted_at_ms": 1782429823637,
-      "message": "Spawning agent: Explore (inherit) | Task: Explore smart device pages"
+    "79a93d4a2f8f50b95f852280616242fee1855dc99a3c75211917f55e72e95fae": {
+      "last_emitted_at_ms": 1782453029538,
+      "message": "Use parallel execution for independent tasks. Use run_in_background for long operations (npm install, builds, tests)."
     }
   },
-  "updated_at": "2026-06-26T00:02:48.242Z"
+  "updated_at": "2026-06-26T05:52:38.768Z"
 }
