@@ -22,7 +22,7 @@ module.exports = {
   /**
    * 是否显示 tagsView
    */
-  tagsView: true,
+  tagsView: false,
 
   /**
    * 持久化标签页

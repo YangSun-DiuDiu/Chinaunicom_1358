@@ -11,7 +11,7 @@ export default {
       return this.$store.state.settings.footerVisible
     },
     content() {
-      return this.$store.state.settings.footerContent
+      return '© 2026 智慧园区管理系统'
     }
   }
 }
