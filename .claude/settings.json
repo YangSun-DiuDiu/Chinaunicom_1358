@@ -107,7 +107,16 @@
       "Bash(curl -s http://1.94.26.126:8090/meeting/slots/list)",
       "Bash(curl -s -H \"Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImxvZ2luX3VzZXJfa2V5IjoiNTAyZjJlOGUtYWUyNS00MTBiLTk4NTYtNzcyYmQwOWRkOTQ3In0.NAXVPmY2EiTfDl-DzN0gluVJCC39hBDgJbk5Nlppt6WKWtMhrUjpDOE4KM9I_C3z6vBnt8PLwGeFAQieUiRHBg\" http://1.94.26.126:8090/meeting/slots/list)",
       "Bash(curl -s -H \"Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImxvZ2luX3VzZXJfa2V5IjoiNTAyZjJlOGUtYWUyNS00MTBiLTk4NTYtNzcyYmQwOWRkOTQ3In0.NAXVPmY2EiTfDl-DzN0gluVJCC39hBDgJbk5Nlppt6WKWtMhrUjpDOE4KM9I_C3z6vBnt8PLwGeFAQieUiRHBg\" \"http://1.94.26.126:8090/meeting/room/list\")",
-      "Bash(curl -s -H \"Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImxvZ2luX3VzZXJfa2V5IjoiNTAyZjJlOGUtYWUyNS00MTBiLTk4NTYtNzcyYmQwOWRkOTQ3In0.NAXVPmY2EiTfDl-DzN0gluVJCC39hBDgJbk5Nlppt6WKWtMhrUjpDOE4KM9I_C3z6vBnt8PLwGeFAQieUiRHBg\" \"http://1.94.26.126:8090/meeting/booking/slots/1?date=2026-06-26\")"
+      "Bash(curl -s -H \"Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImxvZ2luX3VzZXJfa2V5IjoiNTAyZjJlOGUtYWUyNS00MTBiLTk4NTYtNzcyYmQwOWRkOTQ3In0.NAXVPmY2EiTfDl-DzN0gluVJCC39hBDgJbk5Nlppt6WKWtMhrUjpDOE4KM9I_C3z6vBnt8PLwGeFAQieUiRHBg\" \"http://1.94.26.126:8090/meeting/booking/slots/1?date=2026-06-26\")",
+      "Bash(mysql -h 1.94.26.126 -P 3306 -u sadmin -pChinaunicom@1358 ry101 -e \"SELECT booking_id, room_id, title, start_time, end_time, status FROM meeting_booking ORDER BY booking_id DESC LIMIT 5;\")",
+      "Bash(python3 -c 'import sys,json; d=json.load\\(sys.stdin\\); print\\('\\\\''Status:'\\\\'', d.get\\('\\\\''msg'\\\\''\\)\\); print\\('\\\\''Current:'\\\\'', d['\\\\''data'\\\\''].get\\('\\\\''currentStatus'\\\\''\\)\\); print\\('\\\\''Bookings:'\\\\'', len\\(d['\\\\''data'\\\\''].get\\('\\\\''todayBookings'\\\\'',[]\\)\\)\\); *)",
+      "Bash(mysql -h 1.94.26.126 -P 3306 -u sadmin -pChinaunicom@1358 ry101 -N -e \"SELECT booking_id, room_id, title, DATE\\(start_time\\), start_time, end_time, status FROM meeting_booking ORDER BY booking_id;\")",
+      "Bash(npm run *)",
+      "Bash(scp -r dist/* root@1.94.26.126:/usr/share/nginx/zhihuiyuanqu/dist/)",
+      "Bash(ssh root@1.94.26.126 'nginx -s reload')",
+      "Bash(mysql -h 1.94.26.126 -P 3306 -u sadmin -pChinaunicom@1358 ry101 -e \"DELETE FROM meeting_booking WHERE booking_id=2;\")",
+      "Bash(mysql -h 1.94.26.126 -P 3306 -u sadmin -pChinaunicom@1358 ry101 -e \"SELECT booking_id, room_id, title, host_name, status FROM meeting_booking;\")",
+      "Bash(python3 -c ' *)"
     ],
     "additionalDirectories": [
       "e:\\gitee\\production_release\\RuoYi-Vue-master2026-06-24\\.claude\\skills"
