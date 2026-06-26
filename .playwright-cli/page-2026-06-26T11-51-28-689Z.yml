@@ -1,0 +1,24 @@
+- generic [ref=e3]:
+  - generic [ref=e5]:
+    - heading "智慧园区管理系统" [level=1] [ref=e6]
+    - paragraph [ref=e7]: Smart Park Management System
+    - paragraph [ref=e9]: 智能化 · 数字化 · 可视化的园区综合管理平台
+  - generic [ref=e10]:
+    - generic [ref=e11]:
+      - heading "欢迎登录" [level=3] [ref=e12]
+      - generic [ref=e13]:
+        - generic [ref=e16]:
+          - textbox "账号" [ref=e17]: admin
+          - img [ref=e19]
+        - generic [ref=e23]:
+          - textbox "密码" [ref=e24]: admin123
+          - img [ref=e26]
+        - generic [ref=e36] [cursor=pointer]:
+          - generic [ref=e37]:
+            - checkbox "记住密码"
+          - generic [ref=e39]: 记住密码
+        - generic [ref=e41]:
+          - button " 登 录 中..." [disabled]:
+            - generic: 
+            - generic: 登 录 中...
+    - generic [ref=e44]: Copyright © 2026 智慧园区管理系统 All Rights Reserved.
