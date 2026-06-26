@@ -65,6 +65,12 @@ export const constantRoutes = [
     meta: { title: '维修确认' }
   },
   {
+    path: '/meeting/board',
+    component: () => import('@/views/meeting/board/index'),
+    hidden: true,
+    meta: { title: '会议室看板' }
+  },
+  {
     path: '/lock',
     component: () => import('@/views/lock'),
     hidden: true,
@@ -358,6 +364,34 @@ export const staticRoutes = [
         component: () => import('@/views/sms/log/index'),
         name: 'SmsLogView',
         meta: { title: '发送记录', icon: 'list', permissions: ['sms:log:list'] }
+      }
+    ]
+  },
+  // ==================== 会议管理 ====================
+  {
+    path: '/meeting',
+    component: Layout,
+    name: 'Meeting',
+    alwaysShow: true,
+    meta: { title: '会议管理', icon: 'date' },
+    children: [
+      {
+        path: 'room',
+        component: () => import('@/views/meeting/room/index'),
+        name: 'MeetingRoom',
+        meta: { title: '会议室管理', icon: 'room', permissions: ['meeting:room:list'] }
+      },
+      {
+        path: 'booking',
+        component: () => import('@/views/meeting/booking/index'),
+        name: 'MeetingBooking',
+        meta: { title: '会议预约', icon: 'edit', permissions: ['meeting:booking:list'] }
+      },
+      {
+        path: 'manage',
+        component: () => import('@/views/meeting/manage/index'),
+        name: 'MeetingManage',
+        meta: { title: '会议管理', icon: 'list', permissions: ['meeting:booking:list'] }
       }
     ]
   }
