@@ -2,19 +2,17 @@
   <div class="sidebar-logo-container" :class="{'collapse':collapse}" :style="{ backgroundColor: sideTheme === 'theme-dark' && navType !== 3 ? variables.menuBackground : variables.menuLightBackground }">
     <transition name="sidebarLogoFade">
       <router-link v-if="collapse" key="collapse" class="sidebar-logo-link" to="/">
-        <img v-if="logo" :src="logo" class="sidebar-logo" />
-        <h1 v-else class="sidebar-title" :style="{ color: sideTheme === 'theme-dark' && navType !== 3 ? variables.logoTitleColor : variables.logoLightTitleColor }">{{ title }} </h1>
+        <span class="sidebar-logo-emoji">🏢</span>
       </router-link>
       <router-link v-else key="expand" class="sidebar-logo-link" to="/">
-        <img v-if="logo" :src="logo" class="sidebar-logo" />
-        <h1 class="sidebar-title" :style="{ color: sideTheme === 'theme-dark' && navType !== 3 ? variables.logoTitleColor : variables.logoLightTitleColor }">{{ title }} </h1>
+        <span class="sidebar-logo-emoji">🏢</span>
+        <span class="sidebar-logo-text">智慧园区</span>
       </router-link>
     </transition>
   </div>
 </template>
 
 <script>
-import logoImg from '@/assets/logo/logo.png'
 import variables from '@/assets/styles/variables.scss'
 
 export default {
@@ -34,12 +32,6 @@ export default {
     },
     navType() {
       return this.$store.state.settings.navType
-    }
-  },
-  data() {
-    return {
-      title: process.env.VUE_APP_TITLE,
-      logo: logoImg
     }
   }
 }
@@ -67,28 +59,30 @@ export default {
     height: 100%;
     width: 100%;
 
-    & .sidebar-logo {
-      width: 32px;
-      height: 32px;
+    & .sidebar-logo-emoji {
+      font-size: 22px;
       vertical-align: middle;
-      margin-right: 12px;
     }
 
-    & .sidebar-title {
+    & .sidebar-logo-text {
       display: inline-block;
       margin: 0;
-      color: #fff;
-      font-weight: 600;
+      margin-left: 8px;
+      font-weight: 700;
       line-height: 50px;
-      font-size: 14px;
+      font-size: 16px;
       font-family: Avenir, Helvetica Neue, Arial, Helvetica, sans-serif;
       vertical-align: middle;
+      background: linear-gradient(90deg, #00D4FF, #00B894);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
   }
 
   &.collapse {
-    .sidebar-logo {
-      margin-right: 0px;
+    .sidebar-logo-emoji {
+      font-size: 24px;
     }
   }
 }
