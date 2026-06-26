@@ -61,7 +61,15 @@
       "Bash(bash \"C:\\\\Users\\\\Administrator\\\\.claude\\\\plugins\\\\cache\\\\superpowers-marketplace\\\\superpowers\\\\6.0.3\\\\skills\\\\subagent-driven-development\\\\scripts\\\\task-brief\" \"e:\\\\gitee\\\\production_release\\\\RuoYi-Vue-master2026-06-24\\\\docs\\\\superpowers\\\\plans\\\\2026-06-26-smart-device-ping-repair-plan.md\" 1)",
       "Bash(mvn clean *)",
       "Bash(bash \"C:\\\\Users\\\\Administrator\\\\.claude\\\\plugins\\\\cache\\\\superpowers-marketplace\\\\superpowers\\\\6.0.3\\\\skills\\\\subagent-driven-development\\\\scripts\\\\task-brief\" \"e:\\\\gitee\\\\production_release\\\\RuoYi-Vue-master2026-06-24\\\\docs\\\\superpowers\\\\plans\\\\2026-06-26-smart-device-ping-repair-plan.md\" 2)",
-      "Bash(bash \"C:\\\\Users\\\\Administrator\\\\.claude\\\\plugins\\\\cache\\\\superpowers-marketplace\\\\superpowers\\\\6.0.3\\\\skills\\\\subagent-driven-development\\\\scripts\\\\task-brief\" \"e:\\\\gitee\\\\production_release\\\\RuoYi-Vue-master2026-06-24\\\\docs\\\\superpowers\\\\plans\\\\2026-06-26-smart-device-ping-repair-plan.md\" 3)"
+      "Bash(bash \"C:\\\\Users\\\\Administrator\\\\.claude\\\\plugins\\\\cache\\\\superpowers-marketplace\\\\superpowers\\\\6.0.3\\\\skills\\\\subagent-driven-development\\\\scripts\\\\task-brief\" \"e:\\\\gitee\\\\production_release\\\\RuoYi-Vue-master2026-06-24\\\\docs\\\\superpowers\\\\plans\\\\2026-06-26-smart-device-ping-repair-plan.md\" 3)",
+      "Bash(bash \"C:\\\\Users\\\\Administrator\\\\.claude\\\\plugins\\\\cache\\\\superpowers-marketplace\\\\superpowers\\\\6.0.3\\\\skills\\\\subagent-driven-development\\\\scripts\\\\task-brief\" \"e:\\\\gitee\\\\production_release\\\\RuoYi-Vue-master2026-06-24\\\\docs\\\\superpowers\\\\plans\\\\2026-06-26-smart-device-ping-repair-plan.md\" 4)",
+      "Bash(scp \"e:/gitee/production_release/RuoYi-Vue-master2026-06-24/ruoyi-admin/target/ruoyi-admin.jar\" root@1.94.26.126:/root/zhihuiyuanqu20260625/)",
+      "Bash(ssh root@1.94.26.126 'cd /root/zhihuiyuanqu20260625 && bash stop-server.sh && bash start-server.sh && nginx -s reload')",
+      "Bash(curl -s -X POST \"http://1.94.26.126:8090/login\" -H \"Content-Type: application/json\" -d '{\"username\":\"admin\",\"password\":\"admin123\"}')",
+      "Bash(curl -s -X POST http://1.94.26.126:8090/smart/access/person-device/ping-all -H 'Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImxvZ2luX3VzZXJfa2V5IjoiNmM3NTdjNDQtYjkyYi00NDJjLThjOGUtMDAwMDk3ZjE2YWUxIn0.YCqoWJElDjnkLh_SvYa63AhZTeDsr6Tvd3JCVZtHmlpZXIA8rk69c_fx7BI7ojoSNXMjIclGeGTA45K4v-a-DQ')",
+      "Bash(curl -s -X POST http://1.94.26.126:8090/smart/access/device-repair/person/1 -H 'Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImxvZ2luX3VzZXJfa2V5IjoiNmM3NTdjNDQtYjkyYi00NDJjLThjOGUtMDAwMDk3ZjE2YWUxIn0.YCqoWJElDjnkLh_SvYa63AhZTeDsr6Tvd3JCVZtHmlpZXIA8rk69c_fx7BI7ojoSNXMjIclGeGTA45K4v-a-DQ' -H 'Content-Type: application/json' -d '{\"phone\":\"13800000001\"}')",
+      "Bash(curl -s -o /dev/null -w \"Frontend HTTP %{http_code}\\\\n\" http://1.94.26.126:80/)",
+      "Bash(curl -s -o /dev/null -w \"Repair-complete page HTTP %{http_code}\\\\n\" http://1.94.26.126:80/repair-complete)"
     ],
     "additionalDirectories": [
       "e:\\gitee\\production_release\\RuoYi-Vue-master2026-06-24\\.claude\\skills"

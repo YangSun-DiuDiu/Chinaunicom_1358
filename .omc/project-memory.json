@@ -18,7 +18,7 @@
     "runtime": null
   },
   "build": {
-    "buildCommand": null,
+    "buildCommand": "cd \"e:/gitee/production_release/RuoYi-Vue-master2026-06-24/ruoyi-ui\" && npm run build:prod 2>&1",
     "testCommand": null,
     "lintCommand": null,
     "devCommand": null,
@@ -448,6 +448,18 @@
       "accessCount": 1,
       "lastAccessed": 1782430734188,
       "type": "directory"
+    },
+    {
+      "path": ".superpowers\\sdd\\task-4-brief.md",
+      "accessCount": 1,
+      "lastAccessed": 1782430788220,
+      "type": "file"
+    },
+    {
+      "path": ".superpowers\\sdd\\task-4-report.md",
+      "accessCount": 1,
+      "lastAccessed": 1782430788676,
+      "type": "file"
     }
   ],
   "userDirectives": []

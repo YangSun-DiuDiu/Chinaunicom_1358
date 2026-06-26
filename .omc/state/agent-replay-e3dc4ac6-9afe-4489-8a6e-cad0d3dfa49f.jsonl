@@ -8,3 +8,5 @@
 {"t":0,"agent":"a770897","agent_type":"executor","event":"agent_start","parent_mode":"none"}
 {"t":0,"agent":"a770897","agent_type":"executor","event":"agent_stop","success":true,"duration_ms":96923}
 {"t":0,"agent":"a650317","agent_type":"executor","event":"agent_start","parent_mode":"none"}
+{"t":0,"agent":"a650317","agent_type":"executor","event":"agent_stop","success":true,"duration_ms":171301}
+{"t":0,"agent":"ac858c6","agent_type":"executor","event":"agent_start","parent_mode":"none"}
