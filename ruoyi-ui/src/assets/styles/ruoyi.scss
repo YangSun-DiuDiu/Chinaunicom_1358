@@ -482,3 +482,15 @@
   position: relative;
   float: right;
 }
+
+// ============ 科技风主题全局覆盖 ============
+// 全局卡片样式
+.el-card { border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+.el-table { border-radius: 8px; overflow: hidden; }
+.el-button--primary { background: #00D4FF; border-color: #00D4FF; }
+.el-button--primary:hover { background: #00B8E0; border-color: #00B8E0; }
+.el-pagination button:hover, .el-pagination .el-pager li:hover { color: #00D4FF; }
+
+// 表格悬停
+.el-table--striped .el-table__body tr.el-table__row--striped td { background: #F8FAFC; }
+.el-table tbody tr:hover > td { background: rgba(0,212,255,0.03) !important; }

@@ -319,3 +319,13 @@
     }
   }
 }
+
+// ============ 科技风 sub-sidebar 样式 ============
+.sub-sidebar { background: rgba(10,22,40,0.97) !important; backdrop-filter: blur(12px); }
+.sub-sidebar .el-menu { background: transparent; border: none; }
+.sub-sidebar .el-menu-item { border-radius: 8px; margin: 2px 8px; color: #A0B4C8; }
+.sub-sidebar .el-menu-item:hover { background: rgba(0,212,255,0.08); color: #00D4FF; }
+.sub-sidebar .el-menu-item.is-active {
+  background: linear-gradient(90deg, rgba(0,212,255,0.15), transparent);
+  border-left: 3px solid #00D4FF; color: #00D4FF;
+}
