@@ -44,6 +44,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="status != null and status != ''">
                 AND b.status = #{status}
             </if>
+            <if test="createBy != null and createBy != ''">
+                AND b.create_by = #{createBy}
+            </if>
             <if test="params.beginTime != null and params.beginTime != ''">
                 and date_format(b.create_time,'%Y%m%d') &gt;= date_format(#{params.beginTime},'%Y%m%d')
             </if>
@@ -132,6 +135,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         AND b.status IN ('PENDING','APPROVED')
         AND DATE(b.start_time) = CURDATE()
         ORDER BY b.start_time ASC
+    </select>
+
+    <select id="selectSlots" resultMap="MeetingBookingResult">
+        <include refid="selectMeetingBookingVo"/>
+        WHERE b.room_id = #{roomId} AND DATE(b.start_time) = #{date}
+        AND b.status IN ('PENDING','APPROVED')
+        ORDER BY b.start_time
     </select>
 
 </mapper>

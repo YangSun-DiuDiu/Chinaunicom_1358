@@ -90,7 +90,12 @@
       "Bash(mysql -h 1.94.26.126 -P 3306 -u sadmin -pChinaunicom@1358 ry101 -e \"SELECT menu_id, menu_name, path, component, perms FROM sys_menu WHERE menu_name LIKE '%会议%' ORDER BY menu_id;\")",
       "Bash(mysql -h 1.94.26.126 -P 3306 -u sadmin -pChinaunicom@1358 ry101 -e ' *)",
       "Bash(mysql -h 1.94.26.126 -P 3306 -u sadmin -pChinaunicom@1358 ry101 -e \"SELECT menu_id, menu_name, perms FROM sys_menu WHERE menu_name LIKE '%会议%' OR perms LIKE 'meeting%' ORDER BY menu_id;\")",
-      "Bash(mysql -h 1.94.26.126 -P 3306 -u sadmin -pChinaunicom@1358 ry101 -e \"UPDATE sys_menu SET perms='meeting:booking:list' WHERE menu_id=2034; SELECT menu_id, menu_name, perms FROM sys_menu WHERE menu_name LIKE '%会议%' ORDER BY menu_id;\")"
+      "Bash(mysql -h 1.94.26.126 -P 3306 -u sadmin -pChinaunicom@1358 ry101 -e \"UPDATE sys_menu SET perms='meeting:booking:list' WHERE menu_id=2034; SELECT menu_id, menu_name, perms FROM sys_menu WHERE menu_name LIKE '%会议%' ORDER BY menu_id;\")",
+      "Bash(bash \"C:\\\\Users\\\\Administrator\\\\.claude\\\\plugins\\\\cache\\\\superpowers-marketplace\\\\superpowers\\\\6.0.3\\\\skills\\\\subagent-driven-development\\\\scripts\\\\task-brief\" \"e:\\\\gitee\\\\production_release\\\\RuoYi-Vue-master2026-06-24\\\\docs\\\\superpowers\\\\plans\\\\2026-06-26-meeting-booking-improvements-plan.md\" 1)",
+      "Bash(mysql -h 1.94.26.126 -P 3306 -u sadmin -pChinaunicom@1358 ry101 -e \"SELECT menu_id, menu_name, parent_id, order_num, path, component, perms, menu_type, visible, status FROM sys_menu WHERE menu_id IN \\(2031, 2033\\) OR parent_id=2031 ORDER BY parent_id, order_num;\")",
+      "Bash(mysql -h 1.94.26.126 -P 3306 -u sadmin -pChinaunicom@1358 ry101 -e \"SELECT menu_id, menu_name, parent_id, order_num, path, component, perms, menu_type, visible, status FROM sys_menu WHERE parent_id=2031 ORDER BY order_num, menu_id;\")",
+      "Bash(mysql -h 1.94.26.126 -P 3306 -u sadmin -pChinaunicom@1358 ry101 -e \"SELECT rm.role_id, rm.menu_id, m.menu_name, m.perms FROM sys_role_menu rm JOIN sys_menu m ON rm.menu_id=m.menu_id WHERE rm.menu_id IN \\(2035, 2036\\) ORDER BY rm.menu_id;\")",
+      "Bash(bash \"C:\\\\Users\\\\Administrator\\\\.claude\\\\plugins\\\\cache\\\\superpowers-marketplace\\\\superpowers\\\\6.0.3\\\\skills\\\\subagent-driven-development\\\\scripts\\\\task-brief\" \"e:\\\\gitee\\\\production_release\\\\RuoYi-Vue-master2026-06-24\\\\docs\\\\superpowers\\\\plans\\\\2026-06-26-meeting-booking-improvements-plan.md\" 2)"
     ],
     "additionalDirectories": [
       "e:\\gitee\\production_release\\RuoYi-Vue-master2026-06-24\\.claude\\skills"

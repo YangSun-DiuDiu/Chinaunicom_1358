@@ -1,7 +1,7 @@
 {
-  "tool_name": "Bash",
-  "tool_input_preview": "{\"command\":\"TOKEN=$(curl -s -X POST http://1.94.26.126:8090/login -H \\\"Content-Type: application/json\\\" -d '{\\\"username\\\":\\\"admin\\\",\\\"password\\\":\\\"admin123\\\",\\\"code\\\":\\\"0\\\",\\\"uuid\\\":\\\"0\\\"}' 2>&1 | pyt...",
-  "error": "Exit code 49",
-  "timestamp": "2026-06-26T04:33:05.311Z",
-  "retry_count": 1
+  "tool_name": "mcp__plugin_oh-my-claudecode_t__lsp_diagnostics",
+  "tool_input_preview": "{\"file\":\"e:\\\\gitee\\\\production_release\\\\RuoYi-Vue-master2026-06-24\\\\ruoyi-system\\\\src\\\\main\\\\java\\\\com\\\\ruoyi\\\\system\\\\service\\\\impl\\\\MeetingBookingServiceImpl.java\"}",
+  "error": "Language server 'jdtls' not found.\nInstall with: Install from https://github.com/eclipse/eclipse.jdt.ls",
+  "timestamp": "2026-06-26T06:12:20.263Z",
+  "retry_count": 4
 }

@@ -108,4 +108,17 @@ public class MeetingBookingServiceImpl implements IMeetingBookingService
     {
         return meetingBookingMapper.selectTodayByRoom(roomId);
     }
+
+    /**
+     * 查询指定会议室指定日期的已占用时间段
+     *
+     * @param roomId 会议室ID
+     * @param date 日期 (yyyy-MM-dd)
+     * @return 预约列表
+     */
+    @Override
+    public List<MeetingBooking> selectSlots(Long roomId, String date)
+    {
+        return meetingBookingMapper.selectSlots(roomId, date);
+    }
 }
