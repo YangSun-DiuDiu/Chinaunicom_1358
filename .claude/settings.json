@@ -97,7 +97,17 @@
       "Bash(mysql -h 1.94.26.126 -P 3306 -u sadmin -pChinaunicom@1358 ry101 -e \"SELECT rm.role_id, rm.menu_id, m.menu_name, m.perms FROM sys_role_menu rm JOIN sys_menu m ON rm.menu_id=m.menu_id WHERE rm.menu_id IN \\(2035, 2036\\) ORDER BY rm.menu_id;\")",
       "Bash(bash \"C:\\\\Users\\\\Administrator\\\\.claude\\\\plugins\\\\cache\\\\superpowers-marketplace\\\\superpowers\\\\6.0.3\\\\skills\\\\subagent-driven-development\\\\scripts\\\\task-brief\" \"e:\\\\gitee\\\\production_release\\\\RuoYi-Vue-master2026-06-24\\\\docs\\\\superpowers\\\\plans\\\\2026-06-26-meeting-booking-improvements-plan.md\" 2)",
       "Bash(bash \"C:\\\\Users\\\\Administrator\\\\.claude\\\\plugins\\\\cache\\\\superpowers-marketplace\\\\superpowers\\\\6.0.3\\\\skills\\\\subagent-driven-development\\\\scripts\\\\task-brief\" \"e:\\\\gitee\\\\production_release\\\\RuoYi-Vue-master2026-06-24\\\\docs\\\\superpowers\\\\plans\\\\2026-06-26-meeting-booking-improvements-plan.md\" 3)",
-      "Bash(bash \"C:\\\\Users\\\\Administrator\\\\.claude\\\\plugins\\\\cache\\\\superpowers-marketplace\\\\superpowers\\\\6.0.3\\\\skills\\\\subagent-driven-development\\\\scripts\\\\task-brief\" \"e:\\\\gitee\\\\production_release\\\\RuoYi-Vue-master2026-06-24\\\\docs\\\\superpowers\\\\plans\\\\2026-06-26-meeting-booking-improvements-plan.md\" 4)"
+      "Bash(bash \"C:\\\\Users\\\\Administrator\\\\.claude\\\\plugins\\\\cache\\\\superpowers-marketplace\\\\superpowers\\\\6.0.3\\\\skills\\\\subagent-driven-development\\\\scripts\\\\task-brief\" \"e:\\\\gitee\\\\production_release\\\\RuoYi-Vue-master2026-06-24\\\\docs\\\\superpowers\\\\plans\\\\2026-06-26-meeting-booking-improvements-plan.md\" 4)",
+      "Bash(bash \"C:\\\\Users\\\\Administrator\\\\.claude\\\\plugins\\\\cache\\\\superpowers-marketplace\\\\superpowers\\\\6.0.3\\\\skills\\\\subagent-driven-development\\\\scripts\\\\task-brief\" \"e:\\\\gitee\\\\production_release\\\\RuoYi-Vue-master2026-06-24\\\\docs\\\\superpowers\\\\plans\\\\2026-06-26-meeting-booking-improvements-plan.md\" 5)",
+      "Bash(ssh root@1.94.26.126 \"cd /root/zhihuiyuanqu20260625 && bash stop-server.sh\")",
+      "Bash(ssh root@1.94.26.126 \"cd /root/zhihuiyuanqu20260625 && bash start-server.sh\")",
+      "Bash(ssh root@1.94.26.126 \"nginx -s reload\")",
+      "Bash(curl -s -o /dev/null -w \"Backend 8090: HTTP %{http_code}\" http://1.94.26.126:8090/)",
+      "Bash(curl -s -o /dev/null -w \"Frontend 80: HTTP %{http_code}\" http://1.94.26.126:80/)",
+      "Bash(curl -s http://1.94.26.126:8090/meeting/slots/list)",
+      "Bash(curl -s -H \"Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImxvZ2luX3VzZXJfa2V5IjoiNTAyZjJlOGUtYWUyNS00MTBiLTk4NTYtNzcyYmQwOWRkOTQ3In0.NAXVPmY2EiTfDl-DzN0gluVJCC39hBDgJbk5Nlppt6WKWtMhrUjpDOE4KM9I_C3z6vBnt8PLwGeFAQieUiRHBg\" http://1.94.26.126:8090/meeting/slots/list)",
+      "Bash(curl -s -H \"Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImxvZ2luX3VzZXJfa2V5IjoiNTAyZjJlOGUtYWUyNS00MTBiLTk4NTYtNzcyYmQwOWRkOTQ3In0.NAXVPmY2EiTfDl-DzN0gluVJCC39hBDgJbk5Nlppt6WKWtMhrUjpDOE4KM9I_C3z6vBnt8PLwGeFAQieUiRHBg\" \"http://1.94.26.126:8090/meeting/room/list\")",
+      "Bash(curl -s -H \"Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImxvZ2luX3VzZXJfa2V5IjoiNTAyZjJlOGUtYWUyNS00MTBiLTk4NTYtNzcyYmQwOWRkOTQ3In0.NAXVPmY2EiTfDl-DzN0gluVJCC39hBDgJbk5Nlppt6WKWtMhrUjpDOE4KM9I_C3z6vBnt8PLwGeFAQieUiRHBg\" \"http://1.94.26.126:8090/meeting/booking/slots/1?date=2026-06-26\")"
     ],
     "additionalDirectories": [
       "e:\\gitee\\production_release\\RuoYi-Vue-master2026-06-24\\.claude\\skills"

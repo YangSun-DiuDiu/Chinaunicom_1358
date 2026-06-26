@@ -1,7 +1,7 @@
 {
-  "tool_name": "mcp__plugin_oh-my-claudecode_t__lsp_diagnostics",
-  "tool_input_preview": "{\"file\":\"e:\\\\gitee\\\\production_release\\\\RuoYi-Vue-master2026-06-24\\\\ruoyi-ui\\\\src\\\\views\\\\meeting\\\\room\\\\index.vue\"}",
-  "error": "Language server 'vue-language-server' not found.\nInstall with: npm install -g @vue/language-server",
-  "timestamp": "2026-06-26T06:19:31.106Z",
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"TOKEN=$(curl -s -X POST http://1.94.26.126:8090/login -H \\\"Content-Type: application/json\\\" -d '{\\\"username\\\":\\\"admin\\\",\\\"password\\\":\\\"admin123\\\"}' 2>&1 | python3 -c \\\"import sys,json; pri...",
+  "error": "Exit code 49",
+  "timestamp": "2026-06-26T06:26:07.970Z",
   "retry_count": 1
 }
