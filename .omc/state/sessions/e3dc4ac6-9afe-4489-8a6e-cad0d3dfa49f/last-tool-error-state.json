@@ -1,7 +1,7 @@
 {
   "tool_name": "Bash",
-  "tool_input_preview": "{\"command\":\"cat > /tmp/missing_perms.sql << 'SQL'\\n-- =============================================\\n-- 补全缺失的按钮级菜单权限\\n-- 每个模块仅列缺失的: list已有则补add/edit/remove/query/export/approve等\\n-- ==================...",
-  "error": "Exit code 2\n/usr/bin/bash: -c: line 78: unexpected EOF while looking for matching `''",
-  "timestamp": "2026-06-26T11:46:13.395Z",
+  "tool_input_preview": "{\"command\":\"ZHAO_TOKEN=$(curl -s http://1.94.26.126:8090/login -H \\\"Content-Type: application/json\\\" -d '{\\\"username\\\":\\\"zhaojg\\\",\\\"password\\\":\\\"admin123\\\",\\\"code\\\":\\\"0\\\",\\\"uuid\\\":\\\"test\\\"}' | grep -o...",
+  "error": "Exit code 1",
+  "timestamp": "2026-06-26T14:37:37.146Z",
   "retry_count": 1
 }
