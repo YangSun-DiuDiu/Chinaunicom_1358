@@ -72,11 +72,10 @@ public class DeviceRepairController extends BaseController
             repairService.transferRepair(repairId, to, phone, reason, getUsername());
             DeviceRepair r = repairService.selectRepairById(repairId);
             if (r != null && StringUtils.isNotEmpty(phone)) {
-                String callbackUrl = getRepairCallbackUrl() + "?token=" + (r.getCompleteToken() != null ? r.getCompleteToken() : "");
                 smsService.sendSms(to, phone,
-                    "【设备维修转派】设备「" + r.getDeviceName() + "」维修工单已转派给您。"
-                    + "维修完成后请点击反馈: " + callbackUrl,
-                    "REPAIR_TRANSFER", repairId);
+                    "设备离线告警，设备：" + r.getDeviceName()
+                    + "，已离线，请及时处理。设备登录码：" + (r.getCompleteToken() != null ? r.getCompleteToken() : ""),
+                    "REPAIR", repairId);
             }
             return success();
         } catch (Exception e) { return error(e.getMessage()); }
