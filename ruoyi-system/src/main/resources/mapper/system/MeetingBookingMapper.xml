@@ -7,6 +7,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <resultMap type="MeetingBooking" id="MeetingBookingResult">
         <id     property="bookingId"    column="booking_id"     />
         <result property="roomId"       column="room_id"        />
+        <result property="roomName"     column="room_name"      />
         <result property="title"        column="title"          />
         <result property="hostName"     column="host_name"      />
         <result property="hostPhone"    column="host_phone"     />
@@ -25,8 +26,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <sql id="selectMeetingBookingVo">
         select b.booking_id, b.room_id, b.title, b.host_name, b.host_phone,
                b.start_time, b.end_time, b.attendees, b.status, b.dept_id,
-               b.create_by, b.create_time, b.update_by, b.update_time, b.remark
+               b.create_by, b.create_time, b.update_by, b.update_time, b.remark,
+               r.room_name
         from meeting_booking b
+        left join meeting_room r on b.room_id = r.room_id
     </sql>
 
     <select id="selectMeetingBookingList" parameterType="MeetingBooking" resultMap="MeetingBookingResult">

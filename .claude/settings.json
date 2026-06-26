@@ -116,7 +116,8 @@
       "Bash(ssh root@1.94.26.126 'nginx -s reload')",
       "Bash(mysql -h 1.94.26.126 -P 3306 -u sadmin -pChinaunicom@1358 ry101 -e \"DELETE FROM meeting_booking WHERE booking_id=2;\")",
       "Bash(mysql -h 1.94.26.126 -P 3306 -u sadmin -pChinaunicom@1358 ry101 -e \"SELECT booking_id, room_id, title, host_name, status FROM meeting_booking;\")",
-      "Bash(python3 -c ' *)"
+      "Bash(python3 -c ' *)",
+      "Bash(mysql -h 1.94.26.126 -P 3306 -u sadmin -pChinaunicom@1358 ry101 -e \"DELETE FROM meeting_booking WHERE title='200'; SELECT booking_id, room_id, title, status FROM meeting_booking ORDER BY booking_id;\")"
     ],
     "additionalDirectories": [
       "e:\\gitee\\production_release\\RuoYi-Vue-master2026-06-24\\.claude\\skills"
