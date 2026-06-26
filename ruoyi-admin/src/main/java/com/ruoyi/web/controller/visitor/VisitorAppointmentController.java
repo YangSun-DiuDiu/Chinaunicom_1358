@@ -59,7 +59,7 @@ public class VisitorAppointmentController extends BaseController
     /**
      * 获取待审批预约列表（供审批人查看）
      */
-    @PreAuthorize("@ss.hasPermi('visitor:appointment:pending')")
+    @PreAuthorize("@ss.hasPermi('visitor:approval:list')")
     @GetMapping("/pending")
     public AjaxResult pending()
     {

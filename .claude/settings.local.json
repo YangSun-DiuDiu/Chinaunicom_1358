@@ -72,7 +72,8 @@
       "Bash(mvn clean *)",
       "Bash(ssh root@1.94.26.126 'cd /root/zhihuiyuanqu20260625 && bash stop-server.sh 2>/dev/null; bash start-server.sh')",
       "Bash(curl -s http://1.94.26.126:8090/login -H \"Content-Type: application/json\" -d '{\"username\":\"zhaojg\",\"password\":\"admin123\",\"code\":\"0\",\"uuid\":\"test\"}')",
-      "Bash(mysql -h 1.94.26.126 -P 3306 -u sadmin -pChinaunicom@1358 ry101 -N -e ' *)"
+      "Bash(mysql -h 1.94.26.126 -P 3306 -u sadmin -pChinaunicom@1358 ry101 -N -e ' *)",
+      "Bash(mysql -h 1.94.26.126 -P 3306 -u sadmin -pChinaunicom@1358 ry101 -N -e \"SELECT DISTINCT perms FROM sys_menu WHERE perms IS NOT NULL AND perms != '' ORDER BY perms;\")"
     ]
   }
 }
