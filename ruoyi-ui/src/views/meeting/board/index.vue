@@ -153,21 +153,8 @@ export default {
       }).catch(() => {})
     },
     loadRefresh() {
-      this.refreshing = true
-      request({
-        url: '/meeting/board/' + this.roomId + '/refresh',
-        method: 'get',
-        headers: { isToken: false }
-      }).then(res => {
-        if (res.code === 200) {
-          const d = res.data
-          this.currentStatus = d.currentStatus || 'FREE'
-          this.nextBooking = d.nextBooking || null
-          this.updateCountdown()
-        }
-      }).catch(() => {}).finally(() => {
-        this.refreshing = false
-      })
+      // 30秒刷新直接用 loadBoard 完整刷新，确保新预约能显示
+      this.loadBoard()
     },
     tickCountdown() {
       if (!this.nextBooking) {

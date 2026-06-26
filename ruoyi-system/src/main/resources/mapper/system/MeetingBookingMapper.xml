@@ -135,7 +135,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectTodayByRoom" parameterType="Long" resultMap="MeetingBookingResult">
         <include refid="selectMeetingBookingVo"/>
         WHERE b.room_id = #{roomId}
-        AND b.status IN ('PENDING','APPROVED')
+        AND b.status = 'APPROVED'
         AND DATE(b.start_time) = CURDATE()
         ORDER BY b.start_time ASC
     </select>

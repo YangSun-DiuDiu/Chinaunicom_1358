@@ -1,46 +1,26 @@
 {
   "version": 1,
   "entries": {
-    "79a93d4a2f8f50b95f852280616242fee1855dc99a3c75211917f55e72e95fae": {
-      "last_emitted_at_ms": 1782456970328,
-      "message": "Use parallel execution for independent tasks. Use run_in_background for long operations (npm install, builds, tests)."
-    },
     "445ed27a3872b681d98190bae61ccb84954e1bc4e140df5370be958dee776b3a": {
-      "last_emitted_at_ms": 1782456955816,
+      "last_emitted_at_ms": 1782471228052,
       "message": "Verify changes work after editing. Test functionality before marking complete."
     },
+    "79a93d4a2f8f50b95f852280616242fee1855dc99a3c75211917f55e72e95fae": {
+      "last_emitted_at_ms": 1782471211989,
+      "message": "Use parallel execution for independent tasks. Use run_in_background for long operations (npm install, builds, tests)."
+    },
     "466399dafa2d20f60587180bad0a07358eb7f2bce724df0ff682f038ad33f5ad": {
-      "last_emitted_at_ms": 1782456944379,
+      "last_emitted_at_ms": 1782471194835,
       "message": "Read multiple files in parallel when possible for faster analysis."
     },
     "459c54e5f35d6a58dcd90d2aecc21fa6d1f35d241bc5b134c506f87dc7b6d67b": {
-      "last_emitted_at_ms": 1782456298748,
+      "last_emitted_at_ms": 1782471021121,
       "message": "Combine searches in parallel when investigating multiple patterns."
     },
     "4f7a67fba0a8473e9883d9e8dffbb2d72e00a4a1eeb4fa80cb14213b167dc90f": {
-      "last_emitted_at_ms": 1782455136854,
+      "last_emitted_at_ms": 1782468111219,
       "message": "Mark todos in_progress BEFORE starting, completed IMMEDIATELY after finishing."
-    },
-    "f1e02bfde0b9e6ee9e02664bd792fc36948a08bb1cf53cbd12860b1077471bdd": {
-      "last_emitted_at_ms": 1782454849579,
-      "message": "Spawning agent: oh-my-claudecode:executor (haiku) [BACKGROUND] | Task: Task 5: Build deploy verify"
-    },
-    "2b403f8baca14feec41bff77ae2655dff9a45c1eb68c64db737e2be291868223": {
-      "last_emitted_at_ms": 1782454747378,
-      "message": "Spawning agent: oh-my-claudecode:executor (haiku) | Task: Task 4: Board URL column"
-    },
-    "079d5ba9dcd59688abf47ddb415c37a790fb7e0c7863a2030d128f3f54ba5b69": {
-      "last_emitted_at_ms": 1782454419722,
-      "message": "Spawning agent: oh-my-claudecode:executor (sonnet) | Task: Task 3: Frontend 3 pages refactor"
-    },
-    "9071f1140c5644bc59d7a60bed71a6208dcaf4319fbe5a467080d2ab34503796": {
-      "last_emitted_at_ms": 1782454251593,
-      "message": "Spawning agent: oh-my-claudecode:executor (sonnet) | Task: Task 2: Backend slots + filter"
-    },
-    "59c5cda87de070943c865ae78e17dd4d2cc9bbecbdad2dd0d81127436ca6baa6": {
-      "last_emitted_at_ms": 1782454104985,
-      "message": "Spawning agent: oh-my-claudecode:executor (haiku) | Task: Task 1: DB menu adjustments"
     }
   },
-  "updated_at": "2026-06-26T06:56:10.328Z"
+  "updated_at": "2026-06-26T10:53:48.052Z"
 }

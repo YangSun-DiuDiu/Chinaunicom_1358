@@ -56,7 +56,21 @@
       "Bash(python3 -c ' *)",
       "Bash(curl -s http://localhost:8080/login -H \"Content-Type: application/json\" -d '{\"username\":\"zhaojg\",\"password\":\"admin123\",\"code\":\"0\",\"uuid\":\"test\"}')",
       "Bash(curl -s http://localhost:8080/getInfo -H 'Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ6aGFvamciLCJsb2dpbl91c2VyX2tleSI6IjBkYTFjZDdmLWEyYzUtNDJiMC1hYjNlLTQyZjM2ODQ3ZTAyNyJ9.FS5vAr4Gik_ofBVAzQgw4zPcmZS-b1fTG_lEUQ6cZKvQQChIu83ADilZx4UvJZAEKJ0_usDz9n4kWG8jLZwxDw')",
-      "Bash(curl -s http://localhost:8080/system/dept/switchContext/101 -H 'Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImxvZ2luX3VzZXJfa2V5IjoiMGU5NzgxODctZjJlYi00ZjU1LTgxNDgtMzA2OWFiMDllYWNhIn0.4x5EnmbCqMQTE4V0SuJ4ovcQZvzSysI3XtKI1Zzsh2uq3x_-Jv7diWHaE0ADW95XBB6vF9eN61rJgUSmyCprZQ')"
+      "Bash(curl -s http://localhost:8080/system/dept/switchContext/101 -H 'Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImxvZ2luX3VzZXJfa2V5IjoiMGU5NzgxODctZjJlYi00ZjU1LTgxNDgtMzA2OWFiMDllYWNhIn0.4x5EnmbCqMQTE4V0SuJ4ovcQZvzSysI3XtKI1Zzsh2uq3x_-Jv7diWHaE0ADW95XBB6vF9eN61rJgUSmyCprZQ')",
+      "Bash(scp e:/gitee/production_release/RuoYi-Vue-master2026-06-24/ruoyi-admin/target/ruoyi-admin.jar root@1.94.26.126:/usr/share/nginx/zhihuiyuanqu/)",
+      "Bash(ssh root@1.94.26.126 'systemctl restart ruoyi-admin 2>&1 || supervisorctl restart ruoyi-admin 2>&1')",
+      "Bash(ssh root@1.94.26.126 'ps aux | grep java | grep -v grep')",
+      "Bash(ssh root@1.94.26.126 'ls -la /proc/1876215/cwd 2>/dev/null; ls -la /proc/1876215/exe 2>/dev/null; cat /proc/1876215/cmdline 2>/dev/null | tr \"\\\\0\" \" \"')",
+      "Bash(ssh root@1.94.26.126 'cp /usr/share/nginx/zhihuiyuanqu/ruoyi-admin.jar /root/zhihuiyuanqu20260625/ruoyi-admin.jar && kill 1876215 && sleep 3 && cd /root/zhihuiyuanqu20260625 && nohup java -jar ruoyi-admin.jar --server.port=8090 --spring.devtools.restart.enabled=false > app.log 2>&1 & sleep 8 && tail -5 app.log')",
+      "Bash(ssh root@1.94.26.126 'ps aux | grep \"ruoyi-admin\" | grep -v grep')",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code}\" http://1.94.26.126:8090/)",
+      "Bash(curl -s http://1.94.26.126:8090/meeting/board/1)",
+      "Bash(curl -s http://1.94.26.126:8090/meeting/board/2)",
+      "Bash(mysql -h 1.94.26.126 -P 3306 -u sadmin -pChinaunicom@1358 ry101 -e \"SELECT booking_id, room_id, title, status FROM meeting_booking ORDER BY booking_id;\")",
+      "Bash(scp -r dist/* root@1.94.26.126:/usr/share/nginx/zhihuiyuanqu/dist/)",
+      "Bash(ssh root@1.94.26.126 'nginx -s reload')",
+      "Bash(mvn clean *)",
+      "Bash(ssh root@1.94.26.126 'cd /root/zhihuiyuanqu20260625 && bash stop-server.sh 2>/dev/null; bash start-server.sh')"
     ]
   }
 }
