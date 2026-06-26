@@ -1,53 +1,5 @@
 <template>
   <div class="app-container dashboard-container">
-    <!-- 顶部摘要统计卡片 -->
-    <el-row :gutter="16" class="summary-card-row">
-      <el-col :xs="12" :sm="6">
-        <div class="summary-card summary-card-device">
-          <div class="summary-card-icon">
-            <svg-icon icon-class="switching" />
-          </div>
-          <div class="summary-card-body">
-            <div class="summary-card-label">设备总数</div>
-            <count-to :start-val="0" :end-val="summaryData.deviceTotal" :duration="2000" class="summary-card-value" />
-          </div>
-        </div>
-      </el-col>
-      <el-col :xs="12" :sm="6">
-        <div class="summary-card summary-card-rate">
-          <div class="summary-card-icon">
-            <svg-icon icon-class="chart" />
-          </div>
-          <div class="summary-card-body">
-            <div class="summary-card-label">在线率</div>
-            <count-to :start-val="0" :end-val="summaryData.onlineRate" :duration="2000" :suffix="'%'" :decimals="1" class="summary-card-value" />
-          </div>
-        </div>
-      </el-col>
-      <el-col :xs="12" :sm="6">
-        <div class="summary-card summary-card-visitor">
-          <div class="summary-card-icon">
-            <svg-icon icon-class="peoples" />
-          </div>
-          <div class="summary-card-body">
-            <div class="summary-card-label">访客数</div>
-            <count-to :start-val="0" :end-val="summaryData.visitorCount" :duration="2000" class="summary-card-value" />
-          </div>
-        </div>
-      </el-col>
-      <el-col :xs="12" :sm="6">
-        <div class="summary-card summary-card-meeting">
-          <div class="summary-card-icon">
-            <svg-icon icon-class="date" />
-          </div>
-          <div class="summary-card-body">
-            <div class="summary-card-label">会议数</div>
-            <count-to :start-val="0" :end-val="summaryData.meetingCount" :duration="2000" class="summary-card-value" />
-          </div>
-        </div>
-      </el-col>
-    </el-row>
-
     <!-- 模式切换提示 -->
     <div class="dashboard-mode-badge">
       <span class="mode-label">当前驾驶舱模式：</span>
@@ -320,7 +272,6 @@ import * as echarts from 'echarts'
 require('echarts/theme/macarons')
 import CountTo from 'vue-count-to'
 import { getDeviceDashboard, getVisitorDashboard } from '@/api/dashboard/dashboard'
-import { getList as getMeetingList } from '@/api/meeting/booking'
 
 export default {
   name: 'Index',
@@ -329,13 +280,6 @@ export default {
   },
   data() {
     return {
-      // 摘要统计数据
-      summaryData: {
-        deviceTotal: 0,
-        onlineRate: 0,
-        visitorCount: 0,
-        meetingCount: 0
-      },
       // 驾驶舱模式: 'device' | 'visitor'
       dashboardMode: 'device',
       // 设备数据
@@ -370,7 +314,6 @@ export default {
   },
   mounted() {
     this.$nextTick(() => {
-      this.loadSummaryData()
       this.loadData()
     })
     window.addEventListener('resize', this.handleResize)
@@ -380,25 +323,6 @@ export default {
     this.disposeCharts()
   },
   methods: {
-    /** 加载顶部摘要统计数据 */
-    loadSummaryData() {
-      // 设备总数 + 在线率
-      getDeviceDashboard().then(response => {
-        const data = response.data || response
-        this.summaryData.deviceTotal = data.totalCount || 0
-        this.summaryData.onlineRate = data.onlineRate || 0
-      }).catch(() => {})
-      // 访客数
-      getVisitorDashboard().then(response => {
-        const data = response.data || response
-        this.summaryData.visitorCount = data.todayVisitors || 0
-      }).catch(() => {})
-      // 会议数
-      getMeetingList({ pageNum: 1, pageSize: 1 }).then(response => {
-        this.summaryData.meetingCount = response.total || 0
-      }).catch(() => {})
-    },
-
     /** 从配置中读取驾驶舱模式 */
     loadDashboardMode() {
       // 尝试从vuex或后端配置读取dashboard模式
@@ -681,94 +605,6 @@ export default {
     }
   }
 
-  // 摘要统计卡片行
-  .summary-card-row {
-    margin-bottom: 20px;
-  }
-
-  // 摘要统计卡片
-  .summary-card {
-    display: flex;
-    align-items: center;
-    height: 100px;
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-    padding: 18px 20px;
-    margin-bottom: 16px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-    }
-
-    .summary-card-icon {
-      width: 52px;
-      height: 52px;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-right: 16px;
-      flex-shrink: 0;
-
-      .svg-icon {
-        font-size: 26px;
-        color: #fff;
-      }
-    }
-
-    .summary-card-body {
-      flex: 1;
-      min-width: 0;
-
-      .summary-card-label {
-        font-size: 14px;
-        color: #999;
-        margin-bottom: 6px;
-        white-space: nowrap;
-      }
-
-      .summary-card-value {
-        font-size: 26px;
-        font-weight: 700;
-        color: #333;
-        line-height: 1;
-      }
-    }
-
-    // 各卡片配色
-    &.summary-card-device .summary-card-icon {
-      background: linear-gradient(135deg, #409EFF, #79BBFF);
-    }
-    &.summary-card-device .summary-card-value {
-      color: #409EFF;
-    }
-
-    &.summary-card-rate .summary-card-icon {
-      background: linear-gradient(135deg, #67C23A, #85CE61);
-    }
-    &.summary-card-rate .summary-card-value {
-      color: #67C23A;
-    }
-
-    &.summary-card-visitor .summary-card-icon {
-      background: linear-gradient(135deg, #40c9c6, #67dbd9);
-    }
-    &.summary-card-visitor .summary-card-value {
-      color: #40c9c6;
-    }
-
-    &.summary-card-meeting .summary-card-icon {
-      background: linear-gradient(135deg, #E6A23C, #EEBB5C);
-    }
-    &.summary-card-meeting .summary-card-value {
-      color: #E6A23C;
-    }
-  }
-
   // 统计卡片行
   .stat-card-row {
     margin-bottom: 20px;
@@ -923,30 +759,6 @@ export default {
 // 移动端适配
 @media (max-width: 768px) {
   .dashboard-container {
-    .summary-card {
-      height: 80px;
-      padding: 12px;
-
-      .summary-card-icon {
-        width: 40px;
-        height: 40px;
-
-        .svg-icon {
-          font-size: 20px;
-        }
-      }
-
-      .summary-card-body {
-        .summary-card-label {
-          font-size: 12px;
-          margin-bottom: 4px;
-        }
-        .summary-card-value {
-          font-size: 20px;
-        }
-      }
-    }
-
     .stat-card {
       height: 80px;
       padding: 12px;
