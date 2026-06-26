@@ -97,3 +97,22 @@
   font-size: 14px;
   border-radius: 4px;
 }
+
+// ============ 科技风渐变按钮 ============
+.tech-gradient-btn {
+  background: linear-gradient(135deg, #00D4FF 0%, #00A8CC 100%);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: linear-gradient(135deg, #00B8E0 0%, #0090B0 100%);
+    box-shadow: 0 4px 12px rgba(0, 212, 255, 0.35);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
