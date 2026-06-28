@@ -91,7 +91,8 @@
             <el-form-item label="状态">
               <el-radio-group v-model="detailForm.status">
                 <el-radio label="GREEN">空闲</el-radio>
-                <el-radio label="BLUE">已租</el-radio>
+                <el-radio label="CYAN">有人但未满</el-radio>
+                <el-radio label="BLUE">已住满</el-radio>
                 <el-radio label="GRAY">维修中</el-radio>
               </el-radio-group>
             </el-form-item>
@@ -220,6 +221,7 @@ export default {
 .room-card {
   width: 280px;
   height: 220px;
+  border: 2px solid #2D3436;
   border-radius: 8px;
   padding: 16px;
   box-sizing: border-box;
@@ -250,6 +252,7 @@ export default {
   padding-top: 8px;
 }
 .card-GREEN  { background: #e8f5e9; }
+.card-CYAN   { background: #e0f7fa; }
 .card-BLUE   { background: #e3f2fd; }
 .card-YELLOW { background: #fff8e1; }
 .card-ORANGE { background: #fff3e0; }
