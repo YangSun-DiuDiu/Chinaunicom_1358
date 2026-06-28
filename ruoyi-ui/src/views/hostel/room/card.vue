@@ -202,8 +202,9 @@ export default {
       })
     },
     doCheckIn() {
-      if (this.detailForm.status === 'BLUE') {
-        this.$message.warning('该房间已住满，无法办理入住')
+      if (this.detailForm.status === 'BLUE' || this.detailForm.status === 'GRAY') {
+        const msg = this.detailForm.status === 'GRAY' ? '该房间维修中，无法办理入住' : '该房间已住满，无法办理入住'
+        this.$message.warning(msg)
         return
       }
       this.$router.push('/hostel/tenant/checkin')
