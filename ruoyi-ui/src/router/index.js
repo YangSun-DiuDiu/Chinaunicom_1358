@@ -345,25 +345,49 @@ export const staticRoutes = [
       }
     ]
   },
-  // ==================== 短信管理 ====================
+  // ==================== 短信中台 ====================
   {
     path: '/sms',
     component: Layout,
     name: 'Sms',
     alwaysShow: true,
-    meta: { title: '短信管理', icon: 'message' },
+    meta: { title: '短信中台', icon: 'message' },
     children: [
       {
-        path: 'config',
-        component: () => import('@/views/sms/config/index'),
-        name: 'SmsConfig',
-        meta: { title: '短信设置', icon: 'edit', permissions: ['sms:config:edit'] }
+        path: 'channel',
+        component: () => import('@/views/sms/channel/index'),
+        name: 'SmsChannel',
+        meta: { title: '短信渠道管理', icon: 'component', permissions: ['sms:channel:list'] }
+      },
+      {
+        path: 'signtemplate',
+        component: () => import('@/views/sms/signtemplate/index'),
+        name: 'SmsSignTemplate',
+        meta: { title: '签名模板管理', icon: 'documentation', permissions: ['sms:signtemplate:list'] }
+      },
+      {
+        path: 'biz',
+        component: () => import('@/views/sms/biz/index'),
+        name: 'SmsBiz',
+        meta: { title: '业务短信配置', icon: 'example', permissions: ['sms:biz:list'] }
+      },
+      {
+        path: 'blacklist',
+        component: () => import('@/views/sms/blacklist/index'),
+        name: 'SmsBlacklist',
+        meta: { title: '短信黑名单', icon: 'lock', permissions: ['sms:blacklist:list'] }
+      },
+      {
+        path: 'schedule',
+        component: () => import('@/views/sms/schedule/index'),
+        name: 'SmsSchedule',
+        meta: { title: '定时短信任务', icon: 'time', permissions: ['sms:schedule:list'] }
       },
       {
         path: 'log',
         component: () => import('@/views/sms/log/index'),
-        name: 'SmsLogView',
-        meta: { title: '发送记录', icon: 'list', permissions: ['sms:log:list'] }
+        name: 'SmsLog',
+        meta: { title: '短信发送日志', icon: 'list', permissions: ['sms:log:list'] }
       }
     ]
   },
