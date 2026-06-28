@@ -48,3 +48,33 @@ VALUES ('房间管理-表格', @hostel_parent, 2, 'room', 'hostel/room/index', '
 
 INSERT INTO sys_menu (menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, create_by, create_time)
 VALUES ('房间卡片视图', @hostel_parent, 3, 'room/card', 'hostel/room/card', 'C', '0', '0', 'hostel:room:card', 'admin', NOW());
+
+-- 租客信息表
+CREATE TABLE tenant_info (
+    tenant_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    tenant_name VARCHAR(64) NOT NULL COMMENT '姓名',
+    id_card VARCHAR(18) COMMENT '身份证号',
+    phone VARCHAR(20) COMMENT '手机号',
+    gender CHAR(1) DEFAULT 'M' COMMENT 'M/F',
+    room_id BIGINT COMMENT 'FK→room_info',
+    check_in_date DATE COMMENT '入住日期',
+    check_out_date DATE COMMENT '退租日期',
+    rent_start DATE COMMENT '租期开始',
+    rent_end DATE COMMENT '租期结束',
+    status VARCHAR(20) DEFAULT 'NORMAL' COMMENT 'NORMAL/CHECKED_OUT',
+    openid VARCHAR(64) COMMENT '微信openid',
+    push_enabled CHAR(1) DEFAULT '1' COMMENT '推送开关',
+    dept_id BIGINT, create_by VARCHAR(64), create_time DATETIME,
+    update_by VARCHAR(64), update_time DATETIME, remark VARCHAR(500)
+) COMMENT='租客信息';
+
+-- 租客管理菜单
+INSERT INTO sys_menu (menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, create_by, create_time)
+VALUES ('租客管理', 0, 11, 'tenant', NULL, 'M', '0', '0', NULL, 'admin', NOW());
+SET @tparent = LAST_INSERT_ID();
+
+INSERT INTO sys_menu (menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, create_by, create_time)
+VALUES ('租客档案', @tparent, 1, 'list', 'hostel/tenant/index', 'C', '0', '0', 'hostel:tenant:list', 'admin', NOW());
+
+INSERT INTO sys_menu (menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, create_by, create_time)
+VALUES ('入住办理', @tparent, 2, 'checkin', 'hostel/tenant/checkin', 'C', '0', '0', 'hostel:tenant:checkin', 'admin', NOW());
