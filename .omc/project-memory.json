@@ -18,7 +18,7 @@
     "runtime": null
   },
   "build": {
-    "buildCommand": "cd \"e:/gitee/production_release/RuoYi-Vue-master2026-06-24/ruoyi-ui\" && npm run build:prod 2>&1 | tail -2 && scp -r dist/* root@1.94.26.126:/usr/share/nginx/zhihuiyuanqu/dist/ 2>&1 | tail -1 && ssh root@1.94.26.126 'nginx -s reload' 2>&1 | tail -1 && echo \"DONE\" && cd .. && git add -A && git commit -m \"fix: card filter dropdown and column visibility use string status values\" && git push origin master 2>&1 | tail -2",
+    "buildCommand": "cd \"e:/gitee/production_release/RuoYi-Vue-master2026-06-24/ruoyi-ui\" && npm run build:prod 2>&1 | tail -2 && scp -r dist/* root@1.94.26.126:/usr/share/nginx/zhihuiyuanqu/dist/ 2>&1 | tail -1 && ssh root@1.94.26.126 'nginx -s reload' 2>&1 | tail -1 && echo \"DONE\" && cd .. && git add -A && git commit -m \"fix: block GRAY rooms from check-in in card dialog\" && git push origin master 2>&1 | tail -2",
     "testCommand": null,
     "lintCommand": null,
     "devCommand": null,

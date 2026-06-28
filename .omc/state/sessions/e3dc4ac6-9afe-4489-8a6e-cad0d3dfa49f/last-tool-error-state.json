@@ -1,7 +1,7 @@
 {
-  "tool_name": "mcp__plugin_oh-my-claudecode_t__lsp_diagnostics",
-  "tool_input_preview": "{\"file\":\"e:\\\\gitee\\\\production_release\\\\RuoYi-Vue-master2026-06-24\\\\ruoyi-admin\\\\src\\\\main\\\\java\\\\com\\\\ruoyi\\\\web\\\\controller\\\\hostel\\\\TenantController.java\"}",
-  "error": "Language server 'jdtls' not found.\nInstall with: Install from https://github.com/eclipse/eclipse.jdt.ls",
-  "timestamp": "2026-06-28T04:25:32.708Z",
-  "retry_count": 3
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"cd \\\"e:/gitee/production_release/RuoYi-Vue-master2026-06-24\\\" && mvn clean package -DskipTests -q 2>&1 | tail -3 && echo \\\"BUILD OK\\\" && scp ruoyi-admin/target/ruoyi-admin.jar root@1.94.26...",
+  "error": "Exit code 7\nBUILD OK\n** This session may be vulnerable to \"store now, decrypt later\" attacks.\n** The server may need to be upgraded. See https://openssh.com/pq.html\n** This session may be vulnerable to \"store now, decrypt later\" attacks.\n** The server may need to be upgraded. See https://openssh.com/pq.html\nBackend stopped (PID: 2007949)\nBackend PID: 2011623\nBackend started on port 8090\nHTTP 000",
+  "timestamp": "2026-06-28T05:03:44.867Z",
+  "retry_count": 1
 }
