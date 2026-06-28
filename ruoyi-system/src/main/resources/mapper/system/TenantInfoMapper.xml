@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.TenantInfoMapper">
+
+    <resultMap type="TenantInfo" id="TenantInfoResult">
+        <id     property="tenantId"      column="tenant_id"        />
+        <result property="tenantName"    column="tenant_name"      />
+        <result property="idCard"        column="id_card"          />
+        <result property="phone"         column="phone"            />
+        <result property="gender"        column="gender"           />
+        <result property="roomId"        column="room_id"          />
+        <result property="checkInDate"   column="check_in_date"    />
+        <result property="checkOutDate"  column="check_out_date"   />
+        <result property="rentStart"     column="rent_start"       />
+        <result property="rentEnd"       column="rent_end"         />
+        <result property="status"        column="status"           />
+        <result property="openid"        column="openid"           />
+        <result property="pushEnabled"   column="push_enabled"     />
+        <result property="deptId"        column="dept_id"          />
+        <result property="createBy"      column="create_by"        />
+        <result property="createTime"    column="create_time"      />
+        <result property="updateBy"      column="update_by"        />
+        <result property="updateTime"    column="update_time"      />
+        <result property="remark"        column="remark"           />
+    </resultMap>
+
+    <sql id="selectTenantInfoVo">
+        select tenant_id, tenant_name, id_card, phone, gender,
+               room_id, check_in_date, check_out_date, rent_start, rent_end,
+               status, openid, push_enabled, dept_id, create_by,
+               create_time, update_by, update_time, remark
+        from tenant_info
+    </sql>
+
+    <select id="selectTenantInfoList" parameterType="TenantInfo" resultMap="TenantInfoResult">
+        <include refid="selectTenantInfoVo"/>
+        <where>
+            <if test="tenantName != null and tenantName != ''">
+                AND tenant_name like concat('%', #{tenantName}, '%')
+            </if>
+            <if test="idCard != null and idCard != ''">
+                AND id_card like concat('%', #{idCard}, '%')
+            </if>
+            <if test="phone != null and phone != ''">
+                AND phone like concat('%', #{phone}, '%')
+            </if>
+            <if test="gender != null and gender != ''">
+                AND gender = #{gender}
+            </if>
+            <if test="roomId != null">
+                AND room_id = #{roomId}
+            </if>
+            <if test="status != null and status != ''">
+                AND status = #{status}
+            </if>
+            <if test="params.beginTime != null and params.beginTime != ''">
+                and date_format(create_time,'%Y%m%d') &gt;= date_format(#{params.beginTime},'%Y%m%d')
+            </if>
+            <if test="params.endTime != null and params.endTime != ''">
+                and date_format(create_time,'%Y%m%d') &lt;= date_format(#{params.endTime},'%Y%m%d')
+            </if>
+            <!-- 数据权限过滤 -->
+            ${params.dataScope}
+        </where>
+    </select>
+
+    <select id="selectTenantInfoById" parameterType="Long" resultMap="TenantInfoResult">
+        <include refid="selectTenantInfoVo"/>
+        where tenant_id = #{tenantId}
+    </select>
+
+    <insert id="insertTenantInfo" parameterType="TenantInfo" useGeneratedKeys="true" keyProperty="tenantId">
+        insert into tenant_info (
+            <if test="tenantName != null and tenantName != ''">tenant_name,</if>
+            <if test="idCard != null and idCard != ''">id_card,</if>
+            <if test="phone != null and phone != ''">phone,</if>
+            <if test="gender != null and gender != ''">gender,</if>
+            <if test="roomId != null">room_id,</if>
+            <if test="checkInDate != null">check_in_date,</if>
+            <if test="checkOutDate != null">check_out_date,</if>
+            <if test="rentStart != null">rent_start,</if>
+            <if test="rentEnd != null">rent_end,</if>
+            <if test="status != null and status != ''">status,</if>
+            <if test="openid != null and openid != ''">openid,</if>
+            <if test="pushEnabled != null and pushEnabled != ''">push_enabled,</if>
+            <if test="deptId != null">dept_id,</if>
+            <if test="createBy != null and createBy != ''">create_by,</if>
+            <if test="remark != null and remark != ''">remark,</if>
+            create_time
+        )values(
+            <if test="tenantName != null and tenantName != ''">#{tenantName},</if>
+            <if test="idCard != null and idCard != ''">#{idCard},</if>
+            <if test="phone != null and phone != ''">#{phone},</if>
+            <if test="gender != null and gender != ''">#{gender},</if>
+            <if test="roomId != null">#{roomId},</if>
+            <if test="checkInDate != null">#{checkInDate},</if>
+            <if test="checkOutDate != null">#{checkOutDate},</if>
+            <if test="rentStart != null">#{rentStart},</if>
+            <if test="rentEnd != null">#{rentEnd},</if>
+            <if test="status != null and status != ''">#{status},</if>
+            <if test="openid != null and openid != ''">#{openid},</if>
+            <if test="pushEnabled != null and pushEnabled != ''">#{pushEnabled},</if>
+            <if test="deptId != null">#{deptId},</if>
+            <if test="createBy != null and createBy != ''">#{createBy},</if>
+            <if test="remark != null and remark != ''">#{remark},</if>
+            sysdate()
+        )
+    </insert>
+
+    <update id="updateTenantInfo" parameterType="TenantInfo">
+        update tenant_info
+        <set>
+            <if test="tenantName != null and tenantName != ''">tenant_name = #{tenantName},</if>
+            <if test="idCard != null">id_card = #{idCard},</if>
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="gender != null and gender != ''">gender = #{gender},</if>
+            <if test="roomId != null">room_id = #{roomId},</if>
+            <if test="checkInDate != null">check_in_date = #{checkInDate},</if>
+            <if test="checkOutDate != null">check_out_date = #{checkOutDate},</if>
+            <if test="rentStart != null">rent_start = #{rentStart},</if>
+            <if test="rentEnd != null">rent_end = #{rentEnd},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="openid != null">openid = #{openid},</if>
+            <if test="pushEnabled != null and pushEnabled != ''">push_enabled = #{pushEnabled},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            update_time = sysdate()
+        </set>
+        where tenant_id = #{tenantId}
+    </update>
+
+    <delete id="deleteTenantInfoById" parameterType="Long">
+        delete from tenant_info where tenant_id = #{tenantId}
+    </delete>
+
+    <delete id="deleteTenantInfoByIds" parameterType="Long">
+        delete from tenant_info where tenant_id in
+        <foreach item="tenantId" collection="array" open="(" separator="," close=")">
+            #{tenantId}
+        </foreach>
+    </delete>
+
+</mapper>

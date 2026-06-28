@@ -100,7 +100,28 @@
             </el-form-item>
           </el-form>
         </el-tab-pane>
-        <el-tab-pane label="租客管理" name="tenant"><div class="tab-placeholder">功能开发中</div></el-tab-pane>
+        <el-tab-pane label="租客管理" name="tenant">
+          <div v-if="detailForm.status === '0' || detailForm.status === 'GREEN'" style="margin-bottom:12px">
+            <el-button type="primary" size="small" icon="el-icon-plus" @click="$router.push('/hostel/tenant/checkin')" v-hasPermi="['hostel:tenant:checkin']">办理入住</el-button>
+          </div>
+          <el-table :data="tenantList" v-loading="tenantLoading" size="small" max-height="400">
+            <el-table-column label="姓名" prop="tenantName" min-width="80"/>
+            <el-table-column label="手机号" prop="phone" min-width="110"/>
+            <el-table-column label="租期开始" prop="rentStart" min-width="100" align="center"/>
+            <el-table-column label="租期结束" prop="rentEnd" min-width="100" align="center"/>
+            <el-table-column label="状态" min-width="70" align="center">
+              <template slot-scope="{row}">
+                <el-tag :type="row.status === 'NORMAL' ? 'success' : 'info'" size="small">{{ row.status === 'NORMAL' ? '在租' : '已退租' }}</el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" min-width="80" align="center" v-if="detailForm.status === '1' || detailForm.status === 'BLUE'">
+              <template slot-scope="{row}">
+                <el-button size="mini" type="text" icon="el-icon-delete" @click="doCheckOut(row)" v-if="row.status === 'NORMAL'" v-hasPermi="['hostel:tenant:checkin']">退租</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+          <div v-if="!tenantLoading && tenantList.length === 0" class="tab-placeholder">暂无租客数据</div>
+        </el-tab-pane>
         <el-tab-pane label="设备绑定" name="device"><div class="tab-placeholder">功能开发中</div></el-tab-pane>
         <el-tab-pane label="账单" name="bill"><div class="tab-placeholder">功能开发中</div></el-tab-pane>
         <el-tab-pane label="能耗分析" name="energy"><div class="tab-placeholder">功能开发中</div></el-tab-pane>
@@ -123,7 +144,9 @@ export default {
       query: { apartmentId: undefined, building: undefined, floor: undefined, status: undefined },
       detailOpen: false,
       activeTab: 'info',
-      detailForm: {}
+      detailForm: {},
+      tenantList: [],
+      tenantLoading: false
     }
   },
   created() { this.getApartments(); this.getCardList() },
@@ -150,6 +173,7 @@ export default {
         this.detailForm = r.data || {}
         this.activeTab = 'info'
         this.detailOpen = true
+        this.loadTenants(room.roomId)
       })
     },
     saveDetail() {
@@ -158,6 +182,22 @@ export default {
         this.detailOpen = false
         this.getCardList()
       })
+    },
+    loadTenants(roomId) {
+      this.tenantLoading = true
+      request({ url: '/hostel/tenant/list', method: 'get', params: { pageNum: 1, pageSize: 100, roomId: roomId } }).then(r => {
+        this.tenantList = r.rows || []
+        this.tenantLoading = false
+      })
+    },
+    doCheckOut(tenant) {
+      this.$confirm('确认「' + tenant.tenantName + '」退租?', '提示', { type: 'warning' }).then(() =>
+        request({ url: '/hostel/tenant/check-out/' + tenant.tenantId, method: 'post' }).then(() => {
+          this.$message.success('退租成功')
+          this.loadTenants(this.detailForm.roomId)
+          this.getCardList()
+        })
+      ).catch(() => {})
     }
   }
 }
