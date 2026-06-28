@@ -16,7 +16,7 @@ import com.ruoyi.system.mapper.DeviceMapper;
 import com.ruoyi.system.mapper.DeviceStatusLogMapper;
 import com.ruoyi.system.service.IDeviceRepairService;
 import com.ruoyi.system.service.IDeviceService;
-import com.ruoyi.system.service.ISmsService;
+import com.ruoyi.system.sms.SmsUtil;
 
 /**
  * 设备 业务层处理
@@ -35,7 +35,7 @@ public class DeviceServiceImpl implements IDeviceService
     private DeviceStatusLogMapper deviceStatusLogMapper;
 
     @Autowired
-    private ISmsService smsService;
+    private SmsUtil smsUtil;
 
     @Autowired
     private IDeviceRepairService repairService;
@@ -169,7 +169,7 @@ public class DeviceServiceImpl implements IDeviceService
                 DeviceRepair repair = createRepairOrder(device);
                 // 发送含维修确认链接的短信
                 String completeUrl = getRepairCallbackUrl() + "?token=" + repair.getCompleteToken();
-                smsService.sendSms(device.getResponsible(), device.getResponsiblePhone(),
+                smsUtil.sendSms(device.getResponsible(), device.getResponsiblePhone(),
                     "【设备离线告警】设备「" + device.getDeviceName() + "」（IP:"
                     + (device.getIpAddress() != null ? device.getIpAddress() : "未知")
                     + "）已离线，请及时处理。维修完成后点击确认: " + completeUrl,
@@ -177,7 +177,7 @@ public class DeviceServiceImpl implements IDeviceService
             }
             else if ("ONLINE".equals(status))
             {
-                smsService.sendDeviceOnlineAlert(device);
+                smsUtil.sendDeviceOnlineAlert(device);
             }
         }
         else

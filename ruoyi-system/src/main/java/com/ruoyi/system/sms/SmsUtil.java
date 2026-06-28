@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.system.domain.Device;
+import com.ruoyi.system.domain.VisitorAppointment;
 
 /**
  * 短信统一发送入口——五表驱动多厂商路由
@@ -477,5 +479,89 @@ public class SmsUtil
             }
         }
         return defaultValue;
+    }
+
+    // ============ 兼容旧调用方的桥接方法 ============
+
+    /**
+     * 兼容旧版 sendSms(recipient, phoneNumber, content, bizType, bizId) 调用
+     */
+    public void sendSms(String recipient, String phoneNumber, String content, String bizType, Long bizId)
+    {
+        String params = "{\"content\":\"" + escapeJson(content) + "\"}";
+        sendSms(bizType, phoneNumber, params, 1, null);
+    }
+
+    /**
+     * 发送设备离线告警短信
+     */
+    public void sendDeviceOfflineAlert(Device device)
+    {
+        String content = "设备离线告警：设备「" + safeStr(device.getDeviceName()) + "」（IP: " + safeStr(device.getIpAddress())
+                + "，位置: " + safeStr(device.getLocation()) + "）已离线，请及时排查处理。";
+        sendSms(device.getResponsible(), device.getResponsiblePhone(), content,
+                "DEVICE_OFFLINE", device.getDeviceId());
+    }
+
+    /**
+     * 发送设备上线恢复短信
+     */
+    public void sendDeviceOnlineAlert(Device device)
+    {
+        String content = "设备上线通知：设备「" + safeStr(device.getDeviceName()) + "」（IP: " + safeStr(device.getIpAddress())
+                + "，位置: " + safeStr(device.getLocation()) + "）已恢复正常在线状态。";
+        sendSms(device.getResponsible(), device.getResponsiblePhone(), content,
+                "DEVICE_ONLINE", device.getDeviceId());
+    }
+
+    /**
+     * 发送设备维修通知短信
+     */
+    public void sendRepairAlert(Device device)
+    {
+        String content = "设备离线告警，设备：" + safeStr(device.getDeviceName())
+                + "，已离线，请及时处理。";
+        sendSms(device.getResponsible(), device.getResponsiblePhone(), content,
+                "REPAIR", device.getDeviceId());
+    }
+
+    /**
+     * 发送访客审批通过短信
+     */
+    public void sendVisitorApprovalSms(VisitorAppointment appointment)
+    {
+        String passCode = appointment.getPassCode() != null ? appointment.getPassCode() : "";
+        String content = "访客审批通知：" + safeStr(appointment.getVisitorName()) + "您好，欢迎来访！"
+                + "被访人：" + safeStr(appointment.getHostName())
+                + "（" + safeStr(appointment.getHostDept()) + "），"
+                + "通行码：" + passCode
+                + "，通行链接：http://1.94.26.126:3000/pass/" + passCode;
+        sendSms(appointment.getVisitorName(), appointment.getVisitorPhone(), content,
+                "VISITOR_APPROVE", appointment.getAppointmentId());
+    }
+
+    /**
+     * 发送测试短信
+     */
+    public void sendTestSms(String phoneNumber)
+    {
+        String content = "测试短信，验证码：" + (int) (Math.random() * 9000 + 1000) + "，您正在测试短信发送功能。";
+        sendSms("测试用户", phoneNumber, content, "TEST", null);
+    }
+
+    private String escapeJson(String str)
+    {
+        if (str == null)
+            return "";
+        return str.replace("\\", "\\\\")
+                .replace("\"", "\\\"")
+                .replace("\n", "\\n")
+                .replace("\r", "\\r")
+                .replace("\t", "\\t");
+    }
+
+    private String safeStr(String str)
+    {
+        return str != null ? str : "未知";
     }
 }

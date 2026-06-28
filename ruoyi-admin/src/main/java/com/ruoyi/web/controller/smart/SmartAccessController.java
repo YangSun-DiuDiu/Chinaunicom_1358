@@ -10,7 +10,7 @@ import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.utils.StringUtils;
-import com.ruoyi.system.service.ISmsService;
+import com.ruoyi.system.sms.SmsUtil;
 
 /**
  * 智能化管理 - 人员/车辆通行设备与权限管理通用控制器
@@ -23,7 +23,7 @@ public class SmartAccessController extends BaseController
     private JdbcTemplate jdbc;
 
     @Autowired
-    private ISmsService smsService;
+    private SmsUtil smsUtil;
 
     // ==================== 通用 CRUD ====================
     private TableDataInfo listTable(String table, String where, Object... params) {
@@ -321,7 +321,7 @@ public class SmartAccessController extends BaseController
             repair.getCompleteToken(), repair.getRepairNo());
 
         // 发送短信
-        smsService.sendSms(repair.getCurrentResponsible(), phone,
+        smsUtil.sendSms(repair.getCurrentResponsible(), phone,
             "设备离线告警，设备：" + deviceName + "，已离线，请及时处理。设备登录码：" + repair.getCompleteToken(),
             "REPAIR", deviceId);
 

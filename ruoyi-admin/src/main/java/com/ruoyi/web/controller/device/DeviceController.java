@@ -25,7 +25,7 @@ import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.system.domain.Device;
 import com.ruoyi.system.service.IDeviceService;
-import com.ruoyi.system.service.ISmsService;
+import com.ruoyi.system.sms.SmsUtil;
 
 /**
  * 设备管理
@@ -40,7 +40,7 @@ public class DeviceController extends BaseController
     private IDeviceService deviceService;
 
     @Autowired
-    private ISmsService smsService;
+    private SmsUtil smsUtil;
 
     /**
      * 获取设备列表
@@ -159,7 +159,7 @@ public class DeviceController extends BaseController
         {
             return error("设备负责人电话为空，无法发送维修短信");
         }
-        smsService.sendRepairAlert(device);
+        smsUtil.sendRepairAlert(device);
         return success();
     }
 
