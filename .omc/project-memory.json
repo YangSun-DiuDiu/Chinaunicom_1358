@@ -18,7 +18,7 @@
     "runtime": null
   },
   "build": {
-    "buildCommand": "cd \"e:/gitee/production_release/RuoYi-Vue-master2026-06-24/ruoyi-ui\" && npm run build:prod 2>&1 | tail -2 && scp -r dist/* root@1.94.26.126:/usr/share/nginx/zhihuiyuanqu/dist/ 2>&1 | tail -1 && ssh root@1.94.26.126 'nginx -s reload' 2>&1 | tail -1 && echo \"DONE\" && cd .. && git add -A && git commit -m \"fix: change card.vue detail form status from numeric to GREEN/BLUE/GRAY\" && git push origin master 2>&1 | tail -2",
+    "buildCommand": "cd \"e:/gitee/production_release/RuoYi-Vue-master2026-06-24\" && mvn clean package -DskipTests -q 2>&1 | tail -2 && cd ruoyi-ui && npm run build:prod 2>&1 | tail -2 && echo \"BUILD OK\" && scp ../ruoyi-admin/target/ruoyi-admin.jar root@1.94.26.126:/root/zhihuiyuanqu20260625/ 2>&1 | tail -1 && scp -r dist/* root@1.94.26.126:/usr/share/nginx/zhihuiyuanqu/dist/ 2>&1 | tail -1 && ssh root@1.94.26.126 'cd /root/zhihuiyuanqu20260625 && bash stop-server.sh 2>/dev/null; bash start-server.sh && nginx -s reload' 2>&1 | grep -v \"WARNING\\|post-quantum\" && echo \"DEPLOYED\" && cd .. && git add -A && git commit -m \"feat: add CYAN status for partial occupancy + dark card border\" && git push origin master 2>&1 | tail -2",
     "testCommand": null,
     "lintCommand": null,
     "devCommand": null,
