@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.ApartmentInfoMapper">
+
+    <resultMap type="ApartmentInfo" id="ApartmentInfoResult">
+        <id     property="apartmentId"    column="apartment_id"     />
+        <result property="apartmentName"  column="apartment_name"   />
+        <result property="address"        column="address"          />
+        <result property="contactPhone"   column="contact_phone"    />
+        <result property="areaDesc"       column="area_desc"        />
+        <result property="deptId"         column="dept_id"          />
+        <result property="createBy"       column="create_by"        />
+        <result property="createTime"     column="create_time"      />
+        <result property="updateBy"       column="update_by"        />
+        <result property="updateTime"     column="update_time"      />
+        <result property="remark"         column="remark"           />
+    </resultMap>
+
+    <sql id="selectApartmentInfoVo">
+        select apartment_id, apartment_name, address, contact_phone,
+               area_desc, dept_id, create_by, create_time, update_by,
+               update_time, remark
+        from apartment_info
+    </sql>
+
+    <select id="selectApartmentInfoList" parameterType="ApartmentInfo" resultMap="ApartmentInfoResult">
+        <include refid="selectApartmentInfoVo"/>
+        <where>
+            <if test="apartmentName != null and apartmentName != ''">
+                AND apartment_name like concat('%', #{apartmentName}, '%')
+            </if>
+            <if test="address != null and address != ''">
+                AND address like concat('%', #{address}, '%')
+            </if>
+            <if test="contactPhone != null and contactPhone != ''">
+                AND contact_phone like concat('%', #{contactPhone}, '%')
+            </if>
+            <if test="params.beginTime != null and params.beginTime != ''">
+                and date_format(create_time,'%Y%m%d') &gt;= date_format(#{params.beginTime},'%Y%m%d')
+            </if>
+            <if test="params.endTime != null and params.endTime != ''">
+                and date_format(create_time,'%Y%m%d') &lt;= date_format(#{params.endTime},'%Y%m%d')
+            </if>
+            <!-- 数据权限过滤 -->
+            ${params.dataScope}
+        </where>
+    </select>
+
+    <select id="selectApartmentInfoById" parameterType="Long" resultMap="ApartmentInfoResult">
+        <include refid="selectApartmentInfoVo"/>
+        where apartment_id = #{apartmentId}
+    </select>
+
+    <insert id="insertApartmentInfo" parameterType="ApartmentInfo" useGeneratedKeys="true" keyProperty="apartmentId">
+        insert into apartment_info (
+            <if test="apartmentName != null and apartmentName != ''">apartment_name,</if>
+            <if test="address != null and address != ''">address,</if>
+            <if test="contactPhone != null and contactPhone != ''">contact_phone,</if>
+            <if test="areaDesc != null and areaDesc != ''">area_desc,</if>
+            <if test="deptId != null">dept_id,</if>
+            <if test="createBy != null and createBy != ''">create_by,</if>
+            <if test="remark != null and remark != ''">remark,</if>
+            create_time
+        )values(
+            <if test="apartmentName != null and apartmentName != ''">#{apartmentName},</if>
+            <if test="address != null and address != ''">#{address},</if>
+            <if test="contactPhone != null and contactPhone != ''">#{contactPhone},</if>
+            <if test="areaDesc != null and areaDesc != ''">#{areaDesc},</if>
+            <if test="deptId != null">#{deptId},</if>
+            <if test="createBy != null and createBy != ''">#{createBy},</if>
+            <if test="remark != null and remark != ''">#{remark},</if>
+            sysdate()
+        )
+    </insert>
+
+    <update id="updateApartmentInfo" parameterType="ApartmentInfo">
+        update apartment_info
+        <set>
+            <if test="apartmentName != null and apartmentName != ''">apartment_name = #{apartmentName},</if>
+            <if test="address != null and address != ''">address = #{address},</if>
+            <if test="contactPhone != null and contactPhone != ''">contact_phone = #{contactPhone},</if>
+            <if test="areaDesc != null and areaDesc != ''">area_desc = #{areaDesc},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            update_time = sysdate()
+        </set>
+        where apartment_id = #{apartmentId}
+    </update>
+
+    <delete id="deleteApartmentInfoById" parameterType="Long">
+        delete from apartment_info where apartment_id = #{apartmentId}
+    </delete>
+
+    <delete id="deleteApartmentInfoByIds" parameterType="Long">
+        delete from apartment_info where apartment_id in
+        <foreach item="apartmentId" collection="array" open="(" separator="," close=")">
+            #{apartmentId}
+        </foreach>
+    </delete>
+
+</mapper>
