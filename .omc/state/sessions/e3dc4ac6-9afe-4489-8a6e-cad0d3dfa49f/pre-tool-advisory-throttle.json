@@ -2,17 +2,53 @@
   "version": 1,
   "entries": {
     "79a93d4a2f8f50b95f852280616242fee1855dc99a3c75211917f55e72e95fae": {
-      "last_emitted_at_ms": 1782484634370,
+      "last_emitted_at_ms": 1782608699330,
       "message": "Use parallel execution for independent tasks. Use run_in_background for long operations (npm install, builds, tests)."
     },
+    "466399dafa2d20f60587180bad0a07358eb7f2bce724df0ff682f038ad33f5ad": {
+      "last_emitted_at_ms": 1782608575051,
+      "message": "Read multiple files in parallel when possible for faster analysis."
+    },
     "445ed27a3872b681d98190bae61ccb84954e1bc4e140df5370be958dee776b3a": {
-      "last_emitted_at_ms": 1782484045940,
+      "last_emitted_at_ms": 1782608571616,
       "message": "Verify changes work after editing. Test functionality before marking complete."
     },
-    "466399dafa2d20f60587180bad0a07358eb7f2bce724df0ff682f038ad33f5ad": {
-      "last_emitted_at_ms": 1782484028988,
-      "message": "Read multiple files in parallel when possible for faster analysis."
+    "4f7a67fba0a8473e9883d9e8dffbb2d72e00a4a1eeb4fa80cb14213b167dc90f": {
+      "last_emitted_at_ms": 1782608567212,
+      "message": "Mark todos in_progress BEFORE starting, completed IMMEDIATELY after finishing."
+    },
+    "f1e02bfde0b9e6ee9e02664bd792fc36948a08bb1cf53cbd12860b1077471bdd": {
+      "last_emitted_at_ms": 1782607908127,
+      "message": "Spawning agent: oh-my-claudecode:executor (haiku) [BACKGROUND] | Task: Task 5: Build deploy verify"
+    },
+    "459c54e5f35d6a58dcd90d2aecc21fa6d1f35d241bc5b134c506f87dc7b6d67b": {
+      "last_emitted_at_ms": 1782607869224,
+      "message": "Combine searches in parallel when investigating multiple patterns."
+    },
+    "f47a4956e37d9c56e92ee026b39ad2c4bf85d97a140a52bb9f13bae668fc81d5": {
+      "last_emitted_at_ms": 1782607634891,
+      "message": "Spawning agent: oh-my-claudecode:explore (inherit) | Task: Explore hostel backend APIs"
+    },
+    "81c351b5cc983bcb7481058c0528251e7dcd4efad2f01d4ff613bb4f6eaf79f8": {
+      "last_emitted_at_ms": 1782607632528,
+      "message": "Spawning agent: oh-my-claudecode:explore (inherit) | Task: Explore meeting pages pattern"
+    },
+    "f6dd77946666b6078369f1ac18e032b0686c1b8c97666c4b7b514d3c1fce8132": {
+      "last_emitted_at_ms": 1782607619554,
+      "message": "Spawning agent: oh-my-claudecode:executor (sonnet) | Task: Task 4: Frontend 4 pages"
+    },
+    "a7c02140120f48aec7883cd5c455e67eee5e589cb327a2a982ed16c5a1163c83": {
+      "last_emitted_at_ms": 1782607499083,
+      "message": "Spawning agent: oh-my-claudecode:executor (haiku) | Task: Task 3: Controllers"
+    },
+    "e4ea638ab7c198c20384d7643943afcfa30c8167890ebfdbe31548fafe5243ed": {
+      "last_emitted_at_ms": 1782607320807,
+      "message": "Spawning agent: oh-my-claudecode:executor (sonnet) | Task: Task 2: Domain Mapper Service"
+    },
+    "b55e973e4cca2d4548b1ad72608f2948a8183256a9920a56ff78bf8d55274917": {
+      "last_emitted_at_ms": 1782607083384,
+      "message": "Spawning agent: oh-my-claudecode:executor (haiku) | Task: Task 1: DB tables + menu"
     }
   },
-  "updated_at": "2026-06-26T14:37:14.370Z"
+  "updated_at": "2026-06-28T01:04:59.330Z"
 }

@@ -76,7 +76,19 @@
       "Bash(mysql -h 1.94.26.126 -P 3306 -u sadmin -pChinaunicom@1358 ry101 -N -e \"SELECT DISTINCT perms FROM sys_menu WHERE perms IS NOT NULL AND perms != '' ORDER BY perms;\")",
       "Bash(playwright-cli fill *)",
       "Bash(playwright-cli click *)",
-      "Bash(ssh root@1.94.26.126 'cd /root/zhihuiyuanqu20260625 && bash stop-server.sh 2>/dev/null; bash start-server.sh && sleep 12 && grep \"dept_id\" app.log | tail -2')"
+      "Bash(ssh root@1.94.26.126 'cd /root/zhihuiyuanqu20260625 && bash stop-server.sh 2>/dev/null; bash start-server.sh && sleep 12 && grep \"dept_id\" app.log | tail -2')",
+      "Bash(cp \"e:/gitee/production_release/RuoYi-Vue-backup-20260628.tar.gz\" \"e:/gitee/production_release/RuoYi-Vue-master2026-06-24/\")",
+      "Bash(cp \"e:/gitee/production_release/ry101-backup-20260628.sql\" \"e:/gitee/production_release/RuoYi-Vue-master2026-06-24/\")",
+      "Bash(bash \"C:\\\\Users\\\\Administrator\\\\.claude\\\\plugins\\\\cache\\\\superpowers-marketplace\\\\superpowers\\\\6.0.3\\\\skills\\\\subagent-driven-development\\\\scripts\\\\task-brief\" \"e:\\\\gitee\\\\production_release\\\\RuoYi-Vue-master2026-06-24\\\\docs\\\\superpowers\\\\plans\\\\2026-06-28-hostel-room-card-plan.md\" 1)",
+      "Bash(mysql -h 1.94.26.126 -P 3306 -u sadmin -p'Chinaunicom@1358' ry101)",
+      "Bash(mysql -h 1.94.26.126 -P 3306 -u sadmin -p'Chinaunicom@1358' ry101 -e \"SHOW TABLES LIKE '%_info';\")",
+      "Bash(mysql -h 1.94.26.126 -P 3306 -u sadmin -p'Chinaunicom@1358' ry101 -e \"SELECT menu_id, menu_name, parent_id, order_num, path, perms FROM sys_menu WHERE path LIKE 'hostel%' ORDER BY order_num;\")",
+      "Bash(mysql -h 1.94.26.126 -P 3306 -u sadmin -p'Chinaunicom@1358' ry101 -e \"SELECT menu_id, menu_name, parent_id, order_num, path, perms FROM sys_menu WHERE menu_id >= 2113 OR parent_id = 2113 ORDER BY menu_id;\")",
+      "Bash(mysql -h 1.94.26.126 -P 3306 -u sadmin -p'Chinaunicom@1358' ry101 -e \"DESCRIBE apartment_info; DESCRIBE room_info;\")",
+      "Bash(bash \"C:\\\\Users\\\\Administrator\\\\.claude\\\\plugins\\\\cache\\\\superpowers-marketplace\\\\superpowers\\\\6.0.3\\\\skills\\\\subagent-driven-development\\\\scripts\\\\task-brief\" \"e:\\\\gitee\\\\production_release\\\\RuoYi-Vue-master2026-06-24\\\\docs\\\\superpowers\\\\plans\\\\2026-06-28-hostel-room-card-plan.md\" 2)",
+      "Bash(bash \"C:\\\\Users\\\\Administrator\\\\.claude\\\\plugins\\\\cache\\\\superpowers-marketplace\\\\superpowers\\\\6.0.3\\\\skills\\\\subagent-driven-development\\\\scripts\\\\task-brief\" \"e:\\\\gitee\\\\production_release\\\\RuoYi-Vue-master2026-06-24\\\\docs\\\\superpowers\\\\plans\\\\2026-06-28-hostel-room-card-plan.md\" 3)",
+      "Bash(bash \"C:\\\\Users\\\\Administrator\\\\.claude\\\\plugins\\\\cache\\\\superpowers-marketplace\\\\superpowers\\\\6.0.3\\\\skills\\\\subagent-driven-development\\\\scripts\\\\task-brief\" \"e:\\\\gitee\\\\production_release\\\\RuoYi-Vue-master2026-06-24\\\\docs\\\\superpowers\\\\plans\\\\2026-06-28-hostel-room-card-plan.md\" 4)",
+      "Bash(bash \"C:\\\\Users\\\\Administrator\\\\.claude\\\\plugins\\\\cache\\\\superpowers-marketplace\\\\superpowers\\\\6.0.3\\\\skills\\\\subagent-driven-development\\\\scripts\\\\task-brief\" \"e:\\\\gitee\\\\production_release\\\\RuoYi-Vue-master2026-06-24\\\\docs\\\\superpowers\\\\plans\\\\2026-06-28-hostel-room-card-plan.md\" 5)"
     ]
   }
 }
