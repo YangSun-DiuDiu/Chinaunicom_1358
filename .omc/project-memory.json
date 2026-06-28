@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1782426911560,
+  "lastScanned": 1782604554162,
   "projectRoot": "e:\\gitee\\production_release\\RuoYi-Vue-master2026-06-24",
   "techStack": {
     "languages": [
@@ -45,7 +45,7 @@
       "path": "bin",
       "purpose": "Executable scripts",
       "fileCount": 3,
-      "lastAccessed": 1782426911408,
+      "lastAccessed": 1782604553776,
       "keyFiles": [
         "clean.bat",
         "package.bat",
@@ -56,7 +56,7 @@
       "path": "deploy",
       "purpose": null,
       "fileCount": 5,
-      "lastAccessed": 1782426911409,
+      "lastAccessed": 1782604553777,
       "keyFiles": [
         "nginx.conf",
         "README.md",
@@ -68,8 +68,8 @@
     "doc": {
       "path": "doc",
       "purpose": null,
-      "fileCount": 33,
-      "lastAccessed": 1782426911410,
+      "fileCount": 35,
+      "lastAccessed": 1782604553778,
       "keyFiles": [
         "01-项目概述.md",
         "02-模块架构.md",
@@ -82,14 +82,14 @@
       "path": "docs",
       "purpose": "Documentation",
       "fileCount": 0,
-      "lastAccessed": 1782426911411,
+      "lastAccessed": 1782604553778,
       "keyFiles": []
     },
     "ruoyi-admin": {
       "path": "ruoyi-admin",
       "purpose": null,
       "fileCount": 1,
-      "lastAccessed": 1782426911412,
+      "lastAccessed": 1782604553779,
       "keyFiles": [
         "pom.xml"
       ]
@@ -98,7 +98,7 @@
       "path": "ruoyi-common",
       "purpose": null,
       "fileCount": 1,
-      "lastAccessed": 1782426911413,
+      "lastAccessed": 1782604553780,
       "keyFiles": [
         "pom.xml"
       ]
@@ -107,7 +107,7 @@
       "path": "ruoyi-framework",
       "purpose": null,
       "fileCount": 1,
-      "lastAccessed": 1782426911414,
+      "lastAccessed": 1782604553780,
       "keyFiles": [
         "pom.xml"
       ]
@@ -116,7 +116,7 @@
       "path": "ruoyi-quartz",
       "purpose": null,
       "fileCount": 1,
-      "lastAccessed": 1782426911414,
+      "lastAccessed": 1782604553781,
       "keyFiles": [
         "pom.xml"
       ]
@@ -125,7 +125,7 @@
       "path": "ruoyi-system",
       "purpose": null,
       "fileCount": 1,
-      "lastAccessed": 1782426911415,
+      "lastAccessed": 1782604553795,
       "keyFiles": [
         "pom.xml"
       ]
@@ -134,7 +134,7 @@
       "path": "ruoyi-ui",
       "purpose": null,
       "fileCount": 10,
-      "lastAccessed": 1782426911415,
+      "lastAccessed": 1782604553797,
       "keyFiles": [
         "babel.config.js",
         "package-lock.json",
@@ -146,21 +146,21 @@
     "sql": {
       "path": "sql",
       "purpose": null,
-      "fileCount": 18,
-      "lastAccessed": 1782426911416,
+      "fileCount": 20,
+      "lastAccessed": 1782604553798,
       "keyFiles": [
+        "fix_missing_permissions.sql",
+        "meeting_management.sql",
         "menu_reorg_batch1_device_visitor.sql",
         "menu_reorg_batch2_smart_attendance_sms.sql",
-        "quartz.sql",
-        "ry-vue100-accounts.sql",
-        "ry-vue100-fix-columns.sql"
+        "quartz.sql"
       ]
     },
     "test-records": {
       "path": "test-records",
       "purpose": null,
       "fileCount": 32,
-      "lastAccessed": 1782426911416,
+      "lastAccessed": 1782604553833,
       "keyFiles": [
         "01-测试计划总览.md",
         "02-登录与认证模块测试.md",
@@ -173,7 +173,7 @@
       "path": "tools",
       "purpose": null,
       "fileCount": 1,
-      "lastAccessed": 1782426911418,
+      "lastAccessed": 1782604553847,
       "keyFiles": [
         "test_snmp.py"
       ]
@@ -182,7 +182,7 @@
       "path": "zhihuiyuanqu20260625",
       "purpose": null,
       "fileCount": 5,
-      "lastAccessed": 1782426911420,
+      "lastAccessed": 1782604553882,
       "keyFiles": [
         "deploy.sh",
         "nginx.conf",
@@ -195,7 +195,7 @@
       "path": "deploy\\dist",
       "purpose": "Distribution/build output",
       "fileCount": 4,
-      "lastAccessed": 1782426911422,
+      "lastAccessed": 1782604553916,
       "keyFiles": [
         "favicon.ico",
         "index.html",
@@ -206,42 +206,42 @@
       "path": "ruoyi-admin\\src",
       "purpose": "Source code",
       "fileCount": 0,
-      "lastAccessed": 1782426911424,
+      "lastAccessed": 1782604553961,
       "keyFiles": []
     },
     "ruoyi-common\\src": {
       "path": "ruoyi-common\\src",
       "purpose": "Source code",
       "fileCount": 0,
-      "lastAccessed": 1782426911425,
+      "lastAccessed": 1782604553986,
       "keyFiles": []
     },
     "ruoyi-framework\\src": {
       "path": "ruoyi-framework\\src",
       "purpose": "Source code",
       "fileCount": 0,
-      "lastAccessed": 1782426911426,
+      "lastAccessed": 1782604554001,
       "keyFiles": []
     },
     "ruoyi-quartz\\src": {
       "path": "ruoyi-quartz\\src",
       "purpose": "Source code",
       "fileCount": 0,
-      "lastAccessed": 1782426911428,
+      "lastAccessed": 1782604554017,
       "keyFiles": []
     },
     "ruoyi-system\\src": {
       "path": "ruoyi-system\\src",
       "purpose": "Source code",
       "fileCount": 0,
-      "lastAccessed": 1782426911429,
+      "lastAccessed": 1782604554050,
       "keyFiles": []
     },
     "ruoyi-ui\\bin": {
       "path": "ruoyi-ui\\bin",
       "purpose": "Executable scripts",
       "fileCount": 3,
-      "lastAccessed": 1782426911429,
+      "lastAccessed": 1782604554056,
       "keyFiles": [
         "build.bat",
         "package.bat",
@@ -252,7 +252,7 @@
       "path": "ruoyi-ui\\build",
       "purpose": "Build output",
       "fileCount": 1,
-      "lastAccessed": 1782426911430,
+      "lastAccessed": 1782604554097,
       "keyFiles": [
         "index.js"
       ]
@@ -261,7 +261,7 @@
       "path": "ruoyi-ui\\dist",
       "purpose": "Distribution/build output",
       "fileCount": 4,
-      "lastAccessed": 1782426911430,
+      "lastAccessed": 1782604554102,
       "keyFiles": [
         "favicon.ico",
         "index.html",
@@ -272,7 +272,7 @@
       "path": "zhihuiyuanqu20260625\\dist",
       "purpose": "Distribution/build output",
       "fileCount": 4,
-      "lastAccessed": 1782426911432,
+      "lastAccessed": 1782604554162,
       "keyFiles": [
         "favicon.ico",
         "index.html",
@@ -283,14 +283,14 @@
   "hotPaths": [
     {
       "path": "",
-      "accessCount": 63,
-      "lastAccessed": 1782467797419,
+      "accessCount": 99,
+      "lastAccessed": 1782607685940,
       "type": "directory"
     },
     {
       "path": "ruoyi-ui\\src\\router\\index.js",
-      "accessCount": 14,
-      "lastAccessed": 1782473773014,
+      "accessCount": 17,
+      "lastAccessed": 1782607833700,
       "type": "directory"
     },
     {
@@ -313,14 +313,20 @@
     },
     {
       "path": ".superpowers\\sdd\\task-1-report.md",
-      "accessCount": 7,
-      "lastAccessed": 1782466607297,
+      "accessCount": 9,
+      "lastAccessed": 1782607290661,
       "type": "file"
     },
     {
       "path": ".superpowers\\sdd\\task-4-report.md",
+      "accessCount": 8,
+      "lastAccessed": 1782607623439,
+      "type": "file"
+    },
+    {
+      "path": ".superpowers\\sdd\\task-3-report.md",
       "accessCount": 7,
-      "lastAccessed": 1782468162973,
+      "lastAccessed": 1782607596971,
       "type": "file"
     },
     {
@@ -330,40 +336,40 @@
       "type": "file"
     },
     {
-      "path": ".superpowers\\sdd\\task-3-report.md",
-      "accessCount": 5,
-      "lastAccessed": 1782467313834,
-      "type": "file"
-    },
-    {
       "path": ".superpowers\\sdd\\task-2-report.md",
-      "accessCount": 4,
-      "lastAccessed": 1782446361043,
+      "accessCount": 6,
+      "lastAccessed": 1782607476885,
       "type": "file"
     },
     {
       "path": ".superpowers\\sdd\\task-1-brief.md",
-      "accessCount": 4,
-      "lastAccessed": 1782466376317,
+      "accessCount": 5,
+      "lastAccessed": 1782607087879,
       "type": "file"
     },
     {
       "path": ".superpowers\\sdd\\task-2-brief.md",
-      "accessCount": 4,
-      "lastAccessed": 1782466652997,
+      "accessCount": 5,
+      "lastAccessed": 1782607324004,
       "type": "file"
     },
     {
       "path": ".superpowers\\sdd\\task-3-brief.md",
-      "accessCount": 4,
-      "lastAccessed": 1782467007287,
+      "accessCount": 5,
+      "lastAccessed": 1782607502243,
       "type": "file"
     },
     {
       "path": ".superpowers\\sdd\\task-4-brief.md",
-      "accessCount": 4,
-      "lastAccessed": 1782467404319,
+      "accessCount": 5,
+      "lastAccessed": 1782607623029,
       "type": "file"
+    },
+    {
+      "path": "ruoyi-ui",
+      "accessCount": 5,
+      "lastAccessed": 1782607680879,
+      "type": "directory"
     },
     {
       "path": "ruoyi-system\\src\\main\\java\\com\\ruoyi\\system\\service\\ISmsService.java",
@@ -382,12 +388,6 @@
       "accessCount": 2,
       "lastAccessed": 1782447489321,
       "type": "file"
-    },
-    {
-      "path": "ruoyi-ui",
-      "accessCount": 2,
-      "lastAccessed": 1782467044323,
-      "type": "directory"
     },
     {
       "path": "ruoyi-quartz\\src\\main\\java\\com\\ruoyi\\quartz\\task\\DeviceHeartbeatTask.java",
