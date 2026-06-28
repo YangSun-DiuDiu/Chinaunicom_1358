@@ -24,6 +24,7 @@ import com.ruoyi.system.domain.RoomInfo;
 import com.ruoyi.system.domain.TenantInfo;
 import com.ruoyi.system.service.IRoomInfoService;
 import com.ruoyi.system.service.ITenantInfoService;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
  * 租客管理 信息操作处理
@@ -39,6 +40,8 @@ public class TenantController extends BaseController
 
     @Autowired
     private IRoomInfoService roomInfoService;
+    @Autowired
+    private JdbcTemplate jdbc;
 
     /**
      * 获取租客分页列表
@@ -126,10 +129,12 @@ public class TenantController extends BaseController
         tenantInfo.setUpdateBy(SecurityUtils.getUsername());
         tenantInfoService.updateTenantInfo(tenantInfo);
 
-        // 更新房间状态：BLUE，人数+1
+        // 更新房间状态：基于实际入住人数 vs 房间容量(tenant_count)
         RoomInfo roomInfo = roomInfoService.selectRoomInfoById(roomId);
-        roomInfo.setStatus("BLUE");
-        roomInfo.setTenantCount(roomInfo.getTenantCount() == null ? 1 : roomInfo.getTenantCount() + 1);
+        int actualCount = jdbc.queryForObject(
+            "SELECT COUNT(*) FROM tenant_info WHERE room_id=? AND status='NORMAL'", Integer.class, roomId);
+        int maxCapacity = roomInfo.getTenantCount() != null ? roomInfo.getTenantCount() : 4;
+        roomInfo.setStatus(actualCount >= maxCapacity ? "BLUE" : (actualCount > 0 ? "BLUE" : "GREEN"));
         roomInfo.setUpdateBy(SecurityUtils.getUsername());
         roomInfoService.updateRoomInfo(roomInfo);
 
@@ -152,17 +157,15 @@ public class TenantController extends BaseController
         tenantInfo.setUpdateBy(SecurityUtils.getUsername());
         tenantInfoService.updateTenantInfo(tenantInfo);
 
-        // 更新房间：人数-1，人数为0则状态恢复GREEN
+        // 更新房间：重新计算实际入住人数，与房间容量(tenant_count)比较决定状态
         Long roomId = tenantInfo.getRoomId();
         if (roomId != null)
         {
             RoomInfo roomInfo = roomInfoService.selectRoomInfoById(roomId);
-            int newCount = (roomInfo.getTenantCount() == null ? 0 : roomInfo.getTenantCount()) - 1;
-            roomInfo.setTenantCount(Math.max(newCount, 0));
-            if (roomInfo.getTenantCount() == 0)
-            {
-                roomInfo.setStatus("GREEN");
-            }
+            int actualCount = jdbc.queryForObject(
+                "SELECT COUNT(*) FROM tenant_info WHERE room_id=? AND status='NORMAL'", Integer.class, roomId);
+            int maxCapacity = roomInfo.getTenantCount() != null ? roomInfo.getTenantCount() : 4;
+            roomInfo.setStatus(actualCount == 0 ? "GREEN" : "BLUE");
             roomInfo.setUpdateBy(SecurityUtils.getUsername());
             roomInfoService.updateRoomInfo(roomInfo);
         }

@@ -70,11 +70,6 @@
             <el-option label="女" value="F"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="分配房间" prop="roomId">
-          <el-select v-model="form.roomId" placeholder="请选择房间" clearable style="width:100%">
-            <el-option v-for="r in rooms" :key="r.roomId" :label="r.roomCode" :value="r.roomId"/>
-          </el-select>
-        </el-form-item>
         <el-form-item label="租期开始" prop="rentStart">
           <el-date-picker v-model="form.rentStart" type="date" value-format="yyyy-MM-dd" placeholder="选择日期" style="width:100%"/>
         </el-form-item>
@@ -104,7 +99,7 @@ export default {
       loading: false, showSearch: true, total: 0, list: [], open: false, title: '',
       rooms: [],
       query: { pageNum: 1, pageSize: 10, tenantName: undefined, phone: undefined, status: undefined },
-      form: { tenantId: undefined, tenantName: '', idCard: '', phone: '', gender: 'M', roomId: undefined, rentStart: undefined, rentEnd: undefined, status: 'NORMAL' },
+      form: { tenantId: undefined, tenantName: '', idCard: '', phone: '', gender: 'M', rentStart: undefined, rentEnd: undefined, status: 'NORMAL' },
       rules: {
         tenantName: [{ required: true, message: '姓名不能为空', trigger: 'blur' }]
       }

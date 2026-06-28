@@ -1,7 +1,7 @@
 {
   "tool_name": "Bash",
-  "tool_input_preview": "{\"command\":\"TOKEN=$(curl -s -X POST http://1.94.26.126:8090/login -H \\\"Content-Type: application/json\\\" -d '{\\\"username\\\":\\\"admin\\\",\\\"password\\\":\\\"admin123\\\"}' 2>&1 | python3 -c \\\"import sys,json; dat...",
-  "error": "Exit code 49",
-  "timestamp": "2026-06-28T00:58:52.937Z",
+  "tool_input_preview": "{\"command\":\"echo \\\"=== 80 ===\\\" && curl -s -o /dev/null -w \\\"%{http_code}\\\\n\\\" http://1.94.26.126:80/ --connect-timeout 5 && echo \\\"=== 3001 ===\\\" && curl -s -o /dev/null -w \\\"%{http_code}\\\\n\\\" http:/...",
+  "error": "Exit code 28\n=== 80 ===\n200\r\n=== 3001 ===\n000",
+  "timestamp": "2026-06-28T02:02:16.473Z",
   "retry_count": 1
 }
