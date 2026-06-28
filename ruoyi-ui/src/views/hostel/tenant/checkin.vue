@@ -102,8 +102,8 @@ export default {
     },
     loadVacantRooms() {
       this.roomLoading = true
-      request({ url: '/hostel/room/list', method: 'get', params: { pageNum: 1, pageSize: 1000, status: '0' } }).then(r => {
-        this.vacantRooms = (r.rows || []).filter(room => room.status === '0' || room.status === 'GREEN')
+      request({ url: '/hostel/room/list', method: 'get', params: { pageNum: 1, pageSize: 1000, status: 'GREEN' } }).then(r => {
+        this.vacantRooms = r.rows || []
         this.roomLoading = false
       })
     },
