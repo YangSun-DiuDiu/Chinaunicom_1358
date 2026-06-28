@@ -27,6 +27,23 @@
 | actual>=capacity | BLUE | 蓝色 |
 | 手动设置 | GRAY | 灰色(维修) |
 
+## 技术债务（代码审查发现，暂不修复）
+
+| 严重度 | 问题 | 位置 |
+|--------|------|------|
+| CRITICAL | Controller 直接使用 JdbcTemplate 违反分层 | TenantController, RoomController |
+| HIGH | 物理 DELETE 未用 delFlag 逻辑删除 | ApartmentInfoMapper, RoomInfoMapper, TenantInfoMapper |
+| HIGH | ServiceImpl 缺少 @DataScope | ApartmentInfoServiceImpl, RoomInfoServiceImpl, TenantInfoServiceImpl |
+| HIGH | checkIn/renew 裸 Map 入参无校验 | TenantController |
+| HIGH | JdbcTemplate 无异常捕获 | TenantController, RoomController |
+| MEDIUM | ServiceImpl 循环单删 | ApartmentInfoServiceImpl, RoomInfoServiceImpl, TenantInfoServiceImpl |
+| MEDIUM | checkIn/checkOut 状态重算代码重复 | TenantController |
+| MEDIUM | cardList N+1 查询 | RoomController |
+| MEDIUM | checkin.vue pageSize=1000 硬编码 | checkin.vue |
+| LOW | renew 端点无前端调用 | TenantController |
+
+> 来源: 2026-06-28 代码审查 (Angle C/H/E)
+
 ## 关键配置
 
 | 配置项 | 值 |

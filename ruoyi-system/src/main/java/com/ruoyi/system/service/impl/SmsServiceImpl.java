@@ -1,21 +1,12 @@
 package com.ruoyi.system.service.impl;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
-import java.util.TimeZone;
-import java.util.TreeMap;
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.aliyuncs.DefaultAcsClient;
+import com.aliyuncs.dysmsapi.model.v20170525.SendSmsRequest;
+import com.aliyuncs.dysmsapi.model.v20170525.SendSmsResponse;
+import com.aliyuncs.exceptions.ClientException;
+import com.aliyuncs.profile.DefaultProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,11 +44,6 @@ public class SmsServiceImpl implements ISmsService {
     /** 发送结果常量 */
     private static final String SEND_RESULT_SUCCESS = "SUCCESS";
     private static final String SEND_RESULT_FAIL = "FAIL";
-
-    /** 阿里云短信API域名 */
-    private static final String ALIYUN_SMS_ENDPOINT = "dysmsapi.aliyuncs.com";
-    private static final String ALIYUN_SMS_VERSION = "2017-05-25";
-    private static final String ALIYUN_SMS_ACTION = "SendSms";
 
     /**
      * 发送短信并记录到短信日志表
@@ -169,7 +155,7 @@ public class SmsServiceImpl implements ISmsService {
     }
 
     /**
-     * 调用阿里云短信API
+     * 调用阿里云短信SDK发送短信
      */
     private void callAliyunSmsApi(String phoneNumber, String templateParam, String bizType) throws Exception {
         String accessKeyId = smsConfigService.getAccessKeyId();
@@ -177,7 +163,6 @@ public class SmsServiceImpl implements ISmsService {
         String signName = smsConfigService.getSignName();
         String templateCode = getTemplateCode(bizType);
         String regionId = smsConfigService.getRegionId();
-        String endpoint = smsConfigService.getSmsEndpoint();
 
         if (StringUtils.isEmpty(accessKeyId) || StringUtils.isEmpty(accessKeySecret)
                 || StringUtils.isEmpty(signName) || StringUtils.isEmpty(templateCode)) {
@@ -185,73 +170,31 @@ public class SmsServiceImpl implements ISmsService {
             return;
         }
 
-        if (StringUtils.isEmpty(endpoint)) {
-            endpoint = ALIYUN_SMS_ENDPOINT;
+        if (StringUtils.isEmpty(regionId)) {
+            regionId = "cn-hangzhou";
         }
 
-        // 构建请求参数
-        TreeMap<String, String> params = new TreeMap<>();
-        params.put("PhoneNumbers", phoneNumber);
-        params.put("SignName", signName);
-        params.put("TemplateCode", templateCode);
-        // 将模板内容序列化为JSON格式的TemplateParam
-        params.put("TemplateParam", "{\"content\":\"" + escapeJson(templateParam) + "\"}");
-        params.put("AccessKeyId", accessKeyId);
-        params.put("Action", ALIYUN_SMS_ACTION);
-        params.put("Version", ALIYUN_SMS_VERSION);
-        params.put("SignatureMethod", "HMAC-SHA1");
-        params.put("SignatureVersion", "1.0");
-        params.put("Timestamp", getTimestamp());
-        params.put("Format", "JSON");
-        params.put("SignatureNonce", generateNonce());
-        params.put("RegionId", StringUtils.isEmpty(regionId) ? "cn-hangzhou" : regionId);
+        com.aliyuncs.profile.DefaultProfile profile = com.aliyuncs.profile.DefaultProfile.getProfile(
+                regionId, accessKeyId, accessKeySecret);
+        com.aliyuncs.DefaultAcsClient client = new com.aliyuncs.DefaultAcsClient(profile);
+        com.aliyuncs.dysmsapi.model.v20170525.SendSmsRequest request =
+                new com.aliyuncs.dysmsapi.model.v20170525.SendSmsRequest();
+        request.setPhoneNumbers(phoneNumber);
+        request.setSignName(signName);
+        request.setTemplateCode(templateCode);
+        request.setTemplateParam("{\"content\":\"" + escapeJson(templateParam) + "\"}");
 
-        // 计算签名
-        String signature = sign(params, accessKeySecret);
-        params.put("Signature", signature);
-
-        // 发送HTTP POST请求
-        String urlStr = "https://" + endpoint;
-        String postData = buildQueryString(params, false);
-
-        log.debug("阿里云短信API请求: endpoint={}, phone={}, sign={}", endpoint, phoneNumber, signName);
-
-        HttpURLConnection conn = (HttpURLConnection) new URL(urlStr).openConnection();
-        conn.setRequestMethod("POST");
-        conn.setDoOutput(true);
-        conn.setConnectTimeout(10000);
-        conn.setReadTimeout(10000);
-        conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-
-        try (OutputStream os = conn.getOutputStream()) {
-            os.write(postData.getBytes(StandardCharsets.UTF_8));
-            os.flush();
-        }
-
-        int statusCode = conn.getResponseCode();
-        StringBuilder response = new StringBuilder();
-        try (BufferedReader br = new BufferedReader(
-                new InputStreamReader(
-                        statusCode == 200 ? conn.getInputStream() : conn.getErrorStream(),
-                        StandardCharsets.UTF_8))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                response.append(line);
+        try {
+            com.aliyuncs.dysmsapi.model.v20170525.SendSmsResponse response =
+                    client.getAcsResponse(request);
+            log.info("阿里云短信发送: phone={}, code={}, message={}, bizId={}",
+                    phoneNumber, response.getCode(), response.getMessage(), response.getBizId());
+            if (!"OK".equals(response.getCode())) {
+                throw new RuntimeException("阿里云短信发送失败: " + response.getMessage());
             }
-        }
-
-        log.info("阿里云短信API响应: status={}, body={}", statusCode, response);
-
-        if (statusCode != 200) {
-            throw new RuntimeException("阿里云短信API返回状态码: " + statusCode + ", 响应: " + response);
-        }
-
-        // 解析响应JSON
-        ObjectMapper mapper = new ObjectMapper();
-        Map<String, Object> respMap = mapper.readValue(response.toString(), Map.class);
-        String code = (String) respMap.get("Code");
-        if (!"OK".equals(code)) {
-            throw new RuntimeException("阿里云短信发送失败: " + respMap.get("Message"));
+        } catch (com.aliyuncs.exceptions.ClientException e) {
+            log.error("阿里云短信SDK调用异常: phone={}", phoneNumber, e);
+            throw e;
         }
     }
 
@@ -275,80 +218,6 @@ public class SmsServiceImpl implements ISmsService {
             default:
                 return "";
         }
-    }
-
-    // ===== 阿里云签名计算 =====
-
-    /**
-     * 计算HMAC-SHA1签名
-     */
-    private String sign(TreeMap<String, String> params, String accessKeySecret) throws Exception {
-        String queryString = buildQueryString(params, true);
-        String stringToSign = "POST&" + percentEncode("/") + "&" + percentEncode(queryString);
-        String key = accessKeySecret + "&";
-        Mac mac = Mac.getInstance("HmacSHA1");
-        mac.init(new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), "HmacSHA1"));
-        byte[] signData = mac.doFinal(stringToSign.getBytes(StandardCharsets.UTF_8));
-        return base64Encode(signData);
-    }
-
-    private String buildQueryString(TreeMap<String, String> params, boolean forSign) {
-        StringBuilder sb = new StringBuilder();
-        for (Map.Entry<String, String> entry : params.entrySet()) {
-            if ("Signature".equals(entry.getKey())) {
-                continue;
-            }
-            if (sb.length() > 0) {
-                sb.append("&");
-            }
-            sb.append(percentEncode(entry.getKey()));
-            sb.append("=");
-            sb.append(forSign ? percentEncode(entry.getValue()) : urlEncode(entry.getValue()));
-        }
-        return sb.toString();
-    }
-
-    private String percentEncode(String value) {
-        if (value == null)
-            return "";
-        try {
-            String encoded = URLEncoder.encode(value, "UTF-8")
-                    .replace("+", "%20")
-                    .replace("*", "%2A")
-                    .replace("%7E", "~");
-            return encoded;
-        } catch (Exception e) {
-            return value;
-        }
-    }
-
-    private String urlEncode(String value) {
-        if (value == null)
-            return "";
-        try {
-            return URLEncoder.encode(value, "UTF-8");
-        } catch (Exception e) {
-            return value;
-        }
-    }
-
-    private String getTimestamp() {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-        return sdf.format(new Date());
-    }
-
-    private String generateNonce() {
-        StringBuilder sb = new StringBuilder();
-        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        for (int i = 0; i < 32; i++) {
-            sb.append(chars.charAt((int) (Math.random() * chars.length())));
-        }
-        return sb.toString();
-    }
-
-    private String base64Encode(byte[] data) {
-        return java.util.Base64.getEncoder().encodeToString(data);
     }
 
     private String escapeJson(String str) {

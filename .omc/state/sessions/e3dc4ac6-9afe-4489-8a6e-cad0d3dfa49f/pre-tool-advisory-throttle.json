@@ -2,45 +2,21 @@
   "version": 1,
   "entries": {
     "79a93d4a2f8f50b95f852280616242fee1855dc99a3c75211917f55e72e95fae": {
-      "last_emitted_at_ms": 1782622917013,
+      "last_emitted_at_ms": 1782625320752,
       "message": "Use parallel execution for independent tasks. Use run_in_background for long operations (npm install, builds, tests)."
     },
     "445ed27a3872b681d98190bae61ccb84954e1bc4e140df5370be958dee776b3a": {
-      "last_emitted_at_ms": 1782620699512,
+      "last_emitted_at_ms": 1782625051266,
       "message": "Verify changes work after editing. Test functionality before marking complete."
     },
-    "459c54e5f35d6a58dcd90d2aecc21fa6d1f35d241bc5b134c506f87dc7b6d67b": {
-      "last_emitted_at_ms": 1782620616445,
-      "message": "Combine searches in parallel when investigating multiple patterns."
-    },
     "466399dafa2d20f60587180bad0a07358eb7f2bce724df0ff682f038ad33f5ad": {
-      "last_emitted_at_ms": 1782620587723,
+      "last_emitted_at_ms": 1782625030999,
       "message": "Read multiple files in parallel when possible for faster analysis."
     },
-    "6cf81cf5f7f869cb6aa3fc550190c435c2bb1e7b84ee37d4cca1f70f53cab305": {
-      "last_emitted_at_ms": 1782620580919,
-      "message": "Spawning agent: oh-my-claudecode:code-reviewer (sonnet) [BACKGROUND] | Task: Code review angle H: conventions"
-    },
-    "4f7a67fba0a8473e9883d9e8dffbb2d72e00a4a1eeb4fa80cb14213b167dc90f": {
-      "last_emitted_at_ms": 1782620579540,
-      "message": "Mark todos in_progress BEFORE starting, completed IMMEDIATELY after finishing."
-    },
-    "5670dc7d603e3416e14f8b8a1b6192063491ede41876c51849788cb13f38b337": {
-      "last_emitted_at_ms": 1782620578212,
-      "message": "Spawning agent: oh-my-claudecode:code-reviewer (sonnet) [BACKGROUND] | Task: Code review angle E: simplify"
-    },
-    "e6b9d1948fe4908154139d0a4b6952ca626f830b96af4e95ab034dbcdcd6f34c": {
-      "last_emitted_at_ms": 1782620576016,
-      "message": "Spawning agent: oh-my-claudecode:code-reviewer (sonnet) [BACKGROUND] | Task: Code review angle C: cross-file"
-    },
-    "b55e47d845b51c75b0c81406af0324ff61a62b5d6928867b27fd0cf781261616": {
-      "last_emitted_at_ms": 1782620573461,
-      "message": "Spawning agent: oh-my-claudecode:code-reviewer (sonnet) [BACKGROUND] | Task: Code review angle B: removed"
-    },
-    "264f12461365cbd1931017d7e087878d444b7c43f13d6d42b664404f3861fd76": {
-      "last_emitted_at_ms": 1782620570867,
-      "message": "Spawning agent: oh-my-claudecode:code-reviewer (sonnet) [BACKGROUND] | Task: Code review angle A: diff scan"
+    "459c54e5f35d6a58dcd90d2aecc21fa6d1f35d241bc5b134c506f87dc7b6d67b": {
+      "last_emitted_at_ms": 1782625022290,
+      "message": "Combine searches in parallel when investigating multiple patterns."
     }
   },
-  "updated_at": "2026-06-28T05:01:57.013Z"
+  "updated_at": "2026-06-28T05:42:00.752Z"
 }
