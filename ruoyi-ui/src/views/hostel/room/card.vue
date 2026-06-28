@@ -36,8 +36,8 @@
         <div class="card-body">
           <p>{{ room.unitType || '-' }} | {{ room.area != null ? room.area + 'm²' : '-' }}</p>
           <p>{{ room.building || '-' }}-{{ room.floor || '-' }}</p>
-          <p>合租: {{ room.tenantCount || 0 }}人 | {{ room.doorType === 'ONLINE' ? '联网锁' : 'NFC锁' }}</p>
-          <p>{{ room.deviceStatus === 'BOUND' ? '设备已绑定' : '未绑定' }}</p>
+          <p>{{ tenantNames(room) || '暂无租客' }}</p>
+          <p>床位: {{ room.params.actualCount || 0 }}/{{ room.tenantCount || 0 }} | {{ room.doorType === 'ONLINE' ? '联网锁' : 'NFC锁' }}</p>
         </div>
         <div class="card-footer">{{ room.rentStart || '-' }} ~ {{ room.rentEnd || '-' }}</div>
       </div>
@@ -142,6 +142,7 @@ export default {
       cardList: [],
       apartments: [],
       query: { apartmentId: undefined, building: undefined, floor: undefined, status: undefined },
+      timer: null,
       detailOpen: false,
       activeTab: 'info',
       detailForm: {},
@@ -149,7 +150,11 @@ export default {
       tenantLoading: false
     }
   },
-  created() { this.getApartments(); this.getCardList() },
+  created() {
+    this.getApartments(); this.getCardList()
+    this.timer = setInterval(() => { this.getCardList() }, 30000)
+  },
+  beforeDestroy() { if (this.timer) clearInterval(this.timer) },
   methods: {
     getApartments() {
       request({ url: '/hostel/apartment/list', method: 'get', params: { pageNum: 1, pageSize: 1000 } }).then(r => {
@@ -157,7 +162,11 @@ export default {
       })
     },
     cardClass(status) {
-      return status === '0' ? 'card-GREEN' : status === '1' ? 'card-BLUE' : status === '2' ? 'card-YELLOW' : 'card-GRAY'
+      return 'card-' + (status || 'GREEN')
+    },
+    tenantNames(room) {
+      const names = room.params && room.params.tenantNames
+      return names && names.length ? names.join(', ') : ''
     },
     getCardList() {
       request({ url: BASE + '/card/list', method: 'get', params: this.query }).then(r => {
