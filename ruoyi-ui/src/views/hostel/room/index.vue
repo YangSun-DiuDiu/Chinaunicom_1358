@@ -14,9 +14,9 @@
       </el-form-item>
       <el-form-item label="状态">
         <el-select v-model="query.status" placeholder="全部" clearable style="width:120px">
-          <el-option label="空闲" value="0"/>
-          <el-option label="已租" value="1"/>
-          <el-option label="维修中" value="2"/>
+          <el-option label="空闲" value="GREEN"/>
+          <el-option label="已租" value="BLUE"/>
+          <el-option label="维修中" value="GRAY"/>
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -109,9 +109,9 @@
         </el-form-item>
         <el-form-item label="状态" prop="status">
           <el-radio-group v-model="form.status">
-            <el-radio label="0">空闲</el-radio>
-            <el-radio label="1">已租</el-radio>
-            <el-radio label="2">维修中</el-radio>
+            <el-radio label="GREEN">空闲</el-radio>
+            <el-radio label="BLUE">已租</el-radio>
+            <el-radio label="GRAY">维修中</el-radio>
           </el-radio-group>
         </el-form-item>
       </el-form>
@@ -131,7 +131,7 @@ export default {
       loading: false, showSearch: true, total: 0, list: [], open: false, title: '',
       apartments: [],
       query: { pageNum: 1, pageSize: 10, apartmentId: undefined, building: undefined, roomCode: undefined, status: undefined },
-      form: { roomId: undefined, roomCode: '', apartmentId: undefined, building: '', floor: '', unitType: '', area: undefined, rentStart: undefined, rentEnd: undefined, tenantCount: 0, doorType: 'ONLINE', deviceStatus: 'BOUND', status: '0' },
+      form: { roomId: undefined, roomCode: '', apartmentId: undefined, building: '', floor: '', unitType: '', area: undefined, rentStart: undefined, rentEnd: undefined, tenantCount: 0, doorType: 'ONLINE', deviceStatus: 'BOUND', status: 'GREEN' },
       rules: {
         roomCode: [{ required: true, message: '房间编号不能为空', trigger: 'blur' }],
         apartmentId: [{ required: true, message: '请选择公寓', trigger: 'change' }]
@@ -149,8 +149,8 @@ export default {
       const a = this.apartments.find(x => x.apartmentId === id)
       return a ? a.apartmentName : ''
     },
-    statusText(v) { return v === '0' ? '空闲' : v === '1' ? '已租' : v === '2' ? '维修中' : v },
-    statusTag(v) { return v === '0' ? 'success' : v === '1' ? '' : v === '2' ? 'danger' : '' },
+    statusText(v) { return v === 'GREEN' ? '空闲' : v === 'BLUE' ? '已租' : v === 'GRAY' ? '维修中' : v },
+    statusTag(v) { return v === 'GREEN' ? 'success' : v === 'BLUE' ? '' : v === 'GRAY' ? 'info' : '' },
     getList() {
       this.loading = true
       request({ url: BASE + '/list', method: 'get', params: this.query }).then(r => {
@@ -162,7 +162,7 @@ export default {
       this.getList()
     },
     handleAdd() {
-      this.form = { roomId: undefined, roomCode: '', apartmentId: undefined, building: '', floor: '', unitType: '', area: undefined, rentStart: undefined, rentEnd: undefined, tenantCount: 0, doorType: 'ONLINE', deviceStatus: 'BOUND', status: '0' }
+      this.form = { roomId: undefined, roomCode: '', apartmentId: undefined, building: '', floor: '', unitType: '', area: undefined, rentStart: undefined, rentEnd: undefined, tenantCount: 0, doorType: 'ONLINE', deviceStatus: 'BOUND', status: 'GREEN' }
       this.title = '新增房间'; this.open = true
     },
     handleEdit(row) {
