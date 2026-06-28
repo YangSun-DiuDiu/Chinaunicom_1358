@@ -1,7 +1,7 @@
 {
-  "tool_name": "Bash",
-  "tool_input_preview": "{\"command\":\"echo \\\"=== 80 ===\\\" && curl -s -o /dev/null -w \\\"%{http_code}\\\\n\\\" http://1.94.26.126:80/ --connect-timeout 5 && echo \\\"=== 3001 ===\\\" && curl -s -o /dev/null -w \\\"%{http_code}\\\\n\\\" http:/...",
-  "error": "Exit code 28\n=== 80 ===\n200\r\n=== 3001 ===\n000",
-  "timestamp": "2026-06-28T02:02:16.473Z",
-  "retry_count": 1
+  "tool_name": "mcp__plugin_oh-my-claudecode_t__lsp_diagnostics",
+  "tool_input_preview": "{\"file\":\"e:\\\\gitee\\\\production_release\\\\RuoYi-Vue-master2026-06-24\\\\ruoyi-admin\\\\src\\\\main\\\\java\\\\com\\\\ruoyi\\\\web\\\\controller\\\\hostel\\\\TenantController.java\"}",
+  "error": "Language server 'jdtls' not found.\nInstall with: Install from https://github.com/eclipse/eclipse.jdt.ls",
+  "timestamp": "2026-06-28T04:25:32.708Z",
+  "retry_count": 3
 }
