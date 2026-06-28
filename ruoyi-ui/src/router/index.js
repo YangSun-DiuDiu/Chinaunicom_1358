@@ -400,6 +400,34 @@ export const staticRoutes = [
         meta: { title: '会议管理', icon: 'list', permissions: ['meeting:booking:list'] }
       }
     ]
+  },
+  // ==================== 公寓管理 ====================
+  {
+    path: '/hostel',
+    component: Layout,
+    name: 'Hostel',
+    alwaysShow: true,
+    meta: { title: '公寓管理', icon: 'house' },
+    children: [
+      {
+        path: 'apartment',
+        component: () => import('@/views/hostel/apartment/index'),
+        name: 'HostelApartment',
+        meta: { title: '公寓管理', icon: 'building', permissions: ['hostel:apartment:list'] }
+      },
+      {
+        path: 'room',
+        component: () => import('@/views/hostel/room/index'),
+        name: 'HostelRoom',
+        meta: { title: '房间管理', icon: 'list', permissions: ['hostel:room:list'] }
+      },
+      {
+        path: 'room/card',
+        component: () => import('@/views/hostel/room/card'),
+        name: 'HostelRoomCard',
+        meta: { title: '房间卡片', icon: 'component', permissions: ['hostel:room:card'] }
+      }
+    ]
   }
 ]
 
