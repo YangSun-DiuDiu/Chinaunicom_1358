@@ -90,9 +90,9 @@
             </el-form-item>
             <el-form-item label="状态">
               <el-radio-group v-model="detailForm.status">
-                <el-radio label="0">空闲</el-radio>
-                <el-radio label="1">已租</el-radio>
-                <el-radio label="2">维修中</el-radio>
+                <el-radio label="GREEN">空闲</el-radio>
+                <el-radio label="BLUE">已租</el-radio>
+                <el-radio label="GRAY">维修中</el-radio>
               </el-radio-group>
             </el-form-item>
             <el-form-item>
@@ -101,7 +101,7 @@
           </el-form>
         </el-tab-pane>
         <el-tab-pane label="租客管理" name="tenant">
-          <div v-if="detailForm.status === '0' || detailForm.status === 'GREEN'" style="margin-bottom:12px">
+          <div v-if="detailForm.status === 'GREEN'" style="margin-bottom:12px">
             <el-button type="primary" size="small" icon="el-icon-plus" @click="$router.push('/hostel/tenant/checkin')" v-hasPermi="['hostel:tenant:checkin']">办理入住</el-button>
           </div>
           <el-table :data="tenantList" v-loading="tenantLoading" size="small" max-height="400">
