@@ -24,7 +24,7 @@ import com.ruoyi.system.domain.SysConfig;
 import com.ruoyi.system.mapper.SysConfigMapper;
 import com.ruoyi.system.service.IDeviceRepairService;
 import com.ruoyi.system.service.IDeviceService;
-import com.ruoyi.system.service.ISmsService;
+import com.ruoyi.system.sms.SmsUtil;
 
 /**
  * 设备维修工单管理
@@ -38,7 +38,7 @@ public class DeviceRepairController extends BaseController
     @Autowired
     private IDeviceRepairService repairService;
     @Autowired
-    private ISmsService smsService;
+    private SmsUtil smsUtil;
     @Autowired
     private IDeviceService deviceService;
     @Autowired
@@ -72,7 +72,7 @@ public class DeviceRepairController extends BaseController
             repairService.transferRepair(repairId, to, phone, reason, getUsername());
             DeviceRepair r = repairService.selectRepairById(repairId);
             if (r != null && StringUtils.isNotEmpty(phone)) {
-                smsService.sendSms(to, phone,
+                smsUtil.sendSms(to, phone,
                     "设备离线告警，设备：" + r.getDeviceName()
                     + "，已离线，请及时处理。设备登录码：" + (r.getCompleteToken() != null ? r.getCompleteToken() : ""),
                     "REPAIR", repairId);
@@ -132,7 +132,7 @@ public class DeviceRepairController extends BaseController
         repairService.insertRepair(repair);
 
         String repairToken = repair.getCompleteToken();
-        smsService.sendSms(device.getResponsible(), device.getResponsiblePhone(),
+        smsUtil.sendSms(device.getResponsible(), device.getResponsiblePhone(),
             "设备离线告警，设备：" + device.getDeviceName()
             + "，已离线，请及时处理。设备登录码：" + repairToken,
             "REPAIR", repair.getRepairId());

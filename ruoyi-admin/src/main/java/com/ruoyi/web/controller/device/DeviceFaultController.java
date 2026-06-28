@@ -24,7 +24,7 @@ import com.ruoyi.system.mapper.SysConfigMapper;
 import com.ruoyi.system.service.IDeviceRepairService;
 import com.ruoyi.system.service.IDeviceService;
 import com.ruoyi.system.service.IDeviceStatusLogService;
-import com.ruoyi.system.service.ISmsService;
+import com.ruoyi.system.sms.SmsUtil;
 
 /**
  * 设备故障预警 Controller
@@ -43,7 +43,7 @@ public class DeviceFaultController extends BaseController
     private IDeviceService deviceService;
 
     @Autowired
-    private ISmsService smsService;
+    private SmsUtil smsUtil;
 
     @Autowired
     private IDeviceRepairService repairService;
@@ -144,7 +144,7 @@ public class DeviceFaultController extends BaseController
 
         // 发送带反馈链接的维修短信
         String completeUrl = callbackUrl + "?token=" + repair.getCompleteToken();
-        smsService.sendSms(device.getResponsible(), device.getResponsiblePhone(),
+        smsUtil.sendSms(device.getResponsible(), device.getResponsiblePhone(),
             "【设备维修】设备「" + device.getDeviceName() + "」（IP:" + device.getIpAddress()
             + "）离线故障，请及时处理。维修完成后请点击反馈: " + completeUrl,
             "REPAIR", repair.getRepairId());

@@ -16,7 +16,7 @@ import com.ruoyi.system.domain.DeviceRepair;
 import com.ruoyi.system.service.IDeviceHeartbeatLogService;
 import com.ruoyi.system.service.IDeviceRepairService;
 import com.ruoyi.system.service.IDeviceService;
-import com.ruoyi.system.service.ISmsService;
+import com.ruoyi.system.sms.SmsUtil;
 
 /**
  * 设备心跳检测定时任务——覆盖设备管理+智能化管理全部设备
@@ -32,7 +32,7 @@ public class DeviceHeartbeatTask
     @Autowired private IDeviceService deviceService;
     @Autowired private IDeviceHeartbeatLogService heartbeatLogService;
     @Autowired private IDeviceRepairService repairService;
-    @Autowired private ISmsService smsService;
+    @Autowired private SmsUtil smsUtil;
     @Autowired private JdbcTemplate jdbc;
 
     /** 任务入口 */
@@ -114,7 +114,7 @@ public class DeviceHeartbeatTask
                                 repair.setCompleteToken(java.util.UUID.randomUUID().toString().replace("-", ""));
                                 repair.setRepairNo(generateRepairNo());
                                 repairService.insertRepair(repair);
-                                smsService.sendSms(d.getResponsible(), d.getResponsiblePhone(),
+                                smsUtil.sendSms(d.getResponsible(), d.getResponsiblePhone(),
                                     "设备离线告警，设备：" + d.getDeviceName()
                                     + "，已离线，请及时处理。设备登录码：" + repair.getCompleteToken(),
                                     "REPAIR", repair.getRepairId());

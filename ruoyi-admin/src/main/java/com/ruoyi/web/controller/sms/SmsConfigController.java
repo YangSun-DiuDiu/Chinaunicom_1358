@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
-import com.ruoyi.system.service.ISmsService;
+import com.ruoyi.system.sms.SmsUtil;
 
 /**
  * 短信配置管理
@@ -21,7 +21,7 @@ import com.ruoyi.system.service.ISmsService;
 public class SmsConfigController extends BaseController
 {
     @Autowired
-    private ISmsService smsService;
+    private SmsUtil smsUtil;
 
     /**
      * 测试短信发送
@@ -37,7 +37,7 @@ public class SmsConfigController extends BaseController
         }
         try
         {
-            smsService.sendTestSms(phoneNumber.trim());
+            smsUtil.sendTestSms(phoneNumber.trim());
             return success("测试短信发送成功");
         }
         catch (Exception e)

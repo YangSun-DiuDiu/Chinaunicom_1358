@@ -12,7 +12,7 @@ import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.system.domain.VisitorAppointment;
 import com.ruoyi.system.mapper.VisitorAppointmentMapper;
 import com.ruoyi.system.service.IVisitorAppointmentService;
-import com.ruoyi.system.service.ISmsService;
+import com.ruoyi.system.sms.SmsUtil;
 
 /**
  * 访客预约 服务层处理
@@ -36,7 +36,7 @@ public class VisitorAppointmentServiceImpl implements IVisitorAppointmentService
     private VisitorAppointmentMapper appointmentMapper;
 
     @Autowired
-    private ISmsService smsService;
+    private SmsUtil smsUtil;
 
     /**
      * 查询预约列表
@@ -217,7 +217,7 @@ public class VisitorAppointmentServiceImpl implements IVisitorAppointmentService
         try
         {
             // 调用短信服务实际发送
-            smsService.sendVisitorApprovalSms(appointment);
+            smsUtil.sendVisitorApprovalSms(appointment);
 
             log.info("审批短信已发送 -> 手机号: {}, 内容: {}",
                     appointment.getVisitorPhone(), smsContent);

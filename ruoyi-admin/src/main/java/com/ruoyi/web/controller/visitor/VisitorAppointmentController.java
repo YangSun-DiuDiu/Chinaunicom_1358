@@ -24,7 +24,7 @@ import com.ruoyi.system.domain.VisitorAppointment;
 import com.ruoyi.system.domain.VisitorLog;
 import com.ruoyi.system.service.IVisitorAppointmentService;
 import com.ruoyi.system.service.IVisitorLogService;
-import com.ruoyi.system.service.ISmsService;
+import com.ruoyi.system.sms.SmsUtil;
 
 /**
  * 访客预约管理
@@ -42,7 +42,7 @@ public class VisitorAppointmentController extends BaseController
     private IVisitorLogService visitorLogService;
 
     @Autowired
-    private ISmsService smsService;
+    private SmsUtil smsUtil;
 
     /**
      * 获取预约列表（分页）
@@ -194,7 +194,7 @@ public class VisitorAppointmentController extends BaseController
                 // 发送短信通知（含通行码链接），仅发送一次
                 if (StringUtils.isNotEmpty(approved.getVisitorPhone()))
                 {
-                    smsService.sendVisitorApprovalSms(approved);
+                    smsUtil.sendVisitorApprovalSms(approved);
                 }
             }
         }
