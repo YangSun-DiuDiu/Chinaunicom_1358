@@ -1,7 +1,10 @@
 package com.ruoyi.web.controller.hostel;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -32,6 +35,8 @@ public class RoomController extends BaseController
 {
     @Autowired
     private IRoomInfoService roomInfoService;
+    @Autowired
+    private JdbcTemplate jdbc;
 
     /**
      * 获取房间分页列表
@@ -63,6 +68,16 @@ public class RoomController extends BaseController
     public AjaxResult cardList(RoomInfo roomInfo)
     {
         List<RoomInfo> list = roomInfoService.selectRoomCardList(roomInfo);
+        // 为每个房间附加租客姓名列表
+        for (RoomInfo r : list) {
+            List<Map<String, Object>> tenants = jdbc.queryForList(
+                "SELECT tenant_name FROM tenant_info WHERE room_id=? AND status='NORMAL'", r.getRoomId());
+            List<String> names = new java.util.ArrayList<>();
+            for (Map<String, Object> t : tenants) names.add((String) t.get("tenant_name"));
+            r.getParams().put("tenantNames", names);
+            // 实际人数 & 容量
+            r.getParams().put("actualCount", names.size());
+        }
         return success(list);
     }
 
