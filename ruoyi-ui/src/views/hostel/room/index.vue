@@ -15,7 +15,8 @@
       <el-form-item label="状态">
         <el-select v-model="query.status" placeholder="全部" clearable style="width:120px">
           <el-option label="空闲" value="GREEN"/>
-          <el-option label="已租" value="BLUE"/>
+          <el-option label="有人但未满" value="CYAN"/>
+          <el-option label="已住满" value="BLUE"/>
           <el-option label="维修中" value="GRAY"/>
         </el-select>
       </el-form-item>
@@ -110,7 +111,8 @@
         <el-form-item label="状态" prop="status">
           <el-radio-group v-model="form.status">
             <el-radio label="GREEN">空闲</el-radio>
-            <el-radio label="BLUE">已租</el-radio>
+            <el-radio label="CYAN">有人但未满</el-radio>
+            <el-radio label="BLUE">已住满</el-radio>
             <el-radio label="GRAY">维修中</el-radio>
           </el-radio-group>
         </el-form-item>
@@ -149,8 +151,8 @@ export default {
       const a = this.apartments.find(x => x.apartmentId === id)
       return a ? a.apartmentName : ''
     },
-    statusText(v) { return v === 'GREEN' ? '空闲' : v === 'BLUE' ? '已租' : v === 'GRAY' ? '维修中' : v },
-    statusTag(v) { return v === 'GREEN' ? 'success' : v === 'BLUE' ? '' : v === 'GRAY' ? 'info' : '' },
+    statusText(v) { return v === 'GREEN' ? '空闲' : v === 'CYAN' ? '有人但未满' : v === 'BLUE' ? '已住满' : v === 'GRAY' ? '维修中' : v },
+    statusTag(v) { return v === 'GREEN' ? 'success' : v === 'CYAN' ? 'warning' : v === 'BLUE' ? '' : v === 'GRAY' ? 'info' : '' },
     getList() {
       this.loading = true
       request({ url: BASE + '/list', method: 'get', params: this.query }).then(r => {
