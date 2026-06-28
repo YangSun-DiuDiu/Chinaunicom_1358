@@ -426,6 +426,18 @@ export const staticRoutes = [
         component: () => import('@/views/hostel/room/card'),
         name: 'HostelRoomCard',
         meta: { title: '房间卡片', icon: 'component', permissions: ['hostel:room:card'] }
+      },
+      {
+        path: 'tenant',
+        component: () => import('@/views/hostel/tenant/index'),
+        name: 'HostelTenant',
+        meta: { title: '租客管理', icon: 'people', permissions: ['hostel:tenant:list'] }
+      },
+      {
+        path: 'tenant/checkin',
+        component: () => import('@/views/hostel/tenant/checkin'),
+        name: 'HostelTenantCheckin',
+        meta: { title: '办理入住', icon: 'edit', permissions: ['hostel:tenant:checkin'] }
       }
     ]
   }
