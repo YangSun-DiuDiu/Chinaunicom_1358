@@ -102,8 +102,8 @@
           </el-form>
         </el-tab-pane>
         <el-tab-pane label="租客管理" name="tenant">
-          <div v-if="detailForm.status === 'GREEN'" style="margin-bottom:12px">
-            <el-button type="primary" size="small" icon="el-icon-plus" @click="$router.push('/hostel/tenant/checkin')" v-hasPermi="['hostel:tenant:checkin']">办理入住</el-button>
+          <div style="margin-bottom:12px">
+            <el-button type="primary" size="small" icon="el-icon-plus" @click="doCheckIn" v-hasPermi="['hostel:tenant:checkin']">办理入住</el-button>
           </div>
           <el-table :data="tenantList" v-loading="tenantLoading" size="small" max-height="400">
             <el-table-column label="姓名" prop="tenantName" min-width="80"/>
@@ -199,6 +199,13 @@ export default {
         this.tenantList = r.rows || []
         this.tenantLoading = false
       })
+    },
+    doCheckIn() {
+      if (this.detailForm.status === 'BLUE') {
+        this.$message.warning('该房间已住满，无法办理入住')
+        return
+      }
+      this.$router.push('/hostel/tenant/checkin')
     },
     doCheckOut(tenant) {
       this.$confirm('确认「' + tenant.tenantName + '」退租?', '提示', { type: 'warning' }).then(() =>

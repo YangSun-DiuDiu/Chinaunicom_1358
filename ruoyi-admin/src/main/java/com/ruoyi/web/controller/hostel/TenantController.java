@@ -165,7 +165,7 @@ public class TenantController extends BaseController
             int actualCount = jdbc.queryForObject(
                 "SELECT COUNT(*) FROM tenant_info WHERE room_id=? AND status='NORMAL'", Integer.class, roomId);
             int maxCapacity = roomInfo.getTenantCount() != null ? roomInfo.getTenantCount() : 4;
-            roomInfo.setStatus(actualCount == 0 ? "GREEN" : "BLUE");
+            roomInfo.setStatus(actualCount == 0 ? "GREEN" : actualCount < maxCapacity ? "CYAN" : "BLUE");
             roomInfo.setUpdateBy(SecurityUtils.getUsername());
             roomInfoService.updateRoomInfo(roomInfo);
         }
