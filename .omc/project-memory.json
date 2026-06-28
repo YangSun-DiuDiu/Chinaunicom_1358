@@ -18,7 +18,7 @@
     "runtime": null
   },
   "build": {
-    "buildCommand": "cd e:/gitee/production_release/RuoYi-Vue-master2026-06-24/ruoyi-ui && npm run build:prod 2>&1",
+    "buildCommand": "cd \"e:/gitee/production_release/RuoYi-Vue-master2026-06-24/ruoyi-ui\" && npm run build:prod 2>&1",
     "testCommand": null,
     "lintCommand": null,
     "devCommand": null,
@@ -283,15 +283,21 @@
   "hotPaths": [
     {
       "path": "",
-      "accessCount": 99,
-      "lastAccessed": 1782607685940,
+      "accessCount": 118,
+      "lastAccessed": 1782611100190,
       "type": "directory"
     },
     {
       "path": "ruoyi-ui\\src\\router\\index.js",
-      "accessCount": 17,
-      "lastAccessed": 1782607833700,
+      "accessCount": 22,
+      "lastAccessed": 1782611087465,
       "type": "directory"
+    },
+    {
+      "path": ".superpowers\\sdd\\task-1-report.md",
+      "accessCount": 11,
+      "lastAccessed": 1782610402182,
+      "type": "file"
     },
     {
       "path": "ruoyi-admin\\src\\main\\java\\com\\ruoyi\\web\\controller\\smart\\SmartAccessController.java",
@@ -306,27 +312,33 @@
       "type": "file"
     },
     {
+      "path": ".superpowers\\sdd\\task-4-report.md",
+      "accessCount": 10,
+      "lastAccessed": 1782611491530,
+      "type": "file"
+    },
+    {
       "path": "ruoyi-ui\\src\\views\\smart\\person-access\\device\\index.vue",
       "accessCount": 9,
       "lastAccessed": 1782447770066,
       "type": "file"
     },
     {
-      "path": ".superpowers\\sdd\\task-1-report.md",
-      "accessCount": 9,
-      "lastAccessed": 1782607290661,
-      "type": "file"
-    },
-    {
-      "path": ".superpowers\\sdd\\task-4-report.md",
-      "accessCount": 8,
-      "lastAccessed": 1782607623439,
-      "type": "file"
-    },
-    {
       "path": ".superpowers\\sdd\\task-3-report.md",
+      "accessCount": 9,
+      "lastAccessed": 1782610960300,
+      "type": "file"
+    },
+    {
+      "path": ".superpowers\\sdd\\task-2-report.md",
+      "accessCount": 8,
+      "lastAccessed": 1782610669837,
+      "type": "file"
+    },
+    {
+      "path": ".superpowers\\sdd\\task-3-brief.md",
       "accessCount": 7,
-      "lastAccessed": 1782607596971,
+      "lastAccessed": 1782610714311,
       "type": "file"
     },
     {
@@ -336,33 +348,21 @@
       "type": "file"
     },
     {
-      "path": ".superpowers\\sdd\\task-2-report.md",
-      "accessCount": 6,
-      "lastAccessed": 1782607476885,
-      "type": "file"
-    },
-    {
       "path": ".superpowers\\sdd\\task-1-brief.md",
-      "accessCount": 5,
-      "lastAccessed": 1782607087879,
+      "accessCount": 6,
+      "lastAccessed": 1782609627651,
       "type": "file"
     },
     {
       "path": ".superpowers\\sdd\\task-2-brief.md",
-      "accessCount": 5,
-      "lastAccessed": 1782607324004,
-      "type": "file"
-    },
-    {
-      "path": ".superpowers\\sdd\\task-3-brief.md",
-      "accessCount": 5,
-      "lastAccessed": 1782607502243,
+      "accessCount": 6,
+      "lastAccessed": 1782610431330,
       "type": "file"
     },
     {
       "path": ".superpowers\\sdd\\task-4-brief.md",
-      "accessCount": 5,
-      "lastAccessed": 1782607623029,
+      "accessCount": 6,
+      "lastAccessed": 1782611003859,
       "type": "file"
     },
     {
@@ -378,15 +378,15 @@
       "type": "file"
     },
     {
-      "path": "ruoyi-common\\src\\main\\java\\com\\ruoyi\\common\\utils\\PingUtil.java",
-      "accessCount": 2,
-      "lastAccessed": 1782436438373,
+      "path": "ruoyi-admin\\src\\main\\resources\\application.yml",
+      "accessCount": 3,
+      "lastAccessed": 1782611022713,
       "type": "file"
     },
     {
-      "path": "ruoyi-admin\\src\\main\\resources\\application.yml",
+      "path": "ruoyi-common\\src\\main\\java\\com\\ruoyi\\common\\utils\\PingUtil.java",
       "accessCount": 2,
-      "lastAccessed": 1782447489321,
+      "lastAccessed": 1782436438373,
       "type": "file"
     },
     {
