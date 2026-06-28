@@ -20,9 +20,10 @@
       </el-form-item>
       <el-form-item label="状态">
         <el-select v-model="query.status" placeholder="全部" clearable style="width:120px" @change="getCardList">
-          <el-option label="空闲" value="0"/>
-          <el-option label="已租" value="1"/>
-          <el-option label="维修中" value="2"/>
+          <el-option label="空闲" value="GREEN"/>
+          <el-option label="有人但未满" value="CYAN"/>
+          <el-option label="已住满" value="BLUE"/>
+          <el-option label="维修中" value="GRAY"/>
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -115,7 +116,7 @@
                 <el-tag :type="row.status === 'NORMAL' ? 'success' : 'info'" size="small">{{ row.status === 'NORMAL' ? '在租' : '已退租' }}</el-tag>
               </template>
             </el-table-column>
-            <el-table-column label="操作" min-width="80" align="center" v-if="detailForm.status === '1' || detailForm.status === 'BLUE'">
+            <el-table-column label="操作" min-width="80" align="center" v-if="detailForm.status === 'CYAN' || detailForm.status === 'BLUE'">
               <template slot-scope="{row}">
                 <el-button size="mini" type="text" icon="el-icon-delete" @click="doCheckOut(row)" v-if="row.status === 'NORMAL'" v-hasPermi="['hostel:tenant:checkin']">退租</el-button>
               </template>
