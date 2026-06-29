@@ -6,6 +6,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.ruoyi.common.utils.StringUtils;
@@ -39,6 +40,9 @@ public class DeviceServiceImpl implements IDeviceService
 
     @Autowired
     private IDeviceRepairService repairService;
+
+    @Autowired
+    private JdbcTemplate jdbc;
 
     /**
      * 根据条件分页查询设备列表
@@ -241,11 +245,23 @@ public class DeviceServiceImpl implements IDeviceService
         repair.setStatus("PENDING");
         repair.setCreateBy("SYSTEM");
         repair.setCreateTime(new Date());
+        repair.setRepairNo(generateRepairNo());
         repair.setCompleteToken(java.util.UUID.randomUUID().toString().replace("-", ""));
         repairService.insertRepair(repair);
-        log.info("自动创建维修工单: repairId={}, device={}, token={}",
-                repair.getRepairId(), device.getDeviceName(), repair.getCompleteToken());
+        log.info("自动创建维修工单: repairNo={}, repairId={}, device={}, token={}",
+                repair.getRepairNo(), repair.getRepairId(), device.getDeviceName(), repair.getCompleteToken());
         return repair;
+    }
+
+    /**
+     * 生成工单编号: yyyyMMdd + 3位序号
+     */
+    private String generateRepairNo() {
+        String today = new java.text.SimpleDateFormat("yyyyMMdd").format(new Date());
+        Integer count = jdbc.queryForObject(
+            "SELECT COUNT(*) FROM iot_device_repair WHERE DATE(create_time)=CURDATE()", Integer.class);
+        int seq = (count != null ? count : 0) + 1;
+        return today + String.format("%03d", seq);
     }
 
     /**

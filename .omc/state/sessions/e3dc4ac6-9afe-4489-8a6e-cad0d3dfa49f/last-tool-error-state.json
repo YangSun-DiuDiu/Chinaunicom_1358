@@ -1,7 +1,7 @@
 {
   "tool_name": "Bash",
   "tool_input_preview": "{\"command\":\"cd \\\"e:/gitee/production_release/RuoYi-Vue-master2026-06-24\\\" && mvn clean package -DskipTests -q 2>&1 | tail -3 && echo \\\"BUILD OK\\\" && scp ruoyi-admin/target/ruoyi-admin.jar root@1.94.26...",
-  "error": "Exit code 7\nBUILD OK\n** The server may need to be upgraded. See https://openssh.com/pq.html\r\n** This session may be vulnerable to \"store now, decrypt later\" attacks.\n** The server may need to be upgraded. See https://openssh.com/pq.html\nBackend stopped (PID: 2071055)\nBackend PID: 2105162\nBackend started on port 8090\nHTTP 000",
-  "timestamp": "2026-06-29T10:57:40.635Z",
+  "error": "Exit code 7\nBUILD OK\n** The server may need to be upgraded. See https://openssh.com/pq.html\r\n** This session may be vulnerable to \"store now, decrypt later\" attacks.\n** The server may need to be upgraded. See https://openssh.com/pq.html\nBackend stopped (PID: 2105162)\nBackend PID: 2106467\nBackend started on port 8090\nHTTP 000",
+  "timestamp": "2026-06-29T11:14:42.641Z",
   "retry_count": 1
 }
