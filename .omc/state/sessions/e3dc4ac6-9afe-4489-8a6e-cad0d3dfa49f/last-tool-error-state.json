@@ -1,7 +1,7 @@
 {
   "tool_name": "Bash",
-  "tool_input_preview": "{\"command\":\"cd \\\"e:/gitee/production_release/RuoYi-Vue-master2026-06-24\\\" && mvn clean package -DskipTests -q 2>&1 | tail -3 && cd ruoyi-ui && npm run build:prod 2>&1 | tail -3 && echo \\\"BUILD OK\\\" &&...",
-  "error": "Exit code 7\n DONE  Build complete. The dist directory is ready to be deployed.\n INFO  Check out deployment instructions at https://cli.vuejs.org/guide/deployment.html\n      \nBUILD OK\n** The server may need to be upgraded. See https://openssh.com/pq.html\r\n** The server may need to be upgraded. See https://openssh.com/pq.html\r\n** This session may be vulnerable to \"store now, decrypt later\" attacks.\n** The server may need to be upgraded. See https://openssh.com/pq.html\nBackend stopped (PID: 2053940...",
-  "timestamp": "2026-06-29T00:10:55.698Z",
+  "tool_input_preview": "{\"command\":\"cd \\\"e:/gitee/production_release/RuoYi-Vue-master2026-06-24\\\" && mvn clean package -DskipTests -q 2>&1 | tail -3 && echo \\\"BUILD OK\\\" && scp ruoyi-admin/target/ruoyi-admin.jar root@1.94.26...",
+  "error": "Exit code 7\nBUILD OK\n** The server may need to be upgraded. See https://openssh.com/pq.html\r\n** This session may be vulnerable to \"store now, decrypt later\" attacks.\n** The server may need to be upgraded. See https://openssh.com/pq.html\nBackend stopped (PID: 2057408)\nBackend PID: 2059128\nBackend started on port 8090\nHTTP 000",
+  "timestamp": "2026-06-29T00:32:17.544Z",
   "retry_count": 1
 }

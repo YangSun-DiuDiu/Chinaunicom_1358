@@ -72,10 +72,9 @@ public class DeviceRepairController extends BaseController
             repairService.transferRepair(repairId, to, phone, reason, getUsername());
             DeviceRepair r = repairService.selectRepairById(repairId);
             if (r != null && StringUtils.isNotEmpty(phone)) {
-                smsUtil.sendSms(to, phone,
-                    "设备离线告警，设备：" + r.getDeviceName()
-                    + "，已离线，请及时处理。设备登录码：" + (r.getCompleteToken() != null ? r.getCompleteToken() : ""),
-                    "REPAIR", repairId);
+                smsUtil.sendSms("device_repair_transfer", phone,
+                    "{\"content\":\"设备离线告警，设备：" + r.getDeviceName()
+                    + "，已离线，请及时处理。设备登录码：" + (r.getCompleteToken() != null ? r.getCompleteToken() : "") + "\"}", 1, null);
             }
             return success();
         } catch (Exception e) { return error(e.getMessage()); }
@@ -132,10 +131,9 @@ public class DeviceRepairController extends BaseController
         repairService.insertRepair(repair);
 
         String repairToken = repair.getCompleteToken();
-        smsUtil.sendSms(device.getResponsible(), device.getResponsiblePhone(),
-            "设备离线告警，设备：" + device.getDeviceName()
-            + "，已离线，请及时处理。设备登录码：" + repairToken,
-            "REPAIR", repair.getRepairId());
+        smsUtil.sendSms("device_repair", device.getResponsiblePhone(),
+            "{\"content\":\"设备离线告警，设备：" + device.getDeviceName()
+            + "，已离线，请及时处理。设备登录码：" + repairToken + "\"}", 1, null);
         return success(repair);
     }
 

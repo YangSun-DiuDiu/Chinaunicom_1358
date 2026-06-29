@@ -159,7 +159,8 @@ public class DeviceController extends BaseController
         {
             return error("设备负责人电话为空，无法发送维修短信");
         }
-        smsUtil.sendRepairAlert(device);
+        smsUtil.sendSms("device_repair_alert", device.getResponsiblePhone(),
+            "{\"content\":\"设备离线告警，设备：" + device.getDeviceName() + "，已离线，请及时处理\"}", 1, null);
         return success();
     }
 

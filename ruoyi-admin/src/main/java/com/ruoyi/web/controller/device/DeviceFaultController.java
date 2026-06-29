@@ -144,10 +144,9 @@ public class DeviceFaultController extends BaseController
 
         // 发送带反馈链接的维修短信
         String completeUrl = callbackUrl + "?token=" + repair.getCompleteToken();
-        smsUtil.sendSms(device.getResponsible(), device.getResponsiblePhone(),
-            "【设备维修】设备「" + device.getDeviceName() + "」（IP:" + device.getIpAddress()
-            + "）离线故障，请及时处理。维修完成后请点击反馈: " + completeUrl,
-            "REPAIR", repair.getRepairId());
+        smsUtil.sendSms("device_fault_repair", device.getResponsiblePhone(),
+            "{\"content\":\"设备离线告警，设备：" + device.getDeviceName()
+            + "，已离线，请及时处理。设备登录码：" + repair.getCompleteToken() + "\"}", 1, null);
 
         return success("报修短信已发送至 " + device.getResponsiblePhone() + "，维修工单已创建");
     }

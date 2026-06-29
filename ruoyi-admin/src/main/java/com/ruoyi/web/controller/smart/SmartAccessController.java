@@ -321,9 +321,8 @@ public class SmartAccessController extends BaseController
             repair.getCompleteToken(), repair.getRepairNo());
 
         // 发送短信
-        smsUtil.sendSms(repair.getCurrentResponsible(), phone,
-            "设备离线告警，设备：" + deviceName + "，已离线，请及时处理。设备登录码：" + repair.getCompleteToken(),
-            "REPAIR", deviceId);
+        smsUtil.sendSms("smart_device_repair", phone,
+            "{\"content\":\"设备离线告警，设备：" + deviceName + "，已离线，请及时处理。设备登录码：" + repair.getCompleteToken() + "\"}", 1, null);
 
         return success(repair.getCompleteToken());
     }

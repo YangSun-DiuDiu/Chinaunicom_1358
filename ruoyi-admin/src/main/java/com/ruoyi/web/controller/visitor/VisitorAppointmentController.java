@@ -194,7 +194,8 @@ public class VisitorAppointmentController extends BaseController
                 // 发送短信通知（含通行码链接），仅发送一次
                 if (StringUtils.isNotEmpty(approved.getVisitorPhone()))
                 {
-                    smsUtil.sendVisitorApprovalSms(approved);
+                    smsUtil.sendSms("visitor_approval", approved.getVisitorPhone(),
+                        "{\"visitor_name\":\"" + (approved.getVisitorName() != null ? approved.getVisitorName() : "") + "\",\"host_name\":\"" + (approved.getHostName() != null ? approved.getHostName() : "") + "\",\"pass_code\":\"" + (approved.getPassCode() != null ? approved.getPassCode() : "") + "\"}", 1, null);
                 }
             }
         }
