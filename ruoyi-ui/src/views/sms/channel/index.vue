@@ -51,6 +51,7 @@
       <el-table-column label="创建时间" prop="create_time" min-width="140" align="center"/>
       <el-table-column label="操作" min-width="120" fixed="right" align="center">
         <template slot-scope="{row}">
+          <el-button size="mini" type="text" icon="el-icon-message" @click="handleTest(row)">测试</el-button>
           <el-button size="mini" type="text" icon="el-icon-edit" @click="handleEdit(row)" v-hasPermi="['sms:channel:edit']">修改</el-button>
           <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDel(row)" v-hasPermi="['sms:channel:remove']">删除</el-button>
         </template>
@@ -93,6 +94,27 @@
         <el-button @click="open=false">取消</el-button>
       </div>
     </el-dialog>
+    <!-- 测试发送 -->
+    <el-dialog title="测试短信发送" :visible.sync="testOpen" width="450px" append-to-body>
+      <el-form label-width="80px" size="small">
+        <el-form-item label="渠道">{{ testChannel.channel_name }}</el-form-item>
+        <el-form-item label="签名模板">
+          <el-select v-model="testStId" placeholder="选择模板" style="width:100%">
+            <el-option v-for="t in templates" :key="t.st_id" :label="t.sign_name + '(' + t.template_code + ')'" :value="t.st_id"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="手机号" required>
+          <el-input v-model="testPhone" placeholder="请输入测试手机号"/>
+        </el-form-item>
+        <el-form-item label="模板参数">
+          <el-input v-model="testParams" placeholder='如: {"code":"123456"}' type="textarea" :rows="3"/>
+        </el-form-item>
+      </el-form>
+      <div slot="footer">
+        <el-button @click="testOpen=false">取消</el-button>
+        <el-button type="primary" :disabled="!testPhone" @click="doTest">发送测试</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -104,6 +126,7 @@ export default {
       loading: false, showSearch: true, total: 0, list: [], open: false, title: '',
       query: { pageNum: 1, pageSize: 10, channel_name: undefined, channel_type: undefined, status: undefined },
       form: { channel_id: undefined, channel_name: '', channel_type: 'ALIYUN', access_key_id: '', access_key_secret: '', endpoint: '', status: '0', remark: '' },
+      testOpen: false, testChannel: {}, testStId: undefined, testPhone: '', testParams: '', templates: [],
       rules: {
         channel_name: [{ required: true, message: '渠道名称不能为空', trigger: 'blur' }],
         channel_type: [{ required: true, message: '渠道类型不能为空', trigger: 'change' }]
@@ -133,6 +156,19 @@ export default {
       this.$confirm('确认删除渠道「' + row.channel_name + '」?', '提示', { type: 'warning' }).then(() =>
         request({ url: BASE + '/' + row.channel_id, method: 'delete' }).then(() => { this.$message.success('删除成功'); this.getList() })
       ).catch(() => {})
+    },
+    handleTest(row) {
+      this.testChannel = row; this.testStId = undefined; this.testPhone = ''; this.testParams = ''
+      // 加载可用模板列表
+      request({ url: '/sms/signtemplate/list', method: 'get', params: { pageNum: 1, pageSize: 100 } }).then(r => {
+        this.templates = r.rows || []; this.testOpen = true
+      })
+    },
+    doTest() {
+      const body = { phone: this.testPhone, params: this.testParams, stId: this.testStId }
+      request({ url: BASE + '/test/' + this.testChannel.channel_id, method: 'post', data: body }).then(r => {
+        if (r.code === 200) this.$message.success('测试短信发送成功'); else this.$message.error(r.msg || '发送失败')
+      }).catch(() => { this.$message.error('发送异常') })
     },
     submit() {
       this.$refs.form.validate(v => {

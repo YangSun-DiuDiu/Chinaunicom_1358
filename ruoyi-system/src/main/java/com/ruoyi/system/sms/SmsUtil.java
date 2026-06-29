@@ -298,6 +298,29 @@ public class SmsUtil
     }
 
     /**
+     * 测试渠道发送 — 跳过业务绑定、限流、主备切换，直接调驱动
+     */
+    public boolean sendByChannel(Map<String, Object> channel, Map<String, Object> template, String phone, String params)
+    {
+        String channelType = getString(channel, "channel_type");
+        SmsDriver driver = resolveDriver(channelType, channel);
+        if (driver == null)
+        {
+            log.error("未知渠道类型: {}", channelType);
+            return false;
+        }
+        try
+        {
+            return driver.send(channel, template, phone, params);
+        }
+        catch (Exception e)
+        {
+            log.error("测试发送失败: channel={}, phone={}", channelType, phone, e);
+            return false;
+        }
+    }
+
+    /**
      * 根据渠道类型解析驱动实例
      */
     private SmsDriver resolveDriver(String channelType, Map<String, Object> channel)

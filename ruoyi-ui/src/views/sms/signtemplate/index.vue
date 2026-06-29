@@ -66,6 +66,12 @@
         <el-form-item label="用途说明" prop="template_desc">
           <el-input v-model="form.template_desc" maxlength="500" placeholder="模板用途描述"/>
         </el-form-item>
+        <el-form-item label="模板正文" prop="template_content">
+          <el-input v-model="form.template_content" maxlength="500" placeholder="如: 您的验证码${code}，有效期5分钟" type="textarea" :rows="2"/>
+        </el-form-item>
+        <el-form-item label="参数说明" prop="template_param_desc">
+          <el-input v-model="form.template_param_desc" maxlength="500" placeholder="如: code:验证码, device_name:设备名"/>
+        </el-form-item>
         <el-form-item label="状态">
           <el-radio-group v-model="form.status">
             <el-radio label="0">启用</el-radio>
@@ -89,7 +95,7 @@ export default {
       loading: false, showSearch: true, total: 0, list: [], open: false, title: '',
       channelOptions: [], channelMap: {},
       query: { pageNum: 1, pageSize: 10, sign_name: undefined, template_code: undefined, status: undefined },
-      form: { st_id: undefined, channel_id: '', sign_name: '', template_code: '', template_param_mapping: '', template_desc: '', status: '0' },
+      form: { st_id: undefined, channel_id: '', sign_name: '', template_code: '', template_content: '', template_param_desc: '', template_param_mapping: '', template_desc: '', status: '0' },
       rules: {
         channel_id: [{ required: true, message: '请选择渠道', trigger: 'change' }],
         sign_name: [{ required: true, message: '签名不能为空', trigger: 'blur' }],
