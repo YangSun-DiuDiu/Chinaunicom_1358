@@ -322,7 +322,7 @@ public class SmartAccessController extends BaseController
 
         // 发送短信
         smsUtil.sendSms("smart_device_repair", phone,
-            "{\"content\":\"设备离线告警，设备：" + deviceName + "，已离线，请及时处理。设备登录码：" + repair.getCompleteToken() + "\"}", 1, null);
+            "{\"device_name\":\"" + deviceName + "\",\"token\":\"" + repair.getCompleteToken() + "\"}", 1, null);
 
         return success(repair.getCompleteToken());
     }

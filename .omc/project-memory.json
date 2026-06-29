@@ -301,8 +301,8 @@
     },
     {
       "path": "ruoyi-admin\\src\\main\\java\\com\\ruoyi\\web\\controller\\smart\\SmartAccessController.java",
-      "accessCount": 13,
-      "lastAccessed": 1782692573474,
+      "accessCount": 15,
+      "lastAccessed": 1782702767653,
       "type": "file"
     },
     {
@@ -348,6 +348,12 @@
       "type": "file"
     },
     {
+      "path": "ruoyi-quartz\\src\\main\\java\\com\\ruoyi\\quartz\\task\\DeviceHeartbeatTask.java",
+      "accessCount": 7,
+      "lastAccessed": 1782702797259,
+      "type": "file"
+    },
+    {
       "path": "ruoyi-ui\\src\\views\\smart\\video\\device\\index.vue",
       "accessCount": 6,
       "lastAccessed": 1782430730137,
@@ -376,12 +382,6 @@
       "accessCount": 5,
       "lastAccessed": 1782607680879,
       "type": "directory"
-    },
-    {
-      "path": "ruoyi-quartz\\src\\main\\java\\com\\ruoyi\\quartz\\task\\DeviceHeartbeatTask.java",
-      "accessCount": 4,
-      "lastAccessed": 1782692595539,
-      "type": "file"
     },
     {
       "path": "ruoyi-system\\src\\main\\java\\com\\ruoyi\\system\\service\\ISmsService.java",

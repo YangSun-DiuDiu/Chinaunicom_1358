@@ -170,13 +170,13 @@ public class DeviceServiceImpl implements IDeviceService
                 // 发送含维修确认链接的短信
                 String completeUrl = getRepairCallbackUrl() + "?token=" + repair.getCompleteToken();
                 smsUtil.sendSms("device_offline_alert", device.getResponsiblePhone(),
-                    "{\"content\":\"设备离线告警，设备：" + device.getDeviceName()
-                    + "，已离线，请及时处理。设备登录码：" + repair.getCompleteToken() + "\"}", 1, null);
+                    "{\"device_name\":\"" + device.getDeviceName()
+                    + "\",\"token\":\"" + repair.getCompleteToken() + "\"}", 1, null);
             }
             else if ("ONLINE".equals(status))
             {
                 smsUtil.sendSms("device_online_notify", device.getResponsiblePhone(),
-                    "{\"content\":\"设备上线通知：设备" + device.getDeviceName() + "已恢复正常\"}", 1, null);
+                    "{\"device_name\":\"" + device.getDeviceName() + "\"}", 1, null);
             }
         }
         else
