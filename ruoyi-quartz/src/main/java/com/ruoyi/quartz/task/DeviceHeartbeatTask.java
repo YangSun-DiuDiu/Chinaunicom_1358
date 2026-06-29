@@ -115,8 +115,8 @@ public class DeviceHeartbeatTask
                                 repair.setRepairNo(generateRepairNo());
                                 repairService.insertRepair(repair);
                                 smsUtil.sendSms("device_offline_alert", d.getResponsiblePhone(),
-                                    "{\"content\":\"设备离线告警，设备：" + d.getDeviceName()
-                                    + "，已离线，请及时处理。设备登录码：" + repair.getCompleteToken() + "\"}", 1, null);
+                                    "{\"device_name\":\"" + d.getDeviceName()
+                                    + "\",\"token\":\"" + repair.getCompleteToken() + "\"}", 1, null);
                             }
                         } catch (Exception ex) { log.error("离线自动报修失败: {}", d.getDeviceName(), ex); }
                     }
