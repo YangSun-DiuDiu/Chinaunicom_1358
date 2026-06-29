@@ -12,11 +12,8 @@ import com.ruoyi.common.utils.PingUtil;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.system.domain.Device;
 import com.ruoyi.system.domain.DeviceHeartbeatLog;
-import com.ruoyi.system.domain.DeviceRepair;
 import com.ruoyi.system.service.IDeviceHeartbeatLogService;
-import com.ruoyi.system.service.IDeviceRepairService;
 import com.ruoyi.system.service.IDeviceService;
-import com.ruoyi.system.sms.SmsUtil;
 
 /**
  * 设备心跳检测定时任务——覆盖设备管理+智能化管理全部设备
@@ -31,8 +28,6 @@ public class DeviceHeartbeatTask
 
     @Autowired private IDeviceService deviceService;
     @Autowired private IDeviceHeartbeatLogService heartbeatLogService;
-    @Autowired private IDeviceRepairService repairService;
-    @Autowired private SmsUtil smsUtil;
     @Autowired private JdbcTemplate jdbc;
 
     /** 任务入口 */
@@ -94,32 +89,8 @@ public class DeviceHeartbeatTask
                 if (!newStatus.equals(oldStatus))
                 {
                     log.info("设备[{}]状态变更: {} -> {}", d.getDeviceName(), oldStatus, newStatus);
+                    // updateDeviceStatus 内部已自动创建工单+发送短信
                     deviceService.updateDeviceStatus(d.getDeviceId(), newStatus);
-                    // 设备离线时自动创建维修工单并发送短信（与手动报修模板一致）
-                    if (OFFLINE.equals(newStatus)) {
-                        try {
-                            if (StringUtils.isNotEmpty(d.getResponsiblePhone())) {
-                                DeviceRepair repair = new DeviceRepair();
-                                repair.setDeviceId(d.getDeviceId());
-                                repair.setDeviceName(d.getDeviceName());
-                                repair.setDeviceIp(d.getIpAddress());
-                                repair.setOriginalResponsible(d.getResponsible());
-                                repair.setOriginalPhone(d.getResponsiblePhone());
-                                repair.setCurrentResponsible(d.getResponsible());
-                                repair.setCurrentPhone(d.getResponsiblePhone());
-                                repair.setFaultDescription("设备自动检测离线，请及时维修");
-                                repair.setStatus("PENDING");
-                                repair.setCreateBy("SYSTEM");
-                                repair.setCreateTime(new Date());
-                                repair.setCompleteToken(java.util.UUID.randomUUID().toString().replace("-", ""));
-                                repair.setRepairNo(generateRepairNo());
-                                repairService.insertRepair(repair);
-                                smsUtil.sendSms("device_offline_alert", d.getResponsiblePhone(),
-                                    "{\"device_name\":\"" + d.getDeviceName()
-                                    + "\",\"token\":\"" + repair.getCompleteToken() + "\"}", 1, null);
-                            }
-                        } catch (Exception ex) { log.error("离线自动报修失败: {}", d.getDeviceName(), ex); }
-                    }
                     c[3]++;
                 }
             }
