@@ -1,7 +1,7 @@
 {
   "tool_name": "Bash",
-  "tool_input_preview": "{\"command\":\"sleep 10 && curl -s -o /dev/null -w \\\"HTTP %{http_code}\\\\n\\\" http://1.94.26.126:8090/\",\"timeout\":30000,\"description\":\"Retry\"}",
-  "error": "Exit code 7\nHTTP 000",
-  "timestamp": "2026-06-29T11:42:56.597Z",
-  "retry_count": 3
+  "tool_input_preview": "{\"command\":\"cd \\\"e:\\\\gitee\\\\production_release\\\\RuoYi-Vue-master2026-06-24\\\" && git add -A && git commit -m \\\"refactor: move repair logic Controller→Service, JDBC→MyBatis, fix circular dep with @Lazy\\...",
+  "error": "Exit code 143\nCommand timed out after 30s\nwarning: in the working copy of '.omc/project-memory.json', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of '.omc/state/agent-replay-e3dc4ac6-9afe-4489-8a6e-cad0d3dfa49f.jsonl', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of '.omc/state/idle-notif-cooldown.json', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of '.omc/state/sessions/e...",
+  "timestamp": "2026-06-29T11:47:18.118Z",
+  "retry_count": 1
 }
