@@ -120,4 +120,8 @@
         group by current_responsible
         order by total desc
     </select>
+
+    <select id="countTodayRepairs" resultType="int">
+        SELECT COUNT(*) FROM iot_device_repair WHERE DATE(create_time)=CURDATE()
+    </select>
 </mapper>

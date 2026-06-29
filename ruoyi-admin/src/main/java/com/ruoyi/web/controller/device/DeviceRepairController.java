@@ -1,7 +1,5 @@
 package com.ruoyi.web.controller.device;
 
-import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,12 +16,8 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.StringUtils;
-import com.ruoyi.system.domain.Device;
 import com.ruoyi.system.domain.DeviceRepair;
-import com.ruoyi.system.domain.SysConfig;
-import com.ruoyi.system.mapper.SysConfigMapper;
 import com.ruoyi.system.service.IDeviceRepairService;
-import com.ruoyi.system.service.IDeviceService;
 import com.ruoyi.system.sms.SmsUtil;
 
 /**
@@ -39,12 +33,6 @@ public class DeviceRepairController extends BaseController
     private IDeviceRepairService repairService;
     @Autowired
     private SmsUtil smsUtil;
-    @Autowired
-    private IDeviceService deviceService;
-    @Autowired
-    private SysConfigMapper configMapper;
-    @Autowired
-    private org.springframework.jdbc.core.JdbcTemplate jdbc;
 
     @GetMapping("/list")
     @PreAuthorize("@ss.hasPermi('device:repair:list')")
@@ -110,30 +98,8 @@ public class DeviceRepairController extends BaseController
     @PreAuthorize("@ss.hasPermi('device:repair')")
     @Log(title = "设备维修", businessType = BusinessType.INSERT)
     public AjaxResult createRepair(@PathVariable Long deviceId) {
-        Device device = deviceService.selectDeviceById(deviceId);
-        if (device == null) return error("设备不存在");
-        if (StringUtils.isEmpty(device.getResponsiblePhone())) return error("该设备未设置负责人电话");
-
-        DeviceRepair repair = new DeviceRepair();
-        repair.setDeviceId(deviceId);
-        repair.setDeviceName(device.getDeviceName());
-        repair.setDeviceIp(device.getIpAddress());
-        repair.setOriginalResponsible(device.getResponsible());
-        repair.setOriginalPhone(device.getResponsiblePhone());
-        repair.setCurrentResponsible(device.getResponsible());
-        repair.setCurrentPhone(device.getResponsiblePhone());
-        repair.setFaultDescription("设备离线故障，请及时维修");
-        repair.setStatus("PENDING");
-        repair.setCreateBy(getUsername());
-        repair.setCreateTime(new Date());
-        repair.setCompleteToken(java.util.UUID.randomUUID().toString().replace("-", ""));
-        repair.setRepairNo(generateRepairNo());
-        repairService.insertRepair(repair);
-
-        String repairToken = repair.getCompleteToken();
-        smsUtil.sendSms("device_repair", device.getResponsiblePhone(),
-            "{\"device_name\":\"" + device.getDeviceName()
-            + "\",\"token\":\"" + repairToken + "\"}", 1, null);
+        DeviceRepair repair = repairService.createRepairOrder(deviceId, getUsername());
+        if (repair == null) return error("设备不存在或未设置负责人电话");
         return success(repair);
     }
 
@@ -144,27 +110,4 @@ public class DeviceRepairController extends BaseController
         return toAjax(repairService.deleteRepairById(repairId));
     }
 
-    /** 生成工单编号: YYYYMMDD + 3位序号 */
-    private String generateRepairNo() {
-        String today = new java.text.SimpleDateFormat("yyyyMMdd").format(new Date());
-        // 查询今天已有工单数
-        String sql = "SELECT COUNT(*) FROM iot_device_repair WHERE DATE(create_time)=CURDATE()";
-        Integer count = jdbc.queryForObject(sql, Integer.class);
-        int seq = (count != null ? count : 0) + 1;
-        return today + String.format("%03d", seq);
-    }
-
-    private String getRepairCallbackUrl() {
-        try {
-            SysConfig c = new SysConfig();
-            c.setConfigKey("sms.repair.callback.url");
-            List<SysConfig> list = configMapper.selectConfigList(c);
-            if (list != null && !list.isEmpty() && StringUtils.isNotEmpty(list.get(0).getConfigValue())) {
-                String url = list.get(0).getConfigValue();
-                if (!url.endsWith("/repair-complete")) url += "/repair-complete";
-                return url;
-            }
-        } catch (Exception e) {}
-        return "http://192.168.1.60/repair-complete";
-    }
 }

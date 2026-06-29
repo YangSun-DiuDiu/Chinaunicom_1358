@@ -21,4 +21,6 @@ public interface DeviceRepairMapper
     public List<Map<String, Object>> selectWorkloadStats();
     /** 记录配件使用 */
     public int insertPartsUsage(Long repairId, String partName, String usedBy);
+    /** 统计今日已创建工单数（用于生成工单号） */
+    public int countTodayRepairs();
 }

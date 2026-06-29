@@ -15,6 +15,8 @@
 | 9. 拦截器JOIN修复 | ✅ complete | 自动检测表别名，解决dept_id歧义 |
 | 10. 会议室白名单 | ✅ complete | meeting_room加入白名单，全员可见 |
 | 11. 样式优化 | pending | 待确认方案 |
-| 12. 公寓房源+卡片 | ✅ complete | 2张表、4页前端、6色→4色状态(GREEN/CYAN/BLUE/GRAY)、弹窗Tab |
+| 12. 公寓房源+卡片 | ✅ complete | 2张表、4页前端、4色状态(GREEN/CYAN/BLUE/GRAY)、弹窗Tab |
 | 12a. 租客档案+入住退租 | ✅ complete | tenant_info表、CRUD、入住/退租/续费、CYAN逻辑修复 |
-| 13. 公寓预付费-后续子项目 | pending | 费率/分摊/扣费(2b)、物联网设备(3)、微信支付(4)、AI能耗(5)、监控看板(6) |
+| 13. 公寓预付费-后续 | pending | 费率/分摊/扣费(2b)、物联网设备(3)、微信支付(4)、AI能耗(5)、监控看板(6) |
+| 14. 短信中台重建 | ✅ complete | 五表+三驱动+SmsUtil+6页前端+11调用点改造 |
+| 14a. 短信参数/修复 | ✅ complete | 变量JSON替换content-string、签名空格修复、心跳双SMS去除、repairNo补全 |

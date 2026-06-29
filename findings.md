@@ -5,18 +5,19 @@
 - 全静态路由，前端 `meta.permissions` 过滤
 - 租户=Dept，DeptScopeInterceptor 全局自动过滤，需检测 JOIN 别名
 - Quartz RAMJobStore，启动时从 DB 加载任务
-- ResourcesConfig 映射 `/profile/**` 到文件系统（需 Nginx 代理）
+- SMS 新架构：SmsUtil 统一入口 → biz_code 路由 → 三驱动(阿里云/腾讯云/HTTP)
+- 短信参数应从业务代码传入变量JSON，模板内容在云平台维护
 
 ## 常见问题模式
 
 | 问题 | 根因 | 修复方式 |
 |------|------|---------|
 | 403 无权限 | Controller/路由/菜单权限不一致 | 三方统一 |
-| 404 No static resource | 缺少 Controller | 新建端点 |
-| dept_id ambiguous | SQL JOIN 两表都有 dept_id | 拦截器检测别名 |
-| 照片无法预览 | Nginx 缺 /profile/ 代理 | 添加 location |
-| 房间状态不更新 | check-in/out 三元判断不完整 | 统一为 actual vs capacity 比较 |
-| 旧数值残留 | 前端默认值和表单用旧值 | 全局替换为字符串状态 |
+| dept_id ambiguous | SQL JOIN 两表有dept_id | 拦截器检测别名 |
+| 短信日志未生成 | bizCode 不匹配 sys_sms_biz | 统一使用注册的 biz_code |
+| 阿里云短信失败 | sign_name 有前导空格 | TRIM() |
+| 离线发2条SMS | HeartbeatTask+DeviceServiceImpl 重复 | 由 ServiceImpl 统一发送 |
+| 自动工单无 repairNo | createRepairOrder 没生成 | 注入JdbcTemplate生成 |
 
 ## 房间状态规则
 
@@ -27,22 +28,27 @@
 | actual>=capacity | BLUE | 蓝色 |
 | 手动设置 | GRAY | 灰色(维修) |
 
+## 短信 biz_code 映射
+
+| biz_code | 业务场景 | 模板变量 |
+|----------|---------|---------|
+| device_repair | 手动报修 | device_name, token |
+| device_repair_transfer | 转派 | device_name, token |
+| device_fault_repair | 故障报修 | device_name, token |
+| device_repair_alert | 报修按钮 | device_name |
+| device_offline_alert | 离线告警 | device_name, token |
+| device_online_notify | 上线通知 | device_name |
+| smart_device_repair | 智能设备报修 | device_name, token |
+| visitor_approval | 访客审批 | visitor_name, host_name, pass_code |
+
 ## 技术债务（代码审查发现，暂不修复）
 
 | 严重度 | 问题 | 位置 |
 |--------|------|------|
-| CRITICAL | Controller 直接使用 JdbcTemplate 违反分层 | TenantController, RoomController |
-| HIGH | 物理 DELETE 未用 delFlag 逻辑删除 | ApartmentInfoMapper, RoomInfoMapper, TenantInfoMapper |
-| HIGH | ServiceImpl 缺少 @DataScope | ApartmentInfoServiceImpl, RoomInfoServiceImpl, TenantInfoServiceImpl |
-| HIGH | checkIn/renew 裸 Map 入参无校验 | TenantController |
-| HIGH | JdbcTemplate 无异常捕获 | TenantController, RoomController |
-| MEDIUM | ServiceImpl 循环单删 | ApartmentInfoServiceImpl, RoomInfoServiceImpl, TenantInfoServiceImpl |
-| MEDIUM | checkIn/checkOut 状态重算代码重复 | TenantController |
+| CRITICAL | Controller 直接使用 JdbcTemplate | TenantController, RoomController |
+| HIGH | 物理 DELETE 未用 delFlag | hostel Mapper XML |
+| HIGH | ServiceImpl 缺少 @DataScope | hostel ServiceImpl |
 | MEDIUM | cardList N+1 查询 | RoomController |
-| MEDIUM | checkin.vue pageSize=1000 硬编码 | checkin.vue |
-| LOW | renew 端点无前端调用 | TenantController |
-
-> 来源: 2026-06-28 代码审查 (Angle C/H/E)
 
 ## 关键配置
 
