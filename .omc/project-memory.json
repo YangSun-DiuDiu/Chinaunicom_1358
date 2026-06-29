@@ -312,6 +312,12 @@
       "type": "file"
     },
     {
+      "path": "ruoyi-quartz\\src\\main\\java\\com\\ruoyi\\quartz\\task\\DeviceHeartbeatTask.java",
+      "accessCount": 11,
+      "lastAccessed": 1782730532939,
+      "type": "file"
+    },
+    {
       "path": "ruoyi-ui\\src\\views\\smart\\vehicle-access\\device\\index.vue",
       "accessCount": 10,
       "lastAccessed": 1782430696043,
@@ -345,12 +351,6 @@
       "path": ".superpowers\\sdd\\task-3-brief.md",
       "accessCount": 7,
       "lastAccessed": 1782610714311,
-      "type": "file"
-    },
-    {
-      "path": "ruoyi-quartz\\src\\main\\java\\com\\ruoyi\\quartz\\task\\DeviceHeartbeatTask.java",
-      "accessCount": 7,
-      "lastAccessed": 1782702797259,
       "type": "file"
     },
     {
