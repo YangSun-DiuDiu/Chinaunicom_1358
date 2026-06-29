@@ -4,11 +4,15 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.system.domain.Device;
 import com.ruoyi.system.domain.DeviceRepair;
 import com.ruoyi.system.mapper.DeviceRepairMapper;
 import com.ruoyi.system.service.IDeviceRepairService;
+import com.ruoyi.system.service.IDeviceService;
+import com.ruoyi.system.sms.SmsUtil;
 
 /**
  * 设备维修工单服务实现
@@ -20,6 +24,11 @@ public class DeviceRepairServiceImpl implements IDeviceRepairService
 {
     @Autowired
     private DeviceRepairMapper repairMapper;
+    @Lazy
+    @Autowired
+    private IDeviceService deviceService;
+    @Autowired
+    private SmsUtil smsUtil;
 
     @Override
     public List<DeviceRepair> selectRepairList(DeviceRepair repair) {
@@ -139,5 +148,40 @@ public class DeviceRepairServiceImpl implements IDeviceRepairService
     @Override
     public List<Map<String, Object>> selectWorkloadStats() {
         return repairMapper.selectWorkloadStats();
+    }
+
+    @Override
+    public DeviceRepair createRepairOrder(Long deviceId, String username) {
+        Device device = deviceService.selectDeviceById(deviceId);
+        if (device == null) return null;
+        if (StringUtils.isEmpty(device.getResponsiblePhone())) return null;
+
+        DeviceRepair repair = new DeviceRepair();
+        repair.setDeviceId(deviceId);
+        repair.setDeviceName(device.getDeviceName());
+        repair.setDeviceIp(device.getIpAddress());
+        repair.setOriginalResponsible(device.getResponsible());
+        repair.setOriginalPhone(device.getResponsiblePhone());
+        repair.setCurrentResponsible(device.getResponsible());
+        repair.setCurrentPhone(device.getResponsiblePhone());
+        repair.setFaultDescription("设备离线故障，请及时维修");
+        repair.setStatus("PENDING");
+        repair.setCreateBy(username);
+        repair.setCreateTime(new Date());
+        repair.setCompleteToken(java.util.UUID.randomUUID().toString().replace("-", ""));
+        repair.setRepairNo(generateRepairNo());
+        insertRepair(repair);
+
+        smsUtil.sendSms("device_repair", device.getResponsiblePhone(),
+            "{\"device_name\":\"" + device.getDeviceName()
+            + "\",\"token\":\"" + repair.getCompleteToken() + "\"}", 1, null);
+        return repair;
+    }
+
+    private String generateRepairNo() {
+        String today = new java.text.SimpleDateFormat("yyyyMMdd").format(new Date());
+        int count = repairMapper.countTodayRepairs();
+        int seq = count + 1;
+        return today + String.format("%03d", seq);
     }
 }

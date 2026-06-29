@@ -6,7 +6,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.ruoyi.common.utils.StringUtils;
@@ -38,11 +38,9 @@ public class DeviceServiceImpl implements IDeviceService
     @Autowired
     private SmsUtil smsUtil;
 
+    @Lazy
     @Autowired
     private IDeviceRepairService repairService;
-
-    @Autowired
-    private JdbcTemplate jdbc;
 
     /**
      * 根据条件分页查询设备列表
@@ -169,13 +167,13 @@ public class DeviceServiceImpl implements IDeviceService
             // 调用短信服务发送通知
             if ("OFFLINE".equals(status))
             {
-                // 自动创建维修工单
-                DeviceRepair repair = createRepairOrder(device);
-                // 发送含维修确认链接的短信
-                String completeUrl = getRepairCallbackUrl() + "?token=" + repair.getCompleteToken();
-                smsUtil.sendSms("device_offline_alert", device.getResponsiblePhone(),
-                    "{\"device_name\":\"" + device.getDeviceName()
-                    + "\",\"token\":\"" + repair.getCompleteToken() + "\"}", 1, null);
+                // 自动创建维修工单(含短信发送)
+                DeviceRepair repair = repairService.createRepairOrder(device.getDeviceId(), "SYSTEM");
+                if (repair != null) {
+                    smsUtil.sendSms("device_offline_alert", device.getResponsiblePhone(),
+                        "{\"device_name\":\"" + device.getDeviceName()
+                        + "\",\"token\":\"" + repair.getCompleteToken() + "\"}", 1, null);
+                }
             }
             else if ("ONLINE".equals(status))
             {
@@ -228,56 +226,4 @@ public class DeviceServiceImpl implements IDeviceService
         return deviceMapper.selectDeviceTypeStats();
     }
 
-    /**
-     * 自动创建设备维修工单
-     */
-    private DeviceRepair createRepairOrder(Device device)
-    {
-        DeviceRepair repair = new DeviceRepair();
-        repair.setDeviceId(device.getDeviceId());
-        repair.setDeviceName(device.getDeviceName());
-        repair.setDeviceIp(device.getIpAddress());
-        repair.setOriginalResponsible(device.getResponsible());
-        repair.setOriginalPhone(device.getResponsiblePhone());
-        repair.setCurrentResponsible(device.getResponsible());
-        repair.setCurrentPhone(device.getResponsiblePhone());
-        repair.setFaultDescription("设备自动检测离线，请及时维修");
-        repair.setStatus("PENDING");
-        repair.setCreateBy("SYSTEM");
-        repair.setCreateTime(new Date());
-        repair.setRepairNo(generateRepairNo());
-        repair.setCompleteToken(java.util.UUID.randomUUID().toString().replace("-", ""));
-        repairService.insertRepair(repair);
-        log.info("自动创建维修工单: repairNo={}, repairId={}, device={}, token={}",
-                repair.getRepairNo(), repair.getRepairId(), device.getDeviceName(), repair.getCompleteToken());
-        return repair;
-    }
-
-    /**
-     * 生成工单编号: yyyyMMdd + 3位序号
-     */
-    private String generateRepairNo() {
-        String today = new java.text.SimpleDateFormat("yyyyMMdd").format(new Date());
-        Integer count = jdbc.queryForObject(
-            "SELECT COUNT(*) FROM iot_device_repair WHERE DATE(create_time)=CURDATE()", Integer.class);
-        int seq = (count != null ? count : 0) + 1;
-        return today + String.format("%03d", seq);
-    }
-
-    /**
-     * 获取维修确认页面URL：优先读取sys_config配置sms.repair.callback.url，无配置则默认localhost
-     */
-    private String getRepairCallbackUrl()
-    {
-        try {
-            java.util.List<com.ruoyi.system.domain.SysConfig> list =
-                com.ruoyi.common.utils.spring.SpringUtils.getBean(com.ruoyi.system.mapper.SysConfigMapper.class)
-                    .selectConfigList(new com.ruoyi.system.domain.SysConfig() {{ setConfigKey("sms.repair.callback.url"); }});
-            if (list != null && !list.isEmpty() && list.get(0).getConfigValue() != null
-                && !list.get(0).getConfigValue().isEmpty()) {
-                return list.get(0).getConfigValue();
-            }
-        } catch (Exception ignored) {}
-        return "http://localhost:3000/repair-complete";
-    }
 }

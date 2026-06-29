@@ -28,4 +28,6 @@ public interface IDeviceRepairService
                                       String hasParts, String partsDesc);
     /** 工作量统计 */
     public List<Map<String, Object>> selectWorkloadStats();
+    /** 创建维修工单(含生成工单号+发送短信) */
+    public DeviceRepair createRepairOrder(Long deviceId, String username);
 }
