@@ -111,6 +111,9 @@ public class VisitorAppointment extends BaseEntity
     @Excel(name = "租户ID", cellType = ColumnType.NUMERIC)
     private Long tenantId;
 
+    /** 删除标志（0存在 2删除） */
+    private String delFlag;
+
     public Long getAppointmentId()
     {
         return appointmentId;
@@ -299,6 +302,16 @@ public class VisitorAppointment extends BaseEntity
     public void setTenantId(Long tenantId)
     {
         this.tenantId = tenantId;
+    }
+
+    public String getDelFlag()
+    {
+        return delFlag;
+    }
+
+    public void setDelFlag(String delFlag)
+    {
+        this.delFlag = delFlag;
     }
 
     public String getHasCar() { return hasCar; }

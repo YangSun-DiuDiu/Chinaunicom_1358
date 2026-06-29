@@ -77,4 +77,16 @@ public class VisitorLogServiceImpl implements IVisitorLogService
         existingLog.setExitTime(new Date());
         return visitorLogMapper.updateLog(existingLog);
     }
+
+    /**
+     * 通过通行码查询访客记录
+     *
+     * @param passCode 通行码
+     * @return 访客记录信息
+     */
+    @Override
+    public VisitorLog selectLogByPassCode(String passCode)
+    {
+        return visitorLogMapper.selectLogByPassCode(passCode);
+    }
 }

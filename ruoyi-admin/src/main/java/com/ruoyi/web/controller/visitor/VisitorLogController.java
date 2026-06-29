@@ -1,6 +1,7 @@
 package com.ruoyi.web.controller.visitor;
 
 import java.util.List;
+import java.util.Map;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -39,6 +40,37 @@ public class VisitorLogController extends BaseController
     private IVisitorAppointmentService visitorAppointmentService;
 
     /**
+     * 现场登记：创建预约(PENDING)+来访记录(WALKIN)，含通行码
+     * 业务逻辑已下沉至 ServiceImpl.registerWalkin()
+     */
+    @PreAuthorize("@ss.hasPermi('visitor:log:add')")
+    @Log(title = "访客现场登记", businessType = BusinessType.INSERT)
+    @PostMapping
+    public AjaxResult add(@Validated @RequestBody VisitorLog log)
+    {
+        // 构建预约对象
+        VisitorAppointment appointment = new VisitorAppointment();
+        appointment.setVisitorName(log.getVisitorName());
+        appointment.setVisitorPhone(log.getVisitorPhone());
+        appointment.setVisitorIdCard(log.getVisitorIdCard());
+        appointment.setVisitorCompany(log.getVisitorCompany());
+        appointment.setVisitReason(log.getVisitReason());
+        appointment.setHostName(log.getHostName());
+        appointment.setHostDept(log.getHostDept());
+        appointment.setVisitTime(log.getEntryTime());
+        appointment.setHasCar(log.getHasCar());
+        appointment.setCarPlate(log.getCarPlate());
+        appointment.setHasGoods(log.getHasGoods());
+        appointment.setGoodsDesc(log.getGoodsDesc());
+
+        // 委托 Service 完成登记
+        Map<String, Object> resultMap = visitorAppointmentService.registerWalkin(
+                appointment, getUsername());
+
+        return success(resultMap.get("log"));
+    }
+
+    /**
      * 获取访客记录列表（分页）
      */
     @PreAuthorize("@ss.hasPermi('visitor:log:list')")
@@ -58,40 +90,6 @@ public class VisitorLogController extends BaseController
     public AjaxResult getInfo(@PathVariable Long logId)
     {
         return success(visitorLogService.selectLogById(logId));
-    }
-
-    /**
-     * 现场登记：先创建访客预约(PENDING)，审批通过后自动生成来访记录
-     */
-    @PreAuthorize("@ss.hasPermi('visitor:log:add')")
-    @Log(title = "访客现场登记", businessType = BusinessType.INSERT)
-    @PostMapping
-    public AjaxResult add(@Validated @RequestBody VisitorLog log)
-    {
-        // 生成通行码
-        String passCode = java.util.UUID.randomUUID().toString().substring(0, 8).toUpperCase();
-
-        // 创建访客预约记录（状态PENDING，需审批）
-        VisitorAppointment appointment = new VisitorAppointment();
-        appointment.setVisitorName(log.getVisitorName());
-        appointment.setVisitorPhone(log.getVisitorPhone());
-        appointment.setVisitorIdCard(log.getVisitorIdCard());
-        appointment.setVisitorCompany(log.getVisitorCompany());
-        appointment.setVisitReason(log.getVisitReason());
-        appointment.setHostName(log.getHostName());
-        appointment.setHostDept(log.getHostDept());
-        appointment.setVisitTime(log.getEntryTime());
-        appointment.setStatus("PENDING");
-        appointment.setPassCode(passCode);
-        appointment.setCreateBy(getUsername());
-        visitorAppointmentService.insertAppointment(appointment);
-
-        // 同时创建来访记录（登记即进入，含通行码）
-        log.setPassCode(passCode);
-        log.setCreateBy(getUsername());
-        log.setRegisterType("WALKIN");
-        visitorLogService.insertLog(log);
-        return success(log);
     }
 
     /**

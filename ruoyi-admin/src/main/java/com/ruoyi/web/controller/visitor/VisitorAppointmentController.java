@@ -18,13 +18,11 @@ import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
+import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.system.domain.VisitorAppointment;
-import com.ruoyi.system.domain.VisitorLog;
 import com.ruoyi.system.service.IVisitorAppointmentService;
-import com.ruoyi.system.service.IVisitorLogService;
-import com.ruoyi.system.sms.SmsUtil;
 
 /**
  * 访客预约管理
@@ -37,12 +35,6 @@ public class VisitorAppointmentController extends BaseController
 {
     @Autowired
     private IVisitorAppointmentService visitorAppointmentService;
-
-    @Autowired
-    private IVisitorLogService visitorLogService;
-
-    @Autowired
-    private SmsUtil smsUtil;
 
     /**
      * 获取预约列表（分页）
@@ -58,12 +50,19 @@ public class VisitorAppointmentController extends BaseController
 
     /**
      * 获取待审批预约列表（供审批人查看）
+     * 非管理员角色只返回指定审批人为当前用户的记录
      */
     @PreAuthorize("@ss.hasPermi('visitor:approval:list')")
     @GetMapping("/pending")
     public AjaxResult pending()
     {
-        List<VisitorAppointment> list = visitorAppointmentService.selectPendingList();
+        Long approverId = null;
+        // 非admin角色按审批人过滤
+        if (!SecurityUtils.isAdmin(SecurityUtils.getUserId()))
+        {
+            approverId = SecurityUtils.getUserId();
+        }
+        List<VisitorAppointment> list = visitorAppointmentService.selectPendingList(approverId);
         return success(list);
     }
 
@@ -118,7 +117,8 @@ public class VisitorAppointmentController extends BaseController
     }
 
     /**
-     * 审批预约（通过/拒绝，通过时发送短信通知访客）
+     * 审批预约（通过/拒绝）
+     * 审批后处理（创建来访记录、发送短信）已下沉至 ServiceImpl.approveAppointment()
      */
     @PreAuthorize("@ss.hasPermi('visitor:appointment:approve')")
     @Log(title = "访客预约", businessType = BusinessType.UPDATE)
@@ -138,69 +138,7 @@ public class VisitorAppointmentController extends BaseController
             return error("审批状态不能为空");
         }
 
-        int rows = visitorAppointmentService.approveAppointment(appointmentId, status, remark);
-
-        // 审批通过后：创建来访记录并发送短信通知访客
-        if (rows > 0 && "APPROVED".equals(status))
-        {
-            VisitorAppointment approved = visitorAppointmentService.selectAppointmentById(appointmentId);
-            if (StringUtils.isNotNull(approved))
-            {
-                // 使用现有通行码，没有才生成新的（避免和创建时生成的通行码不一致）
-                String passCode = approved.getPassCode();
-                if (StringUtils.isEmpty(passCode))
-                {
-                    passCode = java.util.UUID.randomUUID().toString().substring(0, 8).toUpperCase();
-                }
-
-                // 检查是否已有来访记录，避免重复创建
-                VisitorLog existLog = new VisitorLog();
-                existLog.setAppointmentId(appointmentId);
-                List<VisitorLog> existLogs = visitorLogService.selectLogList(existLog);
-                boolean hasLog = (existLogs != null && !existLogs.isEmpty());
-
-                if (!hasLog)
-                {
-                    // 首次审批：创建来访记录
-                    VisitorLog log = new VisitorLog();
-                    log.setAppointmentId(appointmentId);
-                    log.setPassCode(passCode);
-                    log.setVisitorName(approved.getVisitorName());
-                    log.setVisitorPhone(approved.getVisitorPhone());
-                    log.setVisitorIdCard(approved.getVisitorIdCard());
-                    log.setVisitorCompany(approved.getVisitorCompany());
-                    log.setVisitReason(approved.getVisitReason());
-                    log.setHostName(approved.getHostName());
-                    log.setHostDept(approved.getHostDept());
-                    log.setHasCar(approved.getHasCar());
-                    log.setCarPlate(approved.getCarPlate());
-                    log.setHasGoods(approved.getHasGoods());
-                    log.setGoodsDesc(approved.getGoodsDesc());
-                    log.setEntryTime(approved.getVisitTime());
-                    log.setRegisterType("APPOINTMENT");
-                    if (approved.getCreateBy() != null) {
-                        log.setCreateBy(approved.getCreateBy());
-                    }
-                    visitorLogService.insertLog(log);
-                }
-
-                // 如果通行码有变化则更新预约
-                if (!passCode.equals(approved.getPassCode()))
-                {
-                    approved.setPassCode(passCode);
-                    visitorAppointmentService.updateAppointment(approved);
-                }
-
-                // 发送短信通知（含通行码链接），仅发送一次
-                if (StringUtils.isNotEmpty(approved.getVisitorPhone()))
-                {
-                    smsUtil.sendSms("visitor_approval", approved.getVisitorPhone(),
-                        "{\"visitor_name\":\"" + (approved.getVisitorName() != null ? approved.getVisitorName() : "") + "\",\"host_name\":\"" + (approved.getHostName() != null ? approved.getHostName() : "") + "\",\"pass_code\":\"" + (approved.getPassCode() != null ? approved.getPassCode() : "") + "\"}", 1, null);
-                }
-            }
-        }
-
-        return toAjax(rows);
+        return toAjax(visitorAppointmentService.approveAppointment(appointmentId, status, remark));
     }
 
     /**

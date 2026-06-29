@@ -41,6 +41,42 @@
 | smart_device_repair | 智能设备报修 | device_name, token |
 | visitor_approval | 访客审批 | visitor_name, host_name, pass_code |
 
+## 访客管理模块流程（2026-06-29 梳理）
+
+### 数据模型
+- **visitor_appointment**：预约主表，status 六态流转，pass_code 8位UUID
+- **visitor_log**：来访记录表，register_type 区分 APPOINTMENT/WALKIN
+
+### 三条业务流程
+1. **后台预约→审批（APPOINTMENT）**：管理员创建→审批人通过/拒绝→短信通知→通行码验证→完成离开
+2. **H5自助登记（WALKIN）**：访客扫码→公开接口提交→自动创建预约+记录→仍需审批
+3. **现场登记（WALKIN）**：保安前台→登记页面→自动创建预约+记录→立即进入
+
+### 状态流转
+PENDING → APPROVED/REJECTED → (VISITING,实际跳过) → COMPLETED
+PENDING/APPROVED → CANCELLED
+
+### 公开接口（无需登录）
+- `GET /pass/{passCode}` — 通行码验证
+- `POST /visitor/h5/submit` — H5自助登记
+- `GET /visitor/h5/hosts` — 被访人列表
+
+### 发现的问题（已于 2026-06-29~30 全部修复）
+- ✅ 短信双重发送 → 删除 Controller 层重复，统一由 ServiceImpl 单次发送
+- ✅ 物理删除 → XML 改为逻辑删除 update set del_flag='1'
+- ✅ VISITING 状态未用 → VisitorPassController 验证通行码时自动更新
+- ✅ 审批人无指定 → insertAppointment 自动匹配 hostName→sys_user
+- ✅ Controller 直接注入 Mapper → VisitorPassController 改为注入 Service
+- ✅ Controller 包含业务逻辑 → 全部下沉到 ServiceImpl
+- ✅ 非管理员看不到待审批 → 3 层根因：dept_id NULL 被 DataScope 过滤 + tryAssignApprover 未设 dept_id + selectUserList 不支持 nickName
+
+### 关键调试发现（2026-06-30）
+- **BaseEntity 无 delFlag**：项目定制的 BaseEntity 只有 searchValue/createBy/createTime/updateBy/updateTime/remark/deptId/params，没有 delFlag
+- **MyBatis 类型别名陷阱**：`typeAliasesPackage: com.ruoyi.**.domain` 不覆盖 `entity` 包，`resultType="SysUser"` 需用完整类名或改用 Map
+- **selectUserList 不支持 nickName 过滤**：SysUserMapper.xml 的 selectUserList 只过滤 userId/userName/status/phonenumber/deptId，nickName 被忽略
+- **DeptScope 全局拦截**：DeptScopeInterceptor 对非 admin 自动注入 `dept_id = 当前用户部门`，NULL 记录被排除
+- **H5 无登录上下文**：`SecurityUtils.getDeptId()` 在公开接口中抛异常，需兜底
+
 ## 技术债务（代码审查发现，暂不修复）
 
 | 严重度 | 问题 | 位置 |

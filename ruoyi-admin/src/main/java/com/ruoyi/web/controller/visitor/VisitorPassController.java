@@ -11,8 +11,8 @@ import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.system.domain.VisitorAppointment;
 import com.ruoyi.system.domain.VisitorLog;
-import com.ruoyi.system.mapper.VisitorAppointmentMapper;
-import com.ruoyi.system.mapper.VisitorLogMapper;
+import com.ruoyi.system.service.IVisitorAppointmentService;
+import com.ruoyi.system.service.IVisitorLogService;
 
 /**
  * 访客通行码公开访问 Controller（无需登录）
@@ -24,19 +24,20 @@ import com.ruoyi.system.mapper.VisitorLogMapper;
 public class VisitorPassController extends BaseController
 {
     @Autowired
-    private VisitorAppointmentMapper appointmentMapper;
+    private IVisitorAppointmentService visitorAppointmentService;
 
     @Autowired
-    private VisitorLogMapper visitorLogMapper;
+    private IVisitorLogService visitorLogService;
 
     /**
      * 根据通行码获取访客通行信息（公开接口，无需认证）
+     * 验证同时更新预约状态为 VISITING（到访确认）
      */
     @GetMapping("/{passCode}")
     public AjaxResult getPassInfo(@PathVariable String passCode)
     {
         // 从预约表查找
-        VisitorAppointment apt = appointmentMapper.selectAppointmentByPassCode(passCode);
+        VisitorAppointment apt = visitorAppointmentService.selectAppointmentByPassCode(passCode);
         if (apt != null)
         {
             Map<String, Object> info = new HashMap<>();
@@ -48,11 +49,15 @@ public class VisitorPassController extends BaseController
             info.put("hostDept", apt.getHostDept());
             info.put("visitTime", apt.getVisitTime());
             info.put("status", apt.getStatus());
+
+            // 到访确认：更新状态为 VISITING
+            visitorAppointmentService.checkInVisitor(passCode);
+
             return success(info);
         }
 
         // 从未访记录表查找
-        VisitorLog log = visitorLogMapper.selectLogByPassCode(passCode);
+        VisitorLog log = visitorLogService.selectLogByPassCode(passCode);
         if (log != null)
         {
             Map<String, Object> info = new HashMap<>();
