@@ -581,14 +581,20 @@
       "agent_type": "oh-my-claudecode:code-reviewer",
       "started_at": "2026-06-28T04:22:51.523Z",
       "parent_mode": "none",
-      "status": "running"
+      "status": "failed",
+      "completed_at": "2026-06-28T23:44:39.723Z",
+      "duration_ms": 69708200,
+      "output_summary": "Marked as stale during unmatched stop reconciliation - exceeded timeout"
     },
     {
       "agent_id": "a330f1d5aca69f8fa",
       "agent_type": "oh-my-claudecode:code-reviewer",
       "started_at": "2026-06-28T04:22:54.183Z",
       "parent_mode": "none",
-      "status": "running"
+      "status": "failed",
+      "completed_at": "2026-06-28T23:44:39.723Z",
+      "duration_ms": 69705540,
+      "output_summary": "Marked as stale during unmatched stop reconciliation - exceeded timeout"
     },
     {
       "agent_id": "a1da65cccc69e2557",
@@ -616,10 +622,19 @@
       "status": "completed",
       "completed_at": "2026-06-28T04:25:41.212Z",
       "duration_ms": 159551
+    },
+    {
+      "agent_id": "a05d11c4cafea6e3b",
+      "agent_type": "oh-my-claudecode:executor",
+      "started_at": "2026-06-28T23:44:39.723Z",
+      "parent_mode": "none",
+      "status": "completed",
+      "completed_at": "2026-06-28T23:44:39.723Z",
+      "duration_ms": 0
     }
   ],
   "total_spawned": 70,
-  "total_completed": 68,
-  "total_failed": 0,
-  "last_updated": "2026-06-28T04:26:18.299Z"
+  "total_completed": 69,
+  "total_failed": 2,
+  "last_updated": "2026-06-28T23:44:39.841Z"
 }

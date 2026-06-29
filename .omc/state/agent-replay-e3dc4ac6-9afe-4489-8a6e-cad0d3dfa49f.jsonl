@@ -41,3 +41,5 @@
 {"t":0,"agent":"a1da65c","agent_type":"code-reviewer","event":"agent_stop","success":true,"duration_ms":201422}
 {"t":0,"agent":"system","event":"skill_invoked","skill_name":"superpowers:using-superpowers"}
 {"t":0,"agent":"system","event":"skill_invoked","skill_name":"superpowers:brainstorming"}
+{"t":0,"agent":"a05d11c","agent_type":"executor","event":"agent_stop","success":true,"duration_ms":0}
+{"t":0,"agent":"system","event":"skill_invoked","skill_name":"superpowers:brainstorming"}

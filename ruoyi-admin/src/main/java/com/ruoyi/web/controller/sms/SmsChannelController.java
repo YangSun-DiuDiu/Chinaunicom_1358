@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
+import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.system.sms.SmsUtil;
 
 /**
  * 短信渠道配置 Controller
@@ -30,6 +32,8 @@ public class SmsChannelController extends BaseController
 {
     @Autowired
     private JdbcTemplate jdbc;
+    @Autowired
+    private SmsUtil smsUtil;
 
     /**
      * 查询渠道列表
@@ -113,6 +117,49 @@ public class SmsChannelController extends BaseController
         vals.add(channelId);
         jdbc.update("UPDATE sys_sms_channel SET " + setClause + " WHERE channel_id=?", vals.toArray());
         return success();
+    }
+
+    /**
+     * 测试发送
+     */
+    @PreAuthorize("@ss.hasPermi('sms:channel:test')")
+    @PostMapping("/test/{channelId}")
+    public AjaxResult testSend(@PathVariable Long channelId, @RequestBody Map<String, Object> body)
+    {
+        try {
+            String phone = (String) body.get("phone");
+            String params = (String) body.get("params");
+            Long stId = body.get("stId") != null ? ((Number) body.get("stId")).longValue() : null;
+            if (StringUtils.isEmpty(phone)) return error("手机号不能为空");
+
+            Map<String, Object> channel = jdbc.queryForMap(
+                "SELECT * FROM sys_sms_channel WHERE channel_id=? AND del_flag='0'", channelId);
+
+            Map<String, Object> template = null;
+            if (stId != null) {
+                template = jdbc.queryForMap(
+                    "SELECT * FROM sys_sms_sign_template WHERE st_id=? AND del_flag='0'", stId);
+            } else {
+                try {
+                    template = jdbc.queryForMap(
+                        "SELECT * FROM sys_sms_sign_template WHERE channel_id=? AND del_flag='0' AND status='0' LIMIT 1", channelId);
+                } catch (Exception ignored) {}
+            }
+
+            if (template == null) return error("未找到可用签名模板，请先配置");
+
+            // 黑名单检查
+            try {
+                Map<String, Object> black = jdbc.queryForMap(
+                    "SELECT * FROM sys_sms_blacklist WHERE phone=? AND status='0'", phone);
+                if (black != null) return error("该手机号在黑名单中");
+            } catch (Exception ignored) {}
+
+            boolean ok = smsUtil.sendByChannel(channel, template, phone, params != null ? params : "{}");
+            return ok ? success("发送成功") : error("发送失败，请查看日志");
+        } catch (Exception e) {
+            return error("发送异常: " + e.getMessage());
+        }
     }
 
     /**
