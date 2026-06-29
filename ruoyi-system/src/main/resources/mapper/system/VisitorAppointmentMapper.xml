@@ -34,6 +34,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateBy"          column="update_by"           />
         <result property="updateTime"        column="update_time"         />
         <result property="remark"            column="remark"              />
+        <result property="delFlag"           column="del_flag"            />
     </resultMap>
 
     <sql id="selectAppointmentVo">
@@ -41,7 +42,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                a.visitor_company, a.visit_reason, a.host_name, a.host_dept, a.host_phone,
                a.visit_time, a.leave_time, a.status, a.approver_id, a.approve_time,
                a.approve_remark, a.sms_sent, a.sms_content, a.pass_code, a.has_car, a.car_plate, a.has_goods, a.goods_desc, a.tenant_id,
-               a.create_by, a.create_time, a.update_by, a.update_time, a.remark
+               a.create_by, a.create_time, a.update_by, a.update_time, a.remark, a.del_flag
         from visitor_appointment a
     </sql>
 
@@ -69,18 +70,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="params.endTime != null and params.endTime != ''">
                 AND date_format(a.visit_time,'%Y%m%d') &lt;= date_format(#{params.endTime},'%Y%m%d')
             </if>
+            AND a.del_flag = '0'
         </where>
         order by a.create_time desc
     </select>
 
     <select id="selectAppointmentById" parameterType="Long" resultMap="VisitorAppointmentResult">
         <include refid="selectAppointmentVo"/>
-        where a.appointment_id = #{appointmentId}
+        where a.appointment_id = #{appointmentId} AND a.del_flag = '0'
     </select>
 
     <select id="selectPendingList" resultMap="VisitorAppointmentResult">
         <include refid="selectAppointmentVo"/>
-        where a.status = 'PENDING'
+        where a.status = 'PENDING' AND a.del_flag = '0'
+        <if test="approverId != null">
+            AND (a.approver_id = #{approverId} OR a.approver_id IS NULL)
+        </if>
         order by a.create_time asc
     </select>
 
@@ -173,13 +178,23 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where appointment_id = #{appointmentId}
     </update>
 
-    <delete id="deleteAppointmentById" parameterType="Long">
-        delete from visitor_appointment where appointment_id = #{appointmentId}
-    </delete>
+    <update id="deleteAppointmentById" parameterType="Long">
+        update visitor_appointment set del_flag = '1', update_time = sysdate()
+        where appointment_id = #{appointmentId}
+    </update>
 
     <select id="selectAppointmentByPassCode" parameterType="String" resultMap="VisitorAppointmentResult">
         <include refid="selectAppointmentVo"/>
-        where a.pass_code = #{passCode}
+        where a.pass_code = #{passCode} AND a.del_flag = '0'
+    </select>
+
+    <select id="selectUserIdByNickName" parameterType="String" resultType="Long">
+        SELECT user_id FROM sys_user WHERE nick_name = #{nickName} AND del_flag = '0' LIMIT 1
+    </select>
+
+    <select id="selectUserByNickName" parameterType="String" resultType="java.util.Map">
+        SELECT user_id AS userId, dept_id AS deptId, user_name AS userName, nick_name AS nickName
+        FROM sys_user WHERE nick_name = #{nickName} AND del_flag = '0' LIMIT 1
     </select>
 
 </mapper>

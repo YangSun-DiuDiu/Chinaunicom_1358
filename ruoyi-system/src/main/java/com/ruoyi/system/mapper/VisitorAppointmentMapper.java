@@ -51,11 +51,12 @@ public interface VisitorAppointmentMapper
     public int deleteAppointmentById(Long appointmentId);
 
     /**
-     * 查询待处理预约列表
+     * 查询待处理预约列表（可按审批人过滤）
      *
+     * @param approverId 审批人ID（null=查全部）
      * @return 待处理预约集合
      */
-    public List<VisitorAppointment> selectPendingList();
+    public List<VisitorAppointment> selectPendingList(Long approverId);
 
     /**
      * 通过通行码查询预约
@@ -64,4 +65,18 @@ public interface VisitorAppointmentMapper
      * @return 预约信息
      */
     public VisitorAppointment selectAppointmentByPassCode(String passCode);
+
+    /**
+     * 通过昵称（nick_name）查询用户ID，用于被访人→审批人匹配
+     *
+     * @param nickName 用户昵称
+     * @return 用户ID，未找到返回null
+     */
+    public Long selectUserIdByNickName(String nickName);
+
+    /**
+     * 通过昵称查询用户（含 dept_id），用于被访人→审批人匹配后设置数据范围
+     * @return Map 包含 user_id, dept_id
+     */
+    public java.util.Map<String, Object> selectUserByNickName(String nickName);
 }

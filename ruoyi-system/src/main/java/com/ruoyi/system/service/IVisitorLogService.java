@@ -41,4 +41,12 @@ public interface IVisitorLogService
      * @return 结果
      */
     public int updateLog(VisitorLog log);
+
+    /**
+     * 通过通行码查询访客记录
+     *
+     * @param passCode 通行码
+     * @return 访客记录信息
+     */
+    public VisitorLog selectLogByPassCode(String passCode);
 }

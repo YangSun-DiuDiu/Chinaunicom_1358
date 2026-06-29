@@ -1,7 +1,7 @@
 package com.ruoyi.web.controller.visitor;
 
-import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,9 +14,7 @@ import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.system.domain.VisitorAppointment;
-import com.ruoyi.system.domain.VisitorLog;
 import com.ruoyi.system.service.IVisitorAppointmentService;
-import com.ruoyi.system.service.IVisitorLogService;
 
 /**
  * 访客H5自助登记——公开访问，无需登录
@@ -30,11 +28,9 @@ public class VisitorH5Controller extends BaseController
     @Autowired
     private IVisitorAppointmentService visitorAppointmentService;
 
-    @Autowired
-    private IVisitorLogService visitorLogService;
-
     /**
      * 访客自主提交预约登记（公开接口）
+     * 业务逻辑已下沉至 ServiceImpl.registerWalkin()
      */
     @PostMapping("/submit")
     public AjaxResult submit(@Validated @RequestBody VisitorAppointment appointment)
@@ -53,47 +49,13 @@ public class VisitorH5Controller extends BaseController
             return error("被访人姓名不能为空");
         }
 
-        // 自动生成通行码
-        String passCode = java.util.UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+        // 委托 Service 完成登记（事务中创建预约+来访记录）
+        Map<String, Object> resultMap = visitorAppointmentService.registerWalkin(
+                appointment, appointment.getVisitorName());
 
-        // 设置预约信息
-        appointment.setPassCode(passCode);
-        appointment.setStatus("PENDING");
-        appointment.setCreateBy(appointment.getVisitorName());
-        appointment.setCreateTime(new Date());
-
-        // 如果未填来访时间，默认当天
-        if (appointment.getVisitTime() == null)
-        {
-            appointment.setVisitTime(new Date());
-        }
-
-        visitorAppointmentService.insertAppointment(appointment);
-
-        // 同时创建来访记录（自助登记即进入）
-        VisitorLog log = new VisitorLog();
-        log.setAppointmentId(appointment.getAppointmentId());
-        log.setPassCode(passCode);
-        log.setVisitorName(appointment.getVisitorName());
-        log.setVisitorPhone(appointment.getVisitorPhone());
-        log.setVisitorIdCard(appointment.getVisitorIdCard());
-        log.setVisitorCompany(appointment.getVisitorCompany());
-        log.setVisitReason(appointment.getVisitReason());
-        log.setHostName(appointment.getHostName());
-        log.setHostDept(appointment.getHostDept());
-        log.setHasCar(appointment.getHasCar());
-        log.setCarPlate(appointment.getCarPlate());
-        log.setHasGoods(appointment.getHasGoods());
-        log.setGoodsDesc(appointment.getGoodsDesc());
-        log.setEntryTime(new Date());
-        log.setRegisterType("WALKIN");
-        log.setCreateBy(appointment.getVisitorName());
-        log.setCreateTime(new Date());
-        visitorLogService.insertLog(log);
-
-        AjaxResult result = success(log);
-        result.put("passCode", passCode);
-        result.put("appointmentId", appointment.getAppointmentId());
+        AjaxResult result = success(resultMap.get("log"));
+        result.put("passCode", resultMap.get("passCode"));
+        result.put("appointmentId", resultMap.get("appointmentId"));
         return result;
     }
 

@@ -20,3 +20,5 @@
 | 13. 公寓预付费-后续 | pending | 费率/分摊/扣费(2b)、物联网设备(3)、微信支付(4)、AI能耗(5)、监控看板(6) |
 | 14. 短信中台重建 | ✅ complete | 五表+三驱动+SmsUtil+6页前端+11调用点改造 |
 | 14a. 短信参数/修复 | ✅ complete | 变量JSON替换content-string、签名空格修复、心跳双SMS去除、repairNo补全 |
+| 15. 访客模块重构 | ✅ complete | 5优先：短信去重、VISITING状态、逻辑删除、审批过滤、Controller下沉Service |
+| 15a. 访客审批不可见修复 | ✅ complete | dept_id/approver_id自动设置、MyBatis类型别名修复、DeptScope穿透 |

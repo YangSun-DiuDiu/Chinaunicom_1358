@@ -148,7 +148,7 @@ public class DashboardServiceImpl implements IDashboardService
         result.put("todayEntryCount", todayEntryCount);
 
         // 待审批预约数
-        List<VisitorAppointment> pendingList = visitorAppointmentMapper.selectPendingList();
+        List<VisitorAppointment> pendingList = visitorAppointmentMapper.selectPendingList(null);
         long pendingApprovals = pendingList.size();
         result.put("pendingApprovals", pendingApprovals);
 

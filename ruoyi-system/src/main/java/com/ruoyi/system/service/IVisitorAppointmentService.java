@@ -79,7 +79,33 @@ public interface IVisitorAppointmentService
     /**
      * 查询待处理预约列表
      *
+     * @param approverId 审批人ID（null=查全部，非null=按审批人过滤）
      * @return 待处理预约集合
      */
-    public List<VisitorAppointment> selectPendingList();
+    public List<VisitorAppointment> selectPendingList(Long approverId);
+
+    /**
+     * 通过通行码查询预约
+     *
+     * @param passCode 通行码
+     * @return 预约信息
+     */
+    public VisitorAppointment selectAppointmentByPassCode(String passCode);
+
+    /**
+     * 到访确认：通行码验证通过后将预约状态更新为 VISITING
+     *
+     * @param passCode 通行码
+     * @return 更新后的预约信息，未找到返回null
+     */
+    public VisitorAppointment checkInVisitor(String passCode);
+
+    /**
+     * 访客自助登记/现场登记：事务中创建预约+来访记录
+     *
+     * @param appointment 预约信息
+     * @param createBy 创建者
+     * @return Map 包含 passCode、appointmentId、log
+     */
+    public java.util.Map<String, Object> registerWalkin(VisitorAppointment appointment, String createBy);
 }
