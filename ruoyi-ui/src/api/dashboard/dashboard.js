@@ -15,3 +15,19 @@ export function getVisitorDashboard() {
     method: 'get'
   })
 }
+
+// 获取会议仪表盘数据
+export function getMeetingDashboard() {
+  return request({
+    url: '/dashboard/meeting',
+    method: 'get'
+  })
+}
+
+// 获取公寓仪表盘数据
+export function getApartmentDashboard() {
+  return request({
+    url: '/dashboard/apartment',
+    method: 'get'
+  })
+}
