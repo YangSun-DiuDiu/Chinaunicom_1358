@@ -235,7 +235,7 @@ export default {
         this.deviceData.onlineRate = d.onlineRate || 0
         this.deviceData.deviceTypeDistribution = (d.deviceTypeStats||[]).map(t=>({ name: this.deviceTypeName(t.type), value: t.count }))
         this.deviceData.recentEvents = this.buildEvents(d.recentAlerts||[], d.recentHeartbeats||[])
-        this.$nextTick(() => this.initDevicePie())
+        this.$nextTick(() => { setTimeout(() => this.initDevicePie(), 300) })
       }).catch(() => {})
     },
     loadVisitor() {
@@ -246,7 +246,7 @@ export default {
         this.visitorData.totalAppointments = d.totalAppointments || 0
         this.visitorData.latestVisits = (d.recentVisits||[]).slice(0,5)
         this.visitorData.visitorStatusDistribution = (d.visitStats||[]).map(s=>({ name: this.visitorStatusName(s.status), value: s.count }))
-        this.$nextTick(() => this.initVisitorBar())
+        this.$nextTick(() => { setTimeout(() => this.initVisitorBar(), 300) })
       }).catch(() => {})
     },
     loadMeeting() {
@@ -271,7 +271,7 @@ export default {
         this.apartmentData.fullCount = blue
         this.apartmentData.occupancyRate = this.apartmentData.totalRooms>0
           ? Math.round(this.apartmentData.occupiedCount / this.apartmentData.totalRooms * 100) : 0
-        this.$nextTick(() => this.initApartmentPie())
+        this.$nextTick(() => { setTimeout(() => this.initApartmentPie(), 300) })
       }).catch(() => {})
     },
 
