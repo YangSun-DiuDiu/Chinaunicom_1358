@@ -2,6 +2,7 @@ package com.ruoyi.framework.aspectj;
 
 import com.ruoyi.common.constant.CacheConstants;
 import com.ruoyi.common.core.domain.BaseEntity;
+import com.ruoyi.common.core.domain.entity.SysDept;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
@@ -29,24 +30,28 @@ public class DeptFillAspect {
             "execution(* com.ruoyi.web.controller..*.save*(..)) || " +
             "execution(* com.ruoyi.web.controller..*.insert*(..)) || " +
             "execution(* com.ruoyi.web.controller..*.update*(..))")
+
     public void fillDeptId(JoinPoint joinPoint) {
         try {
             Object[] args = joinPoint.getArgs();
             if (args == null || args.length == 0) {
                 return;
             }
-
             Long currentDeptId = getCurrentDeptId();
             if (currentDeptId == null) {
                 return;
             }
-
             for (Object arg : args) {
                 if (arg instanceof BaseEntity) {
+                    // SysDept.deptId 是部门主键，不是数据范围字段，必须跳过
+                    if (arg instanceof SysDept) {
+                        continue;
+                    }
                     BaseEntity entity = (BaseEntity) arg;
                     if (entity.getDeptId() == null) {
                         entity.setDeptId(currentDeptId);
-                        log.debug("DeptFillAspect: auto-filled deptId={} for {}", currentDeptId, arg.getClass().getSimpleName());
+                        log.debug("DeptFillAspect: auto-filled deptId={} for {}", currentDeptId,
+                                arg.getClass().getSimpleName());
                     }
                 }
             }
