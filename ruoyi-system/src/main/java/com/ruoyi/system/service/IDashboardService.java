@@ -22,4 +22,18 @@ public interface IDashboardService
      * @return 访客仪表盘数据
      */
     public Map<String, Object> getVisitorDashboard();
+
+    /**
+     * 获取会议仪表盘数据
+     *
+     * @return 会议仪表盘数据
+     */
+    public Map<String, Object> getMeetingDashboard();
+
+    /**
+     * 获取公寓仪表盘数据
+     *
+     * @return 公寓仪表盘数据
+     */
+    public Map<String, Object> getApartmentDashboard();
 }
