@@ -23,3 +23,4 @@
 | 15. 访客模块重构 | ✅ complete | 5优先：短信去重、VISITING状态、逻辑删除、审批过滤、Controller下沉Service |
 | 15a. 访客审批不可见修复 | ✅ complete | dept_id/approver_id自动设置、MyBatis类型别名修复、DeptScope穿透 |
 | 16. DeptFillAspect修复 | ✅ complete | 跳过SysDept避免deptId(主键)被覆盖为admin的deptId |
+| 17. 驾驶舱重构 | ✅ complete | 4模块统一cockpit、深蓝科技风、2新API+前端重写 |
