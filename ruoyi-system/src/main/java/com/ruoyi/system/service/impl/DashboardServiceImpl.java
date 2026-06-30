@@ -53,6 +53,15 @@ public class DashboardServiceImpl implements IDashboardService
     @Autowired
     private VisitorLogMapper visitorLogMapper;
 
+    @Autowired
+    private com.ruoyi.system.mapper.MeetingBookingMapper meetingBookingMapper;
+
+    @Autowired
+    private com.ruoyi.system.mapper.MeetingRoomMapper meetingRoomMapper;
+
+    @Autowired
+    private com.ruoyi.system.mapper.RoomInfoMapper roomInfoMapper;
+
     /**
      * 获取设备仪表盘数据
      *
@@ -179,6 +188,68 @@ public class DashboardServiceImpl implements IDashboardService
             visitStats.add(stat);
         }
         result.put("visitStats", visitStats);
+
+        return result;
+    }
+
+    /**
+     * 获取会议仪表盘数据
+     */
+    @Override
+    public Map<String, Object> getMeetingDashboard()
+    {
+        Map<String, Object> result = new LinkedHashMap<>();
+
+        int roomCount = meetingRoomMapper.selectMeetingRoomList(
+                new com.ruoyi.system.domain.MeetingRoom()).size();
+        result.put("roomCount", roomCount);
+
+        int totalBookings = meetingBookingMapper.selectMeetingBookingList(
+                new com.ruoyi.system.domain.MeetingBooking()).size();
+        result.put("totalBookings", totalBookings);
+
+        com.ruoyi.system.domain.MeetingBooking todayQuery = new com.ruoyi.system.domain.MeetingBooking();
+        todayQuery.getParams().put("beginTime",
+                new java.text.SimpleDateFormat("yyyy-MM-dd").format(new Date()) + " 00:00:00");
+        todayQuery.getParams().put("endTime",
+                new java.text.SimpleDateFormat("yyyy-MM-dd").format(new Date()) + " 23:59:59");
+        List<com.ruoyi.system.domain.MeetingBooking> todayMeetings =
+                meetingBookingMapper.selectMeetingBookingList(todayQuery);
+        result.put("todayBookings", todayMeetings.size());
+        result.put("todayMeetings", todayMeetings);
+
+        return result;
+    }
+
+    /**
+     * 获取公寓仪表盘数据
+     */
+    @Override
+    public Map<String, Object> getApartmentDashboard()
+    {
+        Map<String, Object> result = new LinkedHashMap<>();
+
+        List<com.ruoyi.system.domain.RoomInfo> allRooms =
+                roomInfoMapper.selectRoomCardList(new com.ruoyi.system.domain.RoomInfo());
+        int totalRooms = allRooms.size();
+        result.put("totalRooms", totalRooms);
+
+        Map<String, Long> statusMap = allRooms.stream()
+                .collect(Collectors.groupingBy(
+                        r -> r.getStatus() != null ? r.getStatus() : "GRAY",
+                        Collectors.counting()));
+        List<Map<String, Object>> statusDistribution = new ArrayList<>();
+        String[] statuses = {"GREEN", "CYAN", "BLUE", "GRAY"};
+        String[] labels = {"空置", "部分入住", "满房", "维修"};
+        for (int i = 0; i < statuses.length; i++)
+        {
+            Map<String, Object> stat = new HashMap<>();
+            stat.put("status", statuses[i]);
+            stat.put("label", labels[i]);
+            stat.put("count", statusMap.getOrDefault(statuses[i], 0L));
+            statusDistribution.add(stat);
+        }
+        result.put("statusDistribution", statusDistribution);
 
         return result;
     }

@@ -43,4 +43,26 @@ public class DashboardController extends BaseController
         Map<String, Object> data = dashboardService.getVisitorDashboard();
         return success(data);
     }
+
+    /**
+     * 获取会议仪表盘数据
+     */
+    @PreAuthorize("@ss.hasPermi('dashboard:meeting:query')")
+    @GetMapping("/meeting")
+    public AjaxResult meeting()
+    {
+        Map<String, Object> data = dashboardService.getMeetingDashboard();
+        return success(data);
+    }
+
+    /**
+     * 获取公寓仪表盘数据
+     */
+    @PreAuthorize("@ss.hasPermi('dashboard:apartment:query')")
+    @GetMapping("/apartment")
+    public AjaxResult apartment()
+    {
+        Map<String, Object> data = dashboardService.getApartmentDashboard();
+        return success(data);
+    }
 }
