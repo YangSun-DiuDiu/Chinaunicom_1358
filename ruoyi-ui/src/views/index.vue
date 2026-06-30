@@ -189,6 +189,7 @@
 
 <script>
 import * as echarts from 'echarts'
+require('echarts/theme/macarons')
 import CountTo from 'vue-count-to'
 import { getDeviceDashboard, getVisitorDashboard, getMeetingDashboard, getApartmentDashboard } from '@/api/dashboard/dashboard'
 
