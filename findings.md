@@ -77,6 +77,9 @@ PENDING/APPROVED → CANCELLED
 - **DeptScope 全局拦截**：DeptScopeInterceptor 对非 admin 自动注入 `dept_id = 当前用户部门`，NULL 记录被排除
 - **H5 无登录上下文**：`SecurityUtils.getDeptId()` 在公开接口中抛异常，需兜底
 
+### 关键调试发现（2026-07-01）
+- **DeptFillAspect 误写 SysDept 主键**：`DeptFillAspect` 拦截所有 Controller add* 方法，无条件把当前用户的 `deptId` 写入 `BaseEntity.deptId`。但 `SysDept.deptId` 是部门**主键**，不是数据范围字段。admin 的 deptId=100 被写入新部门的 dept_id → INSERT 主键冲突。修复：`if (arg instanceof SysDept) continue;`
+
 ## 技术债务（代码审查发现，暂不修复）
 
 | 严重度 | 问题 | 位置 |
