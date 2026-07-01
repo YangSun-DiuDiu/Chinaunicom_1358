@@ -9,7 +9,7 @@ import { isRelogin } from '@/utils/request'
 
 NProgress.configure({ showSpinner: false })
 
-const whiteList = ['/login', '/h5-register', '/pass', '/repair-complete']
+const whiteList = ['/login', '/h5/login', '/h5-register', '/pass', '/repair-complete']
 
 const isWhiteList = (path) => {
   return whiteList.some(pattern => isPathMatch(pattern, path))
@@ -57,7 +57,8 @@ router.beforeEach((to, from, next) => {
     if (isWhiteList(to.path)) {
       next()
     } else {
-      next('/login?redirect=' + encodeURIComponent(to.fullPath))
+      const loginPath = to.path.startsWith('/h5') ? '/h5/login' : '/login'
+      next(loginPath + '?redirect=' + encodeURIComponent(to.fullPath))
       NProgress.done()
     }
   }

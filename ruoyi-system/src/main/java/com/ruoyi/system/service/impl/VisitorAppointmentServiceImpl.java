@@ -92,7 +92,10 @@ public class VisitorAppointmentServiceImpl implements IVisitorAppointmentService
                 // 无登录上下文时跳过
             }
         }
-        return appointmentMapper.insertAppointment(appointment);
+        int rows = appointmentMapper.insertAppointment(appointment);
+        // 通知被访人（审批人）有新的访客预约
+        notifyApprover(appointment);
+        return rows;
     }
 
     /**
@@ -395,6 +398,30 @@ public class VisitorAppointmentServiceImpl implements IVisitorAppointmentService
             }
         } catch (Exception e) {
             log.debug("被访人-审批人匹配跳过: hostName={}", appointment.getHostName());
+        }
+    }
+
+    /**
+     * 通知被访人（审批人）有新的访客预约待审批
+     */
+    private void notifyApprover(VisitorAppointment appointment) {
+        try {
+            Long approverId = appointment.getApproverId();
+            if (approverId == null) return;
+            SysUser approver = sysUserService.selectUserById(approverId);
+            if (approver == null || approver.getPhonenumber() == null || approver.getPhonenumber().isEmpty()) return;
+            String approverName = approver.getNickName() != null ? approver.getNickName() : approver.getUserName();
+            String visitTimeStr = appointment.getVisitTime() != null
+                ? new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm").format(appointment.getVisitTime()) : "";
+            smsUtil.sendSms("visitor_pending_notify", approver.getPhonenumber(),
+                "{\"host_name\":\"" + safeStr(approverName)
+                + "\",\"visitor_name\":\"" + safeStr(appointment.getVisitorName())
+                + "\",\"visitor_phone\":\"" + safeStr(appointment.getVisitorPhone())
+                + "\",\"visit_reason\":\"" + safeStr(appointment.getVisitReason())
+                + "\",\"visit_time\":\"" + visitTimeStr + "\"}", 1, null);
+            log.info("已通知审批人: approverId={}, phone={}", approverId, approver.getPhonenumber());
+        } catch (Exception e) {
+            log.warn("通知审批人失败: appointmentId={}", appointment.getAppointmentId(), e);
         }
     }
 }

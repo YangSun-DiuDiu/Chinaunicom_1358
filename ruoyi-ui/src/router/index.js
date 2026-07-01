@@ -89,7 +89,16 @@ export const constantRoutes = [
         meta: { title: '个人中心', icon: 'user' }
       }
     ]
-  }
+  },
+  // ==================== H5 轻应用 ====================
+  { path: '/h5/login',         component: () => import('@/views/h5/login'),        hidden: true, meta: { title: 'H5登录' } },
+  { path: '/h5',               component: () => import('@/views/h5/index'),        hidden: true, meta: { title: '园区服务' } },
+  { path: '/h5/visitor',       component: () => import('@/views/h5/visitor'),      hidden: true, meta: { title: '访客登记' } },
+  { path: '/h5/visitor/pass',  component: () => import('@/views/h5/visitor-pass'), hidden: true, meta: { title: '通行码查询' } },
+  { path: '/h5/guard',         component: () => import('@/views/h5/guard'),        hidden: true, meta: { title: '保安核验', permission: 'visitor:guard:verify' } },
+  { path: '/h5/meeting',       component: () => import('@/views/h5/meeting'),      hidden: true, meta: { title: '会议室' } },
+  { path: '/h5/meeting/book',  component: () => import('@/views/h5/meeting-book'), hidden: true, meta: { title: '预约会议' } },
+  { path: '/h5/device',        component: () => import('@/views/h5/device'),       hidden: true, meta: { title: '设备状态' } },
 ]
 
 // 全静态业务路由 - 根据权限过滤侧边栏显示
