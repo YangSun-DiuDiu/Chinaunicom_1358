@@ -77,4 +77,9 @@ public interface IMeetingBookingService
      * @return 预约列表
      */
     public List<MeetingBooking> selectSlots(Long roomId, String date);
+
+    /**
+     * 审批会议预约（通过/拒绝），含短信通知
+     */
+    public int approveBooking(Long bookingId, String status);
 }

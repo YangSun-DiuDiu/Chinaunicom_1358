@@ -134,9 +134,8 @@ public class MeetingBookingController extends BaseController
         {
             return error("仅待审批状态的预约可以审批");
         }
-        booking.setStatus("APPROVED");
         booking.setUpdateBy(SecurityUtils.getUsername());
-        return toAjax(meetingBookingService.updateMeetingBooking(booking));
+        return toAjax(meetingBookingService.approveBooking(bookingId, "APPROVED"));
     }
 
     /**
@@ -156,9 +155,8 @@ public class MeetingBookingController extends BaseController
         {
             return error("仅待审批状态的预约可以拒绝");
         }
-        booking.setStatus("REJECTED");
         booking.setUpdateBy(SecurityUtils.getUsername());
-        return toAjax(meetingBookingService.updateMeetingBooking(booking));
+        return toAjax(meetingBookingService.approveBooking(bookingId, "REJECTED"));
     }
 
     /**
