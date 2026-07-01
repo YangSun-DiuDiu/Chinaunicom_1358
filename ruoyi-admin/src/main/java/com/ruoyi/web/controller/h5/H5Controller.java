@@ -2,6 +2,7 @@ package com.ruoyi.web.controller.h5;
 
 import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -46,6 +47,7 @@ public class H5Controller extends BaseController
     /**
      * 设备列表（含最新心跳状态）
      */
+    @PreAuthorize("@ss.hasPermi('device:list')")
     @GetMapping("/device/list")
     public AjaxResult deviceList()
     {
@@ -67,6 +69,7 @@ public class H5Controller extends BaseController
     /**
      * 会议室列表 + 当日安排
      */
+    @PreAuthorize("@ss.hasPermi('meeting:room:list')")
     @GetMapping("/meeting/rooms")
     public AjaxResult meetingRooms()
     {
@@ -91,6 +94,7 @@ public class H5Controller extends BaseController
     /**
      * 首页动态聚合
      */
+    @PreAuthorize("@ss.hasPermi('dashboard:device:query')")
     @GetMapping("/news")
     public AjaxResult news()
     {
