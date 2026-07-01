@@ -106,19 +106,19 @@ export const staticRoutes = [
     path: "/h5",
     component: () => import("@/views/h5/index"),
     hidden: true,
-    meta: { title: "园区服务", permissions: ["h5:index"] },
+    meta: { title: "园区服务" },
   },
   {
     path: "/h5/visitor",
     component: () => import("@/views/h5/visitor"),
     hidden: true,
-    meta: { title: "访客登记", permissions: ["h5:visitor"] },
+    meta: { title: "访客登记", permissions: ["visitor:appointment:add"] },
   },
   {
     path: "/h5/visitor/pass",
     component: () => import("@/views/h5/visitor-pass"),
     hidden: true,
-    meta: { title: "通行码查询", permissions: ["h5:visitor"] },
+    meta: { title: "通行码查询", permissions: ["visitor:appointment:list"] },
   },
   {
     path: "/h5/guard",
@@ -130,19 +130,19 @@ export const staticRoutes = [
     path: "/h5/meeting",
     component: () => import("@/views/h5/meeting"),
     hidden: true,
-    meta: { title: "会议室", permissions: ["h5:meeting"] },
+    meta: { title: "会议室", permissions: ["meeting:booking:list"] },
   },
   {
     path: "/h5/meeting/book",
     component: () => import("@/views/h5/meeting-book"),
     hidden: true,
-    meta: { title: "预约会议", permissions: ["h5:meeting"] },
+    meta: { title: "预约会议", permissions: ["meeting:booking:add"] },
   },
   {
     path: "/h5/device",
     component: () => import("@/views/h5/device"),
     hidden: true,
-    meta: { title: "设备状态", permissions: ["h5:device"] },
+    meta: { title: "设备状态", permissions: ["device:list"] },
   },
   // ==================== 人员管理 ====================
   {
