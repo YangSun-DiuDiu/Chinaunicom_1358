@@ -1,10 +1,10 @@
-import Vue from 'vue'
-import Router from 'vue-router'
+import Vue from "vue";
+import Router from "vue-router";
 
-Vue.use(Router)
+Vue.use(Router);
 
 /* Layout */
-import Layout from '@/layout'
+import Layout from "@/layout";
 
 /**
  * 全静态路由配置 - 废弃若依动态路由
@@ -14,480 +14,694 @@ import Layout from '@/layout'
 // 静态路由（所有用户均可访问的基础路由）
 export const constantRoutes = [
   {
-    path: '/redirect',
+    path: "/redirect",
     component: Layout,
     hidden: true,
     children: [
       {
-        path: '/redirect/:path(.*)',
-        component: () => import('@/views/redirect')
-      }
-    ]
+        path: "/redirect/:path(.*)",
+        component: () => import("@/views/redirect"),
+      },
+    ],
   },
   {
-    path: '/login',
-    component: () => import('@/views/login'),
-    hidden: true
+    path: "/login",
+    component: () => import("@/views/login"),
+    hidden: true,
   },
   {
-    path: '/404',
-    component: () => import('@/views/error/404'),
-    hidden: true
+    path: "/404",
+    component: () => import("@/views/error/404"),
+    hidden: true,
   },
   {
-    path: '/401',
-    component: () => import('@/views/error/401'),
-    hidden: true
+    path: "/401",
+    component: () => import("@/views/error/401"),
+    hidden: true,
   },
   {
-    path: '/',
+    path: "/",
     component: Layout,
-    redirect: 'index',
+    redirect: "index",
     children: [
       {
-        path: 'index',
-        component: () => import('@/views/index'),
-        name: 'Index',
-        meta: { title: '首页', icon: 'dashboard', affix: true }
-      }
-    ]
+        path: "index",
+        component: () => import("@/views/index"),
+        name: "Index",
+        meta: { title: "首页", icon: "dashboard", affix: true },
+      },
+    ],
   },
   {
-    path: '/h5-register',
-    component: () => import('@/views/visitor/h5/register'),
+    path: "/h5-register",
+    component: () => import("@/views/visitor/h5/register"),
     hidden: true,
-    meta: { title: '访客自助登记' }
+    meta: { title: "访客自助登记" },
   },
   {
-    path: '/repair-complete',
-    component: () => import('@/views/device/repair/complete'),
+    path: "/repair-complete",
+    component: () => import("@/views/device/repair/complete"),
     hidden: true,
-    meta: { title: '维修确认' }
+    meta: { title: "维修确认" },
   },
   {
-    path: '/meeting/board',
-    component: () => import('@/views/meeting/board/index'),
+    path: "/meeting/board",
+    component: () => import("@/views/meeting/board/index"),
     hidden: true,
-    meta: { title: '会议室看板' }
+    meta: { title: "会议室看板" },
   },
   {
-    path: '/lock',
-    component: () => import('@/views/lock'),
+    path: "/lock",
+    component: () => import("@/views/lock"),
     hidden: true,
-    meta: { title: '锁定屏幕' }
+    meta: { title: "锁定屏幕" },
   },
   {
-    path: '/user',
+    path: "/user",
     component: Layout,
     hidden: true,
-    redirect: 'noredirect',
+    redirect: "noredirect",
     children: [
       {
-        path: 'profile',
-        component: () => import('@/views/system/user/profile/index'),
-        name: 'Profile',
-        meta: { title: '个人中心', icon: 'user' }
-      }
-    ]
+        path: "profile",
+        component: () => import("@/views/system/user/profile/index"),
+        name: "Profile",
+        meta: { title: "个人中心", icon: "user" },
+      },
+    ],
   },
-  // ==================== H5 轻应用 ====================
-  { path: '/h5/login',         component: () => import('@/views/h5/login'),        hidden: true, meta: { title: 'H5登录' } },
-  { path: '/h5',               component: () => import('@/views/h5/index'),        hidden: true, meta: { title: '园区服务' } },
-  { path: '/h5/visitor',       component: () => import('@/views/h5/visitor'),      hidden: true, meta: { title: '访客登记' } },
-  { path: '/h5/visitor/pass',  component: () => import('@/views/h5/visitor-pass'), hidden: true, meta: { title: '通行码查询' } },
-  { path: '/h5/guard',         component: () => import('@/views/h5/guard'),        hidden: true, meta: { title: '保安核验', permission: 'visitor:guard:verify' } },
-  { path: '/h5/meeting',       component: () => import('@/views/h5/meeting'),      hidden: true, meta: { title: '会议室' } },
-  { path: '/h5/meeting/book',  component: () => import('@/views/h5/meeting-book'), hidden: true, meta: { title: '预约会议' } },
-  { path: '/h5/device',        component: () => import('@/views/h5/device'),       hidden: true, meta: { title: '设备状态' } },
-]
+  // ==================== H5 登录（白名单） ====================
+  {
+    path: "/h5/login",
+    component: () => import("@/views/h5/login"),
+    hidden: true,
+    meta: { title: "H5登录" },
+  },
+];
 
 // 全静态业务路由 - 根据权限过滤侧边栏显示
 export const staticRoutes = [
+  // ==================== H5 功能页（需登录+权限） ====================
+  {
+    path: "/h5",
+    component: () => import("@/views/h5/index"),
+    hidden: true,
+    meta: { title: "园区服务", permissions: ["h5:index"] },
+  },
+  {
+    path: "/h5/visitor",
+    component: () => import("@/views/h5/visitor"),
+    hidden: true,
+    meta: { title: "访客登记", permissions: ["h5:visitor"] },
+  },
+  {
+    path: "/h5/visitor/pass",
+    component: () => import("@/views/h5/visitor-pass"),
+    hidden: true,
+    meta: { title: "通行码查询", permissions: ["h5:visitor"] },
+  },
+  {
+    path: "/h5/guard",
+    component: () => import("@/views/h5/guard"),
+    hidden: true,
+    meta: { title: "保安核验", permissions: ["visitor:guard:verify"] },
+  },
+  {
+    path: "/h5/meeting",
+    component: () => import("@/views/h5/meeting"),
+    hidden: true,
+    meta: { title: "会议室", permissions: ["h5:meeting"] },
+  },
+  {
+    path: "/h5/meeting/book",
+    component: () => import("@/views/h5/meeting-book"),
+    hidden: true,
+    meta: { title: "预约会议", permissions: ["h5:meeting"] },
+  },
+  {
+    path: "/h5/device",
+    component: () => import("@/views/h5/device"),
+    hidden: true,
+    meta: { title: "设备状态", permissions: ["h5:device"] },
+  },
   // ==================== 人员管理 ====================
   {
-    path: '/system',
+    path: "/system",
     component: Layout,
-    name: 'System',
+    name: "System",
     alwaysShow: true,
-    meta: { title: '人员管理', icon: 'user' },
+    meta: { title: "人员管理", icon: "user" },
     children: [
       {
-        path: 'user',
-        component: () => import('@/views/system/user/index'),
-        name: 'User',
-        meta: { title: '用户管理', icon: 'people', permissions: ['system:user:list'] }
+        path: "user",
+        component: () => import("@/views/system/user/index"),
+        name: "User",
+        meta: {
+          title: "用户管理",
+          icon: "people",
+          permissions: ["system:user:list"],
+        },
       },
       {
-        path: 'dept',
-        component: () => import('@/views/system/dept/index'),
-        name: 'Dept',
-        meta: { title: '部门管理', icon: 'tree', permissions: ['system:dept:list'] }
+        path: "dept",
+        component: () => import("@/views/system/dept/index"),
+        name: "Dept",
+        meta: {
+          title: "部门管理",
+          icon: "tree",
+          permissions: ["system:dept:list"],
+        },
       },
       {
-        path: 'role',
-        component: () => import('@/views/system/role/index'),
-        name: 'Role',
-        meta: { title: '角色管理', icon: 'peoples', permissions: ['system:role:list'] }
-      }
-    ]
+        path: "role",
+        component: () => import("@/views/system/role/index"),
+        name: "Role",
+        meta: {
+          title: "角色管理",
+          icon: "peoples",
+          permissions: ["system:role:list"],
+        },
+      },
+    ],
   },
   // ==================== 设备管理 ====================
   {
-    path: '/device',
+    path: "/device",
     component: Layout,
-    name: 'Device',
+    name: "Device",
     alwaysShow: true,
-    meta: { title: '设备管理', icon: 'monitor' },
+    meta: { title: "设备管理", icon: "monitor" },
     children: [
       {
-        path: 'list',
-        component: () => import('@/views/device/list/index'),
-        name: 'DeviceList',
-        meta: { title: '设备列表', icon: 'monitor', permissions: ['device:list'] }
+        path: "list",
+        component: () => import("@/views/device/list/index"),
+        name: "DeviceList",
+        meta: {
+          title: "设备列表",
+          icon: "monitor",
+          permissions: ["device:list"],
+        },
       },
       {
-        path: 'topology',
-        component: () => import('@/views/device/topology/index'),
-        name: 'DeviceTopology',
-        meta: { title: '设备拓扑', icon: 'tree', permissions: ['device:topology:view'] }
+        path: "topology",
+        component: () => import("@/views/device/topology/index"),
+        name: "DeviceTopology",
+        meta: {
+          title: "设备拓扑",
+          icon: "tree",
+          permissions: ["device:topology:view"],
+        },
       },
       {
-        path: 'heartbeat',
-        component: () => import('@/views/device/heartbeat/index'),
-        name: 'DeviceHeartbeat',
-        meta: { title: '心跳日志', icon: 'log', permissions: ['device:heartbeat:list'] }
+        path: "heartbeat",
+        component: () => import("@/views/device/heartbeat/index"),
+        name: "DeviceHeartbeat",
+        meta: {
+          title: "心跳日志",
+          icon: "log",
+          permissions: ["device:heartbeat:list"],
+        },
       },
       {
-        path: 'fault',
-        component: () => import('@/views/device/fault/index'),
-        name: 'DeviceFault',
-        meta: { title: '故障预警', icon: 'bell', permissions: ['device:fault:list'] }
+        path: "fault",
+        component: () => import("@/views/device/fault/index"),
+        name: "DeviceFault",
+        meta: {
+          title: "故障预警",
+          icon: "bell",
+          permissions: ["device:fault:list"],
+        },
       },
       {
-        path: 'snmp',
-        component: () => import('@/views/device/snmp/index'),
-        name: 'DeviceSnmp',
-        meta: { title: 'SNMP管理', icon: 'monitor', permissions: ['device:snmp:query'] }
+        path: "snmp",
+        component: () => import("@/views/device/snmp/index"),
+        name: "DeviceSnmp",
+        meta: {
+          title: "SNMP管理",
+          icon: "monitor",
+          permissions: ["device:snmp:query"],
+        },
       },
       {
-        path: 'repair',
-        component: () => import('@/views/device/repair/index'),
-        name: 'DeviceRepair',
-        meta: { title: '维修工单', icon: 'tool', permissions: ['device:repair:list'] }
+        path: "repair",
+        component: () => import("@/views/device/repair/index"),
+        name: "DeviceRepair",
+        meta: {
+          title: "维修工单",
+          icon: "tool",
+          permissions: ["device:repair:list"],
+        },
       },
       {
-        path: 'repair-workload',
-        component: () => import('@/views/device/repair/workload'),
-        name: 'DeviceRepairWorkload',
+        path: "repair-workload",
+        component: () => import("@/views/device/repair/workload"),
+        name: "DeviceRepairWorkload",
         hidden: true,
-        meta: { title: '工作量统计', permissions: ['device:repair:list'] }
+        meta: { title: "工作量统计", permissions: ["device:repair:list"] },
       },
       {
-        path: 'parts',
-        component: () => import('@/views/device/parts/index'),
-        name: 'DeviceParts',
-        meta: { title: '配件管理', icon: 'component', permissions: ['device:parts:list'] }
-      }
-    ]
+        path: "parts",
+        component: () => import("@/views/device/parts/index"),
+        name: "DeviceParts",
+        meta: {
+          title: "配件管理",
+          icon: "component",
+          permissions: ["device:parts:list"],
+        },
+      },
+    ],
   },
   // ==================== 访客管理 ====================
   {
-    path: '/visitor',
+    path: "/visitor",
     component: Layout,
-    name: 'Visitor',
+    name: "Visitor",
     alwaysShow: true,
-    meta: { title: '访客管理', icon: 'people' },
+    meta: { title: "访客管理", icon: "people" },
     children: [
       {
-        path: 'appointment',
-        component: () => import('@/views/visitor/appointment/index'),
-        name: 'VisitorAppointment',
-        meta: { title: '访客预约', icon: 'edit', permissions: ['visitor:appointment:list'] }
+        path: "appointment",
+        component: () => import("@/views/visitor/appointment/index"),
+        name: "VisitorAppointment",
+        meta: {
+          title: "访客预约",
+          icon: "edit",
+          permissions: ["visitor:appointment:list"],
+        },
       },
       {
-        path: 'approval',
-        component: () => import('@/views/visitor/approval/index'),
-        name: 'VisitorApproval',
-        meta: { title: '访客审批', icon: 'checkbox', permissions: ['visitor:approval:list'] }
+        path: "approval",
+        component: () => import("@/views/visitor/approval/index"),
+        name: "VisitorApproval",
+        meta: {
+          title: "访客审批",
+          icon: "checkbox",
+          permissions: ["visitor:approval:list"],
+        },
       },
       {
-        path: 'register',
-        component: () => import('@/views/visitor/register/index'),
-        name: 'VisitorRegister',
-        meta: { title: '现场登记', icon: 'form', permissions: ['visitor:register:add'] }
+        path: "register",
+        component: () => import("@/views/visitor/register/index"),
+        name: "VisitorRegister",
+        meta: {
+          title: "现场登记",
+          icon: "form",
+          permissions: ["visitor:register:add"],
+        },
       },
       {
-        path: 'log',
-        component: () => import('@/views/visitor/log/index'),
-        name: 'VisitorLog',
-        meta: { title: '来访记录', icon: 'list', permissions: ['visitor:log:list'] }
-      }
-    ]
+        path: "log",
+        component: () => import("@/views/visitor/log/index"),
+        name: "VisitorLog",
+        meta: {
+          title: "来访记录",
+          icon: "list",
+          permissions: ["visitor:log:list"],
+        },
+      },
+    ],
   },
   // ==================== 日志管理 ====================
   {
-    path: '/log',
+    path: "/log",
     component: Layout,
-    name: 'Log',
-    meta: { title: '日志管理', icon: 'documentation' },
+    name: "Log",
+    meta: { title: "日志管理", icon: "documentation" },
     children: [
       {
-        path: 'operlog',
-        component: () => import('@/views/monitor/operlog/index'),
-        name: 'OperLog',
-        meta: { title: '操作日志', icon: 'form', permissions: ['monitor:operlog:list'] }
+        path: "operlog",
+        component: () => import("@/views/monitor/operlog/index"),
+        name: "OperLog",
+        meta: {
+          title: "操作日志",
+          icon: "form",
+          permissions: ["monitor:operlog:list"],
+        },
       },
       {
-        path: 'logininfor',
-        component: () => import('@/views/monitor/logininfor/index'),
-        name: 'LoginLog',
-        meta: { title: '登录日志', icon: 'logininfor', permissions: ['monitor:logininfor:list'] }
-      }
-    ]
+        path: "logininfor",
+        component: () => import("@/views/monitor/logininfor/index"),
+        name: "LoginLog",
+        meta: {
+          title: "登录日志",
+          icon: "logininfor",
+          permissions: ["monitor:logininfor:list"],
+        },
+      },
+    ],
   },
   // ==================== 系统管理 ====================
   {
-    path: '/settings',
+    path: "/settings",
     component: Layout,
-    name: 'Settings',
-    meta: { title: '系统管理', icon: 'system' },
+    name: "Settings",
+    meta: { title: "系统管理", icon: "system" },
     children: [
       {
-        path: 'menu',
-        component: () => import('@/views/system/menu/index'),
-        name: 'Menu',
-        meta: { title: '菜单管理', icon: 'tree-table', permissions: ['system:menu:list'] }
-      }
-    ]
+        path: "menu",
+        component: () => import("@/views/system/menu/index"),
+        name: "Menu",
+        meta: {
+          title: "菜单管理",
+          icon: "tree-table",
+          permissions: ["system:menu:list"],
+        },
+      },
+    ],
   },
   // ==================== 隐藏路由(不在侧边栏显示) ====================
   {
-    path: '/system',
+    path: "/system",
     component: Layout,
     hidden: true,
     children: [
       {
-        path: 'user-auth/role/:userId(\\d+)',
-        component: () => import('@/views/system/user/authRole'),
-        name: 'AuthRole',
-        meta: { title: '分配角色', activeMenu: '/system/user', permissions: ['system:user:edit'] }
+        path: "user-auth/role/:userId(\\d+)",
+        component: () => import("@/views/system/user/authRole"),
+        name: "AuthRole",
+        meta: {
+          title: "分配角色",
+          activeMenu: "/system/user",
+          permissions: ["system:user:edit"],
+        },
       },
       {
-        path: 'role-auth/user/:roleId(\\d+)',
-        component: () => import('@/views/system/role/authUser'),
-        name: 'AuthUser',
-        meta: { title: '分配用户', activeMenu: '/system/role', permissions: ['system:role:edit'] }
-      }
-    ]
+        path: "role-auth/user/:roleId(\\d+)",
+        component: () => import("@/views/system/role/authUser"),
+        name: "AuthUser",
+        meta: {
+          title: "分配用户",
+          activeMenu: "/system/role",
+          permissions: ["system:role:edit"],
+        },
+      },
+    ],
   },
   // ==================== 智能化管理 ====================
   {
-    path: '/smart',
+    path: "/smart",
     component: Layout,
-    name: 'Smart',
+    name: "Smart",
     alwaysShow: true,
-    meta: { title: '智能化管理', icon: 'cpu' },
+    meta: { title: "智能化管理", icon: "cpu" },
     children: [
       {
-        path: 'person-access-device',
-        component: () => import('@/views/smart/person-access/device/index'),
-        name: 'PersonAccessDevice',
-        meta: { title: '人员通行设备', icon: 'monitor', permissions: ['smart:personAccess:list'] }
+        path: "person-access-device",
+        component: () => import("@/views/smart/person-access/device/index"),
+        name: "PersonAccessDevice",
+        meta: {
+          title: "人员通行设备",
+          icon: "monitor",
+          permissions: ["smart:personAccess:list"],
+        },
       },
       {
-        path: 'person-access-permission',
-        component: () => import('@/views/smart/person-access/permission/index'),
-        name: 'PersonAccessPerm',
-        meta: { title: '通行权限管理', icon: 'lock', permissions: ['smart:personPerm:list'] }
+        path: "person-access-permission",
+        component: () => import("@/views/smart/person-access/permission/index"),
+        name: "PersonAccessPerm",
+        meta: {
+          title: "通行权限管理",
+          icon: "lock",
+          permissions: ["smart:personPerm:list"],
+        },
       },
       {
-        path: 'vehicle-access-device',
-        component: () => import('@/views/smart/vehicle-access/device/index'),
-        name: 'VehicleAccessDevice',
-        meta: { title: '车辆通行设备', icon: 's-order', permissions: ['smart:vehicleAccess:list'] }
+        path: "vehicle-access-device",
+        component: () => import("@/views/smart/vehicle-access/device/index"),
+        name: "VehicleAccessDevice",
+        meta: {
+          title: "车辆通行设备",
+          icon: "s-order",
+          permissions: ["smart:vehicleAccess:list"],
+        },
       },
       {
-        path: 'vehicle-access-permission',
-        component: () => import('@/views/smart/vehicle-access/permission/index'),
-        name: 'VehicleAccessPerm',
-        meta: { title: '车辆通行权限', icon: 'lock', permissions: ['smart:vehiclePerm:list'] }
+        path: "vehicle-access-permission",
+        component: () =>
+          import("@/views/smart/vehicle-access/permission/index"),
+        name: "VehicleAccessPerm",
+        meta: {
+          title: "车辆通行权限",
+          icon: "lock",
+          permissions: ["smart:vehiclePerm:list"],
+        },
       },
       {
-        path: 'video-device',
-        component: () => import('@/views/smart/video/device/index'),
-        name: 'VideoDevice',
-        meta: { title: '监控设备管理', icon: 'video-camera', permissions: ['smart:videoDevice:list'] }
+        path: "video-device",
+        component: () => import("@/views/smart/video/device/index"),
+        name: "VideoDevice",
+        meta: {
+          title: "监控设备管理",
+          icon: "video-camera",
+          permissions: ["smart:videoDevice:list"],
+        },
       },
       {
-        path: 'video-preview',
-        component: () => import('@/views/smart/video/preview/index'),
-        name: 'VideoPreview',
-        meta: { title: '视频预览', icon: 'video-play', permissions: ['smart:videoPreview:list'] }
+        path: "video-preview",
+        component: () => import("@/views/smart/video/preview/index"),
+        name: "VideoPreview",
+        meta: {
+          title: "视频预览",
+          icon: "video-play",
+          permissions: ["smart:videoPreview:list"],
+        },
       },
       {
-        path: 'video-map',
-        component: () => import('@/views/smart/video/map/index'),
-        name: 'VideoMap',
-        meta: { title: '地图模式', icon: 'location', permissions: ['smart:videoMap:list'] }
-      }
-    ]
+        path: "video-map",
+        component: () => import("@/views/smart/video/map/index"),
+        name: "VideoMap",
+        meta: {
+          title: "地图模式",
+          icon: "location",
+          permissions: ["smart:videoMap:list"],
+        },
+      },
+    ],
   },
   // ==================== 考勤管理 ====================
   {
-    path: '/attendance',
+    path: "/attendance",
     component: Layout,
-    name: 'Attendance',
+    name: "Attendance",
     alwaysShow: true,
-    meta: { title: '考勤管理', icon: 'date' },
+    meta: { title: "考勤管理", icon: "date" },
     children: [
       {
-        path: 'import',
-        component: () => import('@/views/attendance/import/index'),
-        name: 'AttendanceImport',
-        meta: { title: '数据对接', icon: 'upload', permissions: ['attendance:import:list'] }
+        path: "import",
+        component: () => import("@/views/attendance/import/index"),
+        name: "AttendanceImport",
+        meta: {
+          title: "数据对接",
+          icon: "upload",
+          permissions: ["attendance:import:list"],
+        },
       },
       {
-        path: 'data',
-        component: () => import('@/views/attendance/data/index'),
-        name: 'AttendanceData',
-        meta: { title: '考勤数据', icon: 's-data', permissions: ['attendance:data:list'] }
-      }
-    ]
+        path: "data",
+        component: () => import("@/views/attendance/data/index"),
+        name: "AttendanceData",
+        meta: {
+          title: "考勤数据",
+          icon: "s-data",
+          permissions: ["attendance:data:list"],
+        },
+      },
+    ],
   },
   // ==================== 短信中台 ====================
   {
-    path: '/sms',
+    path: "/sms",
     component: Layout,
-    name: 'Sms',
+    name: "Sms",
     alwaysShow: true,
-    meta: { title: '短信中台', icon: 'message' },
+    meta: { title: "短信中台", icon: "message" },
     children: [
       {
-        path: 'channel',
-        component: () => import('@/views/sms/channel/index'),
-        name: 'SmsChannel',
-        meta: { title: '短信渠道管理', icon: 'component', permissions: ['sms:channel:list'] }
+        path: "channel",
+        component: () => import("@/views/sms/channel/index"),
+        name: "SmsChannel",
+        meta: {
+          title: "短信渠道管理",
+          icon: "component",
+          permissions: ["sms:channel:list"],
+        },
       },
       {
-        path: 'signtemplate',
-        component: () => import('@/views/sms/signtemplate/index'),
-        name: 'SmsSignTemplate',
-        meta: { title: '签名模板管理', icon: 'documentation', permissions: ['sms:signtemplate:list'] }
+        path: "signtemplate",
+        component: () => import("@/views/sms/signtemplate/index"),
+        name: "SmsSignTemplate",
+        meta: {
+          title: "签名模板管理",
+          icon: "documentation",
+          permissions: ["sms:signtemplate:list"],
+        },
       },
       {
-        path: 'biz',
-        component: () => import('@/views/sms/biz/index'),
-        name: 'SmsBiz',
-        meta: { title: '业务短信配置', icon: 'example', permissions: ['sms:biz:list'] }
+        path: "biz",
+        component: () => import("@/views/sms/biz/index"),
+        name: "SmsBiz",
+        meta: {
+          title: "业务短信配置",
+          icon: "example",
+          permissions: ["sms:biz:list"],
+        },
       },
       {
-        path: 'blacklist',
-        component: () => import('@/views/sms/blacklist/index'),
-        name: 'SmsBlacklist',
-        meta: { title: '短信黑名单', icon: 'lock', permissions: ['sms:blacklist:list'] }
+        path: "blacklist",
+        component: () => import("@/views/sms/blacklist/index"),
+        name: "SmsBlacklist",
+        meta: {
+          title: "短信黑名单",
+          icon: "lock",
+          permissions: ["sms:blacklist:list"],
+        },
       },
       {
-        path: 'schedule',
-        component: () => import('@/views/sms/schedule/index'),
-        name: 'SmsSchedule',
-        meta: { title: '定时短信任务', icon: 'time', permissions: ['sms:schedule:list'] }
+        path: "schedule",
+        component: () => import("@/views/sms/schedule/index"),
+        name: "SmsSchedule",
+        meta: {
+          title: "定时短信任务",
+          icon: "time",
+          permissions: ["sms:schedule:list"],
+        },
       },
       {
-        path: 'log',
-        component: () => import('@/views/sms/log/index'),
-        name: 'SmsLog',
-        meta: { title: '短信发送日志', icon: 'list', permissions: ['sms:log:list'] }
-      }
-    ]
+        path: "log",
+        component: () => import("@/views/sms/log/index"),
+        name: "SmsLog",
+        meta: {
+          title: "短信发送日志",
+          icon: "list",
+          permissions: ["sms:log:list"],
+        },
+      },
+    ],
   },
   // ==================== 会议管理 ====================
   {
-    path: '/meeting',
+    path: "/meeting",
     component: Layout,
-    name: 'Meeting',
+    name: "Meeting",
     alwaysShow: true,
-    meta: { title: '会议管理', icon: 'date' },
+    meta: { title: "会议管理", icon: "date" },
     children: [
       {
-        path: 'room',
-        component: () => import('@/views/meeting/room/index'),
-        name: 'MeetingRoom',
-        meta: { title: '会议室管理', icon: 'room', permissions: ['meeting:room:list'] }
+        path: "room",
+        component: () => import("@/views/meeting/room/index"),
+        name: "MeetingRoom",
+        meta: {
+          title: "会议室管理",
+          icon: "room",
+          permissions: ["meeting:room:list"],
+        },
       },
       {
-        path: 'booking',
-        component: () => import('@/views/meeting/booking/index'),
-        name: 'MeetingBooking',
-        meta: { title: '会议预约', icon: 'edit', permissions: ['meeting:booking:list'] }
+        path: "booking",
+        component: () => import("@/views/meeting/booking/index"),
+        name: "MeetingBooking",
+        meta: {
+          title: "会议预约",
+          icon: "edit",
+          permissions: ["meeting:booking:list"],
+        },
       },
       {
-        path: 'approval',
-        component: () => import('@/views/meeting/approval/index'),
-        name: 'MeetingApproval',
-        meta: { title: '会议审批', icon: 'checkbox', permissions: ['meeting:approval:list'] }
+        path: "approval",
+        component: () => import("@/views/meeting/approval/index"),
+        name: "MeetingApproval",
+        meta: {
+          title: "会议审批",
+          icon: "checkbox",
+          permissions: ["meeting:approval:list"],
+        },
       },
       {
-        path: 'manage',
-        component: () => import('@/views/meeting/manage/index'),
-        name: 'MeetingManage',
-        meta: { title: '会议管理', icon: 'list', permissions: ['meeting:booking:list'] }
-      }
-    ]
+        path: "manage",
+        component: () => import("@/views/meeting/manage/index"),
+        name: "MeetingManage",
+        meta: {
+          title: "会议管理",
+          icon: "list",
+          permissions: ["meeting:booking:list"],
+        },
+      },
+    ],
   },
   // ==================== 公寓管理 ====================
   {
-    path: '/hostel',
+    path: "/hostel",
     component: Layout,
-    name: 'Hostel',
+    name: "Hostel",
     alwaysShow: true,
-    meta: { title: '公寓管理', icon: 'house' },
+    meta: { title: "公寓管理", icon: "house" },
     children: [
       {
-        path: 'apartment',
-        component: () => import('@/views/hostel/apartment/index'),
-        name: 'HostelApartment',
-        meta: { title: '公寓管理', icon: 'building', permissions: ['hostel:apartment:list'] }
+        path: "apartment",
+        component: () => import("@/views/hostel/apartment/index"),
+        name: "HostelApartment",
+        meta: {
+          title: "公寓管理",
+          icon: "building",
+          permissions: ["hostel:apartment:list"],
+        },
       },
       {
-        path: 'room',
-        component: () => import('@/views/hostel/room/index'),
-        name: 'HostelRoom',
-        meta: { title: '房间管理', icon: 'list', permissions: ['hostel:room:list'] }
+        path: "room",
+        component: () => import("@/views/hostel/room/index"),
+        name: "HostelRoom",
+        meta: {
+          title: "房间管理",
+          icon: "list",
+          permissions: ["hostel:room:list"],
+        },
       },
       {
-        path: 'room/card',
-        component: () => import('@/views/hostel/room/card'),
-        name: 'HostelRoomCard',
-        meta: { title: '房间卡片', icon: 'component', permissions: ['hostel:room:card'] }
+        path: "room/card",
+        component: () => import("@/views/hostel/room/card"),
+        name: "HostelRoomCard",
+        meta: {
+          title: "房间卡片",
+          icon: "component",
+          permissions: ["hostel:room:card"],
+        },
       },
       {
-        path: 'tenant',
-        component: () => import('@/views/hostel/tenant/index'),
-        name: 'HostelTenant',
-        meta: { title: '租客管理', icon: 'people', permissions: ['hostel:tenant:list'] }
+        path: "tenant",
+        component: () => import("@/views/hostel/tenant/index"),
+        name: "HostelTenant",
+        meta: {
+          title: "租客管理",
+          icon: "people",
+          permissions: ["hostel:tenant:list"],
+        },
       },
       {
-        path: 'tenant/checkin',
-        component: () => import('@/views/hostel/tenant/checkin'),
-        name: 'HostelTenantCheckin',
-        meta: { title: '办理入住', icon: 'edit', permissions: ['hostel:tenant:checkin'] }
-      }
-    ]
-  }
-]
+        path: "tenant/checkin",
+        component: () => import("@/views/hostel/tenant/checkin"),
+        name: "HostelTenantCheckin",
+        meta: {
+          title: "办理入住",
+          icon: "edit",
+          permissions: ["hostel:tenant:checkin"],
+        },
+      },
+    ],
+  },
+];
 
 // 防止连续点击多次路由报错
-let routerPush = Router.prototype.push
-let routerReplace = Router.prototype.replace
+let routerPush = Router.prototype.push;
+let routerReplace = Router.prototype.replace;
 Router.prototype.push = function push(location) {
-  return routerPush.call(this, location).catch(err => err)
-}
+  return routerPush.call(this, location).catch((err) => err);
+};
 Router.prototype.replace = function push(location) {
-  return routerReplace.call(this, location).catch(err => err)
-}
+  return routerReplace.call(this, location).catch((err) => err);
+};
 
 export default new Router({
-  mode: 'history',
+  mode: "history",
   scrollBehavior: () => ({ y: 0 }),
-  routes: constantRoutes
-})
+  routes: constantRoutes,
+});
