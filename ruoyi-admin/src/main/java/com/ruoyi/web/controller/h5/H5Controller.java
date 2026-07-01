@@ -69,7 +69,7 @@ public class H5Controller extends BaseController
     /**
      * 会议室列表 + 当日安排
      */
-    @PreAuthorize("@ss.hasPermi('meeting:room:list')")
+    @PreAuthorize("@ss.hasPermi('meeting:booking:list')")
     @GetMapping("/meeting/rooms")
     public AjaxResult meetingRooms()
     {
