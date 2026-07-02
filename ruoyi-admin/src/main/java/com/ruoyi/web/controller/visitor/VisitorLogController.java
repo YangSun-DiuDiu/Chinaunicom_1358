@@ -43,7 +43,7 @@ public class VisitorLogController extends BaseController
      * 现场登记：创建预约(PENDING)+来访记录(WALKIN)，含通行码
      * 业务逻辑已下沉至 ServiceImpl.registerWalkin()
      */
-    @PreAuthorize("@ss.hasPermi('visitor:log:add')")
+    @PreAuthorize("@ss.hasAnyPermi('visitor:register:add','visitor:log:add')")
     @Log(title = "访客现场登记", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@Validated @RequestBody VisitorLog log)
