@@ -80,6 +80,7 @@ PENDING/APPROVED → CANCELLED
 ### 关键调试发现（2026-07-01）
 - **DeptFillAspect 误写 SysDept 主键**：`DeptFillAspect` 拦截所有 Controller add* 方法，无条件把当前用户的 `deptId` 写入 `BaseEntity.deptId`。但 `SysDept.deptId` 是部门**主键**，不是数据范围字段。admin 的 deptId=100 被写入新部门的 dept_id → INSERT 主键冲突。修复：`if (arg instanceof SysDept) continue;`
 - **权限三方不一致审计**：新增 H5/仪表盘功能后，Controller 使用了 `dashboard:meeting:query`/`dashboard:apartment:query`/`visitor:guard:verify` 三个权限，但 `sys_menu` 表完全没有对应记录。H5Controller 3 个端点无 `@PreAuthorize` 注解。修复：DB 插 12 条菜单权限 + Controller 加注解
+- **菜单树结构错位**：公寓管理 租客 parent_id=0 应是 2113；智能化管理 7 页面有 3 个多余中间层；考勤管理 6 个按钮权限 parent_id 错挂在顶层 2021。修复：扁平化+归位
 
 ## 技术债务（代码审查发现，暂不修复）
 
