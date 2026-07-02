@@ -82,6 +82,10 @@ PENDING/APPROVED → CANCELLED
 - **权限三方不一致审计**：新增 H5/仪表盘功能后，Controller 使用了 `dashboard:meeting:query`/`dashboard:apartment:query`/`visitor:guard:verify` 三个权限，但 `sys_menu` 表完全没有对应记录。H5Controller 3 个端点无 `@PreAuthorize` 注解。修复：DB 插 12 条菜单权限 + Controller 加注解
 - **菜单树结构错位**：公寓管理 租客 parent_id=0 应是 2113；智能化管理 7 页面有 3 个多余中间层；考勤管理 6 个按钮权限 parent_id 错挂在顶层 2021。修复：扁平化+归位
 
+## 待处理需求（暂缓）
+
+- **废弃 getRouter，精简路由工作流**：当前添加新页面需改前端路由+DB菜单+后端注解三处。方案：sys_menu 只存权限字符串，前端 router 全权负责菜单结构，砍掉 DB 树形关系。新增页面只需改 router + Controller 两处。讨论日期：2026-07-02。
+
 ## 技术债务（代码审查发现，暂不修复）
 
 | 严重度 | 问题 | 位置 |
