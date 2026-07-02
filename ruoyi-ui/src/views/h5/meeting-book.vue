@@ -15,6 +15,7 @@
 
 <script>
 import request from '@/utils/request'
+import { parseTime } from '@/utils/ruoyi'
 
 export default {
   data() {
@@ -27,7 +28,10 @@ export default {
   methods: {
     submit() {
       this.loading = true
-      request({ url:'/meeting/booking', method:'post', data:this.form }).then(() => {
+      const data = { ...this.form }
+      if (data.startTime) data.startTime = parseTime(data.startTime)
+      if (data.endTime) data.endTime = parseTime(data.endTime)
+      request({ url:'/meeting/booking', method:'post', data }).then(() => {
         this.$message.success('预约成功')
         this.$router.back()
       }).finally(() => { this.loading = false })
