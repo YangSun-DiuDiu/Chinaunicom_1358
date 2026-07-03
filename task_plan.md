@@ -28,3 +28,4 @@
 | 19. H5轻应用 | ✅ complete | 8页面(登录/首页/访客/保安/会议/设备/报修)+QR扫码 |
 | 20. 权限审计修复 | ✅ complete | 补3缺失权限+9条H5菜单+H5Controller注解 |
 | 20a. 菜单结构修正 | ✅ complete | 公寓/智能化扁平化、考勤按钮归位、DB对齐前端路由 |
+| 21. getRouter精简 | ✅ complete | 删Controller/Service/Mapper/XML/RouterVo僵尸代码(-397行) |
