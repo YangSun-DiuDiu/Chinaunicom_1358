@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Set;
 import com.ruoyi.common.core.domain.TreeSelect;
 import com.ruoyi.common.core.domain.entity.SysMenu;
-import com.ruoyi.system.domain.vo.RouterVo;
 
 /**
  * 菜单 业务层
@@ -47,28 +46,12 @@ public interface ISysMenuService
     public Set<String> selectMenuPermsByRoleId(Long roleId);
 
     /**
-     * 根据用户ID查询菜单树信息
-     * 
-     * @param userId 用户ID
-     * @return 菜单列表
-     */
-    public List<SysMenu> selectMenuTreeByUserId(Long userId);
-
-    /**
      * 根据角色ID查询菜单树信息
      * 
      * @param roleId 角色ID
      * @return 选中菜单列表
      */
     public List<Long> selectMenuListByRoleId(Long roleId);
-
-    /**
-     * 构建前端路由所需要的菜单
-     * 
-     * @param menus 菜单列表
-     * @return 路由列表
-     */
-    public List<RouterVo> buildMenus(List<SysMenu> menus);
 
     /**
      * 构建前端所需要树结构

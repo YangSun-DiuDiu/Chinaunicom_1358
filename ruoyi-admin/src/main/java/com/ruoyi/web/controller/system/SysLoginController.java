@@ -94,19 +94,6 @@ public class SysLoginController
     }
 
     /**
-     * 获取路由信息（静态路由模式 - 返回用户菜单权限列表）
-     *
-     * @return 菜单权限列表
-     */
-    @GetMapping("getRouters")
-    public AjaxResult getRouters()
-    {
-        Long userId = SecurityUtils.getUserId();
-        List<SysMenu> menus = menuService.selectMenuTreeByUserId(userId);
-        return AjaxResult.success(menuService.buildMenus(menus));
-    }
-
-    /**
      * 获取系统配置（驾驶舱模式等）
      *
      * @return 系统配置
