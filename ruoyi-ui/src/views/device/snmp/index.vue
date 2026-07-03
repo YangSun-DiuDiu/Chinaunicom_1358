@@ -22,6 +22,35 @@
       </el-form>
     </el-card>
 
+    <!-- Categraf配置上传 -->
+    <el-card style="margin-top:12px" v-if="selectedDeviceId">
+      <div slot="header"><span>Categraf SNMP配置管理</span></div>
+      <el-upload ref="upload" :action="uploadUrl" :data="uploadData" :headers="uploadHeaders"
+        :before-upload="beforeConfigUpload" :on-success="onConfigSuccess" :auto-upload="true"
+        accept=".toml" :show-file-list="false">
+        <el-button size="small" type="primary" icon="el-icon-upload2">上传 toml 配置文件</el-button>
+      </el-upload>
+      <span style="margin-left:12px;font-size:12px;color:#909399">或</span>
+      <el-select v-model="templateType" placeholder="选择模板" size="small" style="width:140px;margin-left:8px">
+        <el-option label="交换机模板" value="switch" />
+        <el-option label="防火墙模板" value="firewall" />
+        <el-option label="摄像头模板" value="camera" />
+      </el-select>
+      <el-button size="small" type="success" @click="deployTemplate" :loading="deploying" style="margin-left:8px">
+        生成并部署
+      </el-button>
+      <span v-if="currentDevice && currentDevice.snmpConfigFile" style="margin-left:12px;font-size:12px;color:#67c23a">
+        ✅ 已部署: {{ currentDevice.snmpConfigFile }} (MD5:{{ currentDevice.configMd5 ? currentDevice.configMd5.substring(0,8) : '无' }})
+      </span>
+    </el-card>
+
+    <!-- Grafana驾驶舱按钮 -->
+    <div style="margin-top:12px" v-if="selectedDeviceId">
+      <el-button type="warning" icon="el-icon-data-line" @click="grafanaOpen=true" size="small">
+        Grafana 驾驶舱
+      </el-button>
+    </div>
+
     <el-row :gutter="20" style="margin-top: 15px" v-if="selectedDeviceId">
       <!-- 左栏：基本信息 + NVR存储 -->
       <el-col :span="12">
@@ -141,11 +170,17 @@
         </el-card>
       </el-col>
     </el-row>
+
+    <!-- Grafana驾驶舱弹窗 -->
+    <el-dialog title="SNMP 驾驶舱" :visible.sync="grafanaOpen" width="90%" top="5vh" :close-on-click-modal="false" append-to-body>
+      <iframe :src="grafanaUrl" style="width:100%;height:75vh;border:none" />
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import { listDevice } from '@/api/device/device'
+import { getToken } from '@/utils/auth'
 import request from '@/utils/request'
 
 export default {
@@ -163,7 +198,9 @@ export default {
       customOid: '',
       customResult: null,
       snmpError: '', portError: '',
-      snmpMode: ''
+      snmpMode: '',
+      // Categraf配置上传
+      uploading: false, deploying: false, templateType: 'switch', grafanaOpen: false
     }
   },
   computed: {
@@ -178,10 +215,35 @@ export default {
         oidName: this.resolveOidName(oid, baseOid),
         valueDesc: this.resolveValue(oid, value)
       }))
+    },
+    uploadUrl() { return process.env.VUE_APP_BASE_API + '/device/snmp/config/upload' },
+    uploadData() { return { deviceId: this.selectedDeviceId, templateType: this.templateType } },
+    uploadHeaders() { return { Authorization: 'Bearer ' + getToken() } },
+    grafanaUrl() {
+      return 'http://192.168.1.60:3000/d-solo/snmp-dashboard?orgId=1&refresh=30s&var-device_ip=' +
+        (this.currentDevice ? this.currentDevice.ipAddress : '') + '&theme=light&kiosk'
     }
   },
   created() { this.loadDevices(); this.loadSnmpStatus() },
   methods: {
+    beforeConfigUpload(file) {
+      const isToml = file.name.endsWith('.toml')
+      if (!isToml) { this.$message.error('仅支持 .toml 文件'); return false }
+      return true
+    },
+    onConfigSuccess(res) {
+      if (res.code === 200) { this.$message.success('配置文件已部署'); this.loadDevices() }
+      else { this.$message.error(res.msg || '部署失败') }
+    },
+    deployTemplate() {
+      this.deploying = true
+      this.$axios.post('/device/snmp/config/upload', null, {
+        params: { deviceId: this.selectedDeviceId, templateType: this.templateType }
+      }).then(res => {
+        if (res.code === 200) { this.$message.success('模板配置已生成并部署'); this.loadDevices() }
+        else { this.$message.error(res.msg || '部署失败') }
+      }).finally(() => { this.deploying = false })
+    },
     loadDevices() {
       listDevice({ pageNum: 1, pageSize: 100 }).then(res => { this.deviceList = res.rows || [] })
     },

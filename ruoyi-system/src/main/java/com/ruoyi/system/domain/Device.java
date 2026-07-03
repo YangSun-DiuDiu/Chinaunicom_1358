@@ -63,6 +63,15 @@ public class Device extends BaseEntity
     @Excel(name = "SNMP版本", readConverterExp = "v2c=v2c,v3=v3")
     private String snmpVersion;
 
+    /** SNMP配置文件名（dev_IP下划线.toml） */
+    private String snmpConfigFile;
+
+    /** 配置内容（完整toml文本） */
+    private String configContent;
+
+    /** 配置MD5（用于一致性校验） */
+    private String configMd5;
+
     /** Ping检测间隔（分钟，1-10） */
     @Excel(name = "Ping间隔(分)")
     private Integer pingInterval;
@@ -202,6 +211,13 @@ public class Device extends BaseEntity
     {
         this.snmpVersion = snmpVersion;
     }
+
+    public String getSnmpConfigFile() { return snmpConfigFile; }
+    public void setSnmpConfigFile(String snmpConfigFile) { this.snmpConfigFile = snmpConfigFile; }
+    public String getConfigContent() { return configContent; }
+    public void setConfigContent(String configContent) { this.configContent = configContent; }
+    public String getConfigMd5() { return configMd5; }
+    public void setConfigMd5(String configMd5) { this.configMd5 = configMd5; }
 
     public Integer getPingInterval()
     {
