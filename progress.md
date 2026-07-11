@@ -29,6 +29,7 @@
 | 07-10 | 设备管理页面打磨(11) | 8页面重排: list/fault/heartbeat/repair/parts/snmp/topology/workload，统计卡片+Tab分区 |
 | 07-10 | Redis修复(23) | 1.94.26.126 corrupt dump.rdb清理并启动，配置切回本地Redis |
 | 07-11 | 驾驶舱v2工业风(25) | HMI配色+8KPI单行88px+Grid比例布局+串行API；设备饼图API 499排查中 |
+| 07-11 | 模块导航门户(26) | 移除驾驶舱→10卡CSS几何门户+侧边栏parentMenuId过滤+首页全屏化+返回首页入口+LED信号灯；8任务完成，权限审计进行中 |
 
 ## 当前状态
 

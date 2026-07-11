@@ -33,3 +33,4 @@
 | 20a. 菜单结构修正 | ✅ complete | 公寓/智能化扁平化、考勤按钮归位、DB对齐前端路由 |
 | 21. getRouter精简 | ✅ complete | 删Controller/Service/Mapper/XML/RouterVo僵尸代码(-397行) |
 | 25. 驾驶舱v2工业风 | ⏳ in_progress | HMI配色+KPI放大+Grid布局+串行API；设备饼图API 499待修复 |
+| 26. 模块导航门户 | ⏳ in_progress | 移除驾驶舱→10卡CSS几何门户；侧边栏parentMenuId过滤；首页全屏化；权限审计中 |
