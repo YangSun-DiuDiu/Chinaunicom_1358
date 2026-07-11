@@ -32,5 +32,5 @@
 | 20. 权限审计修复 | ✅ complete | 补3缺失权限+9条H5菜单+H5Controller注解 |
 | 20a. 菜单结构修正 | ✅ complete | 公寓/智能化扁平化、考勤按钮归位、DB对齐前端路由 |
 | 21. getRouter精简 | ✅ complete | 删Controller/Service/Mapper/XML/RouterVo僵尸代码(-397行) |
-| 25. 驾驶舱v2工业风 | ⏳ in_progress | HMI配色+KPI放大+Grid布局+串行API；设备饼图API 499待修复 |
-| 26. 模块导航门户 | ⏳ in_progress | 移除驾驶舱→10卡CSS几何门户；侧边栏parentMenuId过滤；首页全屏化；权限审计中 |
+| 25. 驾驶舱v2工业风 | ⛔ 作废 | 驾驶舱已被阶段26门户取代，设备饼图API 499随驾驶舱移除失效 |
+| 26. 模块导航门户 | ✅ complete | 移除驾驶舱→10卡CSS几何门户+侧边栏parentMenuId过滤+首页全屏化+返回首页入口+LED信号灯；9任务全通+死代码清理+DB补menu_type；权限审计107/130一致 |
