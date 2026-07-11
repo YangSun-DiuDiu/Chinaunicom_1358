@@ -2,6 +2,11 @@
   <div class="navbar" :class="'nav' + navType">
     <hamburger id="hamburger-container" :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
 
+    <router-link v-if="showBackHome" to="/index" class="back-home-link">
+      <i class="el-icon-back"></i>
+      <span>返回首页</span>
+    </router-link>
+
     <breadcrumb v-if="navType == 1" id="breadcrumb-container" class="breadcrumb-container" />
     <top-nav v-if="navType == 2" id="topmenu-container" class="topmenu-container" />
     <template v-if="navType == 3">
@@ -94,6 +99,10 @@ export default {
       'nickName',
       'roles'
     ]),
+    // 进入模块后（路由带 parentMenuId）显示"返回首页"入口
+    showBackHome() {
+      return !!(this.$route.meta && this.$route.meta.parentMenuId)
+    },
     setting: {
       get() {
         return this.$store.state.settings.showSettings
@@ -206,6 +215,23 @@ export default {
   align-items: center;
   // padding: 0 8px;
   box-sizing: border-box;
+
+  .back-home-link {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    height: 100%;
+    padding: 0 14px;
+    color: #00D4FF;
+    font-size: 13px;
+    text-decoration: none;
+    transition: background .3s;
+    border-right: 1px solid #eef0f3;
+
+    &:hover { background: rgba(0, 212, 255, 0.06); }
+
+    i { font-size: 15px; }
+  }
 
   .hamburger-container {
     line-height: 46px;
