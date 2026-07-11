@@ -289,8 +289,8 @@
     },
     {
       "path": "ruoyi-ui\\src\\views\\index.vue",
-      "accessCount": 11,
-      "lastAccessed": 1783738591065,
+      "accessCount": 13,
+      "lastAccessed": 1783752980847,
       "type": "file"
     },
     {
@@ -312,6 +312,18 @@
       "type": "file"
     },
     {
+      "path": "task_plan.md",
+      "accessCount": 5,
+      "lastAccessed": 1783756963782,
+      "type": "file"
+    },
+    {
+      "path": "progress.md",
+      "accessCount": 5,
+      "lastAccessed": 1783756981620,
+      "type": "file"
+    },
+    {
       "path": "meeting-board-app\\app\\src\\main\\AndroidManifest.xml",
       "accessCount": 4,
       "lastAccessed": 1783729224565,
@@ -330,15 +342,9 @@
       "type": "file"
     },
     {
-      "path": "task_plan.md",
+      "path": "ruoyi-framework\\src\\main\\java\\com\\ruoyi\\framework\\config\\SecurityConfig.java",
       "accessCount": 4,
-      "lastAccessed": 1783740128542,
-      "type": "file"
-    },
-    {
-      "path": "progress.md",
-      "accessCount": 4,
-      "lastAccessed": 1783740149822,
+      "lastAccessed": 1783756959245,
       "type": "file"
     },
     {
@@ -351,12 +357,6 @@
       "path": "docs\\superpowers\\specs\\2026-07-10-meeting-board-android-design.md",
       "accessCount": 3,
       "lastAccessed": 1783729227489,
-      "type": "file"
-    },
-    {
-      "path": "ruoyi-framework\\src\\main\\java\\com\\ruoyi\\framework\\config\\SecurityConfig.java",
-      "accessCount": 3,
-      "lastAccessed": 1783738974816,
       "type": "file"
     },
     {

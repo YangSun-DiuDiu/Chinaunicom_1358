@@ -1,0 +1,111 @@
+- generic [ref=e45]:
+  - generic [ref=e46]:
+    - link "🏢 智慧园区" [ref=e48] [cursor=pointer]:
+      - /url: /
+      - text: 🏢
+      - generic [ref=e50]: 智慧园区
+    - menubar [ref=e54]:
+      - link [ref=e56] [cursor=pointer]:
+        - /url: /index
+        - menuitem "首页" [ref=e57]
+      - menuitem "系统管理 " [expanded] [ref=e60]:
+        - generic [ref=e61] [cursor=pointer]:
+          - text: 系统管理
+          - generic [ref=e64]: 
+        - menu:
+          - link [ref=e188] [cursor=pointer]:
+            - /url: /system/user
+            - menuitem "用户管理" [ref=e189]
+          - link [ref=e193] [cursor=pointer]:
+            - /url: /system/dept
+            - menuitem "部门管理" [ref=e194]
+          - link [ref=e198] [cursor=pointer]:
+            - /url: /system/role
+            - menuitem "角色管理" [ref=e199]
+          - link [ref=e203] [cursor=pointer]:
+            - /url: /system/menu
+            - menuitem "菜单管理" [ref=e204]
+      - menuitem "设备管理 " [ref=e66]:
+        - generic [ref=e67] [cursor=pointer]:
+          - text: 设备管理
+          - generic [ref=e70]: 
+      - menuitem "访客管理 " [ref=e72]:
+        - generic [ref=e73] [cursor=pointer]:
+          - text: 访客管理
+          - generic [ref=e76]: 
+      - menuitem "日志管理 " [ref=e78]:
+        - generic [ref=e79] [cursor=pointer]:
+          - text: 日志管理
+          - generic [ref=e82]: 
+      - menuitem "智能化管理 " [ref=e84]:
+        - generic [ref=e85] [cursor=pointer]:
+          - text: 智能化管理
+          - generic [ref=e88]: 
+      - menuitem "考勤管理 " [ref=e90]:
+        - generic [ref=e91] [cursor=pointer]:
+          - text: 考勤管理
+          - generic [ref=e94]: 
+      - menuitem "短信中台 " [ref=e96]:
+        - generic [ref=e97] [cursor=pointer]:
+          - text: 短信中台
+          - generic [ref=e100]: 
+      - menuitem "会议管理 " [ref=e102]:
+        - generic [ref=e103] [cursor=pointer]:
+          - text: 会议管理
+          - generic [ref=e106]: 
+      - menuitem "公寓管理 " [ref=e108]:
+        - generic [ref=e109] [cursor=pointer]:
+          - text: 公寓管理
+          - generic [ref=e111]: 
+  - generic [ref=e113]:
+    - generic [ref=e115]:
+      - navigation "Breadcrumb" [ref=e119]:
+        - generic:
+          - generic [ref=e120]:
+            - link "首页" [ref=e121]
+            - text: /
+          - generic [ref=e207]:
+            - link "系统管理" [ref=e208]
+            - text: /
+          - link "用户管理" [ref=e210]
+      - generic [ref=e122]:
+        - generic [ref=e123] [cursor=pointer]:
+          - button "选择组织" [ref=e124]
+          - text: 
+        - button [ref=e135] [cursor=pointer]
+        - button "孙扬" [ref=e139] [cursor=pointer]
+    - generic [ref=e142]:
+      - generic [ref=e143]:
+        - heading "SMART PARK" [level=2] [ref=e144]
+        - paragraph [ref=e145]: 智慧园区 · 综合管理平台
+      - generic [ref=e146]:
+        - generic [ref=e147] [cursor=pointer]:
+          - generic [ref=e149]: 系统管理
+          - generic [ref=e150]: 菜单 · 角色 · 用户 · 部门 · 岗位 · 参数
+        - generic [ref=e151] [cursor=pointer]:
+          - generic [ref=e153]: 设备管理
+          - generic [ref=e154]: IoT设备 · 拓扑 · 心跳 · 故障 · SNMP · 维修
+        - generic [ref=e155] [cursor=pointer]:
+          - generic [ref=e157]: 智能化管理
+          - generic [ref=e158]: 门禁 · 车行 · 视频监控
+        - generic [ref=e159] [cursor=pointer]:
+          - generic [ref=e161]: 访客管理
+          - generic [ref=e162]: 预约 · 审批 · 登记 · 记录
+        - generic [ref=e163] [cursor=pointer]:
+          - generic [ref=e165]: 考勤管理
+          - generic [ref=e166]: 数据对接 · 考勤统计
+        - generic [ref=e167] [cursor=pointer]:
+          - generic [ref=e169]: 系统监控
+          - generic [ref=e170]: 操作日志 · 登录日志 · 数据监控 · 缓存
+        - generic [ref=e171] [cursor=pointer]:
+          - generic [ref=e173]: 短信中台
+          - generic [ref=e174]: 渠道 · 模板 · 业务 · 黑名单 · 日志
+        - generic [ref=e175] [cursor=pointer]:
+          - generic [ref=e177]: 会议管理
+          - generic [ref=e178]: 会议室 · 预约 · 管理 · 审批
+        - generic [ref=e179] [cursor=pointer]:
+          - generic [ref=e181]: 公寓管理
+          - generic [ref=e182]: 房源 · 房间 · 卡片 · 租客
+        - generic [ref=e183] [cursor=pointer]:
+          - generic [ref=e185]: 通知公告
+          - generic [ref=e186]: 公告发布 · 消息推送

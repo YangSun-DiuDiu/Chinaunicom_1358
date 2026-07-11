@@ -3,3 +3,7 @@
 {"t":0,"agent":"a85f0ce","agent_type":"Explore","event":"agent_stop","success":true,"duration_ms":83254}
 {"t":0,"agent":"system","event":"skill_invoked","skill_name":"superpowers:writing-plans"}
 {"t":0,"agent":"system","event":"skill_invoked","skill_name":"superpowers:subagent-driven-development"}
+{"t":0,"agent":"aa65745","agent_type":"executor","event":"agent_start","parent_mode":"none"}
+{"t":0,"agent":"aa65745","agent_type":"executor","event":"agent_stop","success":true,"duration_ms":77297}
+{"t":0,"agent":"a4b081e","agent_type":"explore","event":"agent_start","parent_mode":"none"}
+{"t":0,"agent":"a4b081e","agent_type":"explore","event":"agent_stop","success":true,"duration_ms":692458}

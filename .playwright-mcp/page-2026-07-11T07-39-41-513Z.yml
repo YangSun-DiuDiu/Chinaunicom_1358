@@ -1,0 +1,427 @@
+- generic [ref=f1e3]:
+  - generic [ref=f1e4]:
+    - link "🏢 智慧园区" [ref=f1e6] [cursor=pointer]:
+      - /url: /
+      - text: 🏢
+      - generic [ref=f1e8]: 智慧园区
+    - menubar [ref=f1e12]:
+      - link [ref=f1e535] [cursor=pointer]:
+        - /url: /index
+        - menuitem "首页" [ref=f1e536]
+      - menuitem "系统管理 " [expanded] [ref=f1e539]:
+        - generic [ref=f1e540] [cursor=pointer]:
+          - text: 系统管理
+          - generic [ref=f1e543]: 
+        - menu [ref=f1e544]:
+          - link [ref=f1e546] [cursor=pointer]:
+            - /url: /system/user
+            - menuitem "用户管理" [ref=f1e547]
+          - link [ref=f1e551] [cursor=pointer]:
+            - /url: /system/dept
+            - menuitem "部门管理" [ref=f1e552]
+          - link [ref=f1e556] [cursor=pointer]:
+            - /url: /system/role
+            - menuitem "角色管理" [ref=f1e557]
+          - link [ref=f1e561] [cursor=pointer]:
+            - /url: /system/menu
+            - menuitem "菜单管理" [ref=f1e562]
+      - menuitem "设备管理 " [ref=f1e566]:
+        - generic [ref=f1e567] [cursor=pointer]:
+          - text: 设备管理
+          - generic [ref=f1e570]: 
+      - menuitem "访客管理 " [ref=f1e572]:
+        - generic [ref=f1e573] [cursor=pointer]:
+          - text: 访客管理
+          - generic [ref=f1e576]: 
+      - menuitem "日志管理 " [ref=f1e578]:
+        - generic [ref=f1e579] [cursor=pointer]:
+          - text: 日志管理
+          - generic [ref=f1e582]: 
+      - menuitem "智能化管理 " [ref=f1e584]:
+        - generic [ref=f1e585] [cursor=pointer]:
+          - text: 智能化管理
+          - generic [ref=f1e588]: 
+      - menuitem "考勤管理 " [ref=f1e590]:
+        - generic [ref=f1e591] [cursor=pointer]:
+          - text: 考勤管理
+          - generic [ref=f1e594]: 
+      - menuitem "短信中台 " [ref=f1e596]:
+        - generic [ref=f1e597] [cursor=pointer]:
+          - text: 短信中台
+          - generic [ref=f1e600]: 
+      - menuitem "会议管理 " [ref=f1e602]:
+        - generic [ref=f1e603] [cursor=pointer]:
+          - text: 会议管理
+          - generic [ref=f1e606]: 
+      - menuitem "公寓管理 " [ref=f1e608]:
+        - generic [ref=f1e609] [cursor=pointer]:
+          - text: 公寓管理
+          - generic [ref=f1e611]: 
+  - generic [ref=f1e41]:
+    - generic [ref=f1e43]:
+      - navigation "Breadcrumb" [ref=f1e50]:
+        - generic:
+          - generic [ref=f1e51]:
+            - link "首页" [ref=f1e52]
+            - text: /
+          - generic [ref=f1e53]:
+            - link "系统管理" [ref=f1e54]
+            - text: /
+          - link "用户管理" [ref=f1e56]
+      - generic [ref=f1e57]:
+        - generic [ref=f1e58] [cursor=pointer]:
+          - button "选择组织" [ref=f1e59]
+          - text: 
+        - button [ref=f1e70] [cursor=pointer]
+        - button "孙扬" [ref=f1e74] [cursor=pointer]
+    - generic [ref=f1e77]:
+      - generic [ref=f1e78]:
+        - generic [ref=f1e80]:
+          - generic [ref=f1e81]:
+            - generic [ref=f1e82]: 
+            - text: 组织机构
+          - generic [ref=f1e83]:
+            - generic [ref=f1e84] [cursor=pointer]: 
+            - generic [ref=f1e85] [cursor=pointer]: 
+        - generic [ref=f1e86]: 
+        - generic [ref=f1e89]:
+          - textbox "请输入部门名称" [ref=f1e90]
+          - generic [ref=f1e91]: 
+        - tree [ref=f1e94]:
+          - treeitem "  镭诺电子（宁波）有限公司" [expanded] [ref=f1e95]:
+            - generic [ref=f1e96] [cursor=pointer]:
+              - generic [ref=f1e97]: 
+              - generic [ref=f1e98]:
+                - generic [ref=f1e99]: 
+                - generic "镭诺电子（宁波）有限公司" [ref=f1e100]
+            - group [ref=f1e101]:
+              - treeitem "  生产部" [expanded] [ref=f1e102]:
+                - generic [ref=f1e103] [cursor=pointer]:
+                  - generic [ref=f1e104]: 
+                  - generic [ref=f1e105]:
+                    - generic [ref=f1e106]: 
+                    - generic "生产部" [ref=f1e107]
+                - group
+              - treeitem "  市场部" [expanded] [ref=f1e108]:
+                - generic [ref=f1e109] [cursor=pointer]:
+                  - generic [ref=f1e110]: 
+                  - generic [ref=f1e111]:
+                    - generic [ref=f1e112]: 
+                    - generic "市场部" [ref=f1e113]
+                - group [ref=f1e114]:
+                  - treeitem "  市场营销部" [expanded] [ref=f1e115]:
+                    - generic [ref=f1e116] [cursor=pointer]:
+                      - generic [ref=f1e117]: 
+                      - generic [ref=f1e118]:
+                        - generic [ref=f1e119]: 
+                        - generic "市场营销部" [ref=f1e120]
+                    - group [ref=f1e121]:
+                      - treeitem "  营销一部" [expanded] [ref=f1e122]:
+                        - generic [ref=f1e123] [cursor=pointer]:
+                          - generic [ref=f1e124]: 
+                          - generic [ref=f1e125]:
+                            - generic [ref=f1e126]: 
+                            - generic "营销一部" [ref=f1e127]
+                        - group
+                      - treeitem "  营销二部" [expanded] [ref=f1e128]:
+                        - generic [ref=f1e129] [cursor=pointer]:
+                          - generic [ref=f1e130]: 
+                          - generic [ref=f1e131]:
+                            - generic [ref=f1e132]: 
+                            - generic "营销二部" [ref=f1e133]
+                        - group
+                  - treeitem "  市场营销二部" [expanded] [ref=f1e134]:
+                    - generic [ref=f1e135] [cursor=pointer]:
+                      - generic [ref=f1e136]: 
+                      - generic [ref=f1e137]:
+                        - generic [ref=f1e138]: 
+                        - generic "市场营销二部" [ref=f1e139]
+                    - group
+              - treeitem "  信息部" [expanded] [ref=f1e140]:
+                - generic [ref=f1e141] [cursor=pointer]:
+                  - generic [ref=f1e142]: 
+                  - generic [ref=f1e143]:
+                    - generic [ref=f1e144]: 
+                    - generic "信息部" [ref=f1e145]
+                - group [ref=f1e146]:
+                  - treeitem "  硬件部分" [expanded] [ref=f1e147]:
+                    - generic [ref=f1e148] [cursor=pointer]:
+                      - generic [ref=f1e149]: 
+                      - generic [ref=f1e150]:
+                        - generic [ref=f1e151]: 
+                        - generic "硬件部分" [ref=f1e152]
+                    - group
+              - treeitem "  财务部" [expanded] [ref=f1e153]:
+                - generic [ref=f1e154] [cursor=pointer]:
+                  - generic [ref=f1e155]: 
+                  - generic [ref=f1e156]:
+                    - generic [ref=f1e157]: 
+                    - generic "财务部" [ref=f1e158]
+                - group
+              - treeitem "  行政部" [expanded] [ref=f1e159]:
+                - generic [ref=f1e160] [cursor=pointer]:
+                  - generic [ref=f1e161]: 
+                  - generic [ref=f1e162]:
+                    - generic [ref=f1e163]: 
+                    - generic "行政部" [ref=f1e164]
+                - group
+              - treeitem "  工程部" [expanded] [ref=f1e165]:
+                - generic [ref=f1e166] [cursor=pointer]:
+                  - generic [ref=f1e167]: 
+                  - generic [ref=f1e168]:
+                    - generic [ref=f1e169]: 
+                    - generic "工程部" [ref=f1e170]
+                - group
+      - generic [ref=f1e172]:
+        - generic [ref=f1e173]:
+          - generic [ref=f1e174]:
+            - generic [ref=f1e175]: 用户名称
+            - textbox "请输入用户名称" [ref=f1e178]
+          - generic [ref=f1e179]:
+            - generic [ref=f1e180]: 手机号码
+            - textbox "请输入手机号码" [ref=f1e183]
+          - generic [ref=f1e184]:
+            - generic [ref=f1e185]: 状态
+            - generic [ref=f1e188]:
+              - textbox "用户状态" [ref=f1e189] [cursor=pointer]
+              - generic: 
+          - generic [ref=f1e192]:
+            - generic [ref=f1e193]: 创建时间
+            - generic [ref=f1e195]:
+              - generic [ref=f1e196]: 
+              - textbox "开始日期" [ref=f1e197]
+              - generic [ref=f1e198]: "-"
+              - textbox "结束日期" [ref=f1e199]
+          - generic [ref=f1e202]:
+            - button " 搜索" [ref=f1e203] [cursor=pointer]:
+              - generic [ref=f1e204]: 
+              - text: 搜索
+            - button " 重置" [ref=f1e205] [cursor=pointer]:
+              - generic [ref=f1e206]: 
+              - text: 重置
+        - generic [ref=f1e207]:
+          - button " 新增" [ref=f1e209] [cursor=pointer]:
+            - generic [ref=f1e210]: 
+            - text: 新增
+          - button " 修改" [disabled] [ref=f1e212]:
+            - generic [ref=f1e213]: 
+            - text: 修改
+          - button " 删除" [disabled] [ref=f1e215]:
+            - generic [ref=f1e216]: 
+            - text: 删除
+          - button " 导入" [ref=f1e218] [cursor=pointer]:
+            - generic [ref=f1e219]: 
+            - text: 导入
+          - button " 导出" [ref=f1e221] [cursor=pointer]:
+            - generic [ref=f1e222]: 
+            - text: 导出
+          - button " 组织同步" [ref=f1e224] [cursor=pointer]:
+            - generic [ref=f1e225]: 
+            - text: 组织同步
+          - generic [ref=f1e227]:
+            - button "" [ref=f1e228] [cursor=pointer]
+            - button "" [ref=f1e230] [cursor=pointer]
+            - button "" [ref=f1e233] [cursor=pointer]
+        - generic [ref=f1e235]:
+          - table [ref=f1e237]:
+            - rowgroup [ref=f1e252]:
+              - row "用户编号 用户名称 工号 昵称 外部来源 部门 职位 手机号 状态 创建时间 照片 操作" [ref=f1e253]:
+                - columnheader [ref=f1e254]:
+                  - generic [ref=f1e257] [cursor=pointer]:
+                    - checkbox
+                - columnheader "用户编号" [ref=f1e259]
+                - columnheader "用户名称" [ref=f1e261]
+                - columnheader "工号" [ref=f1e263]
+                - columnheader "昵称" [ref=f1e265]
+                - columnheader "外部来源" [ref=f1e267]
+                - columnheader "部门" [ref=f1e269]
+                - columnheader "职位" [ref=f1e271]
+                - columnheader "手机号" [ref=f1e273]
+                - columnheader "状态" [ref=f1e275]
+                - columnheader "创建时间" [ref=f1e277]
+                - columnheader "照片" [ref=f1e279]
+                - columnheader "操作" [ref=f1e281]
+          - table [ref=f1e284]:
+            - rowgroup [ref=f1e299]:
+              - row "1 admin 孙扬 手动 镭诺电子（宁波）有限公司 15888888888 2026-06-15 18:41:32 未上传" [ref=f1e300]:
+                - cell [ref=f1e301]:
+                  - generic [ref=f1e304] [cursor=pointer]:
+                    - checkbox
+                - cell "1" [ref=f1e306]
+                - cell "admin" [ref=f1e308]
+                - cell [ref=f1e310]
+                - cell "孙扬" [ref=f1e311]
+                - cell "手动" [ref=f1e313]
+                - cell "镭诺电子（宁波）有限公司" [ref=f1e315]
+                - cell [ref=f1e317]
+                - cell "15888888888" [ref=f1e318]
+                - cell [ref=f1e320]:
+                  - switch [checked] [ref=f1e322]:
+                    - checkbox [checked]
+                - cell "2026-06-15 18:41:32" [ref=f1e324]
+                - cell "未上传" [ref=f1e326]
+                - cell [ref=f1e329]
+              - row "10 zhaojg 赵建国 手动 生产部 2026-06-15 18:41:34 已上传  修改  删除  更多" [ref=f1e330]:
+                - cell [ref=f1e331]:
+                  - generic [ref=f1e334] [cursor=pointer]:
+                    - checkbox
+                - cell "10" [ref=f1e336]
+                - cell "zhaojg" [ref=f1e338]
+                - cell [ref=f1e340]
+                - cell "赵建国" [ref=f1e341]
+                - cell "手动" [ref=f1e343]
+                - cell "生产部" [ref=f1e345]
+                - cell [ref=f1e347]
+                - cell [ref=f1e348]
+                - cell [ref=f1e349]:
+                  - switch [checked] [ref=f1e351]:
+                    - checkbox [checked]
+                - cell "2026-06-15 18:41:34" [ref=f1e353]
+                - cell "已上传" [ref=f1e355]
+                - cell [ref=f1e358]:
+                  - generic [ref=f1e359]:
+                    - button " 修改" [ref=f1e360] [cursor=pointer]:
+                      - generic [ref=f1e361]: 
+                      - text: 修改
+                    - button " 删除" [ref=f1e362] [cursor=pointer]:
+                      - generic [ref=f1e363]: 
+                      - text: 删除
+                    - generic [ref=f1e364]:
+                      - button " 更多" [ref=f1e365] [cursor=pointer]:
+                        - generic [ref=f1e366]: 
+                        - text: 更多
+                      - text:  
+              - row "11 qianxm 钱晓明 手动 财务部 2026-06-15 18:41:34 已上传  修改  删除  更多" [ref=f1e367]:
+                - cell [ref=f1e368]:
+                  - generic [ref=f1e371] [cursor=pointer]:
+                    - checkbox
+                - cell "11" [ref=f1e373]
+                - cell "qianxm" [ref=f1e375]
+                - cell [ref=f1e377]
+                - cell "钱晓明" [ref=f1e378]
+                - cell "手动" [ref=f1e380]
+                - cell "财务部" [ref=f1e382]
+                - cell [ref=f1e384]
+                - cell [ref=f1e385]
+                - cell [ref=f1e386]:
+                  - switch [checked] [ref=f1e388]:
+                    - checkbox [checked]
+                - cell "2026-06-15 18:41:34" [ref=f1e390]
+                - cell "已上传" [ref=f1e392]
+                - cell [ref=f1e395]:
+                  - generic [ref=f1e396]:
+                    - button " 修改" [ref=f1e397] [cursor=pointer]:
+                      - generic [ref=f1e398]: 
+                      - text: 修改
+                    - button " 删除" [ref=f1e399] [cursor=pointer]:
+                      - generic [ref=f1e400]: 
+                      - text: 删除
+                    - generic [ref=f1e401]:
+                      - button " 更多" [ref=f1e402] [cursor=pointer]:
+                        - generic [ref=f1e403]: 
+                        - text: 更多
+                      - text:  
+              - row "12 sunlh 孙丽华 手动 行政部 2026-06-15 18:41:34 未上传  修改  删除  更多" [ref=f1e404]:
+                - cell [ref=f1e405]:
+                  - generic [ref=f1e408] [cursor=pointer]:
+                    - checkbox
+                - cell "12" [ref=f1e410]
+                - cell "sunlh" [ref=f1e412]
+                - cell [ref=f1e414]
+                - cell "孙丽华" [ref=f1e415]
+                - cell "手动" [ref=f1e417]
+                - cell "行政部" [ref=f1e419]
+                - cell [ref=f1e421]
+                - cell [ref=f1e422]
+                - cell [ref=f1e423]:
+                  - switch [checked] [ref=f1e425]:
+                    - checkbox [checked]
+                - cell "2026-06-15 18:41:34" [ref=f1e427]
+                - cell "未上传" [ref=f1e429]
+                - cell [ref=f1e432]:
+                  - generic [ref=f1e433]:
+                    - button " 修改" [ref=f1e434] [cursor=pointer]:
+                      - generic [ref=f1e435]: 
+                      - text: 修改
+                    - button " 删除" [ref=f1e436] [cursor=pointer]:
+                      - generic [ref=f1e437]: 
+                      - text: 删除
+                    - generic [ref=f1e438]:
+                      - button " 更多" [ref=f1e439] [cursor=pointer]:
+                        - generic [ref=f1e440]: 
+                        - text: 更多
+                      - text:  
+              - row "13 zhouzq 周志强 手动 工程部 2026-06-15 18:41:34 已上传  修改  删除  更多" [ref=f1e441]:
+                - cell [ref=f1e442]:
+                  - generic [ref=f1e445] [cursor=pointer]:
+                    - checkbox
+                - cell "13" [ref=f1e447]
+                - cell "zhouzq" [ref=f1e449]
+                - cell [ref=f1e451]
+                - cell "周志强" [ref=f1e452]
+                - cell "手动" [ref=f1e454]
+                - cell "工程部" [ref=f1e456]
+                - cell [ref=f1e458]
+                - cell [ref=f1e459]
+                - cell [ref=f1e460]:
+                  - switch [checked] [ref=f1e462]:
+                    - checkbox [checked]
+                - cell "2026-06-15 18:41:34" [ref=f1e464]
+                - cell "已上传" [ref=f1e466]
+                - cell [ref=f1e469]:
+                  - generic [ref=f1e470]:
+                    - button " 修改" [ref=f1e471] [cursor=pointer]:
+                      - generic [ref=f1e472]: 
+                      - text: 修改
+                    - button " 删除" [ref=f1e473] [cursor=pointer]:
+                      - generic [ref=f1e474]: 
+                      - text: 删除
+                    - generic [ref=f1e475]:
+                      - button " 更多" [ref=f1e476] [cursor=pointer]:
+                        - generic [ref=f1e477]: 
+                        - text: 更多
+                      - text:  
+              - row "108 chennuo 陈诺 手动 生产部 18667800006 2026-06-26 13:49:30 已上传  修改  删除  更多" [ref=f1e478]:
+                - cell [ref=f1e479]:
+                  - generic [ref=f1e482] [cursor=pointer]:
+                    - checkbox
+                - cell "108" [ref=f1e484]
+                - cell "chennuo" [ref=f1e486]
+                - cell [ref=f1e488]
+                - cell "陈诺" [ref=f1e489]
+                - cell "手动" [ref=f1e491]
+                - cell "生产部" [ref=f1e493]
+                - cell [ref=f1e495]
+                - cell "18667800006" [ref=f1e496]
+                - cell [ref=f1e498]:
+                  - switch [checked] [ref=f1e500]:
+                    - checkbox [checked]
+                - cell "2026-06-26 13:49:30" [ref=f1e502]
+                - cell "已上传" [ref=f1e504]
+                - cell [ref=f1e507]:
+                  - generic [ref=f1e508]:
+                    - button " 修改" [ref=f1e509] [cursor=pointer]:
+                      - generic [ref=f1e510]: 
+                      - text: 修改
+                    - button " 删除" [ref=f1e511] [cursor=pointer]:
+                      - generic [ref=f1e512]: 
+                      - text: 删除
+                    - generic [ref=f1e513]:
+                      - button " 更多" [ref=f1e514] [cursor=pointer]:
+                        - generic [ref=f1e515]: 
+                        - text: 更多
+                      - text:  
+        - generic [ref=f1e517]:
+          - generic [ref=f1e518]: 共 6 条
+          - generic [ref=f1e521]:
+            - textbox "请选择" [ref=f1e522] [cursor=pointer]: 10条/页
+            - generic: 
+          - button "" [disabled] [ref=f1e525]
+          - list [ref=f1e527]:
+            - listitem [ref=f1e528]: "1"
+          - button "" [disabled] [ref=f1e529]
+          - generic [ref=f1e531]:
+            - text: 前往
+            - spinbutton [ref=f1e533]: "1"
+            - text: 页
+      - text: 

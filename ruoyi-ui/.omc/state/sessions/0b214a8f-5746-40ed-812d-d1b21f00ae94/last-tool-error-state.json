@@ -1,0 +1,7 @@
+{
+  "tool_name": "mcp__plugin_playwright_playwright__browser_click",
+  "tool_input_preview": "{\"element\":\"系统管理卡片\",\"target\":\"text=系统管理\"}",
+  "error": "### Error\nError: browserBackend.callTool: Error: strict mode violation: locator('text=系统管理') resolved to 2 elements:\n    1) <span>系统管理</span> aka getByRole('menubar').getByText('系统管理')\n    2) <div data-v-72e04c9c=\"\" class=\"card-title\">系统管理</div> aka locator('section').getByText('系统管理')\n\nCall log:\n\u001b[2m  - waiting for locator('text=系统管理')\u001b[22m",
+  "timestamp": "2026-07-11T07:33:45.757Z",
+  "retry_count": 1
+}
