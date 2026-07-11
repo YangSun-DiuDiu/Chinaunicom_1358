@@ -99,9 +99,10 @@ export default {
       'nickName',
       'roles'
     ]),
-    // 进入模块后（路由带 parentMenuId）显示"返回首页"入口
+    // 进入模块后（路由链中带 parentMenuId）显示"返回首页"入口
     showBackHome() {
-      return !!(this.$route.meta && this.$route.meta.parentMenuId)
+      const matched = this.$route.matched || []
+      return matched.some(m => m.meta && m.meta.parentMenuId)
     },
     setting: {
       get() {

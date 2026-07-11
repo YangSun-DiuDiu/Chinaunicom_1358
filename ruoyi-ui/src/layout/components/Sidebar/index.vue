@@ -36,7 +36,7 @@ export default {
         ...mapGetters(["sidebarRouters", "sidebar"]),
         // 模块门户过滤：进入模块后只显示该模块的子菜单
         filteredRouters() {
-            const parentId = this.$route.meta && this.$route.meta.parentMenuId
+            const parentId = this.currentParentMenuId
             if (!parentId) {
                 // 首页或无标记：显示完整菜单树
                 return this.sidebarRouters
@@ -52,6 +52,16 @@ export default {
                 }
                 return false
             })
+        },
+        // 从当前路由的 matched 链中查找 parentMenuId（父路由携带）
+        currentParentMenuId() {
+            const matched = this.$route.matched || []
+            for (const m of matched) {
+                if (m.meta && m.meta.parentMenuId) {
+                    return m.meta.parentMenuId
+                }
+            }
+            return null
         },
         activeMenu() {
             const route = this.$route
