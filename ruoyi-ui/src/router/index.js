@@ -48,7 +48,7 @@ export const constantRoutes = [
         path: "index",
         component: () => import("@/views/index"),
         name: "Index",
-        meta: { title: "首页", icon: "dashboard", affix: true },
+        meta: { title: "首页", icon: "home", affix: true },
       },
     ],
   },
@@ -150,7 +150,7 @@ export const staticRoutes = [
     component: Layout,
     name: "System",
     alwaysShow: true,
-    meta: { title: "人员管理", icon: "user" },
+    meta: { title: "系统管理", icon: "system", parentMenuId: 1 },
     children: [
       {
         path: "user",
@@ -182,6 +182,16 @@ export const staticRoutes = [
           permissions: ["system:role:list"],
         },
       },
+      {
+        path: "menu",
+        component: () => import("@/views/system/menu/index"),
+        name: "Menu",
+        meta: {
+          title: "菜单管理",
+          icon: "tree-table",
+          permissions: ["system:menu:list"],
+        },
+      },
     ],
   },
   // ==================== 设备管理 ====================
@@ -190,7 +200,7 @@ export const staticRoutes = [
     component: Layout,
     name: "Device",
     alwaysShow: true,
-    meta: { title: "设备管理", icon: "monitor" },
+    meta: { title: "设备管理", icon: "monitor", parentMenuId: 2000 },
     children: [
       {
         path: "list",
@@ -277,7 +287,7 @@ export const staticRoutes = [
     component: Layout,
     name: "Visitor",
     alwaysShow: true,
-    meta: { title: "访客管理", icon: "people" },
+    meta: { title: "访客管理", icon: "people", parentMenuId: 2004 },
     children: [
       {
         path: "appointment",
@@ -326,7 +336,7 @@ export const staticRoutes = [
     path: "/log",
     component: Layout,
     name: "Log",
-    meta: { title: "日志管理", icon: "documentation" },
+    meta: { title: "日志管理", icon: "documentation", parentMenuId: 2 },
     children: [
       {
         path: "operlog",
@@ -350,26 +360,7 @@ export const staticRoutes = [
       },
     ],
   },
-  // ==================== 系统管理 ====================
-  {
-    path: "/settings",
-    component: Layout,
-    name: "Settings",
-    meta: { title: "系统管理", icon: "system" },
-    children: [
-      {
-        path: "menu",
-        component: () => import("@/views/system/menu/index"),
-        name: "Menu",
-        meta: {
-          title: "菜单管理",
-          icon: "tree-table",
-          permissions: ["system:menu:list"],
-        },
-      },
-    ],
-  },
-  // ==================== 隐藏路由(不在侧边栏显示) ====================
+  // ==================== 系统管理隐藏路由(分配角色/用户) ====================
   {
     path: "/system",
     component: Layout,
@@ -403,7 +394,7 @@ export const staticRoutes = [
     component: Layout,
     name: "Smart",
     alwaysShow: true,
-    meta: { title: "智能化管理", icon: "cpu" },
+    meta: { title: "智能化管理", icon: "cpu", parentMenuId: 2009 },
     children: [
       {
         path: "person-access-device",
@@ -484,7 +475,7 @@ export const staticRoutes = [
     component: Layout,
     name: "Attendance",
     alwaysShow: true,
-    meta: { title: "考勤管理", icon: "date" },
+    meta: { title: "考勤管理", icon: "date", parentMenuId: 2021 },
     children: [
       {
         path: "import",
@@ -514,7 +505,7 @@ export const staticRoutes = [
     component: Layout,
     name: "Sms",
     alwaysShow: true,
-    meta: { title: "短信中台", icon: "message" },
+    meta: { title: "短信中台", icon: "message", parentMenuId: 2132 },
     children: [
       {
         path: "channel",
@@ -584,7 +575,7 @@ export const staticRoutes = [
     component: Layout,
     name: "Meeting",
     alwaysShow: true,
-    meta: { title: "会议管理", icon: "date" },
+    meta: { title: "会议管理", icon: "date", parentMenuId: 2031 },
     children: [
       {
         path: "room",
@@ -634,7 +625,7 @@ export const staticRoutes = [
     component: Layout,
     name: "tree",
     alwaysShow: true,
-    meta: { title: "公寓管理", icon: "house" },
+    meta: { title: "公寓管理", icon: "house", parentMenuId: 2113 },
     children: [
       {
         path: "apartment",
