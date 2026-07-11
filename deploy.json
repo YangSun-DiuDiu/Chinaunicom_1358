@@ -1,0 +1,63 @@
+{
+  "default": "production",
+
+  "servers": {
+    "production": {
+      "name": "生产环境",
+      "ip": "1.94.26.126",
+      "user": "root",
+      "password": "Chinaunicom@1358",
+
+      "frontend": {
+        "remoteDir": "/root/zhihuiyuanqu20260625/dist/",
+        "nginxDir": "/usr/share/nginx/zhihuiyuanqu/dist/",
+        "buildCmd": "npm run build:prod",
+        "buildDir": "ruoyi-ui"
+      },
+
+      "backend": {
+        "remoteDir": "/root/zhihuiyuanqu20260625/",
+        "jarName": "ruoyi-admin.jar",
+        "port": 8090,
+        "buildCmd": "mvn clean package -DskipTests -q",
+        "buildOutput": "ruoyi-admin/target/ruoyi-admin.jar"
+      },
+
+      "nginx": {
+        "configPath": "/etc/nginx/conf.d/zhihuiyuanqu.conf",
+        "apiProxyPath": "/prod-api/",
+        "apiProxyTarget": "http://127.0.0.1:8090/",
+        "rootPath": "/usr/share/nginx/zhihuiyuanqu/dist"
+      }
+    },
+
+    "test": {
+      "name": "测试环境",
+      "ip": "",
+      "user": "root",
+      "password": "",
+
+      "frontend": {
+        "remoteDir": "",
+        "nginxDir": "",
+        "buildCmd": "npm run build:prod",
+        "buildDir": "ruoyi-ui"
+      },
+
+      "backend": {
+        "remoteDir": "",
+        "jarName": "ruoyi-admin.jar",
+        "port": 8090,
+        "buildCmd": "mvn clean package -DskipTests -q",
+        "buildOutput": "ruoyi-admin/target/ruoyi-admin.jar"
+      },
+
+      "nginx": {
+        "configPath": "",
+        "apiProxyPath": "/prod-api/",
+        "apiProxyTarget": "",
+        "rootPath": ""
+      }
+    }
+  }
+}

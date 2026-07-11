@@ -1,0 +1,156 @@
+- generic [ref=e37]:
+  - generic [ref=e38]:
+    - link "🏢 智慧园区" [ref=e40] [cursor=pointer]:
+      - /url: /
+      - text: 🏢
+      - generic [ref=e41]: 智慧园区
+    - menubar [ref=e45]:
+      - link [ref=e47] [cursor=pointer]:
+        - /url: /index
+        - menuitem "首页" [ref=e48]
+      - menuitem "人员管理 " [ref=e52]:
+        - generic [ref=e53] [cursor=pointer]:
+          - text: 人员管理
+          - generic [ref=e56]: 
+      - menuitem "设备管理 " [ref=e58]:
+        - generic [ref=e59] [cursor=pointer]:
+          - text: 设备管理
+          - generic [ref=e62]: 
+      - menuitem "访客管理 " [ref=e64]:
+        - generic [ref=e65] [cursor=pointer]:
+          - text: 访客管理
+          - generic [ref=e68]: 
+      - menuitem "日志管理 " [ref=e70]:
+        - generic [ref=e71] [cursor=pointer]:
+          - text: 日志管理
+          - generic [ref=e74]: 
+      - link [ref=e76] [cursor=pointer]:
+        - /url: /settings/menu
+        - menuitem "菜单管理" [ref=e77]
+      - menuitem "智能化管理 " [ref=e81]:
+        - generic [ref=e82] [cursor=pointer]:
+          - text: 智能化管理
+          - generic [ref=e85]: 
+      - menuitem "考勤管理 " [ref=e87]:
+        - generic [ref=e88] [cursor=pointer]:
+          - text: 考勤管理
+          - generic [ref=e91]: 
+      - menuitem "短信中台 " [ref=e93]:
+        - generic [ref=e94] [cursor=pointer]:
+          - text: 短信中台
+          - generic [ref=e97]: 
+      - menuitem "会议管理 " [ref=e99]:
+        - generic [ref=e100] [cursor=pointer]:
+          - text: 会议管理
+          - generic [ref=e103]: 
+      - menuitem "公寓管理 " [ref=e105]:
+        - generic [ref=e106] [cursor=pointer]:
+          - text: 公寓管理
+          - generic [ref=e108]: 
+  - generic [ref=e110]:
+    - generic [ref=e112]:
+      - navigation "Breadcrumb" [ref=e116]:
+        - link "首页" [ref=e118]
+      - generic [ref=e119]:
+        - generic [ref=e120] [cursor=pointer]:
+          - button "选择组织" [ref=e121]
+          - text: 
+        - button [ref=e132] [cursor=pointer]
+        - button "孙扬" [ref=e136] [cursor=pointer]
+    - generic [ref=e139]:
+      - generic [ref=e140]:
+        - generic [ref=e141]:
+          - generic [ref=e143]: "0"
+          - generic [ref=e144]: IoT 设备
+          - generic [ref=e145]: 在线 0
+        - generic [ref=e146]:
+          - generic [ref=e148]: 0.0 %
+          - generic [ref=e149]: 在线率
+          - generic [ref=e150]: 0 台在线
+        - generic [ref=e151]:
+          - generic [ref=e153]: "0"
+          - generic [ref=e154]: 今日访客
+          - generic [ref=e155]: 累计 0
+        - generic [ref=e156]:
+          - generic [ref=e158]: "0"
+          - generic [ref=e159]: 待审批
+          - generic [ref=e160]: 已清空
+        - generic [ref=e161]:
+          - generic [ref=e163]: "0"
+          - generic [ref=e164]: 会议预约
+          - generic [ref=e165]: 0 间可用
+        - generic [ref=e166]:
+          - generic [ref=e168]: "0"
+          - generic [ref=e169]: 今日会议
+          - generic [ref=e170]: 当日安排
+        - generic [ref=e171]:
+          - generic [ref=e173]: "0"
+          - generic [ref=e174]: 公寓房源
+          - generic [ref=e175]:
+            - generic [ref=e176]: 空置 0
+            - generic [ref=e177]: 入住 0
+        - generic [ref=e178]:
+          - generic [ref=e180]: 0.0 %
+          - generic [ref=e181]: 入住率
+          - generic [ref=e182]: 满房 0 间
+      - generic [ref=e183]:
+        - generic [ref=e184]: 设备类型分布
+        - generic [ref=e190]: 访客状态分布
+        - generic [ref=e196]: 公寓状态分布
+      - generic [ref=e202]:
+        - generic [ref=e203]:
+          - generic [ref=e204]:
+            - generic [ref=e206]: 今日会议
+            - generic [ref=e207]: "0"
+          - generic [ref=e208]:
+            - generic [ref=e209]:
+              - table [ref=e211]:
+                - rowgroup [ref=e216]:
+                  - row [ref=e217]:
+                    - columnheader "会议" [ref=e218]
+                    - columnheader "时间" [ref=e220]
+                    - columnheader "状态" [ref=e222]
+              - generic [ref=e224]:
+                - table:
+                  - rowgroup
+                - generic [ref=e225]: 暂无数据
+            - generic [ref=e227]: — 暂无今日会议 —
+        - generic [ref=e228]:
+          - generic [ref=e229]: 最新来访
+          - generic [ref=e232]:
+            - generic [ref=e233]:
+              - table [ref=e235]:
+                - rowgroup [ref=e241]:
+                  - row [ref=e242]:
+                    - columnheader "访客" [ref=e243]
+                    - columnheader "被访" [ref=e245]
+                    - columnheader "事由" [ref=e247]
+                    - columnheader "时间" [ref=e249]
+              - generic [ref=e251]:
+                - table:
+                  - rowgroup
+                - generic [ref=e252]: 暂无数据
+            - generic [ref=e254]: — 暂无来访记录 —
+        - generic [ref=e255]:
+          - generic [ref=e256]: 最近告警
+          - generic [ref=e259]:
+            - generic [ref=e260]:
+              - table [ref=e262]:
+                - rowgroup [ref=e268]:
+                  - row [ref=e269]:
+                    - columnheader "设备" [ref=e270]
+                    - columnheader "事件" [ref=e272]
+                    - columnheader "详情" [ref=e274]
+                    - columnheader "时间" [ref=e276]
+              - generic [ref=e278]:
+                - table:
+                  - rowgroup
+                - generic [ref=e279]: 暂无数据
+            - generic [ref=e281]: — 无告警 —
+      - generic [ref=e282]:
+        - generic [ref=e284]: SYS NORMAL
+        - generic [ref=e285]: │
+        - generic [ref=e287]: NET OK
+        - generic [ref=e288]: │
+        - generic [ref=e290]: API OK
+        - generic [ref=e291]: 2026-07-11 10:46:03

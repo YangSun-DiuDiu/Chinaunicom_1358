@@ -1,0 +1,7 @@
+{
+  "tool_name": "Edit",
+  "tool_input_preview": "{\"file_path\":\"e:\\\\gitee\\\\production_release\\\\RuoYi-Vue-master2026-06-24\\\\ruoyi-admin\\\\src\\\\main\\\\resources\\\\application.yml\",\"old_string\":\"      host: 1.94.26.126\",\"new_string\":\"      host: 115.159.19...",
+  "error": "File content has changed since it was last read. This commonly happens when a linter or formatter run via Bash rewrites the file. Call Read on this file to refresh, then retry the edit.",
+  "timestamp": "2026-07-10T12:51:47.482Z",
+  "retry_count": 1
+}

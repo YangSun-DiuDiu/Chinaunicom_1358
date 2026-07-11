@@ -502,7 +502,7 @@ export const staticRoutes = [
         name: "AttendanceData",
         meta: {
           title: "考勤数据",
-          icon: "s-data",
+          icon: "lock",
           permissions: ["attendance:data:list"],
         },
       },
@@ -592,7 +592,7 @@ export const staticRoutes = [
         name: "MeetingRoom",
         meta: {
           title: "会议室管理",
-          icon: "room",
+          icon: "list",
           permissions: ["meeting:room:list"],
         },
       },
@@ -632,7 +632,7 @@ export const staticRoutes = [
   {
     path: "/hostel",
     component: Layout,
-    name: "Hostel",
+    name: "tree",
     alwaysShow: true,
     meta: { title: "公寓管理", icon: "house" },
     children: [
@@ -642,7 +642,7 @@ export const staticRoutes = [
         name: "HostelApartment",
         meta: {
           title: "公寓管理",
-          icon: "building",
+          icon: "tree",
           permissions: ["hostel:apartment:list"],
         },
       },

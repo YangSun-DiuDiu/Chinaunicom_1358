@@ -1,7 +1,7 @@
 {
   "tool_name": "Bash",
-  "tool_input_preview": "{\"command\":\"cd \\\"e:\\\\gitee\\\\production_release\\\\RuoYi-Vue-master2026-06-24\\\" && git add -A && git commit -m \\\"refactor: move repair logic Controller→Service, JDBC→MyBatis, fix circular dep with @Lazy\\...",
-  "error": "Exit code 143\nCommand timed out after 30s\nwarning: in the working copy of '.omc/project-memory.json', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of '.omc/state/agent-replay-e3dc4ac6-9afe-4489-8a6e-cad0d3dfa49f.jsonl', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of '.omc/state/idle-notif-cooldown.json', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of '.omc/state/sessions/e...",
-  "timestamp": "2026-06-29T11:47:18.118Z",
+  "tool_input_preview": "{\"command\":\"cd \\\"e:\\\\gitee\\\\production_release\\\\RuoYi-Vue-master2026-06-24\\\" && git push origin master 2>&1 | tail -1\",\"timeout\":60000,\"description\":\"Push\"}",
+  "error": "Exit code 143\nCommand timed out after 1m 0s",
+  "timestamp": "2026-06-29T12:08:17.781Z",
   "retry_count": 1
 }

@@ -191,6 +191,7 @@ export default {
       deviceTypeMap: {
         NETWORK: "网络设备",
         MONITOR: "监控设备",
+        NVR: "硬盘录像机",
         OTHER: "其他设备"
       }
     }

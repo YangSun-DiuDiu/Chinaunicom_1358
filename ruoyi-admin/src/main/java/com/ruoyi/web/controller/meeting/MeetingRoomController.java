@@ -1,6 +1,8 @@
 package com.ruoyi.web.controller.meeting;
 
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -43,6 +45,25 @@ public class MeetingRoomController extends BaseController
         startPage();
         List<MeetingRoom> list = meetingRoomService.selectMeetingRoomList(meetingRoom);
         return getDataTable(list);
+    }
+
+    /**
+     * 获取会议室简单列表（供门牌平板配置页使用，无需权限认证）
+     */
+    @GetMapping("/simpleList")
+    public AjaxResult simpleList()
+    {
+        List<MeetingRoom> list = meetingRoomService.selectMeetingRoomList(new MeetingRoom());
+        List<Map<String, Object>> simpleList = new java.util.ArrayList<>();
+        for (MeetingRoom room : list)
+        {
+            Map<String, Object> item = new java.util.HashMap<>();
+            item.put("roomId", room.getRoomId());
+            item.put("roomName", room.getRoomName());
+            item.put("location", room.getLocation());
+            simpleList.add(item);
+        }
+        return success(simpleList);
     }
 
     /**

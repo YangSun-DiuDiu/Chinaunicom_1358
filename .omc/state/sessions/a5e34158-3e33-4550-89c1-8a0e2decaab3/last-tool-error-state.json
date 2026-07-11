@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"ssh root@1.94.26.126 \\\"cd /tmp && curl -sL --max-time 60 'https://github.com/flashcatcloud/categraf/releases/download/v0.3.45/categraf-v0.3.45-linux-amd64.tar.gz' -o categraf.tar.gz 2>&1 &...",
+  "error": "Exit code 28\n** WARNING: connection is not using a post-quantum key exchange algorithm.\r\n** This session may be vulnerable to \"store now, decrypt later\" attacks.\r\n** The server may need to be upgraded. See https://openssh.com/pq.html",
+  "timestamp": "2026-07-03T22:43:13.442Z",
+  "retry_count": 1
+}

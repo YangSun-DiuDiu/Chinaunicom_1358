@@ -1,0 +1,17 @@
+- generic [active] [ref=f3e1]:
+  - complementary [ref=f3e2]:
+    - heading "智慧园区管理系统" [level=1] [ref=f3e5]
+    - generic [ref=f3e51] [cursor=pointer]: ← 返回首页
+    - navigation [ref=f3e6]:
+      - generic [ref=f3e63]:
+        - generic [ref=f3e64] [cursor=pointer]: 设备列表
+        - generic [ref=f3e66] [cursor=pointer]: 设备拓扑
+        - generic [ref=f3e68] [cursor=pointer]: 心跳日志
+        - generic [ref=f3e70] [cursor=pointer]: 故障预警
+        - generic [ref=f3e72] [cursor=pointer]: SNMP管理
+  - generic [ref=f3e7]:
+    - generic [ref=f3e8]: 设备管理
+    - generic [ref=f3e59]:
+      - heading "设备管理" [level=3] [ref=f3e74]
+      - paragraph [ref=f3e61]: 首页 / 设备管理
+      - generic [ref=f3e62]: 此处为【设备管理】模块的列表页面（实际部署后跳转到 /device/ 下的真实页面，侧边栏仅显示该模块子菜单）

@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"scp -r \\\"e:/gitee/production_release/RuoYi-Vue-master2026-06-24/ruoyi-ui/dist/\\\"* root@1.94.26.126:/usr/share/nginx/zhihuiyuanqu/dist/ 2>&1 | tail -2 && cd \\\"e:/gitee/production_release/Ru...",
+  "error": "Exit code 1\n** This session may be vulnerable to \"store now, decrypt later\" attacks.\r\n** The server may need to be upgraded. See https://openssh.com/pq.html\r\nwarning: in the working copy of 'ruoyi-ui/src/views/h5/device.vue', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'ruoyi-ui/src/views/h5/guard.vue', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'ruoyi-ui/src/views/h5/index.vue', LF will be replaced by CRL...",
+  "timestamp": "2026-07-01T12:36:01.307Z",
+  "retry_count": 1
+}

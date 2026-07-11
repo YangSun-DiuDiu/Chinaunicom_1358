@@ -1,0 +1,38 @@
+- generic [active] [ref=f3e1]:
+  - complementary [ref=f3e2]:
+    - heading "智慧园区管理系统" [level=1] [ref=f3e5]
+    - navigation [ref=f3e6]
+  - generic [ref=f3e7]:
+    - generic [ref=f3e8]: 首页
+    - generic [ref=f3e10]:
+      - generic [ref=f3e11]:
+        - heading "SMART PARK" [level=2] [ref=f3e12]
+        - paragraph [ref=f3e13]: 智慧园区 · 综合管理平台
+      - generic [ref=f3e14]:
+        - generic [ref=f3e15] [cursor=pointer]:
+          - generic [ref=f3e17]: 人员管理
+          - generic [ref=f3e18]: 组织 · 用户 · 角色 · 部门
+        - generic [ref=f3e19] [cursor=pointer]:
+          - generic [ref=f3e21]: 设备管理
+          - generic [ref=f3e22]: IoT设备 · 拓扑 · 心跳 · 故障
+        - generic [ref=f3e23] [cursor=pointer]:
+          - generic [ref=f3e25]: 智能化管理
+          - generic [ref=f3e26]: 门禁 · 车行 · 视频监控
+        - generic [ref=f3e27] [cursor=pointer]:
+          - generic [ref=f3e29]: 访客管理
+          - generic [ref=f3e30]: 预约 · 审批 · 登记 · 记录
+        - generic [ref=f3e31] [cursor=pointer]:
+          - generic [ref=f3e33]: 考勤管理
+          - generic [ref=f3e34]: 考勤数据 · 导入 · 统计
+        - generic [ref=f3e35] [cursor=pointer]:
+          - generic [ref=f3e37]: 系统监控
+          - generic [ref=f3e38]: 操作日志 · 登录日志 · 在线用户
+        - generic [ref=f3e39] [cursor=pointer]:
+          - generic [ref=f3e41]: 短信中台
+          - generic [ref=f3e42]: 多渠道 · 模板 · 发送记录
+        - generic [ref=f3e43] [cursor=pointer]:
+          - generic [ref=f3e45]: 会议管理
+          - generic [ref=f3e46]: 会议室 · 预约 · 审批 · 看板
+        - generic [ref=f3e47] [cursor=pointer]:
+          - generic [ref=f3e49]: 公寓管理
+          - generic [ref=f3e50]: 房源 · 房间 · 租客管理

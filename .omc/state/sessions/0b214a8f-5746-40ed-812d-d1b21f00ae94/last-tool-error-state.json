@@ -1,0 +1,7 @@
+{
+  "tool_name": "mcp__plugin_playwright_playwright__browser_navigate",
+  "tool_input_preview": "{\"url\":\"file:///e:/gitee/production_release/RuoYi-Vue-master2026-06-24/prototype-portal.html\"}",
+  "error": "### Error\nError: Access to \"file:\" protocol is blocked. Attempted URL: \"file:///e:/gitee/production_release/RuoYi-Vue-master2026-06-24/prototype-portal.html\"",
+  "timestamp": "2026-07-11T05:48:32.501Z",
+  "retry_count": 1
+}

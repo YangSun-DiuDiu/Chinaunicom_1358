@@ -1,0 +1,34 @@
+// 科技风主色
+$--color-primary: #00D4FF;
+$--color-success: #00B894;
+$--color-warning: #FDCB6E;
+$--color-danger: #E17055;
+$--color-info: #636E72;
+
+// 字体
+$--font-path: '~element-ui/lib/theme-chalk/fonts';
+
+// 圆角
+$--border-radius-base: 8px;
+$--border-radius-small: 4px;
+
+// 边框
+$--border-color-base: #E8ECF1;
+$--border-color-light: #F0F4F8;
+
+// 背景
+$--background-color-base: #F0F4F8;
+
+// 菜单
+$--menu-text: #A0B4C8;
+$--menu-active-text: #00D4FF;
+$--menu-bg: #0A1628;
+$--menu-hover: rgba(0,212,255,0.1);
+
+@import '~element-ui/packages/theme-chalk/src/index';
+
+// the :export directive is the magic sauce for webpack
+// https://www.bluematador.com/blog/how-to-share-variables-between-js-and-sass
+:export {
+  theme: $--color-primary;
+}

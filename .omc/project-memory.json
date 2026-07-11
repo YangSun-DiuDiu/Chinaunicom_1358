@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1782604554162,
+  "lastScanned": 1783679656036,
   "projectRoot": "e:\\gitee\\production_release\\RuoYi-Vue-master2026-06-24",
   "techStack": {
     "languages": [
@@ -18,7 +18,7 @@
     "runtime": null
   },
   "build": {
-    "buildCommand": "cd \"e:/gitee/production_release/RuoYi-Vue-master2026-06-24/ruoyi-ui\" && npm run build:prod 2>&1 | tail -2 && scp -r dist/* root@1.94.26.126:/usr/share/nginx/zhihuiyuanqu/dist/ 2>&1 | tail -1 && ssh root@1.94.26.126 'nginx -s reload' 2>&1 | tail -1 && echo \"DONE\" && cd .. && git add -A && git commit -m \"fix: block GRAY rooms from check-in in card dialog\" && git push origin master 2>&1 | tail -2",
+    "buildCommand": null,
     "testCommand": null,
     "lintCommand": null,
     "devCommand": null,
@@ -45,7 +45,7 @@
       "path": "bin",
       "purpose": "Executable scripts",
       "fileCount": 3,
-      "lastAccessed": 1782604553776,
+      "lastAccessed": 1783679655236,
       "keyFiles": [
         "clean.bat",
         "package.bat",
@@ -55,21 +55,21 @@
     "deploy": {
       "path": "deploy",
       "purpose": null,
-      "fileCount": 5,
-      "lastAccessed": 1782604553777,
+      "fileCount": 6,
+      "lastAccessed": 1783679655238,
       "keyFiles": [
+        "categraf-setup.sh",
         "nginx.conf",
         "README.md",
         "ruoyi-admin.jar",
-        "start-server.bat",
-        "start-server.sh"
+        "start-server.bat"
       ]
     },
     "doc": {
       "path": "doc",
       "purpose": null,
-      "fileCount": 35,
-      "lastAccessed": 1782604553778,
+      "fileCount": 39,
+      "lastAccessed": 1783679655239,
       "keyFiles": [
         "01-项目概述.md",
         "02-模块架构.md",
@@ -82,14 +82,14 @@
       "path": "docs",
       "purpose": "Documentation",
       "fileCount": 0,
-      "lastAccessed": 1782604553778,
+      "lastAccessed": 1783679655248,
       "keyFiles": []
     },
     "ruoyi-admin": {
       "path": "ruoyi-admin",
       "purpose": null,
       "fileCount": 1,
-      "lastAccessed": 1782604553779,
+      "lastAccessed": 1783679655249,
       "keyFiles": [
         "pom.xml"
       ]
@@ -98,7 +98,7 @@
       "path": "ruoyi-common",
       "purpose": null,
       "fileCount": 1,
-      "lastAccessed": 1782604553780,
+      "lastAccessed": 1783679655251,
       "keyFiles": [
         "pom.xml"
       ]
@@ -107,7 +107,7 @@
       "path": "ruoyi-framework",
       "purpose": null,
       "fileCount": 1,
-      "lastAccessed": 1782604553780,
+      "lastAccessed": 1783679655261,
       "keyFiles": [
         "pom.xml"
       ]
@@ -116,7 +116,7 @@
       "path": "ruoyi-quartz",
       "purpose": null,
       "fileCount": 1,
-      "lastAccessed": 1782604553781,
+      "lastAccessed": 1783679655275,
       "keyFiles": [
         "pom.xml"
       ]
@@ -125,7 +125,7 @@
       "path": "ruoyi-system",
       "purpose": null,
       "fileCount": 1,
-      "lastAccessed": 1782604553795,
+      "lastAccessed": 1783679655277,
       "keyFiles": [
         "pom.xml"
       ]
@@ -134,7 +134,7 @@
       "path": "ruoyi-ui",
       "purpose": null,
       "fileCount": 10,
-      "lastAccessed": 1782604553797,
+      "lastAccessed": 1783679655289,
       "keyFiles": [
         "babel.config.js",
         "package-lock.json",
@@ -146,21 +146,21 @@
     "sql": {
       "path": "sql",
       "purpose": null,
-      "fileCount": 20,
-      "lastAccessed": 1782604553798,
+      "fileCount": 23,
+      "lastAccessed": 1783679655299,
       "keyFiles": [
         "fix_missing_permissions.sql",
+        "hostel_management.sql",
         "meeting_management.sql",
         "menu_reorg_batch1_device_visitor.sql",
-        "menu_reorg_batch2_smart_attendance_sms.sql",
-        "quartz.sql"
+        "menu_reorg_batch2_smart_attendance_sms.sql"
       ]
     },
     "test-records": {
       "path": "test-records",
       "purpose": null,
       "fileCount": 32,
-      "lastAccessed": 1782604553833,
+      "lastAccessed": 1783679655313,
       "keyFiles": [
         "01-测试计划总览.md",
         "02-登录与认证模块测试.md",
@@ -173,7 +173,7 @@
       "path": "tools",
       "purpose": null,
       "fileCount": 1,
-      "lastAccessed": 1782604553847,
+      "lastAccessed": 1783679655334,
       "keyFiles": [
         "test_snmp.py"
       ]
@@ -182,7 +182,7 @@
       "path": "zhihuiyuanqu20260625",
       "purpose": null,
       "fileCount": 5,
-      "lastAccessed": 1782604553882,
+      "lastAccessed": 1783679655364,
       "keyFiles": [
         "deploy.sh",
         "nginx.conf",
@@ -195,7 +195,7 @@
       "path": "deploy\\dist",
       "purpose": "Distribution/build output",
       "fileCount": 4,
-      "lastAccessed": 1782604553916,
+      "lastAccessed": 1783679655386,
       "keyFiles": [
         "favicon.ico",
         "index.html",
@@ -206,42 +206,42 @@
       "path": "ruoyi-admin\\src",
       "purpose": "Source code",
       "fileCount": 0,
-      "lastAccessed": 1782604553961,
+      "lastAccessed": 1783679655414,
       "keyFiles": []
     },
     "ruoyi-common\\src": {
       "path": "ruoyi-common\\src",
       "purpose": "Source code",
       "fileCount": 0,
-      "lastAccessed": 1782604553986,
+      "lastAccessed": 1783679655426,
       "keyFiles": []
     },
     "ruoyi-framework\\src": {
       "path": "ruoyi-framework\\src",
       "purpose": "Source code",
       "fileCount": 0,
-      "lastAccessed": 1782604554001,
+      "lastAccessed": 1783679655434,
       "keyFiles": []
     },
     "ruoyi-quartz\\src": {
       "path": "ruoyi-quartz\\src",
       "purpose": "Source code",
       "fileCount": 0,
-      "lastAccessed": 1782604554017,
+      "lastAccessed": 1783679655451,
       "keyFiles": []
     },
     "ruoyi-system\\src": {
       "path": "ruoyi-system\\src",
       "purpose": "Source code",
       "fileCount": 0,
-      "lastAccessed": 1782604554050,
+      "lastAccessed": 1783679655454,
       "keyFiles": []
     },
     "ruoyi-ui\\bin": {
       "path": "ruoyi-ui\\bin",
       "purpose": "Executable scripts",
       "fileCount": 3,
-      "lastAccessed": 1782604554056,
+      "lastAccessed": 1783679655455,
       "keyFiles": [
         "build.bat",
         "package.bat",
@@ -252,7 +252,7 @@
       "path": "ruoyi-ui\\build",
       "purpose": "Build output",
       "fileCount": 1,
-      "lastAccessed": 1782604554097,
+      "lastAccessed": 1783679655456,
       "keyFiles": [
         "index.js"
       ]
@@ -261,7 +261,7 @@
       "path": "ruoyi-ui\\dist",
       "purpose": "Distribution/build output",
       "fileCount": 4,
-      "lastAccessed": 1782604554102,
+      "lastAccessed": 1783679655456,
       "keyFiles": [
         "favicon.ico",
         "index.html",
@@ -272,7 +272,7 @@
       "path": "zhihuiyuanqu20260625\\dist",
       "purpose": "Distribution/build output",
       "fileCount": 4,
-      "lastAccessed": 1782604554162,
+      "lastAccessed": 1783679655461,
       "keyFiles": [
         "favicon.ico",
         "index.html",
@@ -283,302 +283,302 @@
   "hotPaths": [
     {
       "path": "",
-      "accessCount": 119,
-      "lastAccessed": 1782620625734,
+      "accessCount": 14,
+      "lastAccessed": 1783729233831,
       "type": "directory"
     },
     {
-      "path": "ruoyi-ui\\src\\router\\index.js",
-      "accessCount": 24,
-      "lastAccessed": 1782620626594,
-      "type": "directory"
-    },
-    {
-      "path": "ruoyi-system\\src\\main\\java\\com\\ruoyi\\system\\service\\impl\\SmsServiceImpl.java",
-      "accessCount": 16,
-      "lastAccessed": 1782623906165,
-      "type": "file"
-    },
-    {
-      "path": "ruoyi-admin\\src\\main\\java\\com\\ruoyi\\web\\controller\\smart\\SmartAccessController.java",
-      "accessCount": 15,
-      "lastAccessed": 1782702767653,
-      "type": "file"
-    },
-    {
-      "path": ".superpowers\\sdd\\task-1-report.md",
+      "path": "ruoyi-ui\\src\\views\\index.vue",
       "accessCount": 11,
-      "lastAccessed": 1782610402182,
+      "lastAccessed": 1783738591065,
       "type": "file"
     },
     {
-      "path": "ruoyi-quartz\\src\\main\\java\\com\\ruoyi\\quartz\\task\\DeviceHeartbeatTask.java",
-      "accessCount": 11,
-      "lastAccessed": 1782730532939,
-      "type": "file"
-    },
-    {
-      "path": "ruoyi-ui\\src\\views\\smart\\vehicle-access\\device\\index.vue",
-      "accessCount": 10,
-      "lastAccessed": 1782430696043,
-      "type": "file"
-    },
-    {
-      "path": ".superpowers\\sdd\\task-4-report.md",
-      "accessCount": 10,
-      "lastAccessed": 1782611491530,
-      "type": "file"
-    },
-    {
-      "path": "ruoyi-ui\\src\\views\\smart\\person-access\\device\\index.vue",
+      "path": "ruoyi-ui\\src\\views\\device\\list\\index.vue",
       "accessCount": 9,
-      "lastAccessed": 1782447770066,
+      "lastAccessed": 1783687377336,
       "type": "file"
     },
     {
-      "path": ".superpowers\\sdd\\task-3-report.md",
-      "accessCount": 9,
-      "lastAccessed": 1782610960300,
-      "type": "file"
-    },
-    {
-      "path": ".superpowers\\sdd\\task-2-report.md",
-      "accessCount": 8,
-      "lastAccessed": 1782610669837,
-      "type": "file"
-    },
-    {
-      "path": ".superpowers\\sdd\\task-3-brief.md",
-      "accessCount": 7,
-      "lastAccessed": 1782610714311,
-      "type": "file"
-    },
-    {
-      "path": "ruoyi-ui\\src\\views\\smart\\video\\device\\index.vue",
+      "path": "meeting-board-app\\app\\src\\main\\java\\com\\ruoyi\\board\\KioskActivity.kt",
       "accessCount": 6,
-      "lastAccessed": 1782430730137,
+      "lastAccessed": 1783729226084,
       "type": "file"
     },
     {
-      "path": ".superpowers\\sdd\\task-1-brief.md",
+      "path": "meeting-board-app\\app\\src\\main\\java\\com\\ruoyi\\board\\SetupActivity.kt",
       "accessCount": 6,
-      "lastAccessed": 1782609627651,
+      "lastAccessed": 1783729226632,
       "type": "file"
     },
     {
-      "path": ".superpowers\\sdd\\task-2-brief.md",
-      "accessCount": 6,
-      "lastAccessed": 1782610431330,
+      "path": "meeting-board-app\\app\\src\\main\\AndroidManifest.xml",
+      "accessCount": 4,
+      "lastAccessed": 1783729224565,
       "type": "file"
     },
     {
-      "path": ".superpowers\\sdd\\task-4-brief.md",
-      "accessCount": 6,
-      "lastAccessed": 1782611003859,
+      "path": "meeting-board-app\\app\\src\\main\\java\\com\\ruoyi\\board\\BootReceiver.kt",
+      "accessCount": 4,
+      "lastAccessed": 1783729225412,
       "type": "file"
     },
     {
-      "path": "ruoyi-ui",
-      "accessCount": 5,
-      "lastAccessed": 1782607680879,
-      "type": "directory"
+      "path": "meeting-board-app\\app\\src\\main\\java\\com\\ruoyi\\board\\BoardApplication.kt",
+      "accessCount": 4,
+      "lastAccessed": 1783729238697,
+      "type": "file"
     },
     {
-      "path": "ruoyi-system\\src\\main\\java\\com\\ruoyi\\system\\service\\ISmsService.java",
+      "path": "task_plan.md",
+      "accessCount": 4,
+      "lastAccessed": 1783740128542,
+      "type": "file"
+    },
+    {
+      "path": "progress.md",
+      "accessCount": 4,
+      "lastAccessed": 1783740149822,
+      "type": "file"
+    },
+    {
+      "path": "ruoyi-admin\\src\\main\\java\\com\\ruoyi\\web\\controller\\meeting\\MeetingRoomController.java",
       "accessCount": 3,
-      "lastAccessed": 1782436437375,
+      "lastAccessed": 1783695019867,
+      "type": "file"
+    },
+    {
+      "path": "docs\\superpowers\\specs\\2026-07-10-meeting-board-android-design.md",
+      "accessCount": 3,
+      "lastAccessed": 1783729227489,
+      "type": "file"
+    },
+    {
+      "path": "ruoyi-framework\\src\\main\\java\\com\\ruoyi\\framework\\config\\SecurityConfig.java",
+      "accessCount": 3,
+      "lastAccessed": 1783738974816,
       "type": "file"
     },
     {
       "path": "ruoyi-admin\\src\\main\\resources\\application.yml",
       "accessCount": 3,
-      "lastAccessed": 1782611022713,
+      "lastAccessed": 1783739001187,
       "type": "file"
     },
     {
-      "path": "ruoyi-common\\src\\main\\java\\com\\ruoyi\\common\\utils\\PingUtil.java",
+      "path": "ruoyi-ui\\src\\views\\device\\fault\\index.vue",
       "accessCount": 2,
-      "lastAccessed": 1782436438373,
+      "lastAccessed": 1783687406354,
       "type": "file"
     },
     {
-      "path": "sql\\ry-vue100-v7-features.sql",
-      "accessCount": 1,
-      "lastAccessed": 1782429837861,
+      "path": "ruoyi-ui\\src\\views\\device\\heartbeat\\index.vue",
+      "accessCount": 2,
+      "lastAccessed": 1783687436980,
       "type": "file"
     },
     {
-      "path": "ruoyi-admin\\src\\main\\java\\com\\ruoyi\\web\\controller\\smart\\SmartPermissionController.java",
-      "accessCount": 1,
-      "lastAccessed": 1782429839019,
+      "path": "ruoyi-ui\\src\\views\\device\\repair\\index.vue",
+      "accessCount": 2,
+      "lastAccessed": 1783687469725,
       "type": "file"
     },
     {
-      "path": "ruoyi-admin\\src\\main\\java\\com\\ruoyi\\web\\controller\\smart\\DeviceTestController.java",
-      "accessCount": 1,
-      "lastAccessed": 1782429840115,
+      "path": "ruoyi-ui\\src\\views\\device\\parts\\index.vue",
+      "accessCount": 2,
+      "lastAccessed": 1783687497706,
       "type": "file"
     },
     {
-      "path": "ruoyi-admin\\src\\main\\java\\com\\ruoyi\\web\\controller\\smart\\VideoStreamController.java",
-      "accessCount": 1,
-      "lastAccessed": 1782429840297,
+      "path": "ruoyi-ui\\src\\views\\device\\topology\\index.vue",
+      "accessCount": 2,
+      "lastAccessed": 1783687504694,
       "type": "file"
     },
     {
-      "path": "ruoyi-admin\\src\\main\\java\\com\\ruoyi\\web\\controller\\smart\\VideoStreamService.java",
-      "accessCount": 1,
-      "lastAccessed": 1782429840524,
-      "type": "file"
-    },
-    {
-      "path": "ruoyi-ui\\src\\views\\smart\\video\\preview\\index.vue",
-      "accessCount": 1,
-      "lastAccessed": 1782429846903,
-      "type": "file"
-    },
-    {
-      "path": "ruoyi-ui\\src\\views\\smart\\video\\map\\index.vue",
-      "accessCount": 1,
-      "lastAccessed": 1782429847452,
-      "type": "file"
-    },
-    {
-      "path": "ruoyi-ui\\src\\views\\smart\\person-access\\permission\\index.vue",
-      "accessCount": 1,
-      "lastAccessed": 1782429847890,
-      "type": "file"
-    },
-    {
-      "path": "ruoyi-ui\\src\\views\\smart\\vehicle-access\\permission\\index.vue",
-      "accessCount": 1,
-      "lastAccessed": 1782429848196,
-      "type": "file"
-    },
-    {
-      "path": "ruoyi-ui\\src\\views\\smart\\video\\mapBase\\index.vue",
-      "accessCount": 1,
-      "lastAccessed": 1782429848440,
-      "type": "file"
-    },
-    {
-      "path": "docs\\superpowers\\specs\\2026-06-26-smart-device-ping-repair-design.md",
-      "accessCount": 1,
-      "lastAccessed": 1782430135925,
-      "type": "file"
-    },
-    {
-      "path": "docs\\superpowers\\plans\\2026-06-26-smart-device-ping-repair-plan.md",
-      "accessCount": 1,
-      "lastAccessed": 1782430181918,
-      "type": "file"
-    },
-    {
-      "path": "ruoyi-system\\src\\main\\java\\com\\ruoyi\\system\\domain\\DeviceRepair.java",
-      "accessCount": 1,
-      "lastAccessed": 1782430436491,
-      "type": "file"
-    },
-    {
-      "path": "ruoyi-ui\\src\\views\\smart",
-      "accessCount": 1,
-      "lastAccessed": 1782430734188,
+      "path": "ruoyi-admin\\src\\main\\java",
+      "accessCount": 2,
+      "lastAccessed": 1783693030080,
       "type": "directory"
     },
     {
-      "path": "ruoyi-admin\\src\\main\\java\\com\\ruoyi\\web\\controller\\device\\SnmpController.java",
-      "accessCount": 1,
-      "lastAccessed": 1782436432174,
+      "path": "meeting-board-app\\settings.gradle.kts",
+      "accessCount": 2,
+      "lastAccessed": 1783724884985,
       "type": "file"
     },
     {
-      "path": "ruoyi-system\\src\\main\\java\\com\\ruoyi\\system\\service\\impl\\SnmpWalkService.java",
-      "accessCount": 1,
-      "lastAccessed": 1782436435714,
+      "path": "docs\\superpowers\\plans\\2026-07-10-meeting-board-android.md",
+      "accessCount": 2,
+      "lastAccessed": 1783729227179,
       "type": "file"
     },
     {
-      "path": "ruoyi-system\\src\\main\\java\\com\\ruoyi\\system\\service\\impl\\SnmpService.java",
-      "accessCount": 1,
-      "lastAccessed": 1782436436511,
-      "type": "file"
-    },
-    {
-      "path": "ruoyi-system\\src\\main\\java\\com\\ruoyi\\system\\service\\ISmsConfigService.java",
-      "accessCount": 1,
-      "lastAccessed": 1782436439309,
-      "type": "file"
-    },
-    {
-      "path": "ruoyi-system\\src\\main\\java\\com\\ruoyi\\system\\service\\impl\\SmsConfigServiceImpl.java",
-      "accessCount": 1,
-      "lastAccessed": 1782436441000,
-      "type": "file"
-    },
-    {
-      "path": "ruoyi-system\\src\\main\\java\\com\\ruoyi\\system\\domain\\SmsLog.java",
-      "accessCount": 1,
-      "lastAccessed": 1782436441123,
-      "type": "file"
-    },
-    {
-      "path": "ruoyi-system\\src\\main\\java\\com\\ruoyi\\system\\mapper\\SmsLogMapper.java",
-      "accessCount": 1,
-      "lastAccessed": 1782436441431,
-      "type": "file"
-    },
-    {
-      "path": "ruoyi-ui\\src\\views\\device\\snmp\\index.vue",
-      "accessCount": 1,
-      "lastAccessed": 1782436441650,
-      "type": "file"
-    },
-    {
-      "path": "ruoyi-system\\src\\main\\resources\\mapper\\system\\SmsLogMapper.xml",
-      "accessCount": 1,
-      "lastAccessed": 1782436442110,
-      "type": "file"
-    },
-    {
-      "path": "ruoyi-system\\src\\main\\java\\com\\ruoyi\\system\\domain\\Device.java",
-      "accessCount": 1,
-      "lastAccessed": 1782436447598,
+      "path": "meeting-board-app\\app\\src",
+      "accessCount": 2,
+      "lastAccessed": 1783729235347,
       "type": "directory"
     },
     {
-      "path": "ruoyi-admin\\src\\main\\java\\com\\ruoyi\\web\\controller\\sms\\SmsConfigController.java",
-      "accessCount": 1,
-      "lastAccessed": 1782436449612,
+      "path": "meeting-board-app\\app\\proguard-rules.pro",
+      "accessCount": 2,
+      "lastAccessed": 1783729281652,
       "type": "file"
     },
     {
-      "path": "ruoyi-admin\\src\\main\\java\\com\\ruoyi\\web\\controller\\sms\\SmsLogController.java",
-      "accessCount": 1,
-      "lastAccessed": 1782436450264,
+      "path": "ruoyi-ui\\src\\api\\dashboard\\dashboard.js",
+      "accessCount": 2,
+      "lastAccessed": 1783738965907,
       "type": "file"
     },
     {
-      "path": "ruoyi-ui\\src\\api\\smslog.js",
-      "accessCount": 1,
-      "lastAccessed": 1782436450576,
+      "path": "ruoyi-admin\\src\\main\\java\\com\\ruoyi\\web\\controller\\dashboard\\DashboardController.java",
+      "accessCount": 2,
+      "lastAccessed": 1783738967102,
       "type": "file"
     },
     {
-      "path": "sql\\menu_reorg_batch2_smart_attendance_sms.sql",
+      "path": "ruoyi-ui\\src\\views\\device\\repair\\workload.vue",
       "accessCount": 1,
-      "lastAccessed": 1782436451180,
+      "lastAccessed": 1783687213769,
       "type": "file"
     },
     {
-      "path": "ruoyi-ui\\src\\views\\sms\\log\\index.vue",
+      "path": "ruoyi-ui\\src\\views\\device\\repair\\complete.vue",
       "accessCount": 1,
-      "lastAccessed": 1782436461825,
+      "lastAccessed": 1783687214464,
       "type": "file"
     },
     {
-      "path": "ruoyi-ui\\src\\views\\sms\\config\\index.vue",
+      "path": "ruoyi-ui\\src\\views\\meeting\\board\\index.vue",
       "accessCount": 1,
-      "lastAccessed": 1782436462427,
+      "lastAccessed": 1783692198489,
+      "type": "file"
+    },
+    {
+      "path": "ruoyi-ui\\src\\api\\meeting\\room.js",
+      "accessCount": 1,
+      "lastAccessed": 1783692206569,
+      "type": "file"
+    },
+    {
+      "path": "ruoyi-admin\\src\\main\\java\\com\\ruoyi\\web\\controller\\meeting\\MeetingBoardController.java",
+      "accessCount": 1,
+      "lastAccessed": 1783693035621,
+      "type": "file"
+    },
+    {
+      "path": "ruoyi-framework\\src\\main\\java\\com\\ruoyi\\framework\\config",
+      "accessCount": 1,
+      "lastAccessed": 1783694991882,
+      "type": "directory"
+    },
+    {
+      "path": "ruoyi-ui\\public\\board.html",
+      "accessCount": 1,
+      "lastAccessed": 1783695070611,
+      "type": "file"
+    },
+    {
+      "path": "meeting-board-app\\gradle.properties",
+      "accessCount": 1,
+      "lastAccessed": 1783695090744,
+      "type": "file"
+    },
+    {
+      "path": "meeting-board-app\\app\\src\\main\\res\\values\\strings.xml",
+      "accessCount": 1,
+      "lastAccessed": 1783695101539,
+      "type": "file"
+    },
+    {
+      "path": "meeting-board-app\\app\\src\\main\\res\\values\\themes.xml",
+      "accessCount": 1,
+      "lastAccessed": 1783695103163,
+      "type": "file"
+    },
+    {
+      "path": "meeting-board-app\\app\\src\\main\\res\\layout\\activity_kiosk.xml",
+      "accessCount": 1,
+      "lastAccessed": 1783695105223,
+      "type": "file"
+    },
+    {
+      "path": "meeting-board-app\\app\\src\\main\\res\\layout\\activity_setup.xml",
+      "accessCount": 1,
+      "lastAccessed": 1783695108147,
+      "type": "file"
+    },
+    {
+      "path": "meeting-board-app\\app\\src\\main\\res\\drawable\\spinner_bg.xml",
+      "accessCount": 1,
+      "lastAccessed": 1783695121450,
+      "type": "file"
+    },
+    {
+      "path": "meeting-board-app\\app\\src\\main\\res\\mipmap-hdpi\\ic_launcher.xml",
+      "accessCount": 1,
+      "lastAccessed": 1783724914603,
+      "type": "file"
+    },
+    {
+      "path": "meeting-board-app\\app\\src\\main\\res\\drawable\\ic_launcher_background.xml",
+      "accessCount": 1,
+      "lastAccessed": 1783724916027,
+      "type": "file"
+    },
+    {
+      "path": "meeting-board-app\\app\\src\\main\\res\\drawable\\ic_launcher_foreground.xml",
+      "accessCount": 1,
+      "lastAccessed": 1783724917801,
+      "type": "file"
+    },
+    {
+      "path": "meeting-board-app",
+      "accessCount": 1,
+      "lastAccessed": 1783724921720,
+      "type": "directory"
+    },
+    {
+      "path": "ruoyi-ui\\src\\views",
+      "accessCount": 1,
+      "lastAccessed": 1783735091366,
+      "type": "directory"
+    },
+    {
+      "path": "ruoyi-ui\\src\\views\\dashboard\\PanelGroup.vue",
+      "accessCount": 1,
+      "lastAccessed": 1783735096294,
+      "type": "file"
+    },
+    {
+      "path": "ruoyi-ui\\src\\views\\dashboard\\BarChart.vue",
+      "accessCount": 1,
+      "lastAccessed": 1783735096828,
+      "type": "file"
+    },
+    {
+      "path": "ruoyi-ui\\src\\views\\dashboard\\PieChart.vue",
+      "accessCount": 1,
+      "lastAccessed": 1783735097241,
+      "type": "file"
+    },
+    {
+      "path": "deploy.json",
+      "accessCount": 1,
+      "lastAccessed": 1783736518958,
+      "type": "file"
+    },
+    {
+      "path": "ruoyi-admin",
+      "accessCount": 1,
+      "lastAccessed": 1783738956961,
+      "type": "directory"
+    },
+    {
+      "path": "ruoyi-system\\src\\main\\java\\com\\ruoyi\\system\\service\\IDashboardService.java",
+      "accessCount": 1,
+      "lastAccessed": 1783738968052,
       "type": "file"
     }
   ],

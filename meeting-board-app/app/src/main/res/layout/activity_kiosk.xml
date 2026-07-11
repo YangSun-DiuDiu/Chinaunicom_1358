@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/kioskRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:keepScreenOn="true"
+    android:background="#1a1a2e">
+
+    <WebView
+        android:id="@+id/kioskWebView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</FrameLayout>

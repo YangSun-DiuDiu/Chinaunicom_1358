@@ -1,0 +1,18 @@
+- generic [active] [ref=f4e1]:
+  - complementary [ref=f4e2]:
+    - heading "智慧园区管理系统" [level=1] [ref=f4e5]
+    - generic [ref=f4e55] [cursor=pointer]: ← 返回首页
+    - navigation [ref=f4e6]:
+      - generic [ref=f4e56]:
+        - generic [ref=f4e57] [cursor=pointer]: 菜单管理
+        - generic [ref=f4e59] [cursor=pointer]: 角色管理
+        - generic [ref=f4e61] [cursor=pointer]: 用户管理
+        - generic [ref=f4e63] [cursor=pointer]: 部门管理
+        - generic [ref=f4e65] [cursor=pointer]: 岗位管理
+        - generic [ref=f4e67] [cursor=pointer]: 参数设置
+  - generic [ref=f4e7]:
+    - generic [ref=f4e8]: 系统管理
+    - generic [ref=f4e69]:
+      - heading "系统管理" [level=3] [ref=f4e70]
+      - paragraph [ref=f4e71]: 首页 / 系统管理
+      - generic [ref=f4e72]: 此处为【系统管理】模块的列表页面（实际部署后跳转到 /system/ 下的真实页面，侧边栏仅显示该模块子菜单）

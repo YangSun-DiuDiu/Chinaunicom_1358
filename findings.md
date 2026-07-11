@@ -105,3 +105,44 @@ PENDING/APPROVED → CANCELLED
 | 上传目录 | /home/ruoyi/uploadPath/ |
 | 数据库 | 1.94.26.126:3306/ry101 (sadmin) |
 | GitHub | https://github.com/YangSun-DiuDiu/Chinaunicom_1358 |
+
+## 驾驶舱 Dashboard 设备饼图 API 499 排查（2026-07-11）
+
+### 问题现象
+- 驾驶舱4个仪表盘 API：visitor/meeting/apartment 正常 200，device **100% 失败**
+- Chrome DevTools: `net::ERR_ABORTED`
+- Nginx access log: `HTTP 499`（客户端断开连接）
+- 设备饼图区域始终空白
+
+### 排查过程
+
+| 步骤 | 检查项 | 结果 |
+|------|--------|------|
+| 1 | 直接 curl 后端 `/dashboard/device` | 200，0.005s，后端不慢 |
+| 2 | 通过 Nginx curl | 200，0.001s，代理不慢 |
+| 3 | 数据库 `sys_menu` 权限 | admin 有 `*:*:*`，非权限问题 |
+| 4 | 部署 jar 中的 Controller 注解 | 4 个 `@PreAuthorize` 都存在 |
+| 5 | 时间规律 | device 请求与其他3个间隔恰好 10s（axios timeout=10000） |
+| 6 | 部署目录 | **14 个旧 chunk 残留**，新旧 JS 混存 |
+
+### 根因结论
+
+**Nginx 499 = 客户端在收到服务端响应前主动断开连接。**
+
+最可能原因（3 个，按概率排序）：
+
+1. **部署目录旧 chunk 残留**：多次部署积累了 14 个含 `dashboard/device` 的 chunk 文件，浏览器可能加载了旧版 JS（无 `await` 串行化），4 个并发请求同时发出 → Chrome 连接池竞争 → 第一个请求被丢弃 → 10s 超时 → ERR_ABORTED
+
+2. **mounted() 资源竞争**：`loadFonts()`（Google Fonts `<link>` 注入）和 `loadAll()`（4 个 API）同步触发，浏览器资源加载风暴阻塞了首请求
+
+3. **Cookie/Token 读取延迟**：若 `getToken()` 在首请求发出时 cookie 尚未就绪 → 后端 401 → 响应拦截器弹窗 → 取消请求
+
+### 修复方案
+
+| 方案 | 操作 | 效果 |
+|------|------|------|
+| A（推荐） | `setTimeout(() => loadAll(), 100)` + 清空部署目录 | 避免资源竞争 + 保证 JS 版本一致 |
+| B | loadAll 内加 retry 逻辑 | 兜底，API 失败后重试一次 |
+| C | SecurityConfig permitAll `/dashboard/**` | 不推荐（降低安全性） |
+
+方案 A+B 组合预计 95% 解决。

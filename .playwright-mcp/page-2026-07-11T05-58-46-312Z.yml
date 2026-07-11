@@ -1,0 +1,41 @@
+- generic [active] [ref=f4e1]:
+  - complementary [ref=f4e2]:
+    - heading "智慧园区管理系统" [level=1] [ref=f4e5]
+    - navigation [ref=f4e6]
+  - generic [ref=f4e7]:
+    - generic [ref=f4e8]: 首页
+    - generic [ref=f4e10]:
+      - generic [ref=f4e11]:
+        - heading "SMART PARK" [level=2] [ref=f4e12]
+        - paragraph [ref=f4e13]: 智慧园区 · 综合管理平台
+      - generic [ref=f4e14]:
+        - generic [ref=f4e15] [cursor=pointer]:
+          - generic [ref=f4e17]: 系统管理
+          - generic [ref=f4e18]: 菜单 · 角色 · 用户 · 部门 · 岗位 · 参数
+        - generic [ref=f4e19] [cursor=pointer]:
+          - generic [ref=f4e21]: 设备管理
+          - generic [ref=f4e22]: IoT设备 · 拓扑 · 心跳 · 故障 · SNMP
+        - generic [ref=f4e23] [cursor=pointer]:
+          - generic [ref=f4e25]: 智能化管理
+          - generic [ref=f4e26]: 门禁 · 车行 · 视频监控
+        - generic [ref=f4e27] [cursor=pointer]:
+          - generic [ref=f4e29]: 访客管理
+          - generic [ref=f4e30]: 预约 · 审批 · 登记 · 记录
+        - generic [ref=f4e31] [cursor=pointer]:
+          - generic [ref=f4e33]: 考勤管理
+          - generic [ref=f4e34]: 数据对接 · 考勤统计
+        - generic [ref=f4e35] [cursor=pointer]:
+          - generic [ref=f4e37]: 系统监控
+          - generic [ref=f4e38]: 操作日志 · 登录日志 · 数据监控 · 缓存
+        - generic [ref=f4e39] [cursor=pointer]:
+          - generic [ref=f4e41]: 短信中台
+          - generic [ref=f4e42]: 渠道 · 模板 · 业务 · 黑名单 · 日志
+        - generic [ref=f4e43] [cursor=pointer]:
+          - generic [ref=f4e45]: 会议管理
+          - generic [ref=f4e46]: 会议室 · 预约 · 管理 · 审批
+        - generic [ref=f4e47] [cursor=pointer]:
+          - generic [ref=f4e49]: 公寓管理
+          - generic [ref=f4e50]: 房源 · 房间 · 卡片 · 租客
+        - generic [ref=f4e51] [cursor=pointer]:
+          - generic [ref=f4e53]: 通知公告
+          - generic [ref=f4e54]: 公告发布 · 消息推送
