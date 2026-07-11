@@ -120,8 +120,8 @@
           content: '';
           position: absolute;
           inset: 0;
-          background-color: var(--current-color-dark-bg, rgba(64, 158, 255, 0.2));
-          border-right: 3px solid var(--current-color, #409eff);
+          background-color: var(--current-color-dark-bg, rgba(0, 212, 255, 0.12));
+          border-left: 3px solid #00D4FF;
           pointer-events: none;
           z-index: 1;
         }

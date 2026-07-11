@@ -5,6 +5,7 @@
         <span class="sidebar-logo-emoji">🏢</span>
       </router-link>
       <router-link v-else key="expand" class="sidebar-logo-link" to="/">
+        <span class="sidebar-logo-dot"></span>
         <span class="sidebar-logo-emoji">🏢</span>
         <span class="sidebar-logo-text">智慧园区</span>
       </router-link>
@@ -59,6 +60,18 @@ export default {
     height: 100%;
     width: 100%;
 
+    & .sidebar-logo-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #00D4FF;
+      box-shadow: 0 0 10px rgba(0, 212, 255, 0.6);
+      vertical-align: middle;
+      margin-right: 6px;
+      animation: led-pulse 2s ease-in-out infinite;
+    }
+
     & .sidebar-logo-emoji {
       font-size: 22px;
       vertical-align: middle;
@@ -86,4 +99,10 @@ export default {
     }
   }
 }
+
+@keyframes led-pulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 10px rgba(0, 212, 255, 0.6); }
+  50% { opacity: 0.5; box-shadow: 0 0 4px rgba(0, 212, 255, 0.3); }
+}
+
 </style>
