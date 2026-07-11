@@ -18,6 +18,7 @@
 | 阿里云短信失败 | sign_name 有前导空格 | TRIM() |
 | 离线发2条SMS | HeartbeatTask+DeviceServiceImpl 重复 | 由 ServiceImpl 统一发送 |
 | 自动工单无 repairNo | createRepairOrder 没生成 | 注入JdbcTemplate生成 |
+| @PreAuthorize求值500 | hasAnyPermi/hasAnyRoles写成多参数 `('a','b')` | 改逗号分隔单参数 `('a,b')` |
 
 ## 房间状态规则
 

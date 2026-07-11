@@ -31,6 +31,7 @@
 | 07-11 | 驾驶舱v2工业风(25) | HMI配色+8KPI单行88px+Grid比例布局+串行API；设备饼图API 499排查中 |
 | 07-11 | 模块导航门户(26) | 移除驾驶舱→10卡CSS几何门户+侧边栏parentMenuId过滤+首页全屏化+返回首页入口+LED信号灯；8任务完成，权限审计进行中 |
 | 07-11 | 门户收尾+审计+清理(26✅) | 权限审计107/130三方一致(post/register为死代码已清)+DB补11条空menu_type为F；阶段25驾驶舱作废(被门户取代)；9任务全通部署验证 |
+| 07-12 | 权限注解语法修复 | VisitorLogController hasAnyPermi多参数→逗号分隔(修复现场登记500)；全项目247个@PreAuthorize审核仅1处问题；新增zhihuiyuanqu-permission-check Skill |
 
 ## 当前状态
 
