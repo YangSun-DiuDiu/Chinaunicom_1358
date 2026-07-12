@@ -18,7 +18,7 @@ ruoyi:
 # 开发环境配置
 server:
   # 服务器的HTTP端口，默认为8080
-  port: 8090
+  port: 8080
   servlet:
     # 应用的访问路径
     context-path: /
@@ -153,3 +153,11 @@ xss:
   enabled: true
   excludes: /system/notice
   urlPatterns: /system/*,/device/*,/visitor/*,/dashboard/*
+
+# AI大模型配置（网络报告用）
+ai:
+  deepseek:
+    base-url: https://api.deepseek.com/anthropic
+    api-key: sk-ae962dffc574492fb81bf9378f200437
+    model: deepseek-v4-flash
+    timeout: 60000
