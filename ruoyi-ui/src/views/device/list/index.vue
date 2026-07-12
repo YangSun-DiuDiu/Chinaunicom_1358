@@ -68,18 +68,21 @@
       <el-col :span="1.5">
         <el-button type="warning" plain icon="el-icon-download" size="mini" @click="handleExport" v-hasPermi="['device:device:export']">导出</el-button>
       </el-col>
+      <el-col :span="1.5">
+        <el-button type="primary" plain icon="el-icon-data-line" size="mini" @click="openGrafanaOverview">监控大盘</el-button>
+      </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList" />
     </el-row>
 
     <!-- 表格 -->
     <el-table v-loading="loading" :data="deviceList" @selection-change="handleSelectionChange" stripe>
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="设备名称" align="center" prop="deviceName" min-width="140" :show-overflow-tooltip="true">
+      <el-table-column label="设备名称" align="center" prop="deviceName" width="200" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           <a class="link-type" @click="handleView(scope.row)">{{ scope.row.deviceName }}</a>
         </template>
       </el-table-column>
-      <el-table-column label="设备类型" align="center" prop="deviceType" width="110">
+      <el-table-column label="设备类型" align="center" prop="deviceType" width="200">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.deviceType === 'NETWORK'" type="primary" size="small">网络设备</el-tag>
           <el-tag v-else-if="scope.row.deviceType === 'MONITOR'" type="warning" size="small">监控设备</el-tag>
@@ -87,28 +90,29 @@
           <el-tag v-else size="small" type="info">{{ scope.row.deviceType }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="IP地址" align="center" prop="ipAddress" width="150" />
-      <el-table-column label="型号" align="center" prop="model" width="120" :show-overflow-tooltip="true" />
-      <el-table-column label="位置" align="center" prop="location" width="140" :show-overflow-tooltip="true" />
-      <el-table-column label="状态" align="center" prop="status" width="90">
+      <el-table-column label="IP地址" align="center" prop="ipAddress" width="200" />
+      <el-table-column label="型号" align="center" prop="model" width="200" :show-overflow-tooltip="true" />
+      <el-table-column label="位置" align="center" prop="location" width="200" :show-overflow-tooltip="true" />
+      <el-table-column label="状态" align="center" prop="status" width="200">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.status === 'ONLINE'" type="success" size="small">在线</el-tag>
           <el-tag v-else-if="scope.row.status === 'OFFLINE'" type="danger" size="small">离线</el-tag>
           <el-tag v-else type="info" size="small">未知</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="负责人" align="center" prop="responsible" width="100" />
-      <el-table-column label="创建时间" align="center" prop="createTime" width="170">
+      <el-table-column label="负责人" align="center" prop="responsible" width="200" />
+      <el-table-column label="创建时间" align="center" prop="createTime" width="200">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="240" fixed="right">
+      <el-table-column label="操作" align="center" width="300"  fixed="right">
         <template slot-scope="scope">
           <el-button size="mini" type="text" icon="el-icon-view" @click="handleView(scope.row)">查看</el-button>
           <el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdate(scope.row)" v-hasPermi="['device:device:edit']">修改</el-button>
           <el-button v-if="scope.row.status === 'OFFLINE'" size="mini" type="text" icon="el-icon-s-tools" style="color: #e6a23c" @click="handleRepair(scope.row)" v-hasPermi="['device:device:repair']">报修</el-button>
           <el-button size="mini" type="text" icon="el-icon-connection" @click="handleViewPorts(scope.row)">端口</el-button>
+          <el-button size="mini" type="text" icon="el-icon-monitor" style="color: #00a8cc" @click="openGrafana(scope.row)">监控</el-button>
           <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)" v-hasPermi="['device:device:remove']">删除</el-button>
         </template>
       </el-table-column>
@@ -293,6 +297,19 @@ export default {
     this.getList()
   },
   methods: {
+    /** 跳转单设备 Grafana 监控看板（新标签页） */
+    openGrafana(row) {
+      if (!row.ipAddress) {
+        this.$modal.msgWarning('该设备无IP地址，无法查看监控')
+        return
+      }
+      const url = `http://115.159.194.149:3000/d/e8aebe-e5a487-e4bbaa-e8a1a8-e79b98?var-instance=${row.ipAddress}`
+      window.open(url, '_blank')
+    },
+    /** 跳转监控大盘 Grafana 总览看板（新标签页） */
+    openGrafanaOverview() {
+      window.open('http://115.159.194.149:3000/d/e585a8-e5b180-e4bbaa-e8a1a8-e79b98', '_blank')
+    },
     /** 查询设备列表 */
     getList() {
       this.loading = true
