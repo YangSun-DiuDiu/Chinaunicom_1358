@@ -20,8 +20,7 @@ import com.ruoyi.system.service.IDeviceService;
  * @author ruoyi
  */
 @Service
-public class AlertWebhookServiceImpl implements IAlertWebhookService
-{
+public class AlertWebhookServiceImpl implements IAlertWebhookService {
     private static final Logger log = LoggerFactory.getLogger(AlertWebhookServiceImpl.class);
 
     /** 设备状态：离线 */
@@ -41,60 +40,49 @@ public class AlertWebhookServiceImpl implements IAlertWebhookService
      */
     @Override
     @SuppressWarnings("unchecked")
-    public int handleAlert(Map<String, Object> payload)
-    {
+    public int handleAlert(Map<String, Object> payload) {
         int handledCount = 0;
-        try
-        {
-            if (payload == null)
-            {
+        try {
+            if (payload == null) {
                 log.warn("[AlertWebhook] 收到空的告警 payload");
                 return 0;
             }
             Object alertsObj = payload.get("alerts");
-            if (!(alertsObj instanceof List))
-            {
+            if (!(alertsObj instanceof List)) {
                 log.warn("[AlertWebhook] 告警 payload 中 alerts 字段缺失或类型不正确");
                 return 0;
             }
             List<Map<String, Object>> alerts = (List<Map<String, Object>>) alertsObj;
-            for (Map<String, Object> alert : alerts)
-            {
-                try
-                {
-                    if (alert == null)
-                    {
+            for (Map<String, Object> alert : alerts) {
+                try {
+                    if (alert == null) {
                         continue;
                     }
                     // 告警状态：firing(触发) / resolved(恢复)
                     Object statusObj = alert.get("status");
                     String alertStatus = statusObj == null ? "" : String.valueOf(statusObj);
 
-                    // 从 labels.instance 提取实例地址
+                    // 从 labels.target 提取实例地址（AlertManager 推送 payload 中 IP 在 labels.target）
                     Object labelsObj = alert.get("labels");
-                    if (!(labelsObj instanceof Map))
-                    {
+                    if (!(labelsObj instanceof Map)) {
                         log.warn("[AlertWebhook] 告警缺少 labels，跳过");
                         continue;
                     }
                     Map<String, Object> labels = (Map<String, Object>) labelsObj;
-                    Object instanceObj = labels.get("instance");
+                    Object instanceObj = labels.get("target");
                     String instance = instanceObj == null ? "" : String.valueOf(instanceObj);
-                    if (StringUtils.isEmpty(instance))
-                    {
-                        log.warn("[AlertWebhook] 告警缺少 instance 标签，跳过");
+                    if (StringUtils.isEmpty(instance)) {
+                        log.warn("[AlertWebhook] 告警缺少 target 标签，跳过");
                         continue;
                     }
                     // instance 可能是 ip:port 形式，取 ip 部分
                     String ip = instance;
                     int colonIndex = instance.indexOf(':');
-                    if (colonIndex > -1)
-                    {
+                    if (colonIndex > -1) {
                         ip = instance.substring(0, colonIndex);
                     }
                     ip = ip.trim();
-                    if (StringUtils.isEmpty(ip))
-                    {
+                    if (StringUtils.isEmpty(ip)) {
                         log.warn("[AlertWebhook] 解析 instance[{}] 得到空 IP，跳过", instance);
                         continue;
                     }
@@ -102,16 +90,11 @@ public class AlertWebhookServiceImpl implements IAlertWebhookService
                     // 目标状态：显式三态判断，firing -> 离线，resolved -> 在线，其余异常值跳过
                     // 避免 status 缺失/异常值被误判为 OFFLINE，触发误报短信
                     String targetStatus;
-                    if ("firing".equalsIgnoreCase(alertStatus))
-                    {
+                    if ("firing".equalsIgnoreCase(alertStatus)) {
                         targetStatus = STATUS_OFFLINE;
-                    }
-                    else if ("resolved".equalsIgnoreCase(alertStatus))
-                    {
+                    } else if ("resolved".equalsIgnoreCase(alertStatus)) {
                         targetStatus = STATUS_ONLINE;
-                    }
-                    else
-                    {
+                    } else {
                         log.warn("[AlertWebhook] 未知告警状态[{}] IP[{}]，跳过", alertStatus, ip);
                         continue;
                     }
@@ -120,21 +103,17 @@ public class AlertWebhookServiceImpl implements IAlertWebhookService
                     Device query = new Device();
                     query.setIpAddress(ip);
                     List<Device> deviceList = deviceService.selectDeviceList(query);
-                    if (deviceList == null || deviceList.isEmpty())
-                    {
+                    if (deviceList == null || deviceList.isEmpty()) {
                         log.warn("[AlertWebhook] 未匹配到 IP[{}] 对应的设备，跳过", ip);
                         continue;
                     }
-                    for (Device device : deviceList)
-                    {
-                        if (device == null || device.getDeviceId() == null)
-                        {
+                    for (Device device : deviceList) {
+                        if (device == null || device.getDeviceId() == null) {
                             continue;
                         }
                         // 精确匹配：XML 使用 LIKE 模糊查询，192.168.1.5 会命中 192.168.1.50/55 等
                         // 此处按 IP 全等过滤，跳过 LIKE 误命中的同网段设备，避免误伤
-                        if (!ip.equals(device.getIpAddress()))
-                        {
+                        if (!ip.equals(device.getIpAddress())) {
                             continue;
                         }
                         deviceService.updateDeviceStatus(device.getDeviceId(), targetStatus);
@@ -142,15 +121,11 @@ public class AlertWebhookServiceImpl implements IAlertWebhookService
                         log.info("[AlertWebhook] 设备[{}] IP[{}] 状态更新为[{}]",
                                 device.getDeviceName(), ip, targetStatus);
                     }
-                }
-                catch (Exception e)
-                {
+                } catch (Exception e) {
                     log.error("[AlertWebhook] 处理单条告警异常", e);
                 }
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             log.error("[AlertWebhook] 处理告警 payload 异常", e);
         }
         return handledCount;
