@@ -126,6 +126,17 @@ PENDING/APPROVED → CANCELLED
 | 模型名 | deepseek-v4-flash |
 | 接口协议 | Anthropic 兼容(/anthropic 后缀) |
 
+## 监控改造定案（2026-07-12）
+
+| 项 | 值 |
+|----|-----|
+| Grafana总览Dashboard uid | e585a8-e5b180-e4bbaa-e8a1a8-e79b98 |
+| Grafana单设备Dashboard uid | e8aebe-e5a487-e4bbaa-e8a1a8-e79b98 |
+| 报告格式 | B分级评估型(健康评级+设备/线路/流量三维+风险预警+优化建议) |
+| A4运维 | Categraf/AlertManager/Grafana已部署，改为验证 |
+| 三层架构 | Webhook解析下沉AlertWebhookService，Controller只转发 |
+| 健康评分 | HealthScoreCalculator独立工具类(service/impl,纯函数单测) |
+
 ## 驾驶舱 Dashboard 设备饼图 API 499 排查（2026-07-11）
 
 ### 问题现象
