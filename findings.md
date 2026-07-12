@@ -137,6 +137,14 @@ PENDING/APPROVED → CANCELLED
 | 三层架构 | Webhook解析下沉AlertWebhookService，Controller只转发 |
 | 健康评分 | HealthScoreCalculator独立工具类(service/impl,纯函数单测) |
 
+## A4验证结果（2026-07-12）
+
+| 组件 | 端口 | 状态 |
+|------|------|------|
+| Prometheus | 9090 | ✅ 200，up指标可查 |
+| Grafana | 3000 | ✅ 200 |
+| AlertManager | 9093 | ⚠️ 000连接失败——需排查(未启动/端口/防火墙)，不通则A1 Webhook无告警来源 |
+
 ## 驾驶舱 Dashboard 设备饼图 API 499 排查（2026-07-11）
 
 ### 问题现象

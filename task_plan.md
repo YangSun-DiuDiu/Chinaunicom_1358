@@ -34,3 +34,4 @@
 | 21. getRouter精简 | ✅ complete | 删Controller/Service/Mapper/XML/RouterVo僵尸代码(-397行) |
 | 25. 驾驶舱v2工业风 | ⛔ 作废 | 驾驶舱已被阶段26门户取代，设备饼图API 499随驾驶舱移除失效 |
 | 26. 模块导航门户 | ✅ complete | 移除驾驶舱→10卡CSS几何门户+侧边栏parentMenuId过滤+首页全屏化+返回首页入口+LED信号灯；9任务全通+死代码清理+DB补menu_type；权限审计107/130一致 |
+| 27. 监控体系改造 | ✅ complete | A:AlertManager Webhook+删Java心跳+设备列表Grafana跳转; B:net_report表+健康评分算法+DeepSeek报告(6周期)+前端页; DeepSeek解析修复(跳过thinking块)+Prometheus地址修正 |

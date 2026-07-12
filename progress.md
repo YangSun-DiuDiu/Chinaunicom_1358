@@ -32,6 +32,7 @@
 | 07-11 | 模块导航门户(26) | 移除驾驶舱→10卡CSS几何门户+侧边栏parentMenuId过滤+首页全屏化+返回首页入口+LED信号灯；8任务完成，权限审计进行中 |
 | 07-11 | 门户收尾+审计+清理(26✅) | 权限审计107/130三方一致(post/register为死代码已清)+DB补11条空menu_type为F；阶段25驾驶舱作废(被门户取代)；9任务全通部署验证 |
 | 07-12 | 权限注解语法修复 | VisitorLogController hasAnyPermi多参数→逗号分隔(修复现场登记500)；全项目247个@PreAuthorize审核仅1处问题；新增zhihuiyuanqu-permission-check Skill |
+| 07-12 | 监控体系改造(27) | A:AlertManager Webhook三层架构+删Java心跳+设备列表Grafana跳转; B:net_report表+健康评分算法(三维加权)+DeepSeek报告(6周期定时)+前端页; 10任务subagent驱动; 关键坑:DeepSeek content数组首元素是thinking块需遍历取text; Prometheus地址默认192.168.1.60需改115.159.194.149 |
 
 ## 当前状态
 
