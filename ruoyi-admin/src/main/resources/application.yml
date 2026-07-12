@@ -122,6 +122,9 @@ snmp:
   walk-timeout: 4
   # 是否启用Java原生SNMP回退（snmpwalk不可用时自动切换）
   native-fallback: true
+  # Prometheus 地址（设备指标查询 + AI报告数据源）
+  prometheus:
+    url: http://115.159.194.149:9090
 
 # PageHelper分页插件
 pagehelper:

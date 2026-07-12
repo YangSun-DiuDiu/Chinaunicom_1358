@@ -85,7 +85,8 @@ public class DeepSeekClient
                 return null;
             }
 
-            // 解析 Anthropic 格式响应: { "content": [ { "type": "text", "text": "..." } ] }
+            // 解析 Anthropic 格式响应: { "content": [ { "type": "thinking", ... }, { "type": "text", "text": "..." } ] }
+            // 注意：content 数组可能包含 thinking 块(无 text 字段)，需遍历取 type=text 的块
             JSONObject json = JSON.parseObject(response.body());
             JSONArray content = json.getJSONArray("content");
             if (content == null || content.isEmpty())
@@ -93,7 +94,16 @@ public class DeepSeekClient
                 log.error("DeepSeek 响应缺少 content 字段, body={}", response.body());
                 return null;
             }
-            return content.getJSONObject(0).getString("text");
+            for (int i = 0; i < content.size(); i++)
+            {
+                JSONObject block = content.getJSONObject(i);
+                if ("text".equals(block.getString("type")))
+                {
+                    return block.getString("text");
+                }
+            }
+            log.error("DeepSeek 响应无 text 类型块, body={}", response.body());
+            return null;
         }
         catch (Exception e)
         {
