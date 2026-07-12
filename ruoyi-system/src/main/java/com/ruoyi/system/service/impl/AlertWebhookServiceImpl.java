@@ -99,8 +99,22 @@ public class AlertWebhookServiceImpl implements IAlertWebhookService
                         continue;
                     }
 
-                    // 目标状态：firing -> 离线，resolved -> 在线
-                    String targetStatus = "resolved".equalsIgnoreCase(alertStatus) ? STATUS_ONLINE : STATUS_OFFLINE;
+                    // 目标状态：显式三态判断，firing -> 离线，resolved -> 在线，其余异常值跳过
+                    // 避免 status 缺失/异常值被误判为 OFFLINE，触发误报短信
+                    String targetStatus;
+                    if ("firing".equalsIgnoreCase(alertStatus))
+                    {
+                        targetStatus = STATUS_OFFLINE;
+                    }
+                    else if ("resolved".equalsIgnoreCase(alertStatus))
+                    {
+                        targetStatus = STATUS_ONLINE;
+                    }
+                    else
+                    {
+                        log.warn("[AlertWebhook] 未知告警状态[{}] IP[{}]，跳过", alertStatus, ip);
+                        continue;
+                    }
 
                     // 按 IP 匹配设备
                     Device query = new Device();
@@ -114,6 +128,12 @@ public class AlertWebhookServiceImpl implements IAlertWebhookService
                     for (Device device : deviceList)
                     {
                         if (device == null || device.getDeviceId() == null)
+                        {
+                            continue;
+                        }
+                        // 精确匹配：XML 使用 LIKE 模糊查询，192.168.1.5 会命中 192.168.1.50/55 等
+                        // 此处按 IP 全等过滤，跳过 LIKE 误命中的同网段设备，避免误伤
+                        if (!ip.equals(device.getIpAddress()))
                         {
                             continue;
                         }

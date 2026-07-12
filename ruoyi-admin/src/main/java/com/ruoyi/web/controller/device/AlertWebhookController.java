@@ -53,24 +53,17 @@ public class AlertWebhookController
     }
 
     /**
-     * 获取客户端真实 IP（优先取 X-Forwarded-For）
+     * 获取客户端真实 IP（TCP 层源 IP）
+     *
+     * 安全说明：Webhook 白名单场景禁止信任 X-Forwarded-For 等客户端可控请求头，
+     * 否则攻击者可通过伪造 X-Forwarded-For: 127.0.0.1 绕过 IP 白名单校验。
+     * 此处仅使用 request.getRemoteAddr()，即 TCP 连接的源地址，客户端无法伪造。
      *
      * @param request HTTP 请求
      * @return 客户端 IP
      */
     private String getClientIp(HttpServletRequest request)
     {
-        String ip = request.getHeader("X-Forwarded-For");
-        if (StringUtils.isNotEmpty(ip) && !"unknown".equalsIgnoreCase(ip))
-        {
-            // X-Forwarded-For 可能包含多级代理，取第一个
-            int commaIndex = ip.indexOf(',');
-            if (commaIndex > -1)
-            {
-                ip = ip.substring(0, commaIndex);
-            }
-            return ip.trim();
-        }
         return request.getRemoteAddr();
     }
 
