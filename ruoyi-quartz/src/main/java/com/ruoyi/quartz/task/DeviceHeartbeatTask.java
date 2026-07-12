@@ -37,7 +37,10 @@ public class DeviceHeartbeatTask
         int[] counts = new int[4]; // [detected, online, offline, changed]
 
         // 1. 设备管理-设备列表巡检
-        checkIotDevices(counts);
+        // [2026-07-12] iot_device 存活检测已迁移到 Prometheus/AlertManager 驱动，
+        // 状态由 AlertManager 告警 → AlertWebhookController → updateDeviceStatus 更新。
+        // 此处不再由 Java Ping 主动巡检 iot_device。
+        // checkIotDevices(counts);
 
         // 2. 智能化管理-人员通行设备巡检
         checkSmartDevices("iot_person_access_device", "人员通行", counts);
@@ -53,7 +56,8 @@ public class DeviceHeartbeatTask
             counts[0], counts[1], counts[2], counts[3], elapsed);
     }
 
-    /** 巡检 iot_device 表设备 */
+    /** 巡检 iot_device 表设备（已停用：迁移到 Prometheus/AlertManager，保留以便回滚） */
+    @SuppressWarnings("unused")
     private void checkIotDevices(int[] c)
     {
         Device query = new Device();
