@@ -107,6 +107,25 @@ PENDING/APPROVED → CANCELLED
 | 数据库 | 1.94.26.126:3306/ry101 (sadmin) |
 | GitHub | https://github.com/YangSun-DiuDiu/Chinaunicom_1358 |
 
+## 监控体系基础设施（2026-07-12）
+
+| 组件 | 地址 | 用途 |
+|------|------|------|
+| Grafana | http://115.159.194.149:3000 | 监控看板可视化 |
+| Prometheus | http://115.159.194.149:9090 | 时序指标存储 |
+| Categraf | 各设备本地/中心采集 | 统一采集器(SNMP+Ping插件) |
+| AlertManager | 待部署(115.159.194.149) | 告警规则→Webhook |
+
+## 大模型配置（AI报告用，2026-07-12）
+
+| 项 | 值 |
+|----|-----|
+| 提供商 | DeepSeek |
+| baseUrl | https://api.deepseek.com/anthropic |
+| API Key | sk-ae962dffc574492fb81bf9378f200437 |
+| 模型名 | deepseek-v4-flash |
+| 接口协议 | Anthropic 兼容(/anthropic 后缀) |
+
 ## 驾驶舱 Dashboard 设备饼图 API 499 排查（2026-07-11）
 
 ### 问题现象
