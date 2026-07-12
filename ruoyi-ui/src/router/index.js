@@ -279,6 +279,16 @@ export const staticRoutes = [
           permissions: ["device:parts:list"],
         },
       },
+      {
+        path: "report",
+        component: () => import("@/views/report/index"),
+        name: "NetReport",
+        meta: {
+          title: "运行报告",
+          icon: "documentation",
+          permissions: ["report:net:list"],
+        },
+      },
     ],
   },
   // ==================== 访客管理 ====================
