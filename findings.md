@@ -114,7 +114,25 @@ PENDING/APPROVED → CANCELLED
 | Grafana | http://115.159.194.149:3000 | 监控看板可视化 |
 | Prometheus | http://115.159.194.149:9090 | 时序指标存储 |
 | Categraf | 各设备本地/中心采集 | 统一采集器(SNMP+Ping插件) |
-| AlertManager | 待部署(115.159.194.149) | 告警规则→Webhook |
+| AlertManager | 待部署(115.159.194.149:9093) | 告警规则→Webhook |
+
+### AlertManager 部署完成（2026-07-12）
+
+已部署 AlertManager 0.27.0 到 115.159.194.149:9093，告警链路端到端验证通过：
+- 下载：gh-proxy.com 镜像(github直连不通)，装在 /opt/alertmanager
+- 配置：webhook → http://1.94.26.126:8090/device/alert/webhook, send_resolved:true, group_wait:30s
+- Prometheus：/etc/prometheus/prometheus.yml 配 alerting→localhost:9093 + rule_files→/etc/prometheus/rules/device.yml(up==0 for 3m)，systemctl restart 生效
+- 验证：模拟告警 push_alert=200 → 30s后 Java AlertWebhookController 收到 → 未匹配IP正确跳过
+- 良性日志：selectDeviceList 触发 DeptScopeInterceptor 异常(webhook无登录态,getDeptId抛异常)，被内部catch,不影响告警处理(同DeviceHeartbeatTask定时任务同源噪音)
+- 坑：device.yml的heredoc中 {{ $labels }} 的 \$ 转义会导致yaml解析报"unknown escape character"，改用静态summary避开
+- 重启方式：systemd unit prometheus.service，无 --web.enable-lifecycle，只能 systemctl restart
+
+### 服务器 SSH 凭据
+
+| 服务器 | 用户 | 密码 | 用途 |
+|--------|------|------|------|
+| 1.94.26.126 | root | Chinaunicom@1358 | 业务后端(8090)+前端(80)+MySQL(ry101)+Redis |
+| 115.159.194.149 | root | Chinaunicom@1358 | Prometheus(9090)+Grafana(3000)+AlertManager(9093待部署)+Categraf |
 
 ## 大模型配置（AI报告用，2026-07-12）
 
