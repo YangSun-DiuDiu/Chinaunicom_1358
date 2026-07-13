@@ -98,7 +98,7 @@ public class DeviceRepairController extends BaseController
     @PreAuthorize("@ss.hasPermi('device:repair')")
     @Log(title = "设备维修", businessType = BusinessType.INSERT)
     public AjaxResult createRepair(@PathVariable Long deviceId) {
-        DeviceRepair repair = repairService.createRepairOrder(deviceId, getUsername());
+        DeviceRepair repair = repairService.createRepairOrder(deviceId, getUsername(), true);
         if (repair == null) return error("设备不存在或未设置负责人电话");
         return success(repair);
     }

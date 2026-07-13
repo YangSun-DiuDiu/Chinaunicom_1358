@@ -168,7 +168,7 @@ public class DeviceServiceImpl implements IDeviceService
             if ("OFFLINE".equals(status))
             {
                 // 自动创建维修工单(含短信发送)
-                DeviceRepair repair = repairService.createRepairOrder(device.getDeviceId(), "SYSTEM");
+                DeviceRepair repair = repairService.createRepairOrder(device.getDeviceId(), "SYSTEM", false);
                 if (repair != null) {
                     smsUtil.sendSms("device_offline_alert", device.getResponsiblePhone(),
                         "{\"device_name\":\"" + device.getDeviceName()

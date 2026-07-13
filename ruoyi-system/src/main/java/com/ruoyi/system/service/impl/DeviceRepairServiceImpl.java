@@ -151,7 +151,7 @@ public class DeviceRepairServiceImpl implements IDeviceRepairService
     }
 
     @Override
-    public DeviceRepair createRepairOrder(Long deviceId, String username) {
+    public DeviceRepair createRepairOrder(Long deviceId, String username, boolean sendRepairSms) {
         Device device = deviceService.selectDeviceById(deviceId);
         if (device == null) return null;
         if (StringUtils.isEmpty(device.getResponsiblePhone())) return null;
@@ -172,9 +172,11 @@ public class DeviceRepairServiceImpl implements IDeviceRepairService
         repair.setRepairNo(generateRepairNo());
         insertRepair(repair);
 
-        smsUtil.sendSms("device_repair", device.getResponsiblePhone(),
-            "{\"device_name\":\"" + device.getDeviceName()
-            + "\",\"token\":\"" + repair.getCompleteToken() + "\"}", 1, null);
+        if (sendRepairSms) {
+            smsUtil.sendSms("device_repair", device.getResponsiblePhone(),
+                "{\"device_name\":\"" + device.getDeviceName()
+                + "\",\"token\":\"" + repair.getCompleteToken() + "\"}", 1, null);
+        }
         return repair;
     }
 
