@@ -47,6 +47,11 @@ public class AlertWebhookServiceImpl implements IAlertWebhookService {
                 log.warn("[AlertWebhook] 收到空的告警 payload");
                 return 0;
             }
+            String payloadStr = payload.toString();
+            if (payloadStr.length() > 2000) {
+                payloadStr = payloadStr.substring(0, 2000) + "...(truncated)";
+            }
+            log.info("[AlertWebhook] 收到告警 payload: {}", payloadStr);
             Object alertsObj = payload.get("alerts");
             if (!(alertsObj instanceof List)) {
                 log.warn("[AlertWebhook] 告警 payload 中 alerts 字段缺失或类型不正确");
