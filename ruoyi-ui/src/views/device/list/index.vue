@@ -57,16 +57,16 @@
     <!-- 操作栏 -->
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd" v-hasPermi="['device:device:add']">新增</el-button>
+        <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd" v-hasPermi="['device:add']">新增</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="success" plain icon="el-icon-edit" size="mini" :disabled="single" @click="handleUpdate" v-hasPermi="['device:device:edit']">修改</el-button>
+        <el-button type="success" plain icon="el-icon-edit" size="mini" :disabled="single" @click="handleUpdate" v-hasPermi="['device:edit']">修改</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="danger" plain icon="el-icon-delete" size="mini" :disabled="multiple" @click="handleDelete" v-hasPermi="['device:device:remove']">删除</el-button>
+        <el-button type="danger" plain icon="el-icon-delete" size="mini" :disabled="multiple" @click="handleDelete" v-hasPermi="['device:remove']">删除</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="warning" plain icon="el-icon-download" size="mini" @click="handleExport" v-hasPermi="['device:device:export']">导出</el-button>
+        <el-button type="warning" plain icon="el-icon-download" size="mini" @click="handleExport" v-hasPermi="['device:export']">导出</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button type="primary" plain icon="el-icon-data-line" size="mini" @click="openGrafanaOverview">监控大盘</el-button>
@@ -106,14 +106,14 @@
           <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="300"  fixed="right">
+      <el-table-column label="操作" align="center" width="500"  fixed="right">
         <template slot-scope="scope">
           <el-button size="mini" type="text" icon="el-icon-view" @click="handleView(scope.row)">查看</el-button>
-          <el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdate(scope.row)" v-hasPermi="['device:device:edit']">修改</el-button>
-          <el-button v-if="scope.row.status === 'OFFLINE'" size="mini" type="text" icon="el-icon-s-tools" style="color: #e6a23c" @click="handleRepair(scope.row)" v-hasPermi="['device:device:repair']">报修</el-button>
+          <el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdate(scope.row)" v-hasPermi="['device:edit']">修改</el-button>
+          <el-button v-if="scope.row.status === 'OFFLINE'" size="mini" type="text" icon="el-icon-s-tools" style="color: #e6a23c" @click="handleRepair(scope.row)" v-hasPermi="['device:repair']">报修</el-button>
           <el-button size="mini" type="text" icon="el-icon-connection" @click="handleViewPorts(scope.row)">端口</el-button>
           <el-button size="mini" type="text" icon="el-icon-monitor" style="color: #00a8cc" @click="openGrafana(scope.row)">监控</el-button>
-          <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)" v-hasPermi="['device:device:remove']">删除</el-button>
+          <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)" v-hasPermi="['device:remove']">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -303,12 +303,12 @@ export default {
         this.$modal.msgWarning('该设备无IP地址，无法查看监控')
         return
       }
-      const url = `http://115.159.194.149:3000/d/e8aebe-e5a487-e4bbaa-e8a1a8-e79b98?var-instance=${row.ipAddress}`
+      const url = `http://115.159.194.149:3000/d/switch-categraf-huawei-h3c/b203be1?orgId=1&from=now-6h&to=now&timezone=browser&var-instance=${row.ipAddress}&refresh=10s`
       window.open(url, '_blank')
     },
     /** 跳转监控大盘 Grafana 总览看板（新标签页） */
     openGrafanaOverview() {
-      window.open('http://115.159.194.149:3000/d/e585a8-e5b180-e4bbaa-e8a1a8-e79b98', '_blank')
+      window.open('http://115.159.194.149:3000/d/switch-categraf-huawei-h3c/b203be1?orgId=1&from=now-6h&to=now&timezone=browser&var-instance=192.168.1.32&refresh=10s', '_blank')
     },
     /** 查询设备列表 */
     getList() {
