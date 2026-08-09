@@ -163,7 +163,7 @@
 
 所有代码生成、功能开发、Bug 修复、改造重构、配置修改、前端页面、SQL 编写、部署调试，**必须完全贴合若依原生架构、命名、分层、风格**，不引入非若依生态的自定义架构与奇怪写法。
 
-适配版本：**RuoYi-Vue 前后端分离版（SpringBoot2 + Vue2 + MyBatis + Redis）**
+适配版本：**RuoYi-Vue 前后端分离版（SpringBoot 4.0.3 + Java 21 + Tomcat 11 + Vue2 + MyBatis + Redis）**
 
 ## 1. 项目整体约束原则
 

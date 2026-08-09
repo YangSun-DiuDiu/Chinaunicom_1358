@@ -98,6 +98,8 @@ PENDING/APPROVED → CANCELLED
 - **本地SVG图标集**：8 类图标放 `ruoyi-ui/src/assets/topo-icons/`（router/switch/firewall/ap/server/camera/nvr/other），前端 `require('@/assets/topo-icons/'+key+'.svg')` 打包到 dist/static/img/。拓扑节点按 `icon` 渲染，未配置按 deviceType 映射默认（NETWORK→switch/MONITOR→camera/NVR→nvr）。
 - **线缆库**：`cable_type` 4 值：fiber光纤橙实线、ethernet双绞线蓝实线、wireless无线绿虚线(border-left dashed)、coaxial同轴灰实线。拓扑页每个子节点上方垂直线按该子节点 cableType 着色。
 - **部署重启偶发失败**：重启遇 `sysConfigServiceImpl` init 失败（Redis/DB 瞬时抖动），重试即成功。生产环境为 SpringBoot4.0.3+Java21+Tomcat11；fat-jar 关闭时 NoClassDefFoundError(Lifecycle$SingleUse 等) 为噪音不影响运行。启动用 `setsid nohup java -jar ... </dev/null > app.log 2>&1 &`（start-topo.sh 脚本）。
+- **拓扑页空白真正根因（渲染层，2026-08-09 定位）**：`TopologyNode` 组件用**内联字符串 `template`**，而项目打包的是 **runtime-only Vue（无模板编译器）**——`node_modules/vue` 的 module/main 入口都是 `vue.runtime.*.js`，`vue.config.js` 无 `vue$` alias 指向 full build。runtime-only 无法编译字符串模板 → 组件渲染为空注释占位 `<!--function...-->` → 节点区空白。生产 `NODE_ENV=production` 下编译警告被静默，**console 无任何报错**（之前 console 0 错误误导了排查）。该 bug 从 baseline 就存在，拓扑页节点区从未真正渲染过；字段对齐/detailNode 修复只解决接口层和弹窗层。**修复**：TopologyNode 拆为独立 SFC（`topology/TopologyNode.vue`），vue-loader 构建期预编译为 render 函数；index.vue 改 import 引入。**经验**：排查"接口 200 + console 无错但页面空白"时，检查渲染出的 DOM 是否有 `<!--function...-->` 注释占位符 + `Vue.compile` 是否存在（runtime-only 判断）。
+- **Vue runtime-only 判定方法**：页面 `document.querySelector('#app').__vue__.constructor.compile` 为 `undefined` 即 runtime-only；字符串 template 组件必须 SFC 化或改 render 函数。
 
 ## 待处理需求（暂缓）
 
