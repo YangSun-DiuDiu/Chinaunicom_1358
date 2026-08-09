@@ -210,7 +210,7 @@ export default {
 /* 父节点卡片下方的垂直连接线：父卡片底部 → 水平线 */
 .tree-line-connector {
   width: 2px;
-  height: 28px;
+  height: 44px;
   background: #98A6B6;
   position: relative;
   flex-shrink: 0;
@@ -222,8 +222,8 @@ export default {
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 7px;
-  height: 7px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   background: #98A6B6;
 }
@@ -233,8 +233,8 @@ export default {
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  gap: 56px;
-  padding-top: 12px;
+  gap: 64px;
+  padding-top: 20px;
   position: relative;
 }
 
@@ -253,11 +253,11 @@ export default {
 .tree-node-group > .tree-node-row::before {
   content: "";
   position: absolute;
-  top: -12px;
+  top: -20px;
   left: 50%;
   transform: translateX(-50%);
   width: 2px;
-  height: 12px;
+  height: 20px;
   background: #98A6B6;
 }
 
