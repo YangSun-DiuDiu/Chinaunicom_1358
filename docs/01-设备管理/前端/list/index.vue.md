@@ -36,10 +36,17 @@ updatedAt: 2026-08-09
 
 ## 状态更新链路
 
+设备状态由 **Prometheus SNMP 监控体系** 驱动，非前端轮询或 Java 定时任务：
+
 ```
-DeviceHeartbeatTask (Quartz 每分钟)
-  └→ deviceService.updateDeviceStatus()
-      └→ DB iot_device.status 更新
-          └→ 前端列表刷新时获取最新值
+SNMP Exporter (115.159.194.149:9116)
+  └→ Prometheus (up==0 持续 2min → DeviceDown 告警)
+      └→ AlertManager (ruoyi-webhook → 1.94.26.126:8090/device/alert/webhook)
+          └→ AlertWebhookServiceImpl.handleAlert()
+              └→ deviceService.updateDeviceStatus()
+                  └→ DB iot_device.status 更新 + 状态日志 + SMS 通知
+                      └→ 前端用户刷新列表 → GET /device/list → el-tag 渲染
 ```
+
+> 端到端延迟约 3~4 分钟（SNMP 采集 60s + 告警持续 2min + AlertManager group_wait 10s + Webhook <1s）。用户手动刷新页面或切换分页时获取最新 `iot_device.status` 值。
 

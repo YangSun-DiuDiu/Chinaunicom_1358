@@ -44,3 +44,5 @@
 | 28e. 问题复盘 | ✅ complete | findings.md补5个调试坑:ssh -f退出杀进程/Redis过期playwright stale/playwright-cli污染dist EBUSY/DeptScope影响非admin拓扑可见/线缆几何调参 |
 | 29. 文档中心模块 | ✅ complete | DocSyncLog实体+Mapper+DocServiceImpl扫描引擎(500行)+DocController(5接口);DocTree树形导航+DocReader Markdown渲染+Code Atlas设计体系;Quartz每60s检测commit变化自动同步;SecurityConfig+permission.js+router白名单匿名访问;13模块228文档自动生成;部署1.94.26.126验证200 |
 | 30. 文档中心部署 | ✅ complete | SQL执行(sys_doc_sync_log+菜单+定时任务);marked@4.3.0依赖修复;本地maven+npm构建;JAR 106MB+前端dist上传;docs/目录(255.md)同步到服务器;后端重启验证HTTP 200 |
+| 31. Vue页面文件命名区分 | ✅ complete | 所有Vue页面都是index.vue→目录树无法区分;DocServiceImpl.buildTreeNode加父目录前缀(list/index.vue);scanVueFiles骨架标题同步改造;mvn编译+scp JAR+重启;生产/doc/tree HTTP 200验证 |
+| 32. 文档中心维护Skill | ✅ complete | .claude/skills/zhihuiyuanqu-doc-center/SKILL.md:5操作场景+Vue命名规范+3类文档模板+6注意事项+快速参考表 |

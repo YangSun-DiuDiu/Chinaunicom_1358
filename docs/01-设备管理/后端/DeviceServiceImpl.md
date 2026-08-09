@@ -10,16 +10,16 @@ updatedAt: 2026-08-09
 
 # DeviceServiceImpl — 设备服务实现
 
-设备管理的核心业务逻辑层，包含设备 CRUD、状态更新、心跳检测触发等。
+设备管理的核心业务逻辑层，包含设备 CRUD、状态更新等。
 
 ## 核心方法
 
 ### updateDeviceStatus(Long deviceId, String status)
 
-设备状态更新入口，**唯一写 `iot_device.status` 字段的方法**。由以下两个来源触发：
+设备状态更新入口，**唯一写 `iot_device.status` 字段的方法**。由以下来源触发：
 
-1. **`DeviceHeartbeatTask.heartbeatCheck()`** — Quartz 定时任务（每分钟），ping 设备 IP 后调用
-2. **`AlertWebhookController`** — AlertManager 告警 Webhook 回调
+1. **`AlertWebhookServiceImpl.handleAlert()`** — **生产主路径**：AlertManager 告警 Webhook 回调（Prometheus SNMP 监控驱动）
+2. **`DeviceHeartbeatTask.checkSmartDevices()`** — Quartz 定时任务（仅智能化设备：人员通行/车辆通行/视频监控），iot_device 的 Java Ping 检测已停用
 
 #### 副作用链
 
@@ -41,6 +41,13 @@ updateDeviceStatus()
 #### 短信发送条件
 
 仅当设备配置了 `responsiblePhone` 且状态在 ONLINE↔OFFLINE 之间切换时才发送。UNKNOWN→ONLINE/OFFLINE 的过渡不触发短信。
+
+## iot_device 状态监控迁移历史
+
+- **2026-07-12 前**：`DeviceHeartbeatTask.checkIotDevices()` 使用 `PingUtil`（`InetAddress.isReachable(3000ms)`）每 60s ping 设备 IP
+- **2026-07-12 起**：`checkIotDevices()` 已注释，迁移至 Prometheus/AlertManager 驱动
+- **迁移原因**：Java Ping 仅检测 ICMP 可达性，无法感知设备 SNMP 服务状态；Prometheus 可获取设备运行时长、端口流量等多维度指标
+- **不影响的部分**：智能化设备（人员通行/车辆通行/视频监控）仍由 `DeviceHeartbeatTask` Java Ping 检测
 
 ## 依赖
 

@@ -46,10 +46,13 @@
 | 08-09 | 文档中心模块(29) | 完整实现:DocSyncLog实体+Mapper+DocServiceImpl扫描引擎(500行)+DocController(5接口:tree/content/status/sync/search);前端DocTree+DocReader双栏+Code Atlas设计体系+marked渲染;Quartz定时60s检测commit自动同步;匿名访问(SecurityConfig+permission.js+router noAuth);10 commits合并到master |
 | 08-09 | 文档中心部署(29a) | SQL→远程MySQL(sys_doc_sync_log+菜单+定时任务);marked@4.3.0依赖修复(第一次build失败);本地maven+webpack构建;scp JAR(106MB)+dist.tar.gz到1.94.26.126;本地后端启动→同步生成13模块255md→tar上传→远程解压→重启;前端/doc HTTP 200匿名访问;后端/doc/tree+status HTTP 200 |
 
+| 08-09 | Vue页面命名区分(31) | 根因:scanVueFiles直接用vue文件名(全是index.vue)→buildTreeNode展示名去.md=index.vue→50+个同名节点无法区分。修复:scanVueFiles骨架标题加父目录前缀(list/index.vue);buildTreeNode当displayName为index.vue时自动加父目录前缀(排除顶级"前端"目录)。mvn package→scp JAR(106MB)→kill→重启→/doc/tree HTTP 200验证:所有节点显示list/index.vue等可区分名称。commit 8aea4ae |
+| 08-09 | 文档中心维护Skill(32) | 新建.claude/skills/zhihuiyuanqu-doc-center/SKILL.md:覆盖5个操作场景(手动编辑/新增模块/改扫描规则/刷新到服务器/强制同步)+Vue命名规范+3类文档编写模板+6条注意事项(骨架保护/孤本检测/白名单/免重启操作表/服务器路径/状态检查)+快速参考表;commit 8aea4ae |
+
 ## 当前状态
 
 - **服务器**: 1.94.26.126:80/8090
 - **Redis**: 1.94.26.126:6379 (已修复)
-- **Git**: master (今日7 commits: 文档中心10 commits + merge)
+- **Git**: master (今日 +2 commits: Vue命名修复 + doc-center Skill)
 - **新增**: 文档中心 http://1.94.26.126/doc (无需登录, 13模块/228文档)
 - **待处理**: 阶段11(样式优化剩余), 阶段13(公寓预付费后续)
