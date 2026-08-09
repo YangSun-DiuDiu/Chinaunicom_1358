@@ -1,0 +1,254 @@
+// Code Atlas 设计体系
+$atlas-bg: #FBFBF9;
+$atlas-sidebar: #1E232B;
+$atlas-sidebar-text: #BCC0C6;
+$atlas-sidebar-active: #E8EDF2;
+$atlas-accent: #5B7F6B;
+$atlas-accent-soft: rgba(91, 127, 107, 0.10);
+$atlas-text: #1C1C1C;
+$atlas-muted: #7A7A72;
+$atlas-rule: #E6E4E0;
+$atlas-code-bg: #F3F1ED;
+$atlas-code-block: #F6F5F3;
+$atlas-warning: #D4A03A;
+$atlas-statusbar: #F2F1EF;
+
+.doc-center {
+  --atlas-bg: #{$atlas-bg};
+  --atlas-sidebar: #{$atlas-sidebar};
+  --atlas-sidebar-text: #{$atlas-sidebar-text};
+  --atlas-sidebar-active: #{$atlas-sidebar-active};
+  --atlas-accent: #{$atlas-accent};
+  --atlas-accent-soft: #{$atlas-accent-soft};
+  --atlas-text: #{$atlas-text};
+  --atlas-muted: #{$atlas-muted};
+  --atlas-rule: #{$atlas-rule};
+  --atlas-code-bg: #{$atlas-code-bg};
+  --atlas-code-block: #{$atlas-code-block};
+  --atlas-warning: #{$atlas-warning};
+  --atlas-statusbar: #{$atlas-statusbar};
+
+  height: calc(100vh - 84px);
+  display: flex;
+  flex-direction: column;
+  background: var(--atlas-bg);
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+
+  &__body {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  &__sidebar {
+    width: 320px;
+    min-width: 240px;
+    background: var(--atlas-sidebar);
+    color: var(--atlas-sidebar-text);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  &__content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 48px 64px;
+  }
+
+  &__statusbar {
+    height: 36px;
+    line-height: 36px;
+    background: var(--atlas-statusbar);
+    border-top: 1px solid var(--atlas-rule);
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    font-size: 12px;
+    color: var(--atlas-muted);
+    gap: 24px;
+  }
+}
+
+.doc-tree {
+  padding: 16px 0;
+  overflow-y: auto;
+  flex: 1;
+
+  &__search {
+    padding: 0 16px 12px;
+    .el-input__inner {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.10);
+      color: var(--atlas-sidebar-text);
+      border-radius: 4px;
+      font-size: 13px;
+      &::placeholder { color: rgba(188,192,198,0.4); }
+      &:focus { border-color: var(--atlas-accent); }
+    }
+  }
+
+  &__node {
+    position: relative;
+    padding: 6px 16px 6px 28px;
+    font-size: 13px;
+    line-height: 1.4;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 150ms ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    &:hover {
+      background: rgba(255,255,255,0.06);
+      color: #FFF;
+    }
+
+    &--active {
+      color: var(--atlas-sidebar-active);
+      background: var(--atlas-accent-soft);
+      border-left: 3px solid var(--atlas-accent);
+      padding-left: 25px;
+    }
+
+    &--skeleton {
+      font-style: italic;
+      opacity: 0.5;
+      &:hover { opacity: 0.7; }
+    }
+
+    &--orphaned {
+      .doc-tree__warning { display: inline; }
+    }
+
+    &--child { padding-left: 48px; }
+    &--grandchild { padding-left: 68px; }
+  }
+
+  &__icon {
+    font-size: 14px;
+    width: 18px;
+    flex-shrink: 0;
+    color: rgba(188,192,198,0.6);
+  }
+
+  &__label {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__badge {
+    font-size: 11px;
+    color: rgba(188,192,198,0.4);
+    flex-shrink: 0;
+    margin-left: auto;
+  }
+
+  &__warning {
+    color: var(--atlas-warning);
+    display: none;
+    margin-right: 4px;
+  }
+
+  &__branch {
+    position: relative;
+    &::before {
+      content: '';
+      position: absolute;
+      left: 20px;
+      top: 24px;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--atlas-accent), transparent 60%);
+      opacity: 0.4;
+    }
+  }
+}
+
+.doc-reader {
+  max-width: 780px;
+  margin: 0 auto;
+
+  h1 { font-size: 28px; line-height: 1.3; color: var(--atlas-text); margin: 0 0 24px; font-weight: 700; }
+  h2 { font-size: 20px; line-height: 1.4; color: var(--atlas-text); margin: 40px 0 16px; padding-bottom: 8px; border-bottom: 1px solid var(--atlas-rule); }
+  h3 { font-size: 16px; line-height: 1.5; color: var(--atlas-text); margin: 32px 0 12px; }
+  p { font-size: 15px; line-height: 1.75; color: var(--atlas-text); margin: 0 0 16px; }
+  a { color: var(--atlas-accent); text-decoration: none; &:hover { text-decoration: underline; } }
+  blockquote { border-left: 3px solid var(--atlas-accent); padding: 4px 16px; margin: 0 0 16px; color: var(--atlas-muted); background: rgba(91,127,107,0.04); }
+  table { border-collapse: collapse; width: 100%; margin: 0 0 16px; font-size: 14px;
+    th, td { border: 1px solid var(--atlas-rule); padding: 8px 12px; text-align: left; }
+    th { background: var(--atlas-code-bg); font-weight: 600; }
+  }
+  ul, ol { padding-left: 24px; margin: 0 0 16px; li { line-height: 1.75; } }
+
+  code {
+    background: var(--atlas-code-bg);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: "JetBrains Mono", "Cascadia Code", "Fira Code", monospace;
+    font-size: 13px;
+  }
+
+  pre {
+    background: var(--atlas-code-block);
+    border: 1px solid var(--atlas-rule);
+    border-radius: 6px;
+    padding: 16px 20px;
+    overflow-x: auto;
+    margin: 0 0 20px;
+    transition: transform 150ms ease, box-shadow 150ms ease;
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    code {
+      background: transparent;
+      padding: 0;
+      font-size: 13.5px;
+      line-height: 1.6;
+    }
+  }
+
+  img { max-width: 100%; border-radius: 4px; }
+
+  .doc-reader__meta {
+    margin-top: 48px;
+    padding-top: 16px;
+    border-top: 1px solid var(--atlas-rule);
+    display: flex;
+    gap: 24px;
+    font-size: 13px;
+    color: var(--atlas-muted);
+    flex-wrap: wrap;
+
+    &-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+  }
+
+  .doc-reader__empty {
+    text-align: center;
+    padding: 80px 40px;
+    color: var(--atlas-muted);
+    &-icon { font-size: 48px; margin-bottom: 16px; }
+    &-title { font-size: 18px; margin-bottom: 8px; color: var(--atlas-text); }
+    &-desc { font-size: 14px; }
+    &-source { margin-top: 12px; font-size: 13px; }
+  }
+
+  .doc-reader__warning {
+    background: rgba(212,160,58,0.08);
+    border: 1px solid rgba(212,160,58,0.3);
+    border-radius: 4px;
+    padding: 8px 16px;
+    margin-bottom: 24px;
+    font-size: 13px;
+    color: var(--atlas-warning);
+  }
+}
