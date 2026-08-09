@@ -70,12 +70,12 @@
 
     <!-- 表格 -->
     <el-table v-loading="loading" :data="repairList" stripe size="small">
-      <el-table-column label="工单编号" align="center" prop="repairNo" width="110" />
+      <el-table-column label="工单编号" align="center" prop="repairNo" width="200" />
       <el-table-column label="设备名称" align="center" prop="deviceName" :show-overflow-tooltip="true" min-width="120" />
-      <el-table-column label="设备IP" align="center" prop="deviceIp" width="140" />
-      <el-table-column label="责任人" align="center" prop="currentResponsible" width="100" />
-      <el-table-column label="联系电话" align="center" prop="currentPhone" width="120" />
-      <el-table-column label="状态" align="center" prop="status" width="90">
+      <el-table-column label="设备IP" align="center" prop="deviceIp" width="200" />
+      <el-table-column label="责任人" align="center" prop="currentResponsible" width="200" />
+      <el-table-column label="联系电话" align="center" prop="currentPhone" width="200" />
+      <el-table-column label="状态" align="center" prop="status" width="200">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.status==='PENDING'" type="warning" size="small">待处理</el-tag>
           <el-tag v-else-if="scope.row.status==='ASSIGNED'" type="info" size="small">已派发</el-tag>
@@ -84,11 +84,11 @@
           <el-tag v-else-if="scope.row.status==='COMPLETED'" type="success" size="small">已完成</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="维修结果" align="center" prop="repairResult" :show-overflow-tooltip="true" min-width="140" />
-      <el-table-column label="创建时间" align="center" prop="createTime" width="170">
+      <el-table-column label="维修结果" align="center" prop="repairResult" :show-overflow-tooltip="true" min-width="200" />
+      <el-table-column label="创建时间" align="center" prop="createTime" width="200">
         <template slot-scope="scope"><span>{{ parseTime(scope.row.createTime) }}</span></template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="180" fixed="right">
+      <el-table-column label="操作" align="center" width="200" fixed="right">
         <template slot-scope="scope">
           <el-button v-if="scope.row.status==='PENDING' || scope.row.status==='ACCEPTED'" size="mini" type="primary" @click="handleTransfer(scope.row)">转派</el-button>
           <el-button v-if="scope.row.status==='ASSIGNED'" size="mini" type="success" @click="handleAccept(scope.row)">接收</el-button>

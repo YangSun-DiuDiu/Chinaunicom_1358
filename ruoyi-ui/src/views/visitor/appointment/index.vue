@@ -130,23 +130,23 @@
 
     <el-table v-loading="loading" :data="appointmentList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="通行码" align="center" key="passCode" prop="passCode" width="90">
+      <el-table-column label="通行码" align="center" key="passCode" prop="passCode" width="180">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.passCode" type="primary" size="small">{{ scope.row.passCode }}</el-tag>
           <span v-else style="color:#c0c4cc">-</span>
         </template>
       </el-table-column>
-      <el-table-column label="访客姓名" align="center" key="visitorName" prop="visitorName" v-if="columns.visitorName.visible" width="100" :show-overflow-tooltip="true" />
-      <el-table-column label="访客电话" align="center" key="visitorPhone" prop="visitorPhone" v-if="columns.visitorPhone.visible" width="120" />
-      <el-table-column label="访客单位" align="center" key="visitorCompany" prop="visitorCompany" v-if="columns.visitorCompany.visible" width="120" :show-overflow-tooltip="true" />
-      <el-table-column label="被访人" align="center" key="hostName" prop="hostName" v-if="columns.hostName.visible" width="120" />
-      <el-table-column label="被访部门" align="center" key="hostDept" prop="hostDept" v-if="columns.hostDept.visible" width="120" :show-overflow-tooltip="true" />
-      <el-table-column label="来访时间" align="center" key="visitTime" v-if="columns.visitTime.visible" width="140">
+      <el-table-column label="访客姓名" align="center" key="visitorName" prop="visitorName" v-if="columns.visitorName.visible" width="180" :show-overflow-tooltip="true" />
+      <el-table-column label="访客电话" align="center" key="visitorPhone" prop="visitorPhone" v-if="columns.visitorPhone.visible" width="180" />
+      <el-table-column label="访客单位" align="center" key="visitorCompany" prop="visitorCompany" v-if="columns.visitorCompany.visible" width="180" :show-overflow-tooltip="true" />
+      <el-table-column label="被访人" align="center" key="hostName" prop="hostName" v-if="columns.hostName.visible" width="180" />
+      <el-table-column label="被访部门" align="center" key="hostDept" prop="hostDept" v-if="columns.hostDept.visible" width="180" :show-overflow-tooltip="true" />
+      <el-table-column label="来访时间" align="center" key="visitTime" v-if="columns.visitTime.visible" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.visitTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="状态" align="center" key="status" v-if="columns.status.visible" width="90">
+      <el-table-column label="状态" align="center" key="status" v-if="columns.status.visible" width="180">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.status==='PENDING'" type="warning" size="small">待审批</el-tag>
           <el-tag v-else-if="scope.row.status==='APPROVED'" type="success" size="small">已通过</el-tag>
@@ -154,13 +154,13 @@
           <el-tag v-else type="info" size="small">{{scope.row.status}}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="短信" align="center" key="smsSent" width="70">
+      <el-table-column label="短信" align="center" key="smsSent" width="180">
         <template slot-scope="scope">
           <span v-if="scope.row.smsSent==='Y'" style="color:#67c23a">&#10003;</span>
           <span v-else style="color:#c0c4cc">-</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="180" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="350" class-name="small-padding fixed-width" fixed="right">
         <template slot-scope="scope">
           <el-button
             size="mini"

@@ -82,16 +82,8 @@ public class VisitorAppointmentServiceImpl implements IVisitorAppointmentService
     @Override
     public int insertAppointment(VisitorAppointment appointment) {
         appointment.setStatus(STATUS_PENDING);
-        // 尝试匹配被访人为审批人（含 dept_id 数据范围）
-        tryAssignApprover(appointment);
-        // 匹配失败时兜底：使用当前登录用户的 dept_id，确保数据范围可见
-        if (appointment.getDeptId() == null) {
-            try {
-                appointment.setDeptId(SecurityUtils.getDeptId());
-            } catch (Exception e) {
-                // 无登录上下文时跳过
-            }
-        }
+        // 强制匹配被访人：设置审批人 + 部门数据范围，匹配失败直接抛异常
+        assignApproverAndDept(appointment);
         int rows = appointmentMapper.insertAppointment(appointment);
         // 通知被访人（审批人）有新的访客预约
         notifyApprover(appointment);
@@ -181,6 +173,7 @@ public class VisitorAppointmentServiceImpl implements IVisitorAppointmentService
                 log.setCarPlate(appointment.getCarPlate());
                 log.setHasGoods(appointment.getHasGoods());
                 log.setGoodsDesc(appointment.getGoodsDesc());
+                log.setDeptId(appointment.getDeptId());
                 log.setEntryTime(appointment.getVisitTime());
                 log.setRegisterType("APPOINTMENT");
                 if (appointment.getCreateBy() != null) {
@@ -349,6 +342,7 @@ public class VisitorAppointmentServiceImpl implements IVisitorAppointmentService
         log.setEntryTime(new Date());
         log.setRegisterType("WALKIN");
         log.setCreateBy(createBy);
+        log.setDeptId(appointment.getDeptId());
         visitorLogService.insertLog(log);
 
         Map<String, Object> result = new HashMap<>();
@@ -359,46 +353,45 @@ public class VisitorAppointmentServiceImpl implements IVisitorAppointmentService
     }
 
     /**
-     * 尝试匹配被访人为审批人（best-effort）
-     * 根据hostName反查sys_user，匹配成功则设置为预约审批人
+     * 强制匹配被访人为审批人（hostName → sys_user），同时设置 dept_id 数据范围
+     *
+     * 匹配失败直接抛异常，阻止创建访客实体。
+     * 适用于员工后台预约、H5自助登记、现场散客登记等所有创建路径。
      */
-    private void tryAssignApprover(VisitorAppointment appointment) {
-        try {
-            String hostName = appointment.getHostName();
-            if (hostName == null || hostName.isEmpty()) {
-                return;
-            }
-            Long approverId = null;
-            Long deptId = null;
-            // 1. 优先尝试精确匹配 loginName（user_name 列）
-            SysUser user = sysUserService.selectUserByUserName(hostName);
-            if (user != null && user.getUserId() != null) {
-                approverId = user.getUserId();
-                deptId = user.getDeptId();
-            }
-            // 2. loginName 没匹配上，尝试按 nickName 匹配（nick_name 列）
-            //    使用 Map 返回避免 SysUser 类型别名不匹配问题
-            if (approverId == null) {
-                Map<String, Object> nickUser = appointmentMapper.selectUserByNickName(hostName);
-                if (nickUser != null && nickUser.get("userId") != null) {
-                    approverId = Long.valueOf(nickUser.get("userId").toString());
-                    if (nickUser.get("deptId") != null) {
-                        deptId = Long.valueOf(nickUser.get("deptId").toString());
-                    }
-                }
-            }
-            // 匹配成功：设置审批人 + 数据范围（dept_id）
-            if (approverId != null) {
-                appointment.setApproverId(approverId);
-                if (deptId != null) {
-                    appointment.setDeptId(deptId);
-                }
-                log.debug("被访人-审批人匹配成功: hostName={}, approverId={}, deptId={}",
-                        hostName, approverId, deptId);
-            }
-        } catch (Exception e) {
-            log.debug("被访人-审批人匹配跳过: hostName={}", appointment.getHostName());
+    private void assignApproverAndDept(VisitorAppointment appointment) {
+        String hostName = appointment.getHostName();
+        if (hostName == null || hostName.isEmpty()) {
+            throw new ServiceException("被访人姓名不能为空");
         }
+        Long approverId = null;
+        Long deptId = null;
+        // 1. 优先精确匹配 loginName（user_name 列）
+        SysUser user = sysUserService.selectUserByUserName(hostName);
+        if (user != null && user.getUserId() != null) {
+            approverId = user.getUserId();
+            deptId = user.getDeptId();
+        }
+        // 2. loginName 没匹配上，按 nickName 匹配（nick_name 列）
+        if (approverId == null) {
+            Map<String, Object> nickUser = appointmentMapper.selectUserByNickName(hostName);
+            if (nickUser != null && nickUser.get("userId") != null) {
+                approverId = Long.valueOf(nickUser.get("userId").toString());
+                if (nickUser.get("deptId") != null) {
+                    deptId = Long.valueOf(nickUser.get("deptId").toString());
+                }
+            }
+        }
+        // 3. 匹配失败 → 拒绝创建
+        if (approverId == null) {
+            throw new ServiceException("被访人『" + hostName + "』不存在，请检查姓名是否正确");
+        }
+        // 匹配成功：设置审批人 + 数据范围（以被访人部门为准）
+        appointment.setApproverId(approverId);
+        if (deptId != null) {
+            appointment.setDeptId(deptId);
+        }
+        log.debug("被访人-审批人匹配成功: hostName={}, approverId={}, deptId={}",
+                hostName, approverId, deptId);
     }
 
     /**

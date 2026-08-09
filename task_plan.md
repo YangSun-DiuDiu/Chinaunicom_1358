@@ -25,6 +25,7 @@
 | 14a. 短信参数/修复 | ✅ complete | 变量JSON替换content-string、签名空格修复、心跳双SMS去除、repairNo补全 |
 | 15. 访客模块重构 | ✅ complete | 5优先：短信去重、VISITING状态、逻辑删除、审批过滤、Controller下沉Service |
 | 15a. 访客审批不可见修复 | ✅ complete | dept_id/approver_id自动设置、MyBatis类型别名修复、DeptScope穿透 |
+| 15b. 访客审批逻辑修正 | ✅ complete | dept_id改回被访人部门;assignApproverAndDept强制匹配hostName→sys_user;visitor_log补dept_id(approveAppointment+registerWalkin) |
 | 16. DeptFillAspect修复 | ✅ complete | 跳过SysDept避免deptId(主键)被覆盖为admin的deptId |
 | 17. 驾驶舱重构 | ✅ complete | 4模块统一cockpit、深蓝科技风、2新API+前端重写 |
 | 18. 审批通知短信 | ✅ complete | 访客预约/会议预约通知审批人(3个biz_code) |

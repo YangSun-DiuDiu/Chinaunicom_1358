@@ -70,7 +70,7 @@
     </el-card>
 
     <!-- 当日登记记录 -->
-    <el-card class="list-card" style="margin-top: 16px;">
+    <el-card >
       <div slot="header">
         <span>当日登记记录</span>
         <el-button
@@ -80,20 +80,20 @@
           @click="getList"
         >刷新</el-button>
       </div>
-      <el-table v-loading="loading" :data="logList" stripe border>
-        <el-table-column label="通行码" align="center" prop="passCode" width="90">
+      <el-table v-loading="loading" :data="logList" >
+        <el-table-column label="通行码" align="center" prop="passCode" width="160">
           <template slot-scope="scope">
             <el-tag v-if="scope.row.passCode" type="primary" size="small">{{ scope.row.passCode }}</el-tag>
             <span v-else style="color:#c0c4cc">-</span>
           </template>
         </el-table-column>
-        <el-table-column label="访客姓名" align="center" prop="visitorName" :show-overflow-tooltip="true" min-width="100" />
-        <el-table-column label="访客电话" align="center" prop="visitorPhone" width="130" />
-        <el-table-column label="身份证号" align="center" prop="visitorIdCard" width="180" />
-        <el-table-column label="访客单位" align="center" prop="visitorCompany" :show-overflow-tooltip="true" min-width="140" />
-        <el-table-column label="来访事由" align="center" prop="visitReason" :show-overflow-tooltip="true" min-width="140" />
-        <el-table-column label="被访人" align="center" prop="hostName" width="100" />
-        <el-table-column label="被访部门" align="center" prop="hostDept" :show-overflow-tooltip="true" min-width="120" />
+        <el-table-column label="访客姓名" align="center" prop="visitorName" :show-overflow-tooltip="true" min-width="160" />
+        <el-table-column label="访客电话" align="center" prop="visitorPhone" width="160" />
+        <el-table-column label="身份证号" align="center" prop="visitorIdCard" width="160" />
+        <el-table-column label="访客单位" align="center" prop="visitorCompany" :show-overflow-tooltip="true" min-width="160" />
+        <el-table-column label="来访事由" align="center" prop="visitReason" :show-overflow-tooltip="true" min-width="160" />
+        <el-table-column label="被访人" align="center" prop="hostName" width="160" />
+        <el-table-column label="被访部门" align="center" prop="hostDept" :show-overflow-tooltip="true" min-width="160" />
         <el-table-column label="登记时间" align="center" width="160">
           <template slot-scope="scope">
             <span>{{ parseTime(scope.row.entryTime) }}</span>

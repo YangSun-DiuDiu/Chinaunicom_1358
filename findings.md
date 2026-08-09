@@ -78,6 +78,14 @@ PENDING/APPROVED → CANCELLED
 - **DeptScope 全局拦截**：DeptScopeInterceptor 对非 admin 自动注入 `dept_id = 当前用户部门`，NULL 记录被排除
 - **H5 无登录上下文**：`SecurityUtils.getDeptId()` 在公开接口中抛异常，需兜底
 
+### 关键调试发现（2026-07-22）—— 访客审批逻辑修正
+
+- **dept_id 来源错误**：`tryAssignApprover` 曾将被访人 dept_id 写入 appointment.deptId，后被误改为取创建者 `SecurityUtils.getDeptId()`。正确逻辑：**dept_id 以被访人部门为准**，用于数据范围隔离。
+- **approver 匹配应强制**：旧逻辑 best-effort 静默匹配 hostName→sys_user，匹配失败不报错，导致 approver_id 为 NULL 的预约可被创建。正确逻辑：**强制匹配，失败抛 ServiceException 阻止创建**。
+- **visitor_log 缺少 dept_id**：`approveAppointment()` 和 `registerWalkin()` 两处创建 VisitorLog 时均未设置 deptId，导致 visitor_log.dept_id 始终为 NULL。修复：`log.setDeptId(appointment.getDeptId())`。
+- **三条路径统一覆盖**：员工后台预约 → `insertAppointment()`、H5 自助 → `registerWalkin()` → `insertAppointment()`、现场散客 → `registerWalkin()` → `insertAppointment()`，全部汇入 `assignApproverAndDept()`（原 `tryAssignApprover` 改名），一处修改全局生效。
+- **方法重命名**：`tryAssignApprover`（best-effort）→ `assignApproverAndDept`（强制匹配），更准确反映语义。
+
 ### 关键调试发现（2026-07-01）
 - **DeptFillAspect 误写 SysDept 主键**：`DeptFillAspect` 拦截所有 Controller add* 方法，无条件把当前用户的 `deptId` 写入 `BaseEntity.deptId`。但 `SysDept.deptId` 是部门**主键**，不是数据范围字段。admin 的 deptId=100 被写入新部门的 dept_id → INSERT 主键冲突。修复：`if (arg instanceof SysDept) continue;`
 - **权限三方不一致审计**：新增 H5/仪表盘功能后，Controller 使用了 `dashboard:meeting:query`/`dashboard:apartment:query`/`visitor:guard:verify` 三个权限，但 `sys_menu` 表完全没有对应记录。H5Controller 3 个端点无 `@PreAuthorize` 注解。修复：DB 插 12 条菜单权限 + Controller 加注解

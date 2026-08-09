@@ -40,21 +40,21 @@
 
     <!-- 表格 -->
     <el-table v-loading="loading" :data="list" stripe size="small">
-      <el-table-column label="配件名称" prop="part_name" min-width="140" :show-overflow-tooltip="true" />
-      <el-table-column label="编码" prop="part_code" width="120" />
-      <el-table-column label="型号" prop="part_model" width="120" />
+      <el-table-column label="配件名称" prop="part_name" width="200" align="center" :show-overflow-tooltip="true" />
+      <el-table-column label="编码" prop="part_code" width="200" align="center" />
+      <el-table-column label="型号" prop="part_model" width="200" align="center" />
       <el-table-column label="单位" prop="unit" width="60" align="center" />
-      <el-table-column label="库存数量" prop="quantity" width="100" align="center">
+      <el-table-column label="库存数量" prop="quantity" width="200" align="center">
         <template slot-scope="{ row }">
           <el-tag :type="row.quantity <= row.alert_quantity ? 'danger' : 'success'" size="small">
             {{ row.quantity }}
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="预警数量" prop="alert_quantity" width="100" align="center" />
-      <el-table-column label="单价" prop="price" width="80" align="center" />
-      <el-table-column label="备注" prop="remark" min-width="120" :show-overflow-tooltip="true" />
-      <el-table-column label="操作" width="150" align="center" fixed="right">
+      <el-table-column label="预警数量" prop="alert_quantity" width="200" align="center" />
+      <el-table-column label="单价" prop="price" width="200" align="center" />
+      <el-table-column label="备注" prop="remark" min-width="200" align="center" :show-overflow-tooltip="true" />
+      <el-table-column label="操作" width="200" align="center" fixed="right">
         <template slot-scope="{ row }">
           <el-button size="mini" type="text" icon="el-icon-edit" @click="handleEdit(row)">修改</el-button>
           <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDel(row)">删除</el-button>
@@ -106,11 +106,11 @@
     <!-- 使用记录弹窗 -->
     <el-dialog title="配件使用记录" :visible.sync="usageDialog" width="900px" append-to-body>
       <el-table :data="usageList" size="small" stripe>
-        <el-table-column label="工单编号" prop="repair_no" width="120" />
-        <el-table-column label="配件名称" prop="part_name" min-width="120" />
-        <el-table-column label="数量" prop="quantity" width="80" align="center" />
-        <el-table-column label="使用人" prop="used_by" width="100" />
-        <el-table-column label="时间" prop="used_time" width="170" />
+        <el-table-column label="工单编号" prop="repair_no" width="170" align="center" />
+        <el-table-column label="配件名称" prop="part_name" min-width="170" align="center" />
+        <el-table-column label="数量" prop="quantity" width="170" align="center" />
+        <el-table-column label="使用人" prop="used_by" width="170" align="center" />
+        <el-table-column label="时间" prop="used_time" width="170" align="center" />
       </el-table>
       <pagination :total="usageTotal" :page.sync="usagePage" @pagination="loadUsage" />
     </el-dialog>

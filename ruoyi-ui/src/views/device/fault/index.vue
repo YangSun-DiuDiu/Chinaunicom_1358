@@ -29,8 +29,8 @@
         <el-button type="text" icon="el-icon-refresh" @click="loadFaultList" :loading="loading">刷新</el-button>
       </div>
       <el-table :data="offlineDevices" stripe v-loading="loading" size="small">
-        <el-table-column label="设备名称" prop="deviceName" min-width="140" :show-overflow-tooltip="true" />
-        <el-table-column label="设备类型" width="110" align="center">
+        <el-table-column label="设备名称" prop="deviceName" width="300" align="center" :show-overflow-tooltip="true" />
+        <el-table-column label="设备类型" width="300" align="center">
           <template slot-scope="scope">
             <el-tag v-if="scope.row.deviceType === 'NETWORK'" type="primary" size="small">网络设备</el-tag>
             <el-tag v-else-if="scope.row.deviceType === 'MONITOR'" type="warning" size="small">监控设备</el-tag>
@@ -38,11 +38,11 @@
             <el-tag v-else size="small" type="info">其它</el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="IP地址" prop="ipAddress" width="150" align="center" />
-        <el-table-column label="位置" prop="location" min-width="120" :show-overflow-tooltip="true" />
-        <el-table-column label="负责人" prop="responsible" width="90" align="center" />
-        <el-table-column label="联系电话" prop="responsiblePhone" width="130" align="center" />
-        <el-table-column label="操作" width="100" align="center" fixed="right">
+        <el-table-column label="IP地址" prop="ipAddress" width="300" align="center" />
+        <el-table-column label="位置" prop="location" min-width="300" align="center" :show-overflow-tooltip="true" />
+        <el-table-column label="负责人" prop="responsible" width="300" align="center" />
+        <el-table-column label="联系电话" prop="responsiblePhone" width="300" align="center" />
+        <el-table-column label="操作" width="300" align="center" fixed="right">
           <template slot-scope="scope">
             <el-button type="danger" size="mini" icon="el-icon-message" @click="handleRepair(scope.row)">报修</el-button>
           </template>
@@ -60,29 +60,29 @@
         <span>离线告警记录</span>
       </div>
       <el-table :data="faultList" stripe v-loading="loadingLog" size="small">
-        <el-table-column label="设备名称" prop="deviceName" min-width="140" :show-overflow-tooltip="true" />
-        <el-table-column label="变更前" width="80" align="center">
+        <el-table-column label="设备名称" prop="deviceName" width="330" align="center" :show-overflow-tooltip="true" />
+        <el-table-column label="变更前" width="330" align="center">
           <template slot-scope="scope">
             <el-tag v-if="scope.row.oldStatus === 'ONLINE'" type="success" size="small">在线</el-tag>
             <el-tag v-else-if="scope.row.oldStatus === 'OFFLINE'" type="danger" size="small">离线</el-tag>
             <el-tag v-else type="info" size="small">{{ scope.row.oldStatus }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="变更后" width="80" align="center">
+        <el-table-column label="变更后" width="330" align="center">
           <template slot-scope="scope">
             <el-tag v-if="scope.row.newStatus === 'ONLINE'" type="success" size="small">在线</el-tag>
             <el-tag v-else-if="scope.row.newStatus === 'OFFLINE'" type="danger" size="small">离线</el-tag>
             <el-tag v-else type="info" size="small">{{ scope.row.newStatus }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="变更时间" prop="changeTime" width="170" align="center" />
-        <el-table-column label="短信通知" width="90" align="center">
+        <el-table-column label="变更时间" prop="changeTime" width="330" align="center" />
+        <el-table-column label="短信通知" width="330" align="center">
           <template slot-scope="scope">
             <el-tag v-if="scope.row.smsSent === 'Y'" type="success" size="small">已发送</el-tag>
             <el-tag v-else type="info" size="small">未发送</el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="接收人" prop="smsRecipient" min-width="120" :show-overflow-tooltip="true" />
+        <el-table-column label="接收人" prop="smsRecipient" width="330" align="center" :show-overflow-tooltip="true" />
       </el-table>
       <pagination v-show="total > 0" :total="total" :page.sync="queryParams.pageNum" :limit.sync="queryParams.pageSize" @pagination="loadFaultLogs" />
     </el-card>

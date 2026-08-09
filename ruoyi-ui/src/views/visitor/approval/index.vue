@@ -13,29 +13,29 @@
     </el-row>
 
     <el-table v-loading="loading" :data="appointmentList">
-      <el-table-column label="通行码" align="center" key="passCode" prop="passCode" width="90">
+      <el-table-column label="通行码" align="center" key="passCode" prop="passCode" width="180">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.passCode" type="primary" size="small">{{ scope.row.passCode }}</el-tag>
           <span v-else style="color:#c0c4cc">-</span>
         </template>
       </el-table-column>
-      <el-table-column label="访客姓名" align="center" key="visitorName" prop="visitorName" :show-overflow-tooltip="true" />
-      <el-table-column label="访客电话" align="center" key="visitorPhone" prop="visitorPhone" width="130" />
-      <el-table-column label="访客单位" align="center" key="visitorCompany" prop="visitorCompany" :show-overflow-tooltip="true" width="150" />
-      <el-table-column label="来访事由" align="center" key="visitReason" prop="visitReason" :show-overflow-tooltip="true" width="150" />
-      <el-table-column label="被访人" align="center" key="hostName" prop="hostName" width="100" />
-      <el-table-column label="被访部门" align="center" key="hostDept" prop="hostDept" :show-overflow-tooltip="true" width="120" />
-      <el-table-column label="来访时间" align="center" key="visitTime" width="160">
+      <el-table-column label="访客姓名" align="center" key="visitorName" prop="visitorName" :show-overflow-tooltip="true" width="180" />
+      <el-table-column label="访客电话" align="center" key="visitorPhone" prop="visitorPhone" width="180" />
+      <el-table-column label="访客单位" align="center" key="visitorCompany" prop="visitorCompany" :show-overflow-tooltip="true" width="180" />
+      <el-table-column label="来访事由" align="center" key="visitReason" prop="visitReason" :show-overflow-tooltip="true" width="180" />
+      <el-table-column label="被访人" align="center" key="hostName" prop="hostName" width="180" />
+      <el-table-column label="被访部门" align="center" key="hostDept" prop="hostDept" :show-overflow-tooltip="true" width="180" />
+      <el-table-column label="来访时间" align="center" key="visitTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.visitTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="创建时间" align="center" key="createTime" width="160">
+      <el-table-column label="创建时间" align="center" key="createTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="160" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="400" class-name="small-padding fixed-width" fixed="right">
         <template slot-scope="scope">
           <el-button
             size="mini"

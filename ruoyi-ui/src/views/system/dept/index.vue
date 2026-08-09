@@ -2,21 +2,12 @@
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch">
       <el-form-item label="部门名称" prop="deptName">
-        <el-input
-          v-model="queryParams.deptName"
-          placeholder="请输入部门名称"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
+        <el-input v-model="queryParams.deptName" placeholder="请输入部门名称" clearable @keyup.enter.native="handleQuery" />
       </el-form-item>
       <el-form-item label="状态" prop="status">
         <el-select v-model="queryParams.status" placeholder="部门状态" clearable>
-          <el-option
-            v-for="dict in dict.type.sys_normal_disable"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
-          />
+          <el-option v-for="dict in dict.type.sys_normal_disable" :key="dict.value" :label="dict.label"
+            :value="dict.value" />
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -27,99 +18,61 @@
 
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['system:dept:add']"
-        >新增</el-button>
+        <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd"
+          v-hasPermi="['system:dept:add']">新增</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button
-          type="warning"
-          plain
-          icon="el-icon-check"
-          size="mini"
-          @click="handleSaveSort"
-          v-hasPermi="['system:dept:edit']"
-        >保存排序</el-button>
+        <el-button type="warning" plain icon="el-icon-check" size="mini" @click="handleSaveSort"
+          v-hasPermi="['system:dept:edit']">保存排序</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button
-          type="info"
-          plain
-          icon="el-icon-sort"
-          size="mini"
-          @click="toggleExpandAll"
-        >展开/折叠</el-button>
+        <el-button type="info" plain icon="el-icon-sort" size="mini" @click="toggleExpandAll">展开/折叠</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table
-      v-if="refreshTable"
-      v-loading="loading"
-      :data="deptList"
-      row-key="deptId"
-      :default-expand-all="isExpandAll"
-      :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
-    >
-      <el-table-column prop="deptName" label="部门名称" width="200"></el-table-column>
-      <el-table-column prop="deptCode" label="编码" width="100"></el-table-column>
-      <el-table-column label="外部来源" width="110">
+    <el-table v-if="refreshTable" v-loading="loading" :data="deptList" row-key="deptId"
+      :default-expand-all="isExpandAll" :tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
+      <el-table-column prop="deptName" label="部门名称" align="center" width="300"></el-table-column>
+      <el-table-column prop="deptCode" label="编码" align="center" width="180"></el-table-column>
+      <el-table-column label="外部来源" align="center" width="180">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.externalSource === 'DINGTALK'" type="primary" size="mini">钉钉</el-tag>
           <el-tag v-else-if="scope.row.externalSource === 'WECHAT'" type="success" size="mini">企业微信</el-tag>
           <span v-else style="color:#909399">本系统</span>
         </template>
       </el-table-column>
-      <el-table-column prop="externalDeptId" label="外部ID" width="120">
+      <el-table-column prop="externalDeptId" label="外部ID" align="center" width="180">
         <template slot-scope="scope">
-          <span v-if="scope.row.externalDeptId" style="font-size:11px;color:#909399">{{ scope.row.externalDeptId }}</span>
+          <span v-if="scope.row.externalDeptId" style="font-size:11px;color:#909399">{{ scope.row.externalDeptId
+            }}</span>
           <span v-else>-</span>
         </template>
       </el-table-column>
-      <el-table-column prop="orderNum" label="排序" width="80">
+      <el-table-column prop="orderNum" label="排序" align="center" width="180">
         <template slot-scope="scope">
-          <el-input-number v-model="scope.row.orderNum" controls-position="right" :min="0" size="mini" style="width: 88px" />
+          <el-input-number v-model="scope.row.orderNum" controls-position="right" :min="0" size="mini"
+            style="width: 88px" />
         </template>
       </el-table-column>
-      <el-table-column prop="status" label="状态" width="100">
+      <el-table-column prop="status" label="状态" align="center" width="180">
         <template slot-scope="scope">
-          <dict-tag :options="dict.type.sys_normal_disable" :value="scope.row.status"/>
+          <dict-tag :options="dict.type.sys_normal_disable" :value="scope.row.status" />
         </template>
       </el-table-column>
-      <el-table-column label="创建时间" align="center" prop="createTime" width="200">
+      <el-table-column label="创建时间" align="center" prop="createTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="300" fixed="right">
         <template slot-scope="scope">
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-edit"
-            @click="handleUpdate(scope.row)"
-            v-hasPermi="['system:dept:edit']"
-          >修改</el-button>
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-plus"
-            @click="handleAdd(scope.row)"
-            v-hasPermi="['system:dept:add']"
-          >新增</el-button>
-          <el-button
-            v-if="scope.row.parentId != 0"
-            size="mini"
-            type="text"
-            icon="el-icon-delete"
-            @click="handleDelete(scope.row)"
-            v-hasPermi="['system:dept:remove']"
-          >删除</el-button>
+          <el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdate(scope.row)"
+            v-hasPermi="['system:dept:edit']">修改</el-button>
+          <el-button size="mini" type="text" icon="el-icon-plus" @click="handleAdd(scope.row)"
+            v-hasPermi="['system:dept:add']">新增</el-button>
+          <el-button v-if="scope.row.parentId != 0" size="mini" type="text" icon="el-icon-delete"
+            @click="handleDelete(scope.row)" v-hasPermi="['system:dept:remove']">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -130,7 +83,8 @@
         <el-row>
           <el-col :span="24" v-if="form.parentId !== 0">
             <el-form-item label="上级部门" prop="parentId">
-              <treeselect v-model="form.parentId" :options="deptOptions" :normalizer="normalizer" placeholder="选择上级部门" />
+              <treeselect v-model="form.parentId" :options="deptOptions" :normalizer="normalizer"
+                placeholder="选择上级部门" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -167,11 +121,8 @@
           <el-col :span="12">
             <el-form-item label="部门状态">
               <el-radio-group v-model="form.status">
-                <el-radio
-                  v-for="dict in dict.type.sys_normal_disable"
-                  :key="dict.value"
-                  :label="dict.value"
-                >{{dict.label}}</el-radio>
+                <el-radio v-for="dict in dict.type.sys_normal_disable" :key="dict.value"
+                  :label="dict.value">{{ dict.label }}</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -394,12 +345,12 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      this.$modal.confirm('是否确认删除名称为"' + row.deptName + '"的数据项？').then(function() {
+      this.$modal.confirm('是否确认删除名称为"' + row.deptName + '"的数据项？').then(function () {
         return delDept(row.deptId)
       }).then(() => {
         this.getList()
         this.$modal.msgSuccess("删除成功")
-      }).catch(() => {})
+      }).catch(() => { })
     }
   }
 }

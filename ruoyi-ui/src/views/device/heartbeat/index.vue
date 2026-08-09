@@ -58,17 +58,17 @@
 
     <!-- 表格 -->
     <el-table v-loading="loading" :data="heartbeatList" stripe size="small">
-      <el-table-column label="设备名称" align="center" prop="deviceName" min-width="140" :show-overflow-tooltip="true" />
-      <el-table-column label="IP地址" align="center" prop="ipAddress" width="160" />
-      <el-table-column label="心跳结果" align="center" prop="pingResult" width="100">
+      <el-table-column label="设备名称" align="center" prop="deviceName" width="400" :show-overflow-tooltip="true" />
+      <el-table-column label="IP地址" align="center" prop="ipAddress" width="400" />
+      <el-table-column label="心跳结果" align="center" prop="pingResult" width="400">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.pingResult === 'SUCCESS'" type="success" size="small">成功</el-tag>
           <el-tag v-else-if="scope.row.pingResult === 'FAIL'" type="danger" size="small">失败</el-tag>
           <el-tag v-else type="info" size="small">{{ scope.row.pingResult }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="延迟(ms)" align="center" prop="pingLatency" width="120" />
-      <el-table-column label="检测时间" align="center" prop="detectTime" width="180">
+      <el-table-column label="延迟(ms)" align="center" prop="pingLatency" width="400" />
+      <el-table-column label="检测时间" align="center" prop="detectTime" width="400">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.detectTime) }}</span>
         </template>

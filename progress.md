@@ -34,10 +34,12 @@
 | 07-12 | 权限注解语法修复 | VisitorLogController hasAnyPermi多参数→逗号分隔(修复现场登记500)；全项目247个@PreAuthorize审核仅1处问题；新增zhihuiyuanqu-permission-check Skill |
 | 07-12 | 监控体系改造(27完成) | 核心坑:DeepSeek content首元素thinking块;Prometheus地址修正;AlertManager部署(115:9093)+告警链路端到端验证通过(labels.target) |
 | 07-13 | 监控收尾+短信修复 | sendRepairSms参数修复(离线不再双发device_repair,只发offline_alert,手动报修才发repair);DeptScopeInterceptor日志噪音分析(webhook无登录态);方案C定期对账回退;设备心跳任务保持现状(iot_device已停,3类智能化保留) |
+| 07-14 | Webhook调试日志+payload验证 | AlertWebhookServiceImpl日志移至try内+防NPE+截断2000字符;部署验证AlertManager payload格式(labels.target) |
+| 07-22 | 访客审批逻辑修复 | dept_id改回被访人部门(非创建者);assignApproverAndDept强制匹配hostName→sys_user,失败抛ServiceException;visitor_log补dept_id两处(approveAppointment+registerWalkin);3次部署到1.94.26.126 |
 
 ## 当前状态
 
 - **服务器**: 1.94.26.126:80/8090
 - **Redis**: 1.94.26.126:6379 (已修复)
-- **Git**: master @ (待确认)
+- **Git**: master
 - **待处理**: 阶段11(样式优化剩余), 阶段13(公寓预付费后续)
