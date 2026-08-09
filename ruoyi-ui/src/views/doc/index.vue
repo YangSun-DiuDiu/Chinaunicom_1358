@@ -94,4 +94,4 @@ export default {
 }
 </script>
 
-<style scoped src="./styles/atlas.scss"></style>
+<style lang="scss" src="./styles/atlas.scss"></style>
