@@ -100,6 +100,8 @@ PENDING/APPROVED → CANCELLED
 - **部署重启偶发失败**：重启遇 `sysConfigServiceImpl` init 失败（Redis/DB 瞬时抖动），重试即成功。生产环境为 SpringBoot4.0.3+Java21+Tomcat11；fat-jar 关闭时 NoClassDefFoundError(Lifecycle$SingleUse 等) 为噪音不影响运行。启动用 `setsid nohup java -jar ... </dev/null > app.log 2>&1 &`（start-topo.sh 脚本）。
 - **拓扑页空白真正根因（渲染层，2026-08-09 定位）**：`TopologyNode` 组件用**内联字符串 `template`**，而项目打包的是 **runtime-only Vue（无模板编译器）**——`node_modules/vue` 的 module/main 入口都是 `vue.runtime.*.js`，`vue.config.js` 无 `vue$` alias 指向 full build。runtime-only 无法编译字符串模板 → 组件渲染为空注释占位 `<!--function...-->` → 节点区空白。生产 `NODE_ENV=production` 下编译警告被静默，**console 无任何报错**（之前 console 0 错误误导了排查）。该 bug 从 baseline 就存在，拓扑页节点区从未真正渲染过；字段对齐/detailNode 修复只解决接口层和弹窗层。**修复**：TopologyNode 拆为独立 SFC（`topology/TopologyNode.vue`），vue-loader 构建期预编译为 render 函数；index.vue 改 import 引入。**经验**：排查"接口 200 + console 无错但页面空白"时，检查渲染出的 DOM 是否有 `<!--function...-->` 注释占位符 + `Vue.compile` 是否存在（runtime-only 判断）。
 - **Vue runtime-only 判定方法**：页面 `document.querySelector('#app').__vue__.constructor.compile` 为 `undefined` 即 runtime-only；字符串 template 组件必须 SFC 化或改 render 函数。
+- **拓扑页过滤孤立设备（2026-08-09）**：拓扑树只展示"参与关联"的设备——`parent_id` 非空 **或** 被其他设备引用为父节点，隐藏完全孤立设备（无父且无子）。实现于 `DeviceController.topology()`：先收集全部 `parent_id` 集合，再过滤 `d.getParentId()!=null || parentIds.contains(d.getDeviceId())`。生产 12 台设备中仅 华为防火墙USG6565(100, 作为 测试设备-权限验证(106) 的父) 保留显示，其余 10 台测试/演示设备全部隐藏。注意：过滤基于 `selectDeviceList` 返回集（受 DeptScope 数据权限影响），不同账号可见范围不同。
+- **架构图连线风格（2026-08-09）**：TopologyNode.vue 连线改为架构图直角折线——父卡片下方竖线(28px) + 水平线(2px 贯穿) + 子卡片上方竖线(12px)，层级间距 40px（connector 28 + padding-top 12）、子节点水平间距 56px；线缆类型着色作用于子节点入口竖线（fiber橙/ethernet蓝/coaxial灰/wireless绿虚线）。**连线几何注意点**：子节点竖线用 `top:-padding-top` 负值定位到 padding 区，需父容器无 overflow:hidden。
 
 ## 待处理需求（暂缓）
 

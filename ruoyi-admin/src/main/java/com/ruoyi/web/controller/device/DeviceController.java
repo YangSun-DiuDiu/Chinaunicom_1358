@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -172,7 +175,15 @@ public class DeviceController extends BaseController
     public AjaxResult topology()
     {
         List<Device> allDevices = deviceService.selectDeviceList(new Device());
-        List<Map<String, Object>> tree = buildTopologyTree(allDevices, 0L);
+        // 只展示参与拓扑关联的设备：配置了父节点 或 被其他设备引用为父节点，隐藏完全孤立的设备
+        Set<Long> parentIds = allDevices.stream()
+            .map(Device::getParentId)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toSet());
+        List<Device> relatedDevices = allDevices.stream()
+            .filter(d -> d.getParentId() != null || parentIds.contains(d.getDeviceId()))
+            .collect(Collectors.toList());
+        List<Map<String, Object>> tree = buildTopologyTree(relatedDevices, 0L);
         return success(tree);
     }
 

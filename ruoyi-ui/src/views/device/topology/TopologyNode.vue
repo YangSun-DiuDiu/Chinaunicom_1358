@@ -206,11 +206,12 @@ export default {
   color: #fff;
 }
 
-/* ---- 连接线（CSS绘制） ---- */
+/* ---- 连接线（CSS绘制 · 架构图风格） ---- */
+/* 父节点卡片下方的垂直连接线：父卡片底部 → 水平线 */
 .tree-line-connector {
   width: 2px;
   height: 28px;
-  background: #c8ccd4;
+  background: #b4bcc6;
   position: relative;
   flex-shrink: 0;
 }
@@ -221,43 +222,43 @@ export default {
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 6px;
-  height: 6px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
-  background: #c8ccd4;
+  background: #b4bcc6;
 }
 
-/* ---- 子节点容器 ---- */
+/* ---- 子节点容器（层级间距与节点间距） ---- */
 .tree-children {
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  gap: 20px;
-  padding-top: 4px;
+  gap: 56px;
+  padding-top: 12px;
   position: relative;
 }
 
-/* 子节点之间的水平连线 */
+/* 子节点层顶部的水平连接线 */
 .tree-children::before {
   content: "";
   position: absolute;
-  top: -2px;
-  left: 20%;
-  right: 20%;
+  top: 0;
+  left: 0;
+  right: 0;
   height: 2px;
-  background: #c8ccd4;
+  background: #b4bcc6;
 }
 
-/* 每个子项列上方的垂直连线 */
+/* 每个子项列上方的垂直连接线：水平线 → 子节点卡片顶部 */
 .tree-node-group > .tree-node-row::before {
   content: "";
   position: absolute;
-  top: -7px;
+  top: -12px;
   left: 50%;
   transform: translateX(-50%);
   width: 2px;
-  height: 8px;
-  background: #c8ccd4;
+  height: 12px;
+  background: #b4bcc6;
 }
 
 /* ---- 线缆类型着色（子节点连向父节点的垂直线，按 cable_type 渲染） ---- */
