@@ -97,6 +97,13 @@ export const constantRoutes = [
     hidden: true,
     meta: { title: "H5登录" },
   },
+  // ==================== 文档中心（匿名访问） ====================
+  {
+    path: "/doc",
+    component: () => import("@/views/doc/index"),
+    hidden: true,
+    meta: { title: "文档中心", noAuth: true },
+  },
 ];
 
 // 全静态业务路由 - 根据权限过滤侧边栏显示
@@ -689,23 +696,8 @@ export const staticRoutes = [
       },
     ],
   },
-  // ==================== 文档中心 ====================
-  {
-    path: "/doc",
-    component: Layout,
-    name: "DocCenter",
-    alwaysShow: true,
-    meta: { title: "文档中心", icon: "documentation", parentMenuId: 2150, noAuth: true },
-    children: [
-      {
-        path: "",
-        component: () => import("@/views/doc/index"),
-        name: "DocView",
-        meta: { title: "文档中心", noAuth: true }
-      }
-    ],
-  },
 ];
+
 
 // 防止连续点击多次路由报错
 let routerPush = Router.prototype.push;

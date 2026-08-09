@@ -43,9 +43,13 @@
 | 08-09 | 线缆加长(28d) | 用户反馈线缆视觉偏短，层级间距40→64px(+60%): connector 28→44、padding-top 12→20、子竖线12→20、水平间距56→64。commit 3f83728 |
 | 08-09 | 问题复盘(28e) | findings.md 补5个调试坑:①ssh -f vs ssh退出杀进程 ②Redis过期致playwright stale ③playwright-cli cwd污染dist EBUSY ④DeptScope影响非admin拓扑可见性 ⑤线缆加长几何调参过程 |
 
+| 08-09 | 文档中心模块(29) | 完整实现:DocSyncLog实体+Mapper+DocServiceImpl扫描引擎(500行)+DocController(5接口:tree/content/status/sync/search);前端DocTree+DocReader双栏+Code Atlas设计体系+marked渲染;Quartz定时60s检测commit自动同步;匿名访问(SecurityConfig+permission.js+router noAuth);10 commits合并到master |
+| 08-09 | 文档中心部署(29a) | SQL→远程MySQL(sys_doc_sync_log+菜单+定时任务);marked@4.3.0依赖修复(第一次build失败);本地maven+webpack构建;scp JAR(106MB)+dist.tar.gz到1.94.26.126;本地后端启动→同步生成13模块255md→tar上传→远程解压→重启;前端/doc HTTP 200匿名访问;后端/doc/tree+status HTTP 200 |
+
 ## 当前状态
 
 - **服务器**: 1.94.26.126:80/8090
 - **Redis**: 1.94.26.126:6379 (已修复)
-- **Git**: master (今日6 commits: 5eae970/c527e68/c943032/e57fbb3/7fffd7d/3f83728)
+- **Git**: master (今日7 commits: 文档中心10 commits + merge)
+- **新增**: 文档中心 http://1.94.26.126/doc (无需登录, 13模块/228文档)
 - **待处理**: 阶段11(样式优化剩余), 阶段13(公寓预付费后续)

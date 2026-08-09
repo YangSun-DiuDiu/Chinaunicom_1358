@@ -42,3 +42,5 @@
 | 28c. 拓扑视觉升级·工程蓝图 | ✅ complete | 画布点阵背景(radial-gradient 20px)+#EEF1F6底色;工具栏透明化;卡片12px圆角+双层阴影+hover#3B82F6光晕;状态色统一palette(Online#10B981/Offline#EF4444);连线#98A6B6;线缆色Fiber#D97706/Ethernet#3B82F6;零JS/零第三方。生产全属性实测一致,console 0错误 |
 | 28d. 线缆加长 | ✅ complete | 用户反馈线缆偏短,层级间距40→64px(+60%):connector 28→44、padding-top 12→20、子竖线12→20、水平间距56→64。commit 3f83728 |
 | 28e. 问题复盘 | ✅ complete | findings.md补5个调试坑:ssh -f退出杀进程/Redis过期playwright stale/playwright-cli污染dist EBUSY/DeptScope影响非admin拓扑可见/线缆几何调参 |
+| 29. 文档中心模块 | ✅ complete | DocSyncLog实体+Mapper+DocServiceImpl扫描引擎(500行)+DocController(5接口);DocTree树形导航+DocReader Markdown渲染+Code Atlas设计体系;Quartz每60s检测commit变化自动同步;SecurityConfig+permission.js+router白名单匿名访问;13模块228文档自动生成;部署1.94.26.126验证200 |
+| 30. 文档中心部署 | ✅ complete | SQL执行(sys_doc_sync_log+菜单+定时任务);marked@4.3.0依赖修复;本地maven+npm构建;JAR 106MB+前端dist上传;docs/目录(255.md)同步到服务器;后端重启验证HTTP 200 |
