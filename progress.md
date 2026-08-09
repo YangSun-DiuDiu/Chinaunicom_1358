@@ -39,6 +39,7 @@
 | 08-09 | 设备拓扑整体升级(28) | 8个SVG图标(assets/topo-icons)+4类线缆库;iot_device加icon/cable_type;buildTopologyTree字段对齐修复拓扑页空白;拓扑页SVG图标+线缆着色;设备表单加图标/父设备/线缆3下拉;补财务部(11)/工程部(13)device:topology:query权限;备份commit 5eae970;部署1.94.26.126拓扑接口验证200 |
 | 08-09 | 拓扑页渲染层修复(28a) | 真正根因:TopologyNode内联字符串template在runtime-only Vue(无编译器,module/main=vue.runtime.*,无vue$ alias)下不编译→渲染为`<!--function...-->`空注释占位→节点区空白;生产NODE_ENV静默编译警告(console 0错误误导)。修复:拆独立SFC TopologyNode.vue(vue-loader预编译render)+index.vue改import。生产部署验证:节点卡片/图标(camera.svg)/线缆cable-default均渲染,console 0错误 |
 | 08-09 | 拓扑过滤+架构图连线(28b) | 后端DeviceController.topology过滤只显示参与关联设备(parent_id非空或被引用为父),隐藏孤立设备:生产12台中仅华为防火墙USG6565[1](→测试设备-权限验证)保留,10台测试/演示设备隐藏;TopologyNode.vue连线改架构图直角折线(层级40px/水平56px/padding12px/线缆着色fiber橙),admin验证通过 |
+| 08-09 | 拓扑视觉升级(28c) | 工程蓝图设计:画布点阵背景`radial-gradient(#D2D7E0 1px) 20px`+`#EEF1F6`底色;工具栏透明化(按钮透明底悬停显色);卡片升级(12px圆角+双层阴影+hover#3B82F6光晕+上移3px);状态色统一palette(Online#10B981/Offline#EF4444/Unknown#9CA3AF,10px圆点+外发光);文字色#152433/#697888;连接线#98A6B6;线缆Fiber#D97706/Ethernet#3B82F6/Coaxial#9CA3AF/Wireless#10B981;零JS/零第三方。生产验证全部几何+色彩一致,console 0错误 |
 
 ## 当前状态
 

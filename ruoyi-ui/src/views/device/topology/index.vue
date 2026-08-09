@@ -247,39 +247,66 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 20px;
-  background: #fff;
-  border-bottom: 1px solid #e4e7ed;
+  padding: 8px 28px;
+  background: transparent;
+  border-bottom: none;
   flex-shrink: 0;
 }
 
 .toolbar-right {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+}
+
+/* 工具栏按钮收拢，悬停才显色 */
+.toolbar-right .el-button-group .el-button {
+  background: transparent;
+  border-color: transparent;
+  color: #697888;
+}
+.toolbar-right .el-button-group .el-button:hover {
+  background: #fff;
+  border-color: #DCE0E8;
+  color: #152433;
+}
+.toolbar-right > .el-button {
+  background: transparent;
+  border-color: #DCE0E8;
+  color: #697888;
+}
+.toolbar-right > .el-button:hover {
+  background: #fff;
+  border-color: #3B82F6;
+  color: #3B82F6;
 }
 
 .zoom-label {
-  font-size: 13px;
-  color: #606266;
-  min-width: 46px;
+  font-size: 12px;
+  color: #697888;
+  min-width: 42px;
   text-align: center;
   font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
 }
 
 .topology-title {
   margin: 0;
-  font-size: 16px;
-  color: #303133;
+  font-size: 15px;
+  font-weight: 600;
+  color: #152433;
+  letter-spacing: 0.01em;
 }
 
 /* ===== 画布 ===== */
 .topology-canvas-wrapper {
   flex: 1;
   overflow: auto;
-  background: #f2f5fa;
+  background-color: #EEF1F6;
+  background-image: radial-gradient(circle, #D2D7E0 1px, transparent 1px);
+  background-size: 20px 20px;
   position: relative;
-  padding: 30px 40px;
+  padding: 40px 48px;
 }
 
 .topology-content {
@@ -295,27 +322,27 @@ export default {
   left: 50%;
   transform: translate(-50%, -50%);
   text-align: center;
-  color: #909399;
+  color: #697888;
   max-width: 420px;
 }
 
 .empty-icon {
   font-size: 72px;
-  color: #dcdfe6;
+  color: #D2D7E0;
 }
 
 .empty-title {
   font-size: 18px;
-  color: #606266;
+  color: #152433;
   margin: 14px 0 8px;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .empty-hint {
   font-size: 13px;
   line-height: 1.6;
   margin-bottom: 18px;
-  color: #909399;
+  color: #697888;
 }
 
 /* ===== 树形布局 ===== */
@@ -324,7 +351,7 @@ export default {
   flex-direction: column;
   align-items: center;
   gap: 0;
-  padding: 10px 0;
+  padding: 6px 0;
 }
 
 /* ===== 设备详情弹窗 ===== */
@@ -346,46 +373,46 @@ export default {
 }
 
 .detail-status-dot {
-  width: 14px;
-  height: 14px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
   margin-right: 10px;
   flex-shrink: 0;
 }
 
 .detail-status-dot.dot-online {
-  background: #67c23a;
-  box-shadow: 0 0 6px rgba(103, 194, 58, 0.45);
+  background: #10B981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.18);
 }
 
 .detail-status-dot.dot-offline {
-  background: #f56c6c;
-  box-shadow: 0 0 6px rgba(245, 108, 108, 0.4);
+  background: #EF4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
 }
 
 .detail-status-dot.dot-unknown {
-  background: #c0c4cc;
+  background: #9CA3AF;
 }
 
 .detail-name {
   font-size: 17px;
   font-weight: 600;
-  color: #303133;
+  color: #152433;
 }
 
 /* ===== 滚动条美化 ===== */
 .topology-canvas-wrapper::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 .topology-canvas-wrapper::-webkit-scrollbar-thumb {
-  background: #c8ccd4;
-  border-radius: 4px;
+  background: #CDD4DE;
+  border-radius: 3px;
 }
 
 .topology-canvas-wrapper::-webkit-scrollbar-thumb:hover {
-  background: #a8abb2;
+  background: #A8B2BF;
 }
 
 .topology-canvas-wrapper::-webkit-scrollbar-track {

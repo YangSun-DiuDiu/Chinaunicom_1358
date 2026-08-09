@@ -112,47 +112,46 @@ export default {
   display: flex;
   align-items: center;
   gap: 10px;
-  background: #fff;
-  border: 1.5px solid #d8dce5;
-  border-radius: 10px;
+  background: #FFFFFF;
+  border: 1px solid #DCE0E8;
+  border-radius: 12px;
   padding: 12px 18px;
   min-width: 200px;
   max-width: 300px;
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.04);
   cursor: pointer;
-  transition: box-shadow 0.2s, border-color 0.2s, transform 0.15s;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
   position: relative;
   z-index: 1;
 }
 
 .tree-node-card:hover {
-  box-shadow: 0 4px 16px rgba(64, 158, 255, 0.2);
-  border-color: #409eff;
-  transform: translateY(-2px);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 8px 24px rgba(59, 130, 246, 0.12);
+  border-color: #3B82F6;
+  transform: translateY(-3px);
 }
 
 /* 状态圆点 */
 .node-status-dot {
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   flex-shrink: 0;
-  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.04);
 }
 
 .node-status-dot.dot-online {
-  background: #67c23a;
-  box-shadow: 0 0 0 3px rgba(103, 194, 58, 0.15), 0 0 8px rgba(103, 194, 58, 0.35);
+  background: #10B981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.18), 0 0 6px rgba(16, 185, 129, 0.25);
 }
 
 .node-status-dot.dot-offline {
-  background: #f56c6c;
-  box-shadow: 0 0 0 3px rgba(245, 108, 108, 0.15);
+  background: #EF4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12);
 }
 
 .node-status-dot.dot-unknown {
-  background: #c0c4cc;
-  box-shadow: 0 0 0 3px rgba(192, 196, 204, 0.15);
+  background: #9CA3AF;
+  box-shadow: 0 0 0 3px rgba(156, 163, 175, 0.12);
 }
 
 /* 节点设备图标 */
@@ -173,7 +172,7 @@ export default {
 .node-name {
   font-size: 14px;
   font-weight: 600;
-  color: #303133;
+  color: #152433;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -181,8 +180,9 @@ export default {
 
 .node-ip {
   font-size: 12px;
-  color: #909399;
-  font-family: "Consolas", "Menlo", monospace;
+  color: #697888;
+  font-family: "SF Mono", "Consolas", "Menlo", monospace;
+  letter-spacing: 0.01em;
 }
 
 /* 折叠/展开切换 */
@@ -190,19 +190,19 @@ export default {
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  background: #ecf5ff;
+  background: #EEF2FF;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 12px;
-  color: #409eff;
+  color: #3B82F6;
   cursor: pointer;
   flex-shrink: 0;
-  transition: background 0.2s;
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
 .node-expand-toggle:hover {
-  background: #409eff;
+  background: #3B82F6;
   color: #fff;
 }
 
@@ -211,7 +211,7 @@ export default {
 .tree-line-connector {
   width: 2px;
   height: 28px;
-  background: #b4bcc6;
+  background: #98A6B6;
   position: relative;
   flex-shrink: 0;
 }
@@ -225,7 +225,7 @@ export default {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #b4bcc6;
+  background: #98A6B6;
 }
 
 /* ---- 子节点容器（层级间距与节点间距） ---- */
@@ -246,7 +246,7 @@ export default {
   left: 0;
   right: 0;
   height: 2px;
-  background: #b4bcc6;
+  background: #98A6B6;
 }
 
 /* 每个子项列上方的垂直连接线：水平线 → 子节点卡片顶部 */
@@ -258,25 +258,25 @@ export default {
   transform: translateX(-50%);
   width: 2px;
   height: 12px;
-  background: #b4bcc6;
+  background: #98A6B6;
 }
 
 /* ---- 线缆类型着色（子节点连向父节点的垂直线，按 cable_type 渲染） ---- */
 .cable-fiber > .tree-node-row::before {
-  background: #e6a23c;
+  background: #D97706;
 }
 
 .cable-ethernet > .tree-node-row::before {
-  background: #409eff;
+  background: #3B82F6;
 }
 
 .cable-coaxial > .tree-node-row::before {
-  background: #909399;
+  background: #9CA3AF;
 }
 
 .cable-wireless > .tree-node-row::before {
   background: transparent;
-  border-left: 2px dashed #67c23a;
+  border-left: 2px dashed #10B981;
   width: 0;
   left: calc(50% - 1px);
 }
