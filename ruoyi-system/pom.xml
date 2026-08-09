@@ -35,6 +35,14 @@
             <version>2.2.1</version>
         </dependency>
 
+
+        <!-- JGit（Git操作，文档中心同步使用） -->
+        <dependency>
+            <groupId>org.eclipse.jgit</groupId>
+            <artifactId>org.eclipse.jgit</artifactId>
+            <version>6.10.0.202406032230-r</version>
+        </dependency>
+
     </dependencies>
 
 </project>
