@@ -207,6 +207,36 @@
           </el-col>
         </el-row>
         <el-row>
+          <el-col :span="12">
+            <el-form-item label="设备图标" prop="icon">
+              <el-select v-model="form.icon" placeholder="请选择设备图标" clearable style="width: 100%" :disabled="isViewMode">
+                <el-option v-for="opt in iconOptions" :key="opt.value" :label="opt.label" :value="opt.value">
+                  <span style="display: inline-flex; align-items: center; gap: 6px;">
+                    <img :src="require('@/assets/topo-icons/' + opt.value + '.svg')" alt="" style="width: 20px; height: 20px;" />
+                    <span>{{ opt.label }}</span>
+                  </span>
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="父设备" prop="parentId">
+              <el-select v-model="form.parentId" placeholder="无（作为顶级设备）" clearable filterable style="width: 100%" :disabled="isViewMode">
+                <el-option v-for="opt in parentDeviceOptions" :key="opt.deviceId" :label="opt.deviceName" :value="opt.deviceId" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="线缆类型" prop="cableType">
+              <el-select v-model="form.cableType" placeholder="请选择连接线缆类型" clearable style="width: 100%" :disabled="isViewMode">
+                <el-option v-for="opt in cableOptions" :key="opt.value" :label="opt.label" :value="opt.value" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
           <el-col :span="24">
             <el-form-item label="备注">
               <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" :disabled="isViewMode" />
@@ -280,6 +310,26 @@ export default {
           { required: true, message: "巡检周期不能为空", trigger: "change" }
         ]
       },
+      // 拓扑图标选项（对应 src/assets/topo-icons/ 下 SVG 文件）
+      iconOptions: [
+        { value: "router", label: "路由器" },
+        { value: "switch", label: "交换机" },
+        { value: "firewall", label: "防火墙" },
+        { value: "ap", label: "无线AP" },
+        { value: "server", label: "服务器" },
+        { value: "camera", label: "摄像头" },
+        { value: "nvr", label: "硬盘录像机" },
+        { value: "other", label: "其他" }
+      ],
+      // 拓扑线缆类型（连接父设备与子设备的线缆样式）
+      cableOptions: [
+        { value: "fiber", label: "光纤" },
+        { value: "ethernet", label: "双绞线" },
+        { value: "wireless", label: "无线" },
+        { value: "coaxial", label: "同轴" }
+      ],
+      // 父设备候选列表
+      parentDeviceOptions: [],
       // 端口弹窗
       portOpen: false,
       portDialogTitle: "",
@@ -356,6 +406,9 @@ export default {
         snmpCommunity: undefined,
         snmpPort: 161,
         snmpVersion: 'v2c',
+        parentId: undefined,
+        icon: undefined,
+        cableType: undefined,
         remark: undefined
       }
       this.resetForm("form")
@@ -376,10 +429,21 @@ export default {
       this.single = selection.length !== 1
       this.multiple = !selection.length
     },
+    /** 加载父设备候选列表（排除自身，避免自引用成环） */
+    loadParentDevices(excludeId) {
+      listDevice({ pageNum: 1, pageSize: 1000 }).then(response => {
+        let list = response.rows || []
+        if (excludeId !== undefined && excludeId !== null) {
+          list = list.filter(item => item.deviceId !== excludeId)
+        }
+        this.parentDeviceOptions = list
+      })
+    },
     /** 新增按钮操作 */
     handleAdd() {
       this.reset()
       this.isViewMode = false
+      this.loadParentDevices()
       this.open = true
       this.title = "添加设备"
     },
@@ -388,6 +452,7 @@ export default {
       this.reset()
       this.isViewMode = false
       const deviceId = row.deviceId || this.ids
+      this.loadParentDevices(deviceId)
       getDevice(deviceId).then(response => {
         this.form = response.data
         // 设备状态由定时任务同步，不从表单提交

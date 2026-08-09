@@ -60,6 +60,7 @@
     >
       <div v-if="detailNode" class="device-detail">
         <div class="detail-header">
+          <img v-if="detailIcon" :src="detailIcon" class="detail-icon" :alt="detailNode.deviceName" />
           <span class="detail-status-dot" :class="statusClass(detailNode.status)"></span>
           <span class="detail-name">{{ detailNode.deviceName }}</span>
           <el-tag :type="statusTagType(detailNode.status)" size="small" style="margin-left: 10px;">
@@ -132,9 +133,28 @@ const TopologyNode = {
       if (s === "ONLINE") return "dot-online"
       if (s === "OFFLINE") return "dot-offline"
       return "dot-unknown"
+    },
+    /** 节点图标 key：优先用设备配置的 icon，否则按设备类型映射默认图标 */
+    nodeIcon() {
+      const key = this.resolveIconKey(this.node.icon, this.node.deviceType)
+      return require("@/assets/topo-icons/" + key + ".svg")
+    },
+    /** 线缆样式 class（表示该节点连向其父节点的线缆类型） */
+    cableClass() {
+      return "cable-" + (this.node.cableType || "default")
     }
   },
   methods: {
+    /** 根据 icon 与设备类型解析最终图标 key */
+    resolveIconKey(icon, deviceType) {
+      const validIcons = ["router", "switch", "firewall", "ap", "server", "camera", "nvr", "other"]
+      if (icon && validIcons.indexOf(icon) !== -1) return icon
+      const t = (deviceType || "").toUpperCase()
+      if (t === "NETWORK") return "switch"
+      if (t === "MONITOR") return "camera"
+      if (t === "NVR") return "nvr"
+      return "other"
+    },
     toggleExpand() {
       this.expanded = !this.expanded
     },
@@ -143,10 +163,11 @@ const TopologyNode = {
     }
   },
   template: `
-    <div class="tree-node-group">
+    <div class="tree-node-group" :class="cableClass">
       <div class="tree-node-row">
         <div class="tree-node-card" @click="onClick">
           <div class="node-status-dot" :class="statusDotClass"></div>
+          <img :src="nodeIcon" class="node-icon" :alt="node.deviceName" />
           <div class="node-info">
             <div class="node-name" :title="node.deviceName">{{ node.deviceName }}</div>
             <div class="node-ip" v-if="node.ipAddress">{{ node.ipAddress }}</div>
@@ -196,10 +217,29 @@ export default {
       }
     }
   },
+  computed: {
+    /** 详情弹窗设备图标 */
+    detailIcon() {
+      if (!this.detailNode) return ""
+      const key = this.resolveIconKey(this.detailNode.icon, this.detailNode.deviceType)
+      return require("@/assets/topo-icons/" + key + ".svg")
+    }
+  },
   created() {
     this.fetchTopology()
   },
   methods: {
+    /** 根据 icon 与设备类型解析最终图标 key */
+    resolveIconKey(icon, deviceType) {
+      const validIcons = ["router", "switch", "firewall", "ap", "server", "camera", "nvr", "other"]
+      if (icon && validIcons.indexOf(icon) !== -1) return icon
+      const t = (deviceType || "").toUpperCase()
+      if (t === "NETWORK") return "switch"
+      if (t === "MONITOR") return "camera"
+      if (t === "NVR") return "nvr"
+      return "other"
+    },
+
     /** 获取拓扑数据 */
     fetchTopology() {
       this.loading = true
@@ -435,6 +475,13 @@ export default {
   box-shadow: 0 0 0 3px rgba(192, 196, 204, 0.15);
 }
 
+/* 节点设备图标 */
+.node-icon {
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+}
+
 /* 节点文字信息 */
 .node-info {
   display: flex;
@@ -533,6 +580,26 @@ export default {
   background: #c8ccd4;
 }
 
+/* ---- 线缆类型着色（子节点连向父节点的垂直线，按 cable_type 渲染） ---- */
+.cable-fiber > .tree-node-row::before {
+  background: #e6a23c;
+}
+
+.cable-ethernet > .tree-node-row::before {
+  background: #409eff;
+}
+
+.cable-coaxial > .tree-node-row::before {
+  background: #909399;
+}
+
+.cable-wireless > .tree-node-row::before {
+  background: transparent;
+  border-left: 2px dashed #67c23a;
+  width: 0;
+  left: calc(50% - 1px);
+}
+
 /* ===== 设备详情弹窗 ===== */
 .device-detail {
   padding: 0 4px;
@@ -542,6 +609,13 @@ export default {
   display: flex;
   align-items: center;
   padding: 6px 0;
+}
+
+.detail-icon {
+  width: 34px;
+  height: 34px;
+  margin-right: 8px;
+  flex-shrink: 0;
 }
 
 .detail-status-dot {

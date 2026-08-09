@@ -92,6 +92,12 @@ public class Device extends BaseEntity
     @Excel(name = "父设备ID")
     private Long parentId;
 
+    /** 设备图标（topo-icons 图标 key：router/switch/firewall/ap/server/camera/nvr/other） */
+    private String icon;
+
+    /** 连接线缆类型（fiber=光纤 ethernet=双绞线 wireless=无线 coaxial=同轴） */
+    private String cableType;
+
     public Long getDeviceId()
     {
         return deviceId;
@@ -269,6 +275,26 @@ public class Device extends BaseEntity
         this.parentId = parentId;
     }
 
+    public String getIcon()
+    {
+        return icon;
+    }
+
+    public void setIcon(String icon)
+    {
+        this.icon = icon;
+    }
+
+    public String getCableType()
+    {
+        return cableType;
+    }
+
+    public void setCableType(String cableType)
+    {
+        this.cableType = cableType;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
@@ -289,6 +315,8 @@ public class Device extends BaseEntity
             .append("responsiblePhone", getResponsiblePhone())
             .append("tenantId", getTenantId())
             .append("parentId", getParentId())
+            .append("icon", getIcon())
+            .append("cableType", getCableType())
             .append("createBy", getCreateBy())
             .append("createTime", getCreateTime())
             .append("updateBy", getUpdateBy())

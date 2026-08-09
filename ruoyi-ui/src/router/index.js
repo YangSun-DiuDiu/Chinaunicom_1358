@@ -219,7 +219,7 @@ export const staticRoutes = [
         meta: {
           title: "设备拓扑",
           icon: "tree",
-          permissions: ["device:topology:view"],
+          permissions: ["device:topology:view", "device:topology:query"],
         },
       },
       {

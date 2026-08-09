@@ -192,11 +192,18 @@ public class DeviceController extends BaseController
             if (deviceParentId.equals(parentId))
             {
                 Map<String, Object> node = new HashMap<>();
-                node.put("id", device.getDeviceId());
-                node.put("label", device.getDeviceName());
+                node.put("deviceId", device.getDeviceId());
+                node.put("deviceName", device.getDeviceName());
                 node.put("deviceType", device.getDeviceType());
                 node.put("status", device.getStatus());
                 node.put("ipAddress", device.getIpAddress());
+                node.put("model", device.getModel());
+                node.put("location", device.getLocation());
+                node.put("responsible", device.getResponsible());
+                node.put("remark", device.getRemark());
+                node.put("icon", device.getIcon());
+                node.put("cableType", device.getCableType());
+                node.put("parentId", device.getParentId());
                 List<Map<String, Object>> children = buildTopologyTree(devices, device.getDeviceId());
                 node.put("children", children);
                 tree.add(node);

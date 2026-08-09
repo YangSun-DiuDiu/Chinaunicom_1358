@@ -23,6 +23,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="responsiblePhone" column="responsible_phone"  />
         <result property="tenantId"         column="tenant_id"          />
         <result property="parentId"         column="parent_id"          />
+        <result property="icon"             column="icon"              />
+        <result property="cableType"        column="cable_type"         />
         <result property="createBy"         column="create_by"          />
         <result property="createTime"       column="create_time"        />
         <result property="updateBy"         column="update_by"          />
@@ -34,7 +36,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select d.device_id, d.dept_id, d.device_name, d.device_type, d.ip_address, d.mac_address,
                d.model, d.location, d.port_info, d.status, d.snmp_community, d.snmp_port,
                d.snmp_version, d.ping_interval, d.responsible, d.responsible_phone, d.tenant_id, d.parent_id,
-               d.create_by, d.create_time, d.update_by, d.update_time, d.remark
+               d.icon, d.cable_type, d.create_by, d.create_time, d.update_by, d.update_time, d.remark
         from iot_device d
     </sql>
 
@@ -42,7 +44,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select d.device_id, d.dept_id, d.device_name, d.device_type, d.ip_address, d.mac_address,
                d.model, d.location, d.port_info, d.status, d.snmp_community, d.snmp_port,
                d.snmp_version, d.responsible, d.responsible_phone, d.tenant_id, d.parent_id,
-               d.create_by, d.create_time, d.update_by, d.update_time, d.remark
+               d.icon, d.cable_type, d.create_by, d.create_time, d.update_by, d.update_time, d.remark
         from iot_device d
         <where>
             <if test="deviceName != null and deviceName != ''">
@@ -98,6 +100,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="deptId != null">dept_id,</if>
             <if test="tenantId != null">tenant_id,</if>
             <if test="parentId != null">parent_id,</if>
+            <if test="icon != null and icon != ''">icon,</if>
+            <if test="cableType != null and cableType != ''">cable_type,</if>
             <if test="createBy != null and createBy != ''">create_by,</if>
             <if test="remark != null and remark != ''">remark,</if>
             create_time
@@ -119,6 +123,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="deptId != null">#{deptId},</if>
             <if test="tenantId != null">#{tenantId},</if>
             <if test="parentId != null">#{parentId},</if>
+            <if test="icon != null and icon != ''">#{icon},</if>
+            <if test="cableType != null and cableType != ''">#{cableType},</if>
             <if test="createBy != null and createBy != ''">#{createBy},</if>
             <if test="remark != null and remark != ''">#{remark},</if>
             sysdate()
@@ -144,6 +150,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="responsiblePhone != null">responsible_phone = #{responsiblePhone},</if>
             <if test="tenantId != null">tenant_id = #{tenantId},</if>
             <if test="parentId != null">parent_id = #{parentId},</if>
+            <if test="icon != null">icon = #{icon},</if>
+            <if test="cableType != null">cable_type = #{cableType},</if>
             <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
             <if test="remark != null">remark = #{remark},</if>
             update_time = sysdate()

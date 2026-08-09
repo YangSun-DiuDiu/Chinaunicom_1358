@@ -36,3 +36,4 @@
 | 25. 驾驶舱v2工业风 | ⛔ 作废 | 驾驶舱已被阶段26门户取代，设备饼图API 499随驾驶舱移除失效 |
 | 26. 模块导航门户 | ✅ complete | 移除驾驶舱→10卡CSS几何门户+侧边栏parentMenuId过滤+首页全屏化+返回首页入口+LED信号灯；9任务全通+死代码清理+DB补menu_type；权限审计107/130一致 |
 | 27. 监控体系改造 | ✅ complete | A:AlertManager部署(115:9093)+Webhook+删Java心跳+设备列表Grafana跳转; B:net_report表+健康评分算法+DeepSeek报告(6周期)+前端页; DeepSeek解析修复(跳过thinking块)+sendRepairSms参数修复(离线不再双发device_repair); AlertManager→Java告警链路端到端验证通过(labels.target) |
+| 28. 设备拓扑整体升级 | ✅ complete | 本地SVG图标集(8类:router/switch/firewall/ap/server/camera/nvr/other)+线缆库(4类:fiber/ethernet/wireless/coaxial); iot_device加icon/cable_type字段; buildTopologyTree字段对齐(id/label→deviceId/deviceName等)修复拓扑页空白; 拓扑页SVG图标渲染+按cableType线缆着色; 设备表单加图标/父设备/线缆3下拉; 补财务部(11)/工程部(13)device:topology:query权限; 部署1.94.26.126验证200 |

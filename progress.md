@@ -36,6 +36,7 @@
 | 07-13 | 监控收尾+短信修复 | sendRepairSms参数修复(离线不再双发device_repair,只发offline_alert,手动报修才发repair);DeptScopeInterceptor日志噪音分析(webhook无登录态);方案C定期对账回退;设备心跳任务保持现状(iot_device已停,3类智能化保留) |
 | 07-14 | Webhook调试日志+payload验证 | AlertWebhookServiceImpl日志移至try内+防NPE+截断2000字符;部署验证AlertManager payload格式(labels.target) |
 | 07-22 | 访客审批逻辑修复 | dept_id改回被访人部门(非创建者);assignApproverAndDept强制匹配hostName→sys_user,失败抛ServiceException;visitor_log补dept_id两处(approveAppointment+registerWalkin);3次部署到1.94.26.126 |
+| 08-09 | 设备拓扑整体升级(28) | 8个SVG图标(assets/topo-icons)+4类线缆库;iot_device加icon/cable_type;buildTopologyTree字段对齐修复拓扑页空白;拓扑页SVG图标+线缆着色;设备表单加图标/父设备/线缆3下拉;补财务部(11)/工程部(13)device:topology:query权限;备份commit 5eae970;部署1.94.26.126拓扑接口验证200 |
 
 ## 当前状态
 

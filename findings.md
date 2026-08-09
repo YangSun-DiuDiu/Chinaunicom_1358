@@ -91,6 +91,14 @@ PENDING/APPROVED → CANCELLED
 - **权限三方不一致审计**：新增 H5/仪表盘功能后，Controller 使用了 `dashboard:meeting:query`/`dashboard:apartment:query`/`visitor:guard:verify` 三个权限，但 `sys_menu` 表完全没有对应记录。H5Controller 3 个端点无 `@PreAuthorize` 注解。修复：DB 插 12 条菜单权限 + Controller 加注解
 - **菜单树结构错位**：公寓管理 租客 parent_id=0 应是 2113；智能化管理 7 页面有 3 个多余中间层；考勤管理 6 个按钮权限 parent_id 错挂在顶层 2021。修复：扁平化+归位
 
+### 关键调试发现（2026-08-09）—— 设备拓扑整体升级
+
+- **拓扑页空白根因**：`DeviceController.buildTopologyTree` 返回 `id`/`label`，前端读 `node.deviceId`/`node.deviceName` → 节点名称空。修复：字段对齐 `deviceId/deviceName/model/location/responsible/remark/icon/cableType/parentId`。
+- **拓扑权限双轨**：菜单 `device:topology:view`(2002) + 按钮 `device:topology:query`(2048)。财务部(11)/工程部(13)角色有 view 无 query → 菜单可见但接口 403 页面空白。修复：`INSERT IGNORE INTO sys_role_menu VALUES (11,2048),(13,2048)`。
+- **本地SVG图标集**：8 类图标放 `ruoyi-ui/src/assets/topo-icons/`（router/switch/firewall/ap/server/camera/nvr/other），前端 `require('@/assets/topo-icons/'+key+'.svg')` 打包到 dist/static/img/。拓扑节点按 `icon` 渲染，未配置按 deviceType 映射默认（NETWORK→switch/MONITOR→camera/NVR→nvr）。
+- **线缆库**：`cable_type` 4 值：fiber光纤橙实线、ethernet双绞线蓝实线、wireless无线绿虚线(border-left dashed)、coaxial同轴灰实线。拓扑页每个子节点上方垂直线按该子节点 cableType 着色。
+- **部署重启偶发失败**：重启遇 `sysConfigServiceImpl` init 失败（Redis/DB 瞬时抖动），重试即成功。生产环境为 SpringBoot4.0.3+Java21+Tomcat11；fat-jar 关闭时 NoClassDefFoundError(Lifecycle$SingleUse 等) 为噪音不影响运行。启动用 `setsid nohup java -jar ... </dev/null > app.log 2>&1 &`（start-topo.sh 脚本）。
+
 ## 待处理需求（暂缓）
 
 - **废弃 getRouter，精简路由工作流**：当前添加新页面需改前端路由+DB菜单+后端注解三处。方案：sys_menu 只存权限字符串，前端 router 全权负责菜单结构，砍掉 DB 树形关系。新增页面只需改 router + Controller 两处。讨论日期：2026-07-02。
