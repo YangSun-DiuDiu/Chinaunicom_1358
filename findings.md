@@ -101,7 +101,15 @@ PENDING/APPROVED → CANCELLED
 - **拓扑页空白真正根因（渲染层，2026-08-09 定位）**：`TopologyNode` 组件用**内联字符串 `template`**，而项目打包的是 **runtime-only Vue（无模板编译器）**——`node_modules/vue` 的 module/main 入口都是 `vue.runtime.*.js`，`vue.config.js` 无 `vue$` alias 指向 full build。runtime-only 无法编译字符串模板 → 组件渲染为空注释占位 `<!--function...-->` → 节点区空白。生产 `NODE_ENV=production` 下编译警告被静默，**console 无任何报错**（之前 console 0 错误误导了排查）。该 bug 从 baseline 就存在，拓扑页节点区从未真正渲染过；字段对齐/detailNode 修复只解决接口层和弹窗层。**修复**：TopologyNode 拆为独立 SFC（`topology/TopologyNode.vue`），vue-loader 构建期预编译为 render 函数；index.vue 改 import 引入。**经验**：排查"接口 200 + console 无错但页面空白"时，检查渲染出的 DOM 是否有 `<!--function...-->` 注释占位符 + `Vue.compile` 是否存在（runtime-only 判断）。
 - **Vue runtime-only 判定方法**：页面 `document.querySelector('#app').__vue__.constructor.compile` 为 `undefined` 即 runtime-only；字符串 template 组件必须 SFC 化或改 render 函数。
 - **拓扑页过滤孤立设备（2026-08-09）**：拓扑树只展示"参与关联"的设备——`parent_id` 非空 **或** 被其他设备引用为父节点，隐藏完全孤立设备（无父且无子）。实现于 `DeviceController.topology()`：先收集全部 `parent_id` 集合，再过滤 `d.getParentId()!=null || parentIds.contains(d.getDeviceId())`。生产 12 台设备中仅 华为防火墙USG6565(100, 作为 测试设备-权限验证(106) 的父) 保留显示，其余 10 台测试/演示设备全部隐藏。注意：过滤基于 `selectDeviceList` 返回集（受 DeptScope 数据权限影响），不同账号可见范围不同。
-- **架构图连线风格（2026-08-09）**：TopologyNode.vue 连线改为架构图直角折线——父卡片下方竖线(28px) + 水平线(2px 贯穿) + 子卡片上方竖线(12px)，层级间距 40px（connector 28 + padding-top 12）、子节点水平间距 56px；线缆类型着色作用于子节点入口竖线（fiber橙/ethernet蓝/coaxial灰/wireless绿虚线）。**连线几何注意点**：子节点竖线用 `top:-padding-top` 负值定位到 padding 区，需父容器无 overflow:hidden。
+- **架构图连线风格（2026-08-09）**：TopologyNode.vue 连线改为架构图直角折线。初版层级间距 40px（connector 28 + padding-top 12）偏短，**用户反馈后加长到 64px**（connector 44 + padding-top 20 + 子竖线 20）+ 水平间距 64px，commit `3f83728`。连线几何注意点：子节点竖线用 `top:-padding-top` 负值定位到 padding 区，需父容器无 `overflow:hidden`。
+
+- **ssh 会话退出杀 Java 进程（2026-08-09）**：`ssh root@host "pkill; setsid nohup java -jar ... &"` 方式在 ssh 会话退出后 nohup 子进程被 SIGTERM 杀掉。**修复**：用 `ssh -f root@host "bash start-topo.sh"` 让 SSH 自身后台化，进程脱离终端生命周期。症状：pgrep 能短暂看到 PID，但 ssh 退出后进程消失、app.log 无新日志。
+
+- **Redis session 过期导致 playwright 页面 stale（2026-08-09）**：playwright 复用的浏览器 cookie（Admin-Token）仍在，但 Redis 中 login_tokens 已过期 → API 返回 HTTP 200 但 body `code:401`"认证失败"→ 页面看起来"接口 200 但数据空"。**排查标识**：同一页面 `getInfo` 和业务 API 同时返回 `code:401` 即 session 过期。**修复**：playwright 验证前先 `document.cookie='Admin-Token=; expires=...'` + `localStorage.clear()` + 重新 login。
+
+- **playwright-cli 污染 dist 目录（2026-08-09）**：playwright-cli 以当前 cwd 为工作目录，自动写入 `.playwright-cli/`。当 cwd 误在 dist 时，该目录被写入 dist/static/js/ 下 → `rmdir dist` 时 EBUSY（目录被 playwright-cli 进程锁定）。**规避**：构建前确保 cwd 在项目根，部署前 `rm -rf dist/.playwright-cli` 后再 tar。
+
+- **DeptScope 影响拓扑可见性（2026-08-09）**：`DeviceController.topology()` 调用 `selectDeviceList(new Device())` 受 DeptScopeInterceptor 全局过滤 → 非 admin 账号只能看到本部门设备。zhaojg 账号部门内设备无父子关联 → 过滤后拓扑为空——这是数据权限与拓扑过滤逻辑叠加的**正确结果，非 bug**。如需该账号看到拓扑，需在部门内配置设备的 `parent_id` 关系。
 
 ## 待处理需求（暂缓）
 

@@ -40,3 +40,5 @@
 | 28a. 拓扑页渲染层修复 | ✅ complete | 真正根因:TopologyNode内联字符串template在runtime-only Vue(无模板编译器,module/main=vue.runtime.*,无vue$ alias)下不编译→渲染为`<!--function...-->`空注释→节点区空白;生产NODE_ENV静默编译警告(console 0错误误导)。修复:TopologyNode拆独立SFC(TopologyNode.vue, vue-loader预编译render)+index.vue改import;生产部署验证节点/图标/线缆均渲染 |
 | 28b. 拓扑过滤+架构图连线 | ✅ complete | DeviceController.topology只显示参与关联设备(parent_id非空或被引用为父),隐藏孤立设备:生产12台中仅华为防火墙USG6565→测试设备-权限验证保留,10台隐藏;TopologyNode.vue连线改架构图直角折线(层级40px/水平间距56px/线缆着色);admin验证通过 |
 | 28c. 拓扑视觉升级·工程蓝图 | ✅ complete | 画布点阵背景(radial-gradient 20px)+#EEF1F6底色;工具栏透明化;卡片12px圆角+双层阴影+hover#3B82F6光晕;状态色统一palette(Online#10B981/Offline#EF4444);连线#98A6B6;线缆色Fiber#D97706/Ethernet#3B82F6;零JS/零第三方。生产全属性实测一致,console 0错误 |
+| 28d. 线缆加长 | ✅ complete | 用户反馈线缆偏短,层级间距40→64px(+60%):connector 28→44、padding-top 12→20、子竖线12→20、水平间距56→64。commit 3f83728 |
+| 28e. 问题复盘 | ✅ complete | findings.md补5个调试坑:ssh -f退出杀进程/Redis过期playwright stale/playwright-cli污染dist EBUSY/DeptScope影响非admin拓扑可见/线缆几何调参 |
