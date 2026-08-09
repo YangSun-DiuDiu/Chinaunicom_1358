@@ -688,6 +688,22 @@ export const staticRoutes = [
       },
     ],
   },
+  // ==================== 文档中心 ====================
+  {
+    path: "/doc",
+    component: Layout,
+    name: "DocCenter",
+    alwaysShow: true,
+    meta: { title: "文档中心", icon: "documentation", parentMenuId: 2150, noAuth: true },
+    children: [
+      {
+        path: "",
+        component: () => import("@/views/doc/index"),
+        name: "DocView",
+        meta: { title: "文档中心", noAuth: true }
+      }
+    ],
+  },
 ];
 
 // 防止连续点击多次路由报错
