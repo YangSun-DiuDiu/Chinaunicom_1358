@@ -140,7 +140,9 @@ export default {
       return require("@/assets/topo-icons/" + key + ".svg")
     }
   },
-  created() {
+  activated() {
+    // keep-alive 缓存时 created 只执行一次，改为 activated 保证每次进入页面都重新拉取，
+    // 让列表中的父设备/图标/层级改动实时同步到拓扑页
     this.fetchTopology()
   },
   methods: {

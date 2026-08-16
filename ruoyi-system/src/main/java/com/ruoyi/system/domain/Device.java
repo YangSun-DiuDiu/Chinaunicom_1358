@@ -84,6 +84,10 @@ public class Device extends BaseEntity
     @Excel(name = "负责人电话")
     private String responsiblePhone;
 
+    /** 部门名称（联表查询显示字段，非数据库字段） */
+    @Excel(name = "归属部门")
+    private String deptName;
+
     /** 租户ID */
     @Excel(name = "租户ID")
     private Long tenantId;
@@ -253,6 +257,16 @@ public class Device extends BaseEntity
     public void setResponsiblePhone(String responsiblePhone)
     {
         this.responsiblePhone = responsiblePhone;
+    }
+
+    public String getDeptName()
+    {
+        return deptName;
+    }
+
+    public void setDeptName(String deptName)
+    {
+        this.deptName = deptName;
     }
 
     public Long getTenantId()

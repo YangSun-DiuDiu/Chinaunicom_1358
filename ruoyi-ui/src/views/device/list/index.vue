@@ -1,5 +1,8 @@
 <template>
-  <div class="device-list-container">
+  <div class="app-container tree-sidebar-manage-wrap">
+    <tree-panel title="组织架构" :tree-data="deptOptions" search-placeholder="请输入部门名称" storage-key="device-dept-sidebar-width" :defaultExpandAll="true" @node-click="handleDeptNodeClick" @refresh="getDeptTree" ref="deptTreeRef" />
+    <div class="tree-sidebar-content">
+      <div class="content-inner">
     <!-- 搜索表单 -->
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="80px">
       <el-form-item label="设备名称" prop="deviceName">
@@ -93,6 +96,7 @@
       <el-table-column label="IP地址" align="center" prop="ipAddress" width="200" />
       <el-table-column label="型号" align="center" prop="model" width="200" :show-overflow-tooltip="true" />
       <el-table-column label="位置" align="center" prop="location" width="200" :show-overflow-tooltip="true" />
+      <el-table-column label="归属部门" align="center" prop="deptName" width="150" :show-overflow-tooltip="true" />
       <el-table-column label="状态" align="center" prop="status" width="200">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.status === 'ONLINE'" type="success" size="small">在线</el-tag>
@@ -137,6 +141,13 @@
                 <el-option label="硬盘录像机" value="NVR" />
                 <el-option label="其他设备" value="OTHER" />
               </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="归属部门" prop="deptId">
+              <treeselect v-model="form.deptId" :options="enabledDeptOptions" :show-count="true" placeholder="请选择归属部门" :disabled="isViewMode" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -266,15 +277,21 @@
       </el-table>
       <pagination v-show="portTotal > 0" :total="portTotal" :page.sync="portQueryParams.pageNum" :limit.sync="portQueryParams.pageSize" @pagination="getPortList" />
     </el-dialog>
+      </div><!-- content-inner -->
+    </div><!-- tree-sidebar-content -->
   </div>
 </template>
 
 <script>
-import { listDevice, getDevice, delDevice, addDevice, updateDevice, exportDevice, listDevicePort } from "@/api/device/device"
+import { listDevice, getDevice, delDevice, addDevice, updateDevice, exportDevice, listDevicePort, deptTreeSelect } from "@/api/device/device"
 import { createRepair } from "@/api/device/repair"
+import TreePanel from "@/components/TreePanel"
+import Treeselect from "@riophae/vue-treeselect"
+import "@riophae/vue-treeselect/dist/vue-treeselect.css"
 
 export default {
   name: "Device",
+  components: { TreePanel, Treeselect },
   data() {
     return {
       loading: true,
@@ -288,12 +305,17 @@ export default {
       open: false,
       isViewMode: false,
       stats: { total: 0, online: 0, offline: 0, unknown: 0 },
+      // 部门树选项（侧边栏 TreePanel 用）
+      deptOptions: [],
+      // 过滤掉已禁用部门的选项（表单 treeselect 用）
+      enabledDeptOptions: [],
       queryParams: {
         pageNum: 1,
         pageSize: 10,
         deviceName: undefined,
         deviceType: undefined,
-        status: undefined
+        status: undefined,
+        deptId: undefined
       },
       form: {},
       rules: {
@@ -345,6 +367,7 @@ export default {
   },
   created() {
     this.getList()
+    this.getDeptTree()
   },
   methods: {
     /** 跳转单设备 Grafana 监控看板（新标签页） */
@@ -360,6 +383,30 @@ export default {
     openGrafanaOverview() {
       window.open('http://115.159.194.149:3000/d/switch-categraf-huawei-h3c/b203be1?orgId=1&from=now-6h&to=now&timezone=browser&var-instance=192.168.1.32&refresh=10s', '_blank')
     },
+    /** 查询部门树 */
+    getDeptTree() {
+      deptTreeSelect().then(response => {
+        this.deptOptions = response.data
+        this.enabledDeptOptions = this.filterDisabledDept(JSON.parse(JSON.stringify(response.data)))
+      })
+    },
+    /** 过滤禁用的部门（禁用部门不出现在表单 treeselect 中） */
+    filterDisabledDept(deptList) {
+      return deptList.filter(dept => {
+        if (dept.disabled) {
+          return false
+        }
+        if (dept.children && dept.children.length) {
+          dept.children = this.filterDisabledDept(dept.children)
+        }
+        return true
+      })
+    },
+    /** 部门节点单击事件 */
+    handleDeptNodeClick(data) {
+      this.queryParams.deptId = data.id
+      this.handleQuery()
+    },
     /** 查询设备列表 */
     getList() {
       this.loading = true
@@ -370,18 +417,19 @@ export default {
         this.loadStats()
       })
     },
-    /** 加载统计 */
+    /** 加载统计（含部门过滤） */
     loadStats() {
-      listDevice({ pageNum: 1, pageSize: 1 }).then(res => {
+      const baseQuery = { deptId: this.queryParams.deptId, pageNum: 1, pageSize: 1 }
+      listDevice(baseQuery).then(res => {
         this.stats.total = res.total || 0
       })
-      listDevice({ pageNum: 1, pageSize: 1, status: 'ONLINE' }).then(res => {
+      listDevice({ ...baseQuery, status: 'ONLINE' }).then(res => {
         this.stats.online = res.total || 0
       })
-      listDevice({ pageNum: 1, pageSize: 1, status: 'OFFLINE' }).then(res => {
+      listDevice({ ...baseQuery, status: 'OFFLINE' }).then(res => {
         this.stats.offline = res.total || 0
       })
-      listDevice({ pageNum: 1, pageSize: 1, status: 'UNKNOWN' }).then(res => {
+      listDevice({ ...baseQuery, status: 'UNKNOWN' }).then(res => {
         this.stats.unknown = res.total || 0
       })
     },
@@ -395,6 +443,7 @@ export default {
     reset() {
       this.form = {
         deviceId: undefined,
+        deptId: undefined,
         deviceName: undefined,
         deviceType: undefined,
         ipAddress: undefined,
@@ -421,6 +470,10 @@ export default {
     /** 重置按钮操作 */
     resetQuery() {
       this.resetForm("queryForm")
+      this.queryParams.deptId = undefined
+      if (this.$refs.deptTreeRef) {
+        this.$refs.deptTreeRef.setCurrentKey(null)
+      }
       this.handleQuery()
     },
     // 多选框选中数据
@@ -429,12 +482,24 @@ export default {
       this.single = selection.length !== 1
       this.multiple = !selection.length
     },
-    /** 加载父设备候选列表（排除自身，避免自引用成环） */
+    /** 加载父设备候选列表（排除自身及其全部子孙节点，避免父子关系成环导致拓扑无限递归） */
     loadParentDevices(excludeId) {
       listDevice({ pageNum: 1, pageSize: 1000 }).then(response => {
         let list = response.rows || []
         if (excludeId !== undefined && excludeId !== null) {
-          list = list.filter(item => item.deviceId !== excludeId)
+          // 迭代收集 excludeId 的全部子孙设备 ID
+          const excludeIds = new Set([excludeId])
+          let changed = true
+          while (changed) {
+            changed = false
+            for (const item of list) {
+              if (item.parentId != null && excludeIds.has(item.parentId) && !excludeIds.has(item.deviceId)) {
+                excludeIds.add(item.deviceId)
+                changed = true
+              }
+            }
+          }
+          list = list.filter(item => !excludeIds.has(item.deviceId))
         }
         this.parentDeviceOptions = list
       })
@@ -467,6 +532,10 @@ export default {
         if (valid) {
           // 设备状态由定时任务同步，不通过表单提交
           delete this.form.status
+          // 父设备置空时归一化为 null，避免空字符串反序列化 Long 失败导致无法清空
+          if (this.form.parentId === '' || this.form.parentId === undefined) {
+            this.form.parentId = null
+          }
           if (this.form.deviceId != undefined) {
             updateDevice(this.form).then(() => {
               this.$modal.msgSuccess("修改成功")

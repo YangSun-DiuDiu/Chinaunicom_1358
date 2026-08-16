@@ -26,8 +26,10 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
+import com.ruoyi.common.core.domain.entity.SysDept;
 import com.ruoyi.system.domain.Device;
 import com.ruoyi.system.service.IDeviceService;
+import com.ruoyi.system.service.ISysDeptService;
 import com.ruoyi.system.sms.SmsUtil;
 
 /**
@@ -45,8 +47,11 @@ public class DeviceController extends BaseController
     @Autowired
     private SmsUtil smsUtil;
 
+    @Autowired
+    private ISysDeptService deptService;
+
     /**
-     * 获取设备列表
+     * 获取设备列表（支持部门过滤）
      */
     @PreAuthorize("@ss.hasPermi('device:list')")
     @GetMapping("/list")
@@ -55,6 +60,16 @@ public class DeviceController extends BaseController
         startPage();
         List<Device> list = deviceService.selectDeviceList(device);
         return getDataTable(list);
+    }
+
+    /**
+     * 查询部门树结构（供设备管理页组织架构树使用）
+     */
+    @PreAuthorize("@ss.hasPermi('device:list')")
+    @GetMapping("/deptTree")
+    public AjaxResult deptTree(SysDept dept)
+    {
+        return success(deptService.selectDeptTreeList(dept));
     }
 
     /**

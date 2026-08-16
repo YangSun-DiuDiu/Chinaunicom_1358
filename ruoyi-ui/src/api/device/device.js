@@ -124,6 +124,16 @@ export function listStatusLog(query) {
   })
 }
 
+// ===== 部门树 =====
+
+// 查询部门下拉树结构（供设备管理页组织架构树使用）
+export function deptTreeSelect() {
+  return request({
+    url: '/device/deptTree',
+    method: 'get'
+  })
+}
+
 // ===== 心跳日志 =====
 
 export function listHeartbeatLog(query) {
