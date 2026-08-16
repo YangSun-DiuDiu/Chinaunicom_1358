@@ -58,11 +58,11 @@
 | 08-16 | zhaojg部门数据隔离越权修复(35) | 根因:DeptScopeInterceptor白名单按originalSql.contains(table)判定,iot_device LEFT JOIN sys_dept取部门名→误判为系统表查询跳过dept_id过滤→非管理员可见全部设备;另有"WHERE已含dept_id即跳过"后门+XML deptId参数可绕过。修复:白名单改主表判定(extractMainTable)+移除跳过后门+非管理员强制追加"(dept_id=X OR dept_id IN(SELECT t.dept_id FROM sys_dept WHERE find_in_set(X,t.ancestors)))";用户选路线甲(拦截器为主,DeviceMapper.xml保留deptId条件);非管理员=本部门+子部门;历史数据不改。编译+paramiko上传+start-topo.sh重启(PID 483988);端到端验证:zhaojg(dept 101)登录仅见2台(106/114),admin见12台,HTTP 200 |
 | 08-16 | 账号密码规范入档(35a) | 用户确认所有业务账号密码统一admin123(含admin/zhaojg/测试账号);CLAUDE.md新增"系统登录账号"章节(密码规范+验证码关闭+登录示例);长期记忆新增account-password-convention.md+dept-scope-isolation.md;生产验证码已关闭(sys.account.captchaEnabled=false,Redis cache已清) |
 | 08-16 | doc-center同步核对(35b) | md5对比本地vs服务器docs 255/255全一致(0差异),无需tar上传;文档中心服务正常:status HTTP 200(13模块228文件,31填充/197骨架,0孤本,lastSync 08-09),tree HTTP 200,DeviceMapper.md+list/index.vue.md content HTTP 200;docs改动已全部入库(ea5a2ef) |
+| 08-16 | 拓扑跨部门父设备修复(36) | 根因:admin给106(dept101,zhaojg)设父设备100(dept NULL,admin侧),部门隔离下zhaojg仅见106/114,但106父100不可见→buildTopologyTree从根(0L)遍历不到任何节点→zhaojg拓扑图空白。修复:DeviceController.buildTopologyTree构建可见设备ID集合,父设备不在集合中(跨部门被隔离)时提升为根节点挂载。部署1.94.26.126(md5一致,PID526099,HTTP200);端到端验证:zhaojg见1根(106)+子114,admin完整树不变 |
 
 ## 当前状态
 
 - **服务器**: 1.94.26.126:80/8090
 - **Redis**: 1.94.26.126:6379 (已修复)
-- **Git**: master (工作区含拦截器修复+设备修复+CLAUDE.md,未提交)
-- **⚠️**: zhaojg越权修复/设备修复/CLAUDE.md 3组改动待提交
+- **Git**: master (拓扑跨部门父设备修复 DeviceController 待提交)
 - **待处理**: 阶段11(样式优化剩余), 阶段13(公寓预付费后续)

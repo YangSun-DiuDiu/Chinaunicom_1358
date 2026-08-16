@@ -50,3 +50,4 @@
 | 34. 设备父设备/拓扑状态修复 | ✅ complete | 父设备无法修改/删除修复(DeviceMapper.xml无条件更新parent_id+前端空串归一null);修改后状态无法同步到拓扑(keep-alive缓存→topology页activated()重拉);loadParentDevices排除自身+全部后代防循环;部署1.94.26.126验证106→NULL→106 |
 | 35. zhaojg部门数据隔离越权修复 | ✅ complete | 根因:DeptScopeInterceptor白名单按SQL文本contains判定,iot_device LEFT JOIN sys_dept被误判系统表跳过过滤→非管理员可见全部设备。修复:白名单改主表判定(extractMainTable)+非管理员强制追加"本部门+子部门"find_in_set过滤+删除WHERE含dept_id即跳过后门;DeviceMapper.xml保留deptId条件(路线甲);编译部署重启;端到端验证:zhaojg(dept 101)仅见2台(106/114),admin见12台 |
 | 35a. 账号密码规范入档 | ✅ complete | 所有业务账号密码统一admin123(含admin/zhaojg/各测试账号);CLAUDE.md新增"系统登录账号"章节+长期记忆account-password-convention.md+dept-scope-isolation.md |
+| 36. 拓扑跨部门父设备修复 | ✅ complete | 根因:admin给zhaojg根设备106设父设备100(不在zhaojg可见范围),部门隔离下buildTopologyTree从根遍历不到106→拓扑图空白。修复:DeviceController.buildTopologyTree父设备不在可见集合时提升为根节点;部署验证zhaojg见106(+子114),admin树不变 |

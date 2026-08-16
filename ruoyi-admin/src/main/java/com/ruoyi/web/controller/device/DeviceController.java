@@ -212,9 +212,16 @@ public class DeviceController extends BaseController
     private List<Map<String, Object>> buildTopologyTree(List<Device> devices, Long parentId)
     {
         List<Map<String, Object>> tree = new ArrayList<>();
+        // 可见设备ID集合：父设备不在集合中（如被部门数据隔离过滤）时，将该设备提升为根节点展示，避免图块丢失
+        Set<Long> visibleIds = devices.stream().map(Device::getDeviceId).collect(Collectors.toSet());
         for (Device device : devices)
         {
             Long deviceParentId = device.getParentId() == null ? 0L : device.getParentId();
+            // 父设备不可见（跨部门父子关系），视为根节点挂载
+            if (deviceParentId != 0L && !visibleIds.contains(deviceParentId))
+            {
+                deviceParentId = 0L;
+            }
             if (deviceParentId.equals(parentId))
             {
                 Map<String, Object> node = new HashMap<>();
