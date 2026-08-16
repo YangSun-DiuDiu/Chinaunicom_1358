@@ -18,6 +18,7 @@ import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
+import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.system.domain.VisitorAppointment;
 import com.ruoyi.system.domain.VisitorLog;
@@ -72,24 +73,47 @@ public class VisitorLogController extends BaseController
 
     /**
      * 获取访客记录列表（分页）
+     * 非管理员仅返回本人为被访人的记录
      */
     @PreAuthorize("@ss.hasPermi('visitor:log:list')")
     @GetMapping("/list")
     public TableDataInfo list(VisitorLog log)
     {
         startPage();
+        // 非管理员只能查看本人是被访人的记录
+        if (!SecurityUtils.isAdmin(SecurityUtils.getUserId()))
+        {
+            String nickName = SecurityUtils.getLoginUser().getUser().getNickName();
+            log.getParams().put("securityHostName", nickName != null ? nickName : SecurityUtils.getUsername());
+        }
         List<VisitorLog> list = visitorLogService.selectLogList(log);
         return getDataTable(list);
     }
 
     /**
      * 根据记录ID获取详细信息
+     * 非管理员仅能查看本人为被访人的记录
      */
     @PreAuthorize("@ss.hasPermi('visitor:log:query')")
     @GetMapping(value = "/{logId}")
     public AjaxResult getInfo(@PathVariable Long logId)
     {
-        return success(visitorLogService.selectLogById(logId));
+        VisitorLog info = visitorLogService.selectLogById(logId);
+        if (info == null)
+        {
+            return error("记录信息不存在");
+        }
+        // 非管理员校验：只能查看本人是被访人的记录
+        if (!SecurityUtils.isAdmin(SecurityUtils.getUserId()))
+        {
+            String nickName = SecurityUtils.getLoginUser().getUser().getNickName();
+            String selfName = nickName != null ? nickName : SecurityUtils.getUsername();
+            if (info.getHostName() == null || !info.getHostName().equals(selfName))
+            {
+                return error("无权查看该记录");
+            }
+        }
+        return success(info);
     }
 
     /**
@@ -114,6 +138,12 @@ public class VisitorLogController extends BaseController
     @PostMapping("/export")
     public void export(HttpServletResponse response, VisitorLog log)
     {
+        // 非管理员只能导出本人是被访人的记录
+        if (!SecurityUtils.isAdmin(SecurityUtils.getUserId()))
+        {
+            String nickName = SecurityUtils.getLoginUser().getUser().getNickName();
+            log.getParams().put("securityHostName", nickName != null ? nickName : SecurityUtils.getUsername());
+        }
         List<VisitorLog> list = visitorLogService.selectLogList(log);
         ExcelUtil<VisitorLog> util = new ExcelUtil<VisitorLog>(VisitorLog.class);
         util.exportExcel(response, list, "访客记录数据");

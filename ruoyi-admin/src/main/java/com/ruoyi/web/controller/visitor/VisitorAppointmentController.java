@@ -38,12 +38,18 @@ public class VisitorAppointmentController extends BaseController
 
     /**
      * 获取预约列表（分页）
+     * 非管理员仅返回本人为审批人的预约记录
      */
     @PreAuthorize("@ss.hasPermi('visitor:appointment:list')")
     @GetMapping("/list")
     public TableDataInfo list(VisitorAppointment appointment)
     {
         startPage();
+        // 非管理员只能查看自己是审批人（被访人）的预约
+        if (!SecurityUtils.isAdmin(SecurityUtils.getUserId()))
+        {
+            appointment.setApproverId(SecurityUtils.getUserId());
+        }
         List<VisitorAppointment> list = visitorAppointmentService.selectAppointmentList(appointment);
         return getDataTable(list);
     }
@@ -68,12 +74,24 @@ public class VisitorAppointmentController extends BaseController
 
     /**
      * 根据预约ID获取详细信息
+     * 非管理员仅能查看本人为审批人的预约
      */
     @PreAuthorize("@ss.hasPermi('visitor:appointment:query')")
     @GetMapping(value = "/{appointmentId}")
     public AjaxResult getInfo(@PathVariable Long appointmentId)
     {
-        return success(visitorAppointmentService.selectAppointmentById(appointmentId));
+        VisitorAppointment info = visitorAppointmentService.selectAppointmentById(appointmentId);
+        if (info == null)
+        {
+            return error("预约信息不存在");
+        }
+        // 非管理员校验：只能查看自己是审批人的预约
+        if (!SecurityUtils.isAdmin(SecurityUtils.getUserId())
+                && (info.getApproverId() == null || !info.getApproverId().equals(SecurityUtils.getUserId())))
+        {
+            return error("无权查看该预约");
+        }
+        return success(info);
     }
 
     /**
@@ -171,6 +189,11 @@ public class VisitorAppointmentController extends BaseController
     @PostMapping("/export")
     public void export(HttpServletResponse response, VisitorAppointment appointment)
     {
+        // 非管理员只能导出本人为审批人的预约
+        if (!SecurityUtils.isAdmin(SecurityUtils.getUserId()))
+        {
+            appointment.setApproverId(SecurityUtils.getUserId());
+        }
         List<VisitorAppointment> list = visitorAppointmentService.selectAppointmentList(appointment);
         ExcelUtil<VisitorAppointment> util = new ExcelUtil<VisitorAppointment>(VisitorAppointment.class);
         util.exportExcel(response, list, "访客预约数据");
