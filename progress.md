@@ -49,10 +49,19 @@
 | 08-09 | Vue页面命名区分(31) | 根因:scanVueFiles直接用vue文件名(全是index.vue)→buildTreeNode展示名去.md=index.vue→50+个同名节点无法区分。修复:scanVueFiles骨架标题加父目录前缀(list/index.vue);buildTreeNode当displayName为index.vue时自动加父目录前缀(排除顶级"前端"目录)。mvn package→scp JAR(106MB)→kill→重启→/doc/tree HTTP 200验证:所有节点显示list/index.vue等可区分名称。commit 8aea4ae |
 | 08-09 | 文档中心维护Skill(32) | 新建.claude/skills/zhihuiyuanqu-doc-center/SKILL.md:覆盖5个操作场景(手动编辑/新增模块/改扫描规则/刷新到服务器/强制同步)+Vue命名规范+3类文档编写模板+6条注意事项(骨架保护/孤本检测/白名单/免重启操作表/服务器路径/状态检查)+快速参考表;commit 8aea4ae |
 
+| 08-09 | 设备管理文档编写(33) | README完整监控链路全景图(SNMP→Prometheus→AlertManager→Webhook→Java→DB+SMS,端到端3~4min)+AlertWebhookController骨架→完整(payload JSON格式+6步处理+安全设计)+DeviceServiceImpl修正触发源(iot_device已迁移Prometheus)+list/index.vue修正状态链路;paramiko部署+curl验证HTTP 200;commit c9a8139 |
+| 08-09 | doc-center Skill改进(32a) | 场景4部署改用paramiko(上传+解压+验证+清理,对齐CLAUDE.md规范);新增场景7批量编写最佳实践(6步);注意事项补paramiko强制+URL编码;快速参考表增2行;commit c9a8139 |
+| 08-09 | 代码备份 | backup.sh→8.4M tar.gz(backup/RuoYi-Vue-backup-20260809_173505/)+git commit 0feb39f;git push超时(GitHub网络限制),2个本地commit待推送 |
+| 08-10 | 设备管理文档补全 | 4份文档:DeviceMapper.md(方法列表+部门过滤机制)+DeviceMapper.xml.md(12条SQL+LEFT JOIN重构+updateDevice dept_id修复)+device.js.md(13个API+数据流图)+Device.md新增deptId/deptName字段;tar+paramiko上传生产服务器验证230行
+
+| 08-16 | 设备父设备/拓扑状态修复(34) | 4处修复:①DeviceMapper.xml updateDevice parent_id无条件更新(允许清空)②前端list/index.vue submitForm空串归一null③topology页created→activated(keep-alive缓存下每次进入重拉)④loadParentDevices排除自身+全部后代防循环;部署1.94.26.126;SQL验证device 102父级106→NULL→106正确 |
+| 08-16 | zhaojg部门数据隔离越权修复(35) | 根因:DeptScopeInterceptor白名单按originalSql.contains(table)判定,iot_device LEFT JOIN sys_dept取部门名→误判为系统表查询跳过dept_id过滤→非管理员可见全部设备;另有"WHERE已含dept_id即跳过"后门+XML deptId参数可绕过。修复:白名单改主表判定(extractMainTable)+移除跳过后门+非管理员强制追加"(dept_id=X OR dept_id IN(SELECT t.dept_id FROM sys_dept WHERE find_in_set(X,t.ancestors)))";用户选路线甲(拦截器为主,DeviceMapper.xml保留deptId条件);非管理员=本部门+子部门;历史数据不改。编译+paramiko上传+start-topo.sh重启(PID 483988);端到端验证:zhaojg(dept 101)登录仅见2台(106/114),admin见12台,HTTP 200 |
+| 08-16 | 账号密码规范入档(35a) | 用户确认所有业务账号密码统一admin123(含admin/zhaojg/测试账号);CLAUDE.md新增"系统登录账号"章节(密码规范+验证码关闭+登录示例);长期记忆新增account-password-convention.md+dept-scope-isolation.md;生产验证码已关闭(sys.account.captchaEnabled=false,Redis cache已清) |
+
 ## 当前状态
 
 - **服务器**: 1.94.26.126:80/8090
 - **Redis**: 1.94.26.126:6379 (已修复)
-- **Git**: master (今日 +2 commits: Vue命名修复 + doc-center Skill)
-- **新增**: 文档中心 http://1.94.26.126/doc (无需登录, 13模块/228文档)
+- **Git**: master (工作区含拦截器修复+设备修复+CLAUDE.md,未提交)
+- **⚠️**: zhaojg越权修复/设备修复/CLAUDE.md 3组改动待提交
 - **待处理**: 阶段11(样式优化剩余), 阶段13(公寓预付费后续)

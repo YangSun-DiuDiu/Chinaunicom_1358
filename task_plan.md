@@ -46,3 +46,7 @@
 | 30. 文档中心部署 | ✅ complete | SQL执行(sys_doc_sync_log+菜单+定时任务);marked@4.3.0依赖修复;本地maven+npm构建;JAR 106MB+前端dist上传;docs/目录(255.md)同步到服务器;后端重启验证HTTP 200 |
 | 31. Vue页面文件命名区分 | ✅ complete | 所有Vue页面都是index.vue→目录树无法区分;DocServiceImpl.buildTreeNode加父目录前缀(list/index.vue);scanVueFiles骨架标题同步改造;mvn编译+scp JAR+重启;生产/doc/tree HTTP 200验证 |
 | 32. 文档中心维护Skill | ✅ complete | .claude/skills/zhihuiyuanqu-doc-center/SKILL.md:5操作场景+Vue命名规范+3类文档模板+6注意事项+快速参考表 |
+| 33. 设备管理文档补全 | ✅ complete | DeviceMapper.md+DeviceMapper.xml.md+device.js.md+Device.md(4份);dept_id过滤机制+12条SQL+13 API;tar+paramiko上传生产验证230行 |
+| 34. 设备父设备/拓扑状态修复 | ✅ complete | 父设备无法修改/删除修复(DeviceMapper.xml无条件更新parent_id+前端空串归一null);修改后状态无法同步到拓扑(keep-alive缓存→topology页activated()重拉);loadParentDevices排除自身+全部后代防循环;部署1.94.26.126验证106→NULL→106 |
+| 35. zhaojg部门数据隔离越权修复 | ✅ complete | 根因:DeptScopeInterceptor白名单按SQL文本contains判定,iot_device LEFT JOIN sys_dept被误判系统表跳过过滤→非管理员可见全部设备。修复:白名单改主表判定(extractMainTable)+非管理员强制追加"本部门+子部门"find_in_set过滤+删除WHERE含dept_id即跳过后门;DeviceMapper.xml保留deptId条件(路线甲);编译部署重启;端到端验证:zhaojg(dept 101)仅见2台(106/114),admin见12台 |
+| 35a. 账号密码规范入档 | ✅ complete | 所有业务账号密码统一admin123(含admin/zhaojg/各测试账号);CLAUDE.md新增"系统登录账号"章节+长期记忆account-password-convention.md+dept-scope-isolation.md |

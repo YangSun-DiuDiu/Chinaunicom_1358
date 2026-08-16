@@ -117,12 +117,15 @@ ssh root@1.94.26.126 'nginx -s reload'
 
 | 项目 | 值 |
 |------|-----|
+| 服务器IP | 1.94.26.126 |
+| SSH用户 | root |
+| SSH密码 | Chinaunicom@1358 |
 | 后端端口 | 8090 |
 | 前端端口 | 80 (Nginx) |
+| MySQL | 1.94.26.126:3306 / ry101 / sadmin / Chinaunicom@1358 |
+| Redis | 1.94.26.126:6379 |
 | 部署目录 | /root/zhihuiyuanqu20260625/ |
 | 前端目录 | /usr/share/nginx/zhihuiyuanqu/dist/ |
 | Nginx配置 | /etc/nginx/conf.d/zhihuiyuanqu.conf |
 | 上传目录 | /home/ruoyi/uploadPath/ |
-| 数据库 | 1.94.26.126:3306/ry101 |
-| Redis | 1.94.26.126:6379 |
 | GitHub | https://github.com/YangSun-DiuDiu/Chinaunicom_1358 |

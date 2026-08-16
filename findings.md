@@ -19,6 +19,8 @@
 | 离线发2条SMS | HeartbeatTask+DeviceServiceImpl 重复 | 由 ServiceImpl 统一发送 |
 | 自动工单无 repairNo | createRepairOrder 没生成 | 注入JdbcTemplate生成 |
 | @PreAuthorize求值500 | hasAnyPermi/hasAnyRoles写成多参数 `('a','b')` | 改逗号分隔单参数 `('a,b')` |
+| 非管理员看到全部数据(越权) | DeptScopeInterceptor白名单按`originalSql.contains(table)`判定,业务表JOIN系统表(sd)时被误判为系统表查询跳过dept过滤 | 白名单改**主表判定**(extractMainTable),非管理员强制追加`(dept_id=X OR dept_id IN(SELECT t.dept_id FROM sys_dept WHERE find_in_set(X,t.ancestors)))` |
+| 前端传空串导致Long反序列化失败 | 父设备清空时前端传`''`被Jackson转Long报400 | submitForm统一归一化为`null` |
 
 ## 房间状态规则
 
@@ -231,3 +233,35 @@ PENDING/APPROVED → CANCELLED
 | C | SecurityConfig permitAll `/dashboard/**` | 不推荐（降低安全性） |
 
 方案 A+B 组合预计 95% 解决。
+
+## 设备管理父设备/拓扑状态修复（2026-08-16）
+
+- **父设备无法修改/删除**：`DeviceMapper.xml` 的 `updateDevice` 用 `<if test="parentId != null">` 包住 `parent_id`，无法清空（清空=null 时被忽略）；删除有子设备的父设备时外键约束失败。修复：`parent_id = #{parentId},` 改为无条件更新。
+- **前端空串坑**：清空父设备时 `<el-select v-model="form.parentId">` 传空串 `''`，Jackson 反序列化 Long 报 400。修复：submitForm 里 `''`/`undefined` 归一化为 `null`。
+- **修改后状态不同步到拓扑页**：`list/index.vue` 与 `topology/index.vue` 之间通过 keep-alive 缓存切换，topology 页 `created()` 只在首次创建执行，缓存复用不触发 → 修改父级后拓扑页不刷新。修复：`created → activated()`（keep-alive 下每次进入组件都会执行 activated）。
+- **父设备下拉防循环**：`loadParentDevices` 只排除自身（excludeId），若 A 的父是 B、B 的父又是 A 会死循环/无限层级。修复：迭代收集全部后代（父被排除则其子也排除）再过滤。
+
+## zhaojg 部门数据隔离越权修复（2026-08-16）
+
+### 根因
+`DeptScopeInterceptor`（ruoyi-framework，MyBatis StatementHandler 拦截器）是项目唯一部门隔离机制。原白名单判定为 `originalSql.contains(白名单表名)` —— `selectDeviceList` `LEFT JOIN sys_dept sd` 取部门名时，SQL 文本含 `sys_dept` 被误判为系统表查询 → **跳过 dept_id 过滤** → 非管理员（zhaojg/dept 101）可见全部 12 台设备。
+
+### 次要漏洞（一并修复）
+1. 原逻辑 `WHERE 已含 dept_id → 跳过` 的检查可被带 deptId 参数的查询绕过。
+2. `DeviceMapper.xml` line 68-70 的 `<if test="deptId != null and deptId != 0">` 允许前端传 deptId 参数绕过。
+
+### 修复（路线甲：拦截器为主）
+- **白名单改主表判定**：`extractMainTable(sqlLower)` 取 `FROM` 后第一个表，仅当主表为系统/全局共享表（sys_*、meeting_room）才跳过。业务表即使 JOIN 系统表也会被过滤。
+- **非管理员强制附加**：删除「WHERE 含 dept_id → 跳过」后门，非管理员无条件追加 `(dept_id = X OR dept_id IN (SELECT t.dept_id FROM sys_dept t WHERE find_in_set(X, t.ancestors)))` —— 本部门 + 全部子部门。
+- **DeviceMapper.xml 保留 deptId 条件**（用户决策路线甲）：XML 过滤与拦截器叠加，非重复定义问题，双保险。
+- **用户约束**：非管理员看本部门+子部门；历史数据不改（用户自行处理）。
+
+### 验证（生产 1.94.26.126）
+- zhaojg（dept 101, role prodAdmin）登录 `/device/list` → 仅 2 台（106/114），全部 dept 101
+- admin → 12 台（豁免正常）
+- 部署 jar 校验：内嵌 `ruoyi-framework-3.9.2.jar` 的 `DeptScopeInterceptor.class` 含 `extractMainTable` 方法标记（字节码 grep 确认修复代码已上线）
+- dept 101 无子部门（ancestors 无 find_in_set(101)），故仅本部门 2 台
+
+### 经验
+- **MyBatis 拦截器部署验证**：修改拦截器后，仅验证接口层不够，需确认 fat-jar 内嵌 framework 模块 jar 的 class 确实是新版。方法：`unzip -p ruoyi-admin.jar BOOT-INF/lib/ruoyi-framework-*.jar > /tmp/fw.jar`，再 `unzip -p /tmp/fw.jar com/ruoyi/framework/interceptor/DeptScopeInterceptor.class | grep 方法名`。
+- **登录验证统一密码**：系统所有业务账号密码均为 `admin123`（见 CLAUDE.md「系统登录账号」），可用 curl 直接登录调 API 做端到端验证。

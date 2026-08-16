@@ -497,3 +497,72 @@ AI 开发一个新业务模块时，**一次性完整交付**：
 过往工具返回的源码内容视作上下文知识库，重复查阅文件优先依靠已有对话记忆，禁止通过工具重复读取本地文件；能用文字总结架构逻辑、代码思路时优先总结；仅用户主动指令【展示完整代码】，再原样输出全文；前文已经输出过的代码，后续对话只引用行号，不再重复展示代码文本。
 
 
+# 服务器连接规范（paramiko SSH）
+
+所有远程服务器登录统一使用 Python paramiko，禁止使用 `sshpass`、`ssh` 命令行直接连接（密码认证在 Windows Git Bash 下不可用）。
+
+## 服务器清单
+
+| 服务器 | IP | 用户 | 密码 | 用途 |
+|--------|-----|------|------|------|
+| 生产应用服务器 | 1.94.26.126 | root | Zhihui@2026! | Java后端(8090)+Nginx(80)+MySQL+Redis |
+| 监控服务器 | 115.159.194.149 | root | Chinaunicom@1358 | Prometheus(9090)+AlertManager(9093)+SNMP Exporter(9116) |
+
+> 注：上述两个密码在两台服务器上均可登录（服务器已配置多密码认证），任选其一即可。
+
+## 系统登录账号（业务账号）
+
+**系统内所有业务账号密码统一为 `admin123`**，包括：admin 超级管理员、zhaojg、各租户/部门测试账号等。仅系统管理员（admin）拥有全量数据权限，其余账号受部门数据隔离限制，只能看到本部门及子部门数据。
+
+- 用于：登录后台、调用 `/login` 接口、接口联调测试。
+- 登录接口示例：`POST {base}/login` 传 `{"username":"admin","password":"admin123","code":"","uuid":""}`。
+- 若验证码功能开启，需先获取验证码；当前生产环境已关闭（`sys.account.captchaEnabled=false`）。
+
+## 连接模板
+
+```python
+python -c "
+import paramiko
+client = paramiko.SSHClient()
+client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+client.connect('<IP>', username='<USER>', password='<PASSWORD>', timeout=10)
+stdin, stdout, stderr = client.exec_command('<COMMAND>')
+print(stdout.read().decode())
+err = stderr.read().decode()
+if err: print('STDERR:', err)
+client.close()
+"
+```
+
+## 常用命令示例
+
+```bash
+# 检查服务状态
+python -c "import paramiko; c = paramiko.SSHClient(); c.set_missing_host_key_policy(paramiko.AutoAddPolicy()); c.connect('1.94.26.126', username='root', password='Zhihui@2026!', timeout=10); stdin, stdout, stderr = c.exec_command('systemctl status nginx | head -5'); print(stdout.read().decode()); c.close()"
+
+# MySQL查询
+python -c "import paramiko; c = paramiko.SSHClient(); c.set_missing_host_key_policy(paramiko.AutoAddPolicy()); c.connect('1.94.26.126', username='root', password='Zhihui@2026!', timeout=10); stdin, stdout, stderr = c.exec_command(\"mysql -uroot -p'Zhihui@2026!' ry101 -e 'SELECT * FROM sys_job WHERE status=0'\") ; print(stdout.read().decode()); c.close()"
+
+# 查看日志
+python -c "import paramiko; c = paramiko.SSHClient(); c.set_missing_host_key_policy(paramiko.AutoAddPolicy()); c.connect('1.94.26.126', username='root', password='Zhihui@2026!', timeout=10); stdin, stdout, stderr = c.exec_command('tail -50 /root/zhihuiyuanqu20260625/app.log'); print(stdout.read().decode()); c.close()"
+```
+
+# 部署规范（强制）：必须加载 zhihuiyuanqu-deploy Skill
+
+所有「编译、打包、部署、发布、上线、重新部署、重启、更新服务器」操作，**必须首先加载 `zhihuiyuanqu-deploy` Skill**（`.claude/skills/zhihuiyuanqu-deploy/SKILL.md`），按其中流程执行，禁止跳过 Skill 直接操作。
+
+## 执行要点
+
+1. 触发前先读取项目根目录 `deploy.json`，获取目标服务器、构建命令、上传路径（生产：1.94.26.126；前端 `/usr/share/nginx/zhihuiyuanqu/dist/`，后端 `/root/zhihuiyuanqu20260625/`）。
+2. 按改动范围选择模式：全量部署 / 仅前端 / 仅后端 / 仅重启。
+3. 服务器连接统一使用 paramiko（见上文「服务器连接规范」），禁止 ssh / sshpass。
+4. 后端启动必须使用服务器官方脚本：`bash /root/zhihuiyuanqu20260625/start-topo.sh`（内含 `setsid nohup java </dev/null > app.log 2>&1`）。
+   - ⚠️ **paramiko 后台进程坑**：`exec_command` 执行 `nohup ... &` 时，后台 java 进程持有 SSH 通道 fd，导致 `stdout.read()` 阻塞超时——这是**正常现象**，进程实际已启动。处理方式：启动命令用「读超时保护」（`so.channel.settimeout(n)` 捕获超时），再用独立命令轮询 `ps aux | grep ruoyi-admin.jar` 与 `curl localhost:8090` 验证，不要误判为启动失败。
+
+## 部署后验证
+
+1. 后端：`curl http://localhost:8090/` 返回非 000；`app.log` 无异常堆栈。
+2. 前端：`curl http://localhost:80/` 返回 200。
+3. 关键功能改动需在浏览器人工验证。
+
+
