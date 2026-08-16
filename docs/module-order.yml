@@ -1,0 +1,9 @@
+# 文档中心模块排序 (数字越小越靠前)
+01: device  # 设备管理
+02: meeting  # 会议管理
+03: visitor  # 访客管理
+04: hostel  # 公寓管理
+05: smart  # 智能化管理
+06: attendance  # 考勤管理
+07: sms  # 短信管理
+08: system  # 系统管理
