@@ -24,8 +24,10 @@ import java.util.Set;
 /**
  * MyBatis 拦截器：自动为业务表 SELECT 查询添加组织(dept_id)过滤条件
  *
- * 白名单表（系统表/全局共享表）不添加过滤
- * 管理员跳过过滤
+ * 过滤规则：
+ * 1. 按主表判定白名单：仅系统表/全局共享表不添加过滤，业务表即使 JOIN 系统表也会被过滤
+ * 2. 管理员跳过过滤
+ * 3. 非管理员强制追加"本部门 + 子部门"过滤，不可通过查询参数绕过
  */
 @Intercepts({
     @Signature(type = StatementHandler.class, method = "prepare",
@@ -65,17 +67,11 @@ public class DeptScopeInterceptor implements Interceptor {
 
         String originalSql = statementHandler.getBoundSql().getSql().toLowerCase();
 
-        // 检查是否包含白名单表（任一白名单表出现在 SQL 中则跳过）
-        for (String table : WHITELIST_TABLES) {
-            if (originalSql.contains(table)) {
-                return invocation.proceed();
-            }
-        }
-
-        // 检查 WHERE 子句中是否已包含 dept_id 条件（避免重复添加）
-        // 注意：不能简单 contains("dept_id")，因为 SELECT 列表中也包含 dept_id 列
-        int whereIdx = originalSql.indexOf("where");
-        if (whereIdx >= 0 && originalSql.substring(whereIdx).contains("dept_id")) {
+        // 白名单判定改为"主表"判定：仅当 FROM 后主表为系统/全局共享表时才跳过组织过滤。
+        // 原实现按"SQL 文本是否包含任一白名单表"判定，导致业务表(如 iot_device) JOIN sys_dept
+        // 取部门名时被误判为系统表查询而绕过 dept_id 过滤，造成非管理员越权查看全部数据。
+        String mainTable = extractMainTable(originalSql);
+        if (WHITELIST_TABLES.contains(mainTable)) {
             return invocation.proceed();
         }
 
@@ -139,7 +135,7 @@ public class DeptScopeInterceptor implements Interceptor {
         String sqlLower = sql.toLowerCase();
         int fromIdx = sqlLower.indexOf("from ");
         if (fromIdx >= 0) {
-            // 从 FROM 后找到表名和别名，例如 "from meeting_booking b" → alias="b"
+            // 从 FROM 后找到表名和别名，例如 "from iot_device d" → alias="d"
             String afterFrom = sqlLower.substring(fromIdx + 5);
             int joinIdx = afterFrom.indexOf(" join "); // 空格 + join + 空格
             String firstTableClause = joinIdx > 0 ? afterFrom.substring(0, joinIdx) : afterFrom;
@@ -157,12 +153,17 @@ public class DeptScopeInterceptor implements Interceptor {
             }
         }
 
+        // 组织过滤条件：本部门 + 该部门全部子部门（ancestors 包含当前 deptId 的部门），
+        // 用括号包裹避免与其它 AND 条件产生 OR 优先级问题
+        String deptFilter = "(" + deptColumn + " = " + deptId
+                + " OR " + deptColumn + " IN ( SELECT t.dept_id FROM sys_dept t WHERE find_in_set(" + deptId + ", t.ancestors) ))";
+
         StringBuilder sb = new StringBuilder(sql);
         int whereIndex = sqlLower.indexOf("where");
 
         if (whereIndex >= 0) {
             int insertPos = whereIndex + 5;
-            sb.insert(insertPos, " " + deptColumn + " = " + deptId + " AND ");
+            sb.insert(insertPos, " " + deptFilter + " AND ");
         } else {
             int orderIndex = sqlLower.indexOf("order by");
             int groupIndex = sqlLower.indexOf("group by");
@@ -173,10 +174,28 @@ public class DeptScopeInterceptor implements Interceptor {
             if (groupIndex >= 0) insertPos = Math.min(insertPos, groupIndex);
             if (limitIndex >= 0) insertPos = Math.min(insertPos, limitIndex);
 
-            sb.insert(insertPos, " WHERE " + deptColumn + " = " + deptId + " ");
+            sb.insert(insertPos, " WHERE " + deptFilter + " ");
         }
 
         return sb.toString();
+    }
+
+    /**
+     * 提取 SQL 主表名（FROM 后的第一个表），用于白名单判定
+     *
+     * @param sqlLower 已转为小写的 SQL
+     * @return 主表名，找不到返回空串
+     */
+    private String extractMainTable(String sqlLower) {
+        int fromIdx = sqlLower.indexOf("from ");
+        if (fromIdx < 0) {
+            return "";
+        }
+        String afterFrom = sqlLower.substring(fromIdx + 5).trim();
+        int joinIdx = afterFrom.indexOf(" join ");
+        String firstTableClause = joinIdx > 0 ? afterFrom.substring(0, joinIdx) : afterFrom;
+        String[] parts = firstTableClause.trim().split("\\s+");
+        return parts.length > 0 ? parts[0] : "";
     }
 
     @Override
