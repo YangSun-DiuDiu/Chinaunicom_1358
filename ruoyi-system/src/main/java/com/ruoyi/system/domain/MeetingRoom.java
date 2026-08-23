@@ -35,6 +35,9 @@ public class MeetingRoom extends BaseEntity
     @Excel(name = "状态", readConverterExp = "0=启用,1=停用")
     private String status;
 
+    /** 所属组织名称（部门，查询关联，不落库） */
+    private String deptName;
+
     public Long getRoomId()
     {
         return roomId;
@@ -97,6 +100,16 @@ public class MeetingRoom extends BaseEntity
     public void setStatus(String status)
     {
         this.status = status;
+    }
+
+    public String getDeptName()
+    {
+        return deptName;
+    }
+
+    public void setDeptName(String deptName)
+    {
+        this.deptName = deptName;
     }
 
     @Override

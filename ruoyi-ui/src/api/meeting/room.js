@@ -42,3 +42,11 @@ export function delRoom(roomIds) {
     method: 'delete'
   })
 }
+
+// 部门树（组织架构，与系统管理-部门管理数据同步）
+export function deptTreeSelect() {
+  return request({
+    url: '/meeting/room/deptTree',
+    method: 'get'
+  })
+}

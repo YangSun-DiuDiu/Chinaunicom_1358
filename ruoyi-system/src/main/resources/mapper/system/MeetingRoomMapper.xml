@@ -12,6 +12,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="equipment"    column="equipment"      />
         <result property="status"       column="status"         />
         <result property="deptId"       column="dept_id"        />
+        <result property="deptName"     column="dept_name"      />
         <result property="createBy"     column="create_by"      />
         <result property="createTime"   column="create_time"    />
         <result property="updateBy"     column="update_by"      />
@@ -20,23 +21,28 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectMeetingRoomVo">
-        select room_id, room_name, location, capacity, equipment,
-               status, dept_id, create_by, create_time, update_by,
-               update_time, remark
-        from meeting_room
+        select mr.room_id, mr.room_name, mr.location, mr.capacity, mr.equipment,
+               mr.status, mr.dept_id, sd.dept_name,
+               mr.create_by, mr.create_time, mr.update_by,
+               mr.update_time, mr.remark
+        from meeting_room mr
+        left join sys_dept sd on sd.dept_id = mr.dept_id
     </sql>
 
     <select id="selectMeetingRoomList" parameterType="MeetingRoom" resultMap="MeetingRoomResult">
         <include refid="selectMeetingRoomVo"/>
         <where>
             <if test="roomName != null and roomName != ''">
-                AND room_name like concat('%', #{roomName}, '%')
+                AND mr.room_name like concat('%', #{roomName}, '%')
             </if>
             <if test="location != null and location != ''">
-                AND location like concat('%', #{location}, '%')
+                AND mr.location like concat('%', #{location}, '%')
             </if>
             <if test="status != null and status != ''">
-                AND status = #{status}
+                AND mr.status = #{status}
+            </if>
+            <if test="deptId != null and deptId != 0">
+                AND (mr.dept_id = #{deptId} OR mr.dept_id IN (SELECT t.dept_id FROM sys_dept t WHERE find_in_set(#{deptId}, t.ancestors)))
             </if>
             <if test="params.beginTime != null and params.beginTime != ''">
                 and date_format(create_time,'%Y%m%d') &gt;= date_format(#{params.beginTime},'%Y%m%d')
@@ -51,7 +57,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectMeetingRoomById" parameterType="Long" resultMap="MeetingRoomResult">
         <include refid="selectMeetingRoomVo"/>
-        where room_id = #{roomId}
+        where mr.room_id = #{roomId}
     </select>
 
     <insert id="insertMeetingRoom" parameterType="MeetingRoom" useGeneratedKeys="true" keyProperty="roomId">

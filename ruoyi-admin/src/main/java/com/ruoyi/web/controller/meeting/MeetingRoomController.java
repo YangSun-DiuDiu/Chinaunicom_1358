@@ -19,9 +19,11 @@ import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
+import com.ruoyi.common.core.domain.entity.SysDept;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.system.domain.MeetingRoom;
 import com.ruoyi.system.service.IMeetingRoomService;
+import com.ruoyi.system.service.ISysDeptService;
 
 /**
  * 会议室管理 信息操作处理
@@ -35,6 +37,9 @@ public class MeetingRoomController extends BaseController
     @Autowired
     private IMeetingRoomService meetingRoomService;
 
+    @Autowired
+    private ISysDeptService deptService;
+
     /**
      * 获取会议室分页列表
      */
@@ -45,6 +50,16 @@ public class MeetingRoomController extends BaseController
         startPage();
         List<MeetingRoom> list = meetingRoomService.selectMeetingRoomList(meetingRoom);
         return getDataTable(list);
+    }
+
+    /**
+     * 获取组织架构部门树（与系统管理-部门管理数据同步）
+     */
+    @PreAuthorize("@ss.hasPermi('meeting:room:list')")
+    @GetMapping("/deptTree")
+    public AjaxResult deptTree(SysDept dept)
+    {
+        return success(deptService.selectDeptTreeList(dept));
     }
 
     /**

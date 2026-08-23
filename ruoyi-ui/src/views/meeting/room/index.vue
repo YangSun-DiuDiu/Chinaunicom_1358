@@ -1,5 +1,10 @@
 <template>
-  <div class="app-container">
+  <div class="app-container tree-sidebar-manage-wrap">
+    <tree-panel title="组织架构" :tree-data="deptOptions" search-placeholder="请输入部门名称"
+                storage-key="meeting-room-dept-sidebar-width" :defaultExpandAll="true"
+                @node-click="handleDeptNodeClick" @refresh="getDeptTree" ref="deptTreeRef" />
+    <div class="tree-sidebar-content">
+      <div class="content-inner">
     <el-form :model="query" size="small" :inline="true" v-show="showSearch" label-width="80px">
       <el-form-item label="会议室名称">
         <el-input v-model="query.roomName" placeholder="会议室名称" clearable style="width:180px" @keyup.enter.native="getList"/>
@@ -12,7 +17,7 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="getList">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="reset">重置</el-button>
+        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
     <el-row :gutter="10" class="mb8">
@@ -26,6 +31,7 @@
       <el-table-column label="位置" prop="location" min-width="160" :show-overflow-tooltip="true"/>
       <el-table-column label="容量" prop="capacity" min-width="80" align="center"/>
       <el-table-column label="设备" prop="equipment" min-width="180" :show-overflow-tooltip="true"/>
+      <el-table-column label="所属部门" prop="deptName" min-width="120" :show-overflow-tooltip="true"/>
       <el-table-column label="状态" min-width="80" align="center">
         <template slot-scope="{row}">
           <el-tag :type="row.status === '0' ? 'success' : 'danger'" size="small">{{ row.status === '0' ? '启用' : '停用' }}</el-tag>
@@ -72,16 +78,22 @@
         <el-button @click="open=false">取消</el-button>
       </div>
     </el-dialog>
+      </div>
+    </div>
   </div>
 </template>
 <script>
 import request from '@/utils/request'
+import TreePanel from "@/components/TreePanel"
+import { deptTreeSelect } from "@/api/meeting/room"
 const BASE = '/meeting/room'
 export default {
+  components: { TreePanel },
   data() {
     return {
       loading: false, showSearch: true, total: 0, list: [], open: false, title: '',
-      query: { pageNum: 1, pageSize: 10, roomName: undefined, status: undefined },
+      deptOptions: [],
+      query: { pageNum: 1, pageSize: 10, roomName: undefined, status: undefined, deptId: undefined },
       form: { roomId: undefined, roomName: '', location: '', capacity: 10, equipment: '', status: '0' },
       rules: {
         roomName: [{ required: true, message: '会议室名称不能为空', trigger: 'blur' }],
@@ -90,17 +102,30 @@ export default {
       }
     }
   },
-  created() { this.getList() },
+  created() { this.getList(); this.getDeptTree() },
   methods: {
+    /** 查询部门树（组织架构，与系统管理-部门管理数据同步） */
+    getDeptTree() {
+      deptTreeSelect().then(response => {
+        this.deptOptions = response.data
+      })
+    },
+    /** 部门节点单击事件：按部门（含子部门）过滤会议室 */
+    handleDeptNodeClick(data) {
+      this.query.deptId = data.id
+      this.getList()
+    },
+    /** 重置查询：清空部门过滤并取消树选中 */
+    resetQuery() {
+      this.query = { pageNum: 1, pageSize: 10, roomName: undefined, status: undefined, deptId: undefined }
+      if (this.$refs.deptTreeRef) { this.$refs.deptTreeRef.setCurrentKey(null) }
+      this.getList()
+    },
     getList() {
       this.loading = true
       request({ url: BASE + '/list', method: 'get', params: this.query }).then(r => {
         this.list = r.rows; this.total = r.total; this.loading = false
       })
-    },
-    reset() {
-      this.query = { pageNum: 1, pageSize: 10, roomName: undefined, status: undefined }
-      this.getList()
     },
     handleAdd() {
       this.form = { roomId: undefined, roomName: '', location: '', capacity: 10, equipment: '', status: '0' }

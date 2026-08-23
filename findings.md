@@ -265,3 +265,14 @@ PENDING/APPROVED → CANCELLED
 ### 经验
 - **MyBatis 拦截器部署验证**：修改拦截器后，仅验证接口层不够，需确认 fat-jar 内嵌 framework 模块 jar 的 class 确实是新版。方法：`unzip -p ruoyi-admin.jar BOOT-INF/lib/ruoyi-framework-*.jar > /tmp/fw.jar`，再 `unzip -p /tmp/fw.jar com/ruoyi/framework/interceptor/DeptScopeInterceptor.class | grep 方法名`。
 - **登录验证统一密码**：系统所有业务账号密码均为 `admin123`（见 CLAUDE.md「系统登录账号」），可用 curl 直接登录调 API 做端到端验证。
+
+## 会议室组织架构树 + 部门隔离（2026-08-23）
+
+- **业务页面部门树复用模式**：`/system/dept/treeselect` 本项目已改为仅 admin 可调（SysDeptController），业务角色页面必须新增**业务级 deptTree 端点**（设备用 `/device/deptTree` 权限 `device:list`；会议室新增 `/meeting/room/deptTree` 权限 `meeting:room:list`），内部统一委托 `deptService.selectDeptTreeList(new SysDept())`，返回 List<TreeSelect>(id/label/disabled/children)。
+- **部门树与 sys_dept 实时同步**：页面 `created()` 每次进入重新拉取 deptTree（前端路由未设 keepAlive），TreePanel 自带刷新按钮 `@refresh="getDeptTree"`，无需缓存/定时任务。
+- **meeting_room 移出白名单启用隔离**：DeptScopeInterceptor 白名单移除 `meeting_room` 后，非管理员列表查询被强制追加 `(dept_id=X OR dept_id IN(SELECT t.dept_id FROM sys_dept t WHERE find_in_set(X,t.ancestors)))`。主表写别名 `mr` 时拦截器自动用 `mr.dept_id`（detect 到 "meeting_room mr"），LEFT JOIN sys_dept sd 无歧义。**重要**：移除白名单前必须确认存量数据 dept_id 已填充，否则 NULL 部门数据对非管理员不可见（本项目 3 室已全部填充，回填 no-op）。
+- **列表 SQL 别名化坑**：给查询加 LEFT JOIN 后，若主表别名，则 selectMeetingRoomById 等所有复用同一 `<include>` 的 SQL 的 where 条件也要带别名（`where mr.room_id = #{roomId}`），否则 MySQL 报 unknown column。
+- **update 不加 dept_id（自动归属模式）**：DeptFillAspect 仅在 deptId==null 时注入当前用户/切换上下文部门。若 update SQL 加 dept_id 且前端编辑表单不带 deptId，编辑时会被 DeptFillAspect 误改为当前用户部门。决策：归属仅在创建时决定，update SQL 不含 dept_id 列。
+- **DeptFillAspect 是存量 dept_id 的来源**：本项目 3 个会议室 dept_id 已填充（admin→100，zhaojg→101）正是阶段16 DeptFillAspect 生效后创建的。
+- **Vue2 组件未注册的隐蔽症状**：`import TreePanel` 但漏 `components:{TreePanel}` → Vue 把 `<tree-panel>` 当**未知自定义元素**原样渲染（DOM 里是空标签 `<tree-panel title="组织架构"...></tree-panel>`），页面只显示 title 属性文本「组织架构」，**树节点完全不渲染**。API 验证全过（deptTree 200、deptOptions 有数据）但 UI 空白。排查要点：①对比正常页（设备列表 `components:{TreePanel,Treeselect}`）②`document.querySelector('.tree-sidebar')` 为 null 即未渲染 ③`document.querySelector('tree-panel').innerHTML===''` 且 childNodes=0 即组件未挂载。连锁坑：`this.$refs.xxxRef.setCurrentKey()` 报 `setCurrentKey is not a function`（$refs 拿到的是空 DOM 元素而非组件实例），与未注册同根因，修注册一处都好。
+- **playwright eval 的 bash `$` 展开坑**：eval 里写 `vm.$store`/`vm.$refs` 时，bash 双引号会把 `$store` 展开成空 → JS 变 `vm..store` 报 `Unexpected token '.'`（位置 38 左右）。规避：整个 eval 用**单引号**包裹 bash 参数，或避免 `$` 属性访问。

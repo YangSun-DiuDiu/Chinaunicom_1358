@@ -51,3 +51,5 @@
 | 35. zhaojg部门数据隔离越权修复 | ✅ complete | 根因:DeptScopeInterceptor白名单按SQL文本contains判定,iot_device LEFT JOIN sys_dept被误判系统表跳过过滤→非管理员可见全部设备。修复:白名单改主表判定(extractMainTable)+非管理员强制追加"本部门+子部门"find_in_set过滤+删除WHERE含dept_id即跳过后门;DeviceMapper.xml保留deptId条件(路线甲);编译部署重启;端到端验证:zhaojg(dept 101)仅见2台(106/114),admin见12台 |
 | 35a. 账号密码规范入档 | ✅ complete | 所有业务账号密码统一admin123(含admin/zhaojg/各测试账号);CLAUDE.md新增"系统登录账号"章节+长期记忆account-password-convention.md+dept-scope-isolation.md |
 | 36. 拓扑跨部门父设备修复 | ✅ complete | 根因:admin给zhaojg根设备106设父设备100(不在zhaojg可见范围),部门隔离下buildTopologyTree从根遍历不到106→拓扑图空白。修复:DeviceController.buildTopologyTree父设备不在可见集合时提升为根节点;部署验证zhaojg见106(+子114),admin树不变 |
+| 37. 会议室组织架构树 | ✅ complete | 会议室管理页加TreePanel组织树(与sys_dept实时同步):Controller新增/meeting/room/deptTree;列表SQL加LEFT JOIN sys_dept+deptId过滤(find_in_set含子部门)+deptName列;meeting_room移出DeptScopeInterceptor白名单(非管理员仅见本部门+子部门);DeptFillAspect自动归属当前部门(编辑不改dept_id,update SQL不加);存量dept_id已全填充(0行NULL,无需回填);部署验证admin树/过滤/zhaojg隔离/simpleList全通过 |
+| 37a. 组织树渲染Bug修复 | ✅ complete | 浏览器验证发现index.vue漏`components:{TreePanel}`注册→<tree-panel>当未知元素渲染为空(树不显示+resetQuery $refs报错);补注册后前端重构建+部署,浏览器复验树渲染/节点过滤/重置全通过 |

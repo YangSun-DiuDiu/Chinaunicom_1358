@@ -45,8 +45,7 @@ public class DeptScopeInterceptor implements Interceptor {
         "sys_dict_type", "sys_dict_data",
         "sys_config", "sys_notice", "sys_notice_read",
         "sys_oper_log", "sys_logininfor",
-        "sys_job", "sys_job_log", "sys_sms_config",
-        "meeting_room"
+        "sys_job", "sys_job_log", "sys_sms_config"
     ));
 
     @Override
