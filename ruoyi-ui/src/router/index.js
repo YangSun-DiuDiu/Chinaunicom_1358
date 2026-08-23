@@ -634,6 +634,16 @@ export const staticRoutes = [
           permissions: ["meeting:booking:list"],
         },
       },
+      {
+        path: "status",
+        component: () => import("@/views/meeting/status/index"),
+        name: "MeetingStatus",
+        meta: {
+          title: "使用状态总览",
+          icon: "monitor",
+          permissions: ["meeting:room:list"],
+        },
+      },
     ],
   },
   // ==================== 公寓管理 ====================

@@ -82,4 +82,12 @@ public interface IMeetingBookingService
      * 审批会议预约（通过/拒绝），含短信通知
      */
     public int approveBooking(Long bookingId, String status);
+
+    /**
+     * 查询今日全部已通过预约（会议室状态总览聚合用）
+     * <p>部门数据隔离由 DeptScopeInterceptor 拦截器自动追加</p>
+     *
+     * @return 今日 APPROVED 预约列表
+     */
+    public List<MeetingBooking> selectTodayApprovedList();
 }

@@ -147,4 +147,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         ORDER BY b.start_time
     </select>
 
+    <!-- 今日全部已通过预约（会议室状态总览聚合用，一次查全量避免循环内查询） -->
+    <select id="selectTodayApprovedList" resultMap="MeetingBookingResult">
+        <include refid="selectMeetingBookingVo"/>
+        WHERE b.status = 'APPROVED'
+        AND DATE(b.start_time) = CURDATE()
+        ORDER BY b.room_id, b.start_time ASC
+    </select>
+
 </mapper>

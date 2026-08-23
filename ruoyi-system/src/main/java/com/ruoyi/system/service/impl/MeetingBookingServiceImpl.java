@@ -142,6 +142,19 @@ public class MeetingBookingServiceImpl implements IMeetingBookingService
     /**
      * 审批会议预约（通过/拒绝），完成后短信通知主持人
      */
+    /**
+     * 查询今日全部已通过预约（会议室状态总览聚合用）
+     * <p>部门数据隔离由 DeptScopeInterceptor 拦截器自动追加</p>
+     */
+    @Override
+    public List<MeetingBooking> selectTodayApprovedList()
+    {
+        return meetingBookingMapper.selectTodayApprovedList();
+    }
+
+    /**
+     * 审批会议预约（通过/拒绝），完成后短信通知主持人
+     */
     public int approveBooking(Long bookingId, String status) {
         MeetingBooking booking = meetingBookingMapper.selectMeetingBookingById(bookingId);
         if (booking == null) throw new RuntimeException("预约不存在");

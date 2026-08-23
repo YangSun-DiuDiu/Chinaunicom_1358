@@ -90,4 +90,12 @@ public interface MeetingBookingMapper
      * @return 预约列表
      */
     public List<MeetingBooking> selectSlots(@Param("roomId") Long roomId, @Param("date") String date);
+
+    /**
+     * 查询今日全部已通过预约（状态总览聚合用，一次查全量避免循环内查询）
+     * <p>部门数据隔离由 DeptScopeInterceptor 拦截器自动追加，无需手写 dept_id 条件</p>
+     *
+     * @return 今日 APPROVED 预约列表（按会议室、开始时间排序）
+     */
+    public List<MeetingBooking> selectTodayApprovedList();
 }

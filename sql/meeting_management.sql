@@ -47,3 +47,7 @@ VALUES ('会议室管理', @meeting_parent, 1, 'room', 'meeting/room/index', 'C'
 
 INSERT INTO sys_menu (menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, create_by, create_time)
 VALUES ('会议预约', @meeting_parent, 2, 'booking', 'meeting/booking/index', 'C', '0', '0', 'meeting:booking:list', '#', 'admin', NOW());
+
+-- 会议室使用状态总览（需登录 + 部门隔离，权限复用 meeting:room:list）
+INSERT INTO sys_menu (menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, create_by, create_time)
+VALUES ('使用状态总览', @meeting_parent, 3, 'status', 'meeting/status/index', 'C', '0', '0', 'meeting:room:list', '#', 'admin', NOW());

@@ -3,6 +3,8 @@ package com.ruoyi.web.controller.meeting;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -21,7 +23,9 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.core.domain.entity.SysDept;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.system.domain.MeetingBooking;
 import com.ruoyi.system.domain.MeetingRoom;
+import com.ruoyi.system.service.IMeetingBookingService;
 import com.ruoyi.system.service.IMeetingRoomService;
 import com.ruoyi.system.service.ISysDeptService;
 
@@ -36,6 +40,9 @@ public class MeetingRoomController extends BaseController
 {
     @Autowired
     private IMeetingRoomService meetingRoomService;
+
+    @Autowired
+    private IMeetingBookingService meetingBookingService;
 
     @Autowired
     private ISysDeptService deptService;
@@ -60,6 +67,44 @@ public class MeetingRoomController extends BaseController
     public AjaxResult deptTree(SysDept dept)
     {
         return success(deptService.selectDeptTreeList(dept));
+    }
+
+    /**
+     * 获取会议室使用状态总览（所有会议室当前状态 + 今日预约记录）
+     * <p>需登录授权（meeting:room:list）；会议室与预约记录均按登录用户部门隔离（DeptScopeInterceptor）</p>
+     *
+     * @return 每间会议室 [{ room, currentStatus, currentBooking, nextBooking, todayBookings }]
+     */
+    @PreAuthorize("@ss.hasPermi('meeting:room:list')")
+    @GetMapping("/status")
+    public AjaxResult status()
+    {
+        // 会议室列表（拦截器自动按登录用户部门隔离）
+        List<MeetingRoom> roomList = meetingRoomService.selectMeetingRoomList(new MeetingRoom());
+        // 今日全部已通过预约（一次查询，避免循环内查询；拦截器同样按部门隔离）
+        List<MeetingBooking> todayList = meetingBookingService.selectTodayApprovedList();
+
+        // 按 roomId 分组今日预约
+        Map<Long, List<MeetingBooking>> todayByRoom = new HashMap<>();
+        for (MeetingBooking booking : todayList)
+        {
+            todayByRoom.computeIfAbsent(booking.getRoomId(), k -> new ArrayList<>()).add(booking);
+        }
+
+        // 组装每间会议室状态
+        List<Map<String, Object>> resultList = new ArrayList<>();
+        for (MeetingRoom room : roomList)
+        {
+            List<MeetingBooking> roomBookings = todayByRoom.getOrDefault(room.getRoomId(), new ArrayList<>());
+            Map<String, Object> item = new LinkedHashMap<>();
+            item.put("room", room);
+            item.put("currentStatus", meetingRoomService.calcCurrentStatus(roomBookings));
+            item.put("currentBooking", meetingRoomService.getCurrentBooking(roomBookings));
+            item.put("nextBooking", meetingRoomService.getNextBooking(roomBookings));
+            item.put("todayBookings", roomBookings);
+            resultList.add(item);
+        }
+        return success(resultList);
     }
 
     /**

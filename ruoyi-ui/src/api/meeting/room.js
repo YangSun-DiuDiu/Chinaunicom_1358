@@ -50,3 +50,11 @@ export function deptTreeSelect() {
     method: 'get'
   })
 }
+
+// 会议室使用状态总览（所有会议室当前状态 + 今日预约记录）
+export function statusList() {
+  return request({
+    url: '/meeting/room/status',
+    method: 'get'
+  })
+}
