@@ -1,0 +1,379 @@
+- generic [ref=e45]:
+  - generic [ref=e120]:
+    - link "🏢 智慧园区" [ref=e122] [cursor=pointer]:
+      - /url: /
+      - text: 🏢
+      - generic [ref=e124]: 智慧园区
+    - menubar [ref=e128]:
+      - menuitem "会议管理 " [expanded] [ref=e130]:
+        - generic [ref=e131] [cursor=pointer]:
+          - img [ref=e132]
+          - text: 会议管理
+          - generic [ref=e134]: 
+        - menu [ref=e135]:
+          - link "会议室管理" [ref=e137] [cursor=pointer]:
+            - /url: /meeting/room
+            - menuitem "会议室管理" [ref=e138]:
+              - img [ref=e139]
+              - text: 会议室管理
+          - link "会议预约" [ref=e142] [cursor=pointer]:
+            - /url: /meeting/booking
+            - menuitem "会议预约" [ref=e143]:
+              - img [ref=e144]
+              - text: 会议预约
+          - link "会议审批" [ref=e147] [cursor=pointer]:
+            - /url: /meeting/approval
+            - menuitem "会议审批" [ref=e148]:
+              - img [ref=e149]
+              - text: 会议审批
+          - link "会议管理" [ref=e152] [cursor=pointer]:
+            - /url: /meeting/manage
+            - menuitem "会议管理" [ref=e153]:
+              - img [ref=e154]
+              - text: 会议管理
+  - generic [ref=e46]:
+    - generic [ref=e48]:
+      - img [ref=e50] [cursor=pointer]
+      - link " 返回首页" [ref=e157] [cursor=pointer]:
+        - /url: /index
+        - generic [ref=e158]: 
+        - generic [ref=e159]: 返回首页
+      - navigation "Breadcrumb" [ref=e52]:
+        - generic:
+          - generic [ref=e53]:
+            - link "首页" [ref=e54]
+            - text: /
+          - generic [ref=e160]:
+            - link "会议管理" [ref=e161]
+            - text: /
+          - link "会议室管理" [ref=e163]
+      - generic [ref=e55]:
+        - generic [ref=e56] [cursor=pointer]:
+          - button "选择组织" [ref=e57]:
+            - img [ref=e58]
+            - generic [ref=e60]: 选择组织
+          - text: 
+        - img [ref=e62] [cursor=pointer]
+        - img [ref=e65] [cursor=pointer]
+        - button [ref=e68] [cursor=pointer]:
+          - img [ref=e69]
+        - button "孙扬" [ref=e72] [cursor=pointer]:
+          - img [ref=e73]
+          - text: 孙扬
+    - generic [ref=e164]:
+      - generic [ref=e165]:
+        - generic [ref=e167]:
+          - generic [ref=e168]:
+            - generic [ref=e169]: 
+            - text: 组织架构
+          - generic [ref=e170]:
+            - generic [ref=e171] [cursor=pointer]: 
+            - generic [ref=e172] [cursor=pointer]: 
+        - generic [ref=e174] [cursor=pointer]: 
+        - generic [ref=e176]:
+          - textbox "请输入部门名称" [ref=e177]
+          - generic [ref=e179]: 
+        - tree [ref=e181]:
+          - treeitem "  镭诺电子（宁波）有限公司" [expanded] [ref=e182]:
+            - generic [ref=e183] [cursor=pointer]:
+              - generic [ref=e184]: 
+              - generic [ref=e185]:
+                - generic [ref=e186]: 
+                - generic "镭诺电子（宁波）有限公司" [ref=e187]
+            - group [ref=e188]:
+              - treeitem "  生产部" [expanded] [ref=e189]:
+                - generic [ref=e190] [cursor=pointer]:
+                  - generic [ref=e191]: 
+                  - generic [ref=e192]:
+                    - generic [ref=e193]: 
+                    - generic "生产部" [ref=e194]
+                - group [ref=e195]:
+                  - treeitem "  生产部第二支队" [expanded] [ref=e196]:
+                    - generic [ref=e197] [cursor=pointer]:
+                      - generic [ref=e198]: 
+                      - generic [ref=e199]:
+                        - generic [ref=e200]: 
+                        - generic "生产部第二支队" [ref=e201]
+                    - group
+              - treeitem "  市场部" [expanded] [ref=e202]:
+                - generic [ref=e203] [cursor=pointer]:
+                  - generic [ref=e204]: 
+                  - generic [ref=e205]:
+                    - generic [ref=e206]: 
+                    - generic "市场部" [ref=e207]
+                - group [ref=e208]:
+                  - treeitem "  市场营销部" [expanded] [ref=e209]:
+                    - generic [ref=e210] [cursor=pointer]:
+                      - generic [ref=e211]: 
+                      - generic [ref=e212]:
+                        - generic [ref=e213]: 
+                        - generic "市场营销部" [ref=e214]
+                    - group [ref=e215]:
+                      - treeitem "  营销一部" [expanded] [ref=e216]:
+                        - generic [ref=e217] [cursor=pointer]:
+                          - generic [ref=e218]: 
+                          - generic [ref=e219]:
+                            - generic [ref=e220]: 
+                            - generic "营销一部" [ref=e221]
+                        - group
+                      - treeitem "  营销二部" [expanded] [ref=e222]:
+                        - generic [ref=e223] [cursor=pointer]:
+                          - generic [ref=e224]: 
+                          - generic [ref=e225]:
+                            - generic [ref=e226]: 
+                            - generic "营销二部" [ref=e227]
+                        - group
+                      - treeitem "  营销三部" [expanded] [ref=e228]:
+                        - generic [ref=e229] [cursor=pointer]:
+                          - generic [ref=e230]: 
+                          - generic [ref=e231]:
+                            - generic [ref=e232]: 
+                            - generic "营销三部" [ref=e233]
+                        - group
+                  - treeitem "  市场营销二部" [expanded] [ref=e234]:
+                    - generic [ref=e235] [cursor=pointer]:
+                      - generic [ref=e236]: 
+                      - generic [ref=e237]:
+                        - generic [ref=e238]: 
+                        - generic "市场营销二部" [ref=e239]
+                    - group
+              - treeitem "  信息部" [expanded] [ref=e240]:
+                - generic [ref=e241] [cursor=pointer]:
+                  - generic [ref=e242]: 
+                  - generic [ref=e243]:
+                    - generic [ref=e244]: 
+                    - generic "信息部" [ref=e245]
+                - group [ref=e246]:
+                  - treeitem "  硬件部分" [expanded] [ref=e247]:
+                    - generic [ref=e248] [cursor=pointer]:
+                      - generic [ref=e249]: 
+                      - generic [ref=e250]:
+                        - generic [ref=e251]: 
+                        - generic "硬件部分" [ref=e252]
+                    - group
+                  - treeitem "  软件部分" [expanded] [ref=e253]:
+                    - generic [ref=e254] [cursor=pointer]:
+                      - generic [ref=e255]: 
+                      - generic [ref=e256]:
+                        - generic [ref=e257]: 
+                        - generic "软件部分" [ref=e258]
+                    - group
+              - treeitem "  财务部" [expanded] [ref=e259]:
+                - generic [ref=e260] [cursor=pointer]:
+                  - generic [ref=e261]: 
+                  - generic [ref=e262]:
+                    - generic [ref=e263]: 
+                    - generic "财务部" [ref=e264]
+                - group
+              - treeitem "  行政部" [expanded] [ref=e265]:
+                - generic [ref=e266] [cursor=pointer]:
+                  - generic [ref=e267]: 
+                  - generic [ref=e268]:
+                    - generic [ref=e269]: 
+                    - generic "行政部" [ref=e270]
+                - group
+              - treeitem "  工程部" [expanded] [ref=e271]:
+                - generic [ref=e272] [cursor=pointer]:
+                  - generic [ref=e273]: 
+                  - generic [ref=e274]:
+                    - generic [ref=e275]: 
+                    - generic "工程部" [ref=e276]
+                - group
+      - generic [ref=e278]:
+        - generic [ref=e279]:
+          - generic [ref=e280]:
+            - generic [ref=e281]: 会议室名称
+            - textbox "会议室名称" [ref=e284]
+          - generic [ref=e285]:
+            - generic [ref=e286]: 状态
+            - generic [ref=e289]:
+              - textbox "状态" [ref=e290] [cursor=pointer]
+              - generic [ref=e292] [cursor=pointer]: 
+          - generic [ref=e294]:
+            - button " 搜索" [ref=e295] [cursor=pointer]:
+              - generic [ref=e296]: 
+              - text: 搜索
+            - button " 重置" [ref=e297] [cursor=pointer]:
+              - generic [ref=e298]: 
+              - text: 重置
+        - generic [ref=e299]:
+          - button " 新增" [ref=e301] [cursor=pointer]:
+            - generic [ref=e302]: 
+            - text: 新增
+          - generic [ref=e303]:
+            - generic [ref=e304]:
+              - button "" [ref=e305] [cursor=pointer]:
+                - generic [ref=e306]: 
+              - button "" [ref=e307] [cursor=pointer]:
+                - generic [ref=e308]: 
+            - text: 
+        - generic [ref=e309]:
+          - table [ref=e311]:
+            - rowgroup [ref=e322]:
+              - row "会议室名称 位置 容量 设备 所属部门 状态 创建时间 平板地址" [ref=e323]:
+                - columnheader "会议室名称" [ref=e324]:
+                  - generic [ref=e325]: 会议室名称
+                - columnheader "位置" [ref=e326]:
+                  - generic [ref=e327]: 位置
+                - columnheader "容量" [ref=e328]:
+                  - generic [ref=e329]: 容量
+                - columnheader "设备" [ref=e330]:
+                  - generic [ref=e331]: 设备
+                - columnheader "所属部门" [ref=e332]:
+                  - generic [ref=e333]: 所属部门
+                - columnheader "状态" [ref=e334]:
+                  - generic [ref=e335]: 状态
+                - columnheader "创建时间" [ref=e336]:
+                  - generic [ref=e337]: 创建时间
+                - columnheader "平板地址" [ref=e338]:
+                  - generic [ref=e339]: 平板地址
+                - columnheader [ref=e340]
+          - table [ref=e342]:
+            - rowgroup [ref=e353]:
+              - row "二楼会议室 3号楼2层 30 镭诺电子（宁波）有限公司 启用 2026-06-26 13:45:26 http://1.94.26.126:80/meeting/board?roomId=1  复制" [ref=e354]:
+                - cell "二楼会议室" [ref=e355]:
+                  - generic [ref=e356]: 二楼会议室
+                - cell "3号楼2层" [ref=e357]:
+                  - generic [ref=e358]: 3号楼2层
+                - cell "30" [ref=e359]:
+                  - generic [ref=e360]: "30"
+                - cell [ref=e361]
+                - cell "镭诺电子（宁波）有限公司" [ref=e362]:
+                  - generic [ref=e363]: 镭诺电子（宁波）有限公司
+                - cell "启用" [ref=e364]:
+                  - generic [ref=e366]: 启用
+                - cell "2026-06-26 13:45:26" [ref=e367]:
+                  - generic [ref=e368]: 2026-06-26 13:45:26
+                - cell "http://1.94.26.126:80/meeting/board?roomId=1  复制" [ref=e369]:
+                  - generic [ref=e370]:
+                    - textbox [ref=e372]: http://1.94.26.126:80/meeting/board?roomId=1
+                    - button " 复制" [ref=e373] [cursor=pointer]:
+                      - generic [ref=e374]: 
+                      - text: 复制
+                - cell [ref=e375]
+              - row "三楼会议室 3号楼3层 10 镭诺电子（宁波）有限公司 启用 2026-06-26 18:44:19 http://1.94.26.126:80/meeting/board?roomId=2  复制" [ref=e376]:
+                - cell "三楼会议室" [ref=e377]:
+                  - generic [ref=e378]: 三楼会议室
+                - cell "3号楼3层" [ref=e379]:
+                  - generic [ref=e380]: 3号楼3层
+                - cell "10" [ref=e381]:
+                  - generic [ref=e382]: "10"
+                - cell [ref=e383]
+                - cell "镭诺电子（宁波）有限公司" [ref=e384]:
+                  - generic [ref=e385]: 镭诺电子（宁波）有限公司
+                - cell "启用" [ref=e386]:
+                  - generic [ref=e388]: 启用
+                - cell "2026-06-26 18:44:19" [ref=e389]:
+                  - generic [ref=e390]: 2026-06-26 18:44:19
+                - cell "http://1.94.26.126:80/meeting/board?roomId=2  复制" [ref=e391]:
+                  - generic [ref=e392]:
+                    - textbox [ref=e394]: http://1.94.26.126:80/meeting/board?roomId=2
+                    - button " 复制" [ref=e395] [cursor=pointer]:
+                      - generic [ref=e396]: 
+                      - text: 复制
+                - cell [ref=e397]
+              - row "测试会议室 3楼 20 生产部 启用 2026-06-26 19:55:46 http://1.94.26.126:80/meeting/board?roomId=3  复制" [ref=e398]:
+                - cell "测试会议室" [ref=e399]:
+                  - generic [ref=e400]: 测试会议室
+                - cell "3楼" [ref=e401]:
+                  - generic [ref=e402]: 3楼
+                - cell "20" [ref=e403]:
+                  - generic [ref=e404]: "20"
+                - cell [ref=e405]
+                - cell "生产部" [ref=e406]:
+                  - generic [ref=e407]: 生产部
+                - cell "启用" [ref=e408]:
+                  - generic [ref=e410]: 启用
+                - cell "2026-06-26 19:55:46" [ref=e411]:
+                  - generic [ref=e412]: 2026-06-26 19:55:46
+                - cell "http://1.94.26.126:80/meeting/board?roomId=3  复制" [ref=e413]:
+                  - generic [ref=e414]:
+                    - textbox [ref=e416]: http://1.94.26.126:80/meeting/board?roomId=3
+                    - button " 复制" [ref=e417] [cursor=pointer]:
+                      - generic [ref=e418]: 
+                      - text: 复制
+                - cell [ref=e419]
+          - generic [ref=e420]:
+            - table [ref=e422]:
+              - rowgroup [ref=e433]:
+                - row "操作" [ref=e434]:
+                  - columnheader [ref=e435]
+                  - columnheader [ref=e436]
+                  - columnheader [ref=e437]
+                  - columnheader [ref=e438]
+                  - columnheader [ref=e439]
+                  - columnheader [ref=e440]
+                  - columnheader [ref=e441]
+                  - columnheader [ref=e442]
+                  - columnheader "操作" [ref=e443]:
+                    - generic [ref=e444]: 操作
+            - table [ref=e446]:
+              - rowgroup [ref=e457]:
+                - row " 修改  删除" [ref=e458]:
+                  - cell [ref=e459]
+                  - cell [ref=e460]
+                  - cell [ref=e461]
+                  - cell [ref=e462]
+                  - cell [ref=e463]
+                  - cell [ref=e464]
+                  - cell [ref=e465]
+                  - cell [ref=e466]
+                  - cell " 修改  删除" [ref=e467]:
+                    - generic [ref=e468]:
+                      - button " 修改" [ref=e469] [cursor=pointer]:
+                        - generic [ref=e470]: 
+                        - text: 修改
+                      - button " 删除" [ref=e471] [cursor=pointer]:
+                        - generic [ref=e472]: 
+                        - text: 删除
+                - row " 修改  删除" [ref=e473]:
+                  - cell [ref=e474]
+                  - cell [ref=e475]
+                  - cell [ref=e476]
+                  - cell [ref=e477]
+                  - cell [ref=e478]
+                  - cell [ref=e479]
+                  - cell [ref=e480]
+                  - cell [ref=e481]
+                  - cell " 修改  删除" [ref=e482]:
+                    - generic [ref=e483]:
+                      - button " 修改" [ref=e484] [cursor=pointer]:
+                        - generic [ref=e485]: 
+                        - text: 修改
+                      - button " 删除" [ref=e486] [cursor=pointer]:
+                        - generic [ref=e487]: 
+                        - text: 删除
+                - row " 修改  删除" [ref=e488]:
+                  - cell [ref=e489]
+                  - cell [ref=e490]
+                  - cell [ref=e491]
+                  - cell [ref=e492]
+                  - cell [ref=e493]
+                  - cell [ref=e494]
+                  - cell [ref=e495]
+                  - cell [ref=e496]
+                  - cell " 修改  删除" [ref=e497]:
+                    - generic [ref=e498]:
+                      - button " 修改" [ref=e499] [cursor=pointer]:
+                        - generic [ref=e500]: 
+                        - text: 修改
+                      - button " 删除" [ref=e501] [cursor=pointer]:
+                        - generic [ref=e502]: 
+                        - text: 删除
+          - img [ref=e505]
+        - generic [ref=e508]:
+          - generic [ref=e509]: 共 3 条
+          - generic [ref=e512]:
+            - textbox "请选择" [ref=e513] [cursor=pointer]: 10条/页
+            - generic [ref=e515] [cursor=pointer]: 
+          - button "" [disabled] [ref=e516]:
+            - generic [ref=e517]: 
+          - list [ref=e518]:
+            - listitem [ref=e519]: "1"
+          - button "" [disabled] [ref=e520]:
+            - generic [ref=e521]: 
+          - generic [ref=e522]:
+            - text: 前往
+            - spinbutton [ref=e524]: "1"
+            - text: 页
+        - text: 

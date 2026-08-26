@@ -346,6 +346,16 @@ export const staticRoutes = [
           permissions: ["visitor:log:list"],
         },
       },
+      {
+        path: "deptQrcode",
+        component: () => import("@/views/visitor/qrcode/index"),
+        name: "VisitorDeptQrcode",
+        meta: {
+          title: "二维码",
+          icon: "qr-code",
+          permissions: ["visitor:qrcode:list"],
+        },
+      },
     ],
   },
   // ==================== 日志管理 ====================

@@ -122,3 +122,56 @@ export function exportVisitorLog(query) {
     params: query
   })
 }
+
+// ===== 部门登记二维码 =====
+
+// 查询部门登记二维码配置列表
+export function listDeptQrcode(query) {
+  return request({
+    url: '/visitor/deptQrcode/list',
+    method: 'get',
+    params: query
+  })
+}
+
+// 查询部门登记二维码配置详情
+export function getDeptQrcode(id) {
+  return request({
+    url: '/visitor/deptQrcode/' + id,
+    method: 'get'
+  })
+}
+
+// 新增部门登记二维码配置
+export function addDeptQrcode(data) {
+  return request({
+    url: '/visitor/deptQrcode',
+    method: 'post',
+    data: data
+  })
+}
+
+// 修改部门登记二维码配置
+export function updateDeptQrcode(data) {
+  return request({
+    url: '/visitor/deptQrcode',
+    method: 'put',
+    data: data
+  })
+}
+
+// 删除部门登记二维码配置
+export function delDeptQrcode(ids) {
+  return request({
+    url: '/visitor/deptQrcode/' + ids,
+    method: 'delete'
+  })
+}
+
+// 为尚未配置的部门批量初始化登记二维码
+export function initDeptQrcode() {
+  return request({
+    url: '/visitor/deptQrcode/init',
+    method: 'get'
+  })
+}

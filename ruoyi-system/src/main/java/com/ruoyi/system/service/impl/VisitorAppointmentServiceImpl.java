@@ -12,12 +12,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.common.core.domain.entity.SysDept;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.system.domain.VisitorAppointment;
 import com.ruoyi.system.domain.VisitorLog;
 import com.ruoyi.system.mapper.VisitorAppointmentMapper;
+import com.ruoyi.system.service.ISysDeptService;
 import com.ruoyi.system.service.ISysUserService;
 import com.ruoyi.system.service.IVisitorAppointmentService;
+import com.ruoyi.system.service.IVisitorDeptQrcodeService;
 import com.ruoyi.system.service.IVisitorLogService;
 import com.ruoyi.system.sms.SmsUtil;
 
@@ -50,6 +54,12 @@ public class VisitorAppointmentServiceImpl implements IVisitorAppointmentService
     @Autowired
     @Lazy
     private ISysUserService sysUserService;
+
+    @Autowired
+    private ISysDeptService sysDeptService;
+
+    @Autowired
+    private IVisitorDeptQrcodeService visitorDeptQrcodeService;
 
     /**
      * 查询预约列表
@@ -311,20 +321,38 @@ public class VisitorAppointmentServiceImpl implements IVisitorAppointmentService
     @Override
     @Transactional
     public Map<String, Object> registerWalkin(VisitorAppointment appointment, String createBy) {
-        // 1. 生成通行码
+        // 旧版二维码/现场登记：不限定部门
+        return registerWalkin(appointment, createBy, null);
+    }
+
+    /**
+     * 访客自助登记（部门二维码模式）：创建预约+来访记录前，校验被访人所在部门
+     * 是否在登记码限定的部门(含子部门)范围内
+     */
+    @Override
+    @Transactional
+    public Map<String, Object> registerWalkin(VisitorAppointment appointment, String createBy, Long qrDeptId) {
+        // 1. 强制匹配被访人为审批人，并得到被访人部门(dept_id)，匹配失败直接抛异常
+        assignApproverAndDept(appointment);
+
+        // 2. 部门登记码限定校验：被访人部门必须在扫码部门(含子部门)范围内
+        if (qrDeptId != null) {
+            validateDeptScope(appointment, qrDeptId);
+        }
+
+        // 3. 生成通行码
         String passCode = java.util.UUID.randomUUID().toString().substring(0, 8).toUpperCase();
 
-        // 2. 创建预约记录
+        // 4. 创建预约记录（insertAppointment 内部会再次 assignApproverAndDept，幂等）
         appointment.setPassCode(passCode);
         appointment.setStatus(STATUS_PENDING);
         appointment.setCreateBy(createBy);
         if (appointment.getVisitTime() == null) {
             appointment.setVisitTime(new Date());
         }
-        // 尝试匹配被访人为审批人（含 dept_id 数据范围），复用 insertAppointment 的 fallback 逻辑
         this.insertAppointment(appointment);
 
-        // 3. 同时创建来访记录
+        // 5. 同时创建来访记录
         VisitorLog log = new VisitorLog();
         log.setAppointmentId(appointment.getAppointmentId());
         log.setPassCode(passCode);
@@ -353,6 +381,24 @@ public class VisitorAppointmentServiceImpl implements IVisitorAppointmentService
     }
 
     /**
+     * 部门登记码限定校验：被访人所在部门必须在扫码部门(含子部门)范围内
+     *
+     * @param appointment 预约信息（须已执行 assignApproverAndDept，dept_id 为被访人部门）
+     * @param qrDeptId    登记码限定部门ID
+     */
+    private void validateDeptScope(VisitorAppointment appointment, Long qrDeptId) {
+        Long hostDeptId = appointment.getDeptId();
+        if (hostDeptId == null) {
+            throw new ServiceException("被访人部门信息缺失，无法校验登记范围");
+        }
+        if (!visitorDeptQrcodeService.isDeptWithinScope(hostDeptId, qrDeptId)) {
+            SysDept dept = sysDeptService.selectDeptById(qrDeptId);
+            String deptName = dept != null ? dept.getDeptName() : String.valueOf(qrDeptId);
+            throw new ServiceException("该访客登记码仅限预约『" + deptName + "』部门人员，当前被访人不在可预约范围");
+        }
+    }
+
+    /**
      * 强制匹配被访人为审批人（hostName → sys_user），同时设置 dept_id 数据范围
      *
      * 匹配失败直接抛异常，阻止创建访客实体。
@@ -365,11 +411,22 @@ public class VisitorAppointmentServiceImpl implements IVisitorAppointmentService
         }
         Long approverId = null;
         Long deptId = null;
-        // 1. 优先精确匹配 loginName（user_name 列）
-        SysUser user = sysUserService.selectUserByUserName(hostName);
-        if (user != null && user.getUserId() != null) {
-            approverId = user.getUserId();
-            deptId = user.getDeptId();
+        // 0. 优先按前端下发的被访人账号(user_name)精确匹配（H5部门登记模式选中人时下发）
+        String hostAccount = appointment.getHostAccount();
+        if (StringUtils.isNotEmpty(hostAccount)) {
+            SysUser accountUser = sysUserService.selectUserByUserName(hostAccount);
+            if (accountUser != null && accountUser.getUserId() != null) {
+                approverId = accountUser.getUserId();
+                deptId = accountUser.getDeptId();
+            }
+        }
+        // 1. 其次精确匹配 loginName（user_name 列）
+        if (approverId == null) {
+            SysUser user = sysUserService.selectUserByUserName(hostName);
+            if (user != null && user.getUserId() != null) {
+                approverId = user.getUserId();
+                deptId = user.getDeptId();
+            }
         }
         // 2. loginName 没匹配上，按 nickName 匹配（nick_name 列）
         if (approverId == null) {

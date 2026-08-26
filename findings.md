@@ -276,3 +276,22 @@ PENDING/APPROVED → CANCELLED
 - **DeptFillAspect 是存量 dept_id 的来源**：本项目 3 个会议室 dept_id 已填充（admin→100，zhaojg→101）正是阶段16 DeptFillAspect 生效后创建的。
 - **Vue2 组件未注册的隐蔽症状**：`import TreePanel` 但漏 `components:{TreePanel}` → Vue 把 `<tree-panel>` 当**未知自定义元素**原样渲染（DOM 里是空标签 `<tree-panel title="组织架构"...></tree-panel>`），页面只显示 title 属性文本「组织架构」，**树节点完全不渲染**。API 验证全过（deptTree 200、deptOptions 有数据）但 UI 空白。排查要点：①对比正常页（设备列表 `components:{TreePanel,Treeselect}`）②`document.querySelector('.tree-sidebar')` 为 null 即未渲染 ③`document.querySelector('tree-panel').innerHTML===''` 且 childNodes=0 即组件未挂载。连锁坑：`this.$refs.xxxRef.setCurrentKey()` 报 `setCurrentKey is not a function`（$refs 拿到的是空 DOM 元素而非组件实例），与未注册同根因，修注册一处都好。
 - **playwright eval 的 bash `$` 展开坑**：eval 里写 `vm.$store`/`vm.$refs` 时，bash 双引号会把 `$store` 展开成空 → JS 变 `vm..store` 报 `Unexpected token '.'`（位置 38 左右）。规避：整个 eval 用**单引号**包裹 bash 参数，或避免 `$` 属性访问。
+
+## 访客部门登记二维码（2026-08-26）
+
+### 调试坑 1：Vue2 项目误用 Element Plus 组件 `el-tree-select`
+- **症状**：新增弹窗部门树区域空白，无法选择任何部门；API 正常（`/system/dept/treeselect` 返回完整树）。
+- **根因**：`el-tree-select` 是 **Element Plus（Vue 3）** 组件，本项目 Vue 2.6.12 + Element UI 2.15.14 无此组件 → Vue 模板编译成未知自定义元素**渲染为空**（与 37a 的 `<tree-panel>` 未注册同族症状：API 通但 UI 空）。
+- **修复**：改用项目标准 `@riophae/vue-treeselect`（package.json 已依赖 0.4.0），`import Treeselect` + css + `components:{Treeselect}`，`:options` 用 `enabledDeptOptions`（`filterDisabledDept` 递归过滤 `dept.disabled`），对齐 system/user、system/dept、device 写法。
+- **教训**：Vue2 + Element UI 项目写模板组件前先确认组件所属框架。Element UI 2.x 没有 `el-tree-select`/`el-cascader-panel` 等 Element Plus 独有组件，未知元素在 Vue 2 静默渲染为空（无报错，仅 console warning）。
+
+### 调试坑 2：Mapper XML 引用 remark 但建表漏列
+- **症状**：批量初始化接口报 `java.sql.SQLSyntaxErrorException: Unknown column 'v.remark' in 'field list'`。
+- **根因**：`VisitorDeptQrcodeMapper.xml` 按若依标准模板写了 `v.remark`（resultMap/selectVo/insert/update 均引用），但手写建表 SQL 漏了 `remark` 列。
+- **修复**：`ALTER TABLE visitor_dept_qrcode ADD COLUMN remark VARCHAR(500) DEFAULT NULL COMMENT '备注' AFTER del_flag;`，本地 SQL 文件同步补齐。
+- **教训**：自定义表的建表 SQL 字段清单必须与 Mapper XML 的 resultMap/column 清单逐一核对；MyBatis `selectVo` 中显式列出的每个字段都要在表里存在。
+
+### 业务要点
+- **部门树选人含子部门**：`sys_dept.ancestors LIKE CONCAT('%,', #{deptId}, ',%')` 查本部门+全部子部门在职员工（`sys_user u LEFT JOIN sys_dept d`，u.del_flag='0' AND u.status='0' AND d.del_flag='0' AND d.status='0'）。
+- **URL 用 register_code 不用 deptId**：16 位大写 UUID 防暴露内部部门 ID；H5 匿名 `/info/{code}` 解析部门，`/submit` 用 `validateDeptScope` 后端强校验被访人必须属于扫码部门子树，防绕过。
+- **旧码兼容**：无 code 参数时 `/hosts` 退回原「全园区历史被访人」模式，`registerWalkin` 2 参重载委托 3 参传 null 跳过部门校验。

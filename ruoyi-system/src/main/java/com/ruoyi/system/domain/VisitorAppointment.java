@@ -107,6 +107,12 @@ public class VisitorAppointment extends BaseEntity
     @Excel(name = "携带物资说明")
     private String goodsDesc;
 
+    /** 部门登记码（H5扫码登记的URL标识，非表字段） */
+    private String registerCode;
+
+    /** 被访人账号（H5登记选人时下发的user_name，非表字段，用于精确匹配） */
+    private String hostAccount;
+
     /** 租户ID */
     @Excel(name = "租户ID", cellType = ColumnType.NUMERIC)
     private Long tenantId;
@@ -322,6 +328,10 @@ public class VisitorAppointment extends BaseEntity
     public void setHasGoods(String hasGoods) { this.hasGoods = hasGoods; }
     public String getGoodsDesc() { return goodsDesc; }
     public void setGoodsDesc(String goodsDesc) { this.goodsDesc = goodsDesc; }
+    public String getRegisterCode() { return registerCode; }
+    public void setRegisterCode(String registerCode) { this.registerCode = registerCode; }
+    public String getHostAccount() { return hostAccount; }
+    public void setHostAccount(String hostAccount) { this.hostAccount = hostAccount; }
 
     @Override
     public String toString() {

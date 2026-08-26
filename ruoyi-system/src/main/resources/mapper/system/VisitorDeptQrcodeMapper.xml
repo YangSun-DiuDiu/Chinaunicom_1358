@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.VisitorDeptQrcodeMapper">
+
+    <resultMap type="VisitorDeptQrcode" id="VisitorDeptQrcodeResult">
+        <id     property="id"            column="id"             />
+        <result property="deptId"        column="dept_id"        />
+        <result property="deptName"      column="dept_name"      />
+        <result property="registerCode"  column="register_code"  />
+        <result property="enabled"       column="enabled"        />
+        <result property="delFlag"       column="del_flag"       />
+        <result property="createBy"      column="create_by"      />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"      column="update_by"      />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"        column="remark"         />
+    </resultMap>
+
+    <sql id="selectDeptQrcodeVo">
+        select v.id, v.dept_id, d.dept_name, v.register_code, v.enabled, v.del_flag,
+               v.create_by, v.create_time, v.update_by, v.update_time, v.remark
+        from visitor_dept_qrcode v
+        left join sys_dept d on d.dept_id = v.dept_id
+    </sql>
+
+    <select id="selectDeptQrcodeList" parameterType="VisitorDeptQrcode" resultMap="VisitorDeptQrcodeResult">
+        <include refid="selectDeptQrcodeVo"/>
+        <where>
+            <if test="deptId != null">
+                AND v.dept_id = #{deptId}
+            </if>
+            <if test="deptName != null and deptName != ''">
+                AND d.dept_name like concat('%', #{deptName}, '%')
+            </if>
+            <if test="enabled != null and enabled != ''">
+                AND v.enabled = #{enabled}
+            </if>
+            <if test="registerCode != null and registerCode != ''">
+                AND v.register_code = #{registerCode}
+            </if>
+            AND v.del_flag = '0'
+        </where>
+        order by v.create_time desc
+    </select>
+
+    <select id="selectDeptQrcodeById" parameterType="Long" resultMap="VisitorDeptQrcodeResult">
+        <include refid="selectDeptQrcodeVo"/>
+        where v.id = #{id} AND v.del_flag = '0'
+    </select>
+
+    <select id="selectDeptQrcodeByCode" parameterType="String" resultMap="VisitorDeptQrcodeResult">
+        <include refid="selectDeptQrcodeVo"/>
+        where v.register_code = #{registerCode} AND v.del_flag = '0' AND v.enabled = '1'
+        limit 1
+    </select>
+
+    <select id="selectDeptQrcodeByDeptId" parameterType="Long" resultMap="VisitorDeptQrcodeResult">
+        <include refid="selectDeptQrcodeVo"/>
+        where v.dept_id = #{deptId}
+        limit 1
+    </select>
+
+    <insert id="insertDeptQrcode" parameterType="VisitorDeptQrcode" useGeneratedKeys="true" keyProperty="id">
+        insert into visitor_dept_qrcode(
+            <if test="deptId != null">dept_id,</if>
+            <if test="registerCode != null and registerCode != ''">register_code,</if>
+            <if test="enabled != null and enabled != ''">enabled,</if>
+            <if test="createBy != null and createBy != ''">create_by,</if>
+            <if test="remark != null and remark != ''">remark,</if>
+            create_time
+        )values(
+            <if test="deptId != null">#{deptId},</if>
+            <if test="registerCode != null and registerCode != ''">#{registerCode},</if>
+            <if test="enabled != null and enabled != ''">#{enabled},</if>
+            <if test="createBy != null and createBy != ''">#{createBy},</if>
+            <if test="remark != null and remark != ''">#{remark},</if>
+            sysdate()
+        )
+    </insert>
+
+    <update id="updateDeptQrcode" parameterType="VisitorDeptQrcode">
+        update visitor_dept_qrcode
+        <set>
+            <if test="deptId != null">dept_id = #{deptId},</if>
+            <if test="enabled != null and enabled != ''">enabled = #{enabled},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            update_time = sysdate()
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="deleteDeptQrcodeByIds" parameterType="Long">
+        update visitor_dept_qrcode set del_flag = '2', update_time = sysdate()
+        where id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <select id="selectHostUsersByDept" parameterType="Long" resultType="java.util.Map">
+        SELECT
+            u.nick_name AS hostName,
+            u.user_name AS hostAccount,
+            u.phonenumber AS hostPhone,
+            d.dept_name AS hostDept,
+            u.dept_id AS deptId
+        FROM sys_user u
+        LEFT JOIN sys_dept d ON u.dept_id = d.dept_id
+        WHERE u.del_flag = '0' AND u.status = '0'
+          AND d.del_flag = '0' AND d.status = '0'
+          AND d.dept_id IS NOT NULL
+          AND (d.dept_id = #{deptId} OR d.ancestors LIKE CONCAT('%,', #{deptId}, ',%'))
+        ORDER BY d.dept_name, u.nick_name
+    </select>
+
+    <select id="selectDeptDescendantIds" parameterType="Long" resultType="Long">
+        SELECT dept_id FROM sys_dept
+        WHERE del_flag = '0' AND status = '0'
+          AND (dept_id = #{deptId} OR ancestors LIKE CONCAT('%,', #{deptId}, ',%'))
+    </select>
+
+</mapper>

@@ -1,0 +1,270 @@
+- generic [ref=e3]:
+  - generic [ref=e4]:
+    - link "🏢 智慧园区" [ref=e6] [cursor=pointer]:
+      - /url: /
+      - text: 🏢
+      - generic [ref=e8]: 智慧园区
+    - menubar [ref=e12]:
+      - menuitem "会议管理 " [expanded] [ref=e14]:
+        - generic [ref=e15] [cursor=pointer]:
+          - img [ref=e16]
+          - text: 会议管理
+          - generic [ref=e18]: 
+        - menu [ref=e19]:
+          - link "会议室管理" [ref=e21] [cursor=pointer]:
+            - /url: /meeting/room
+            - menuitem "会议室管理" [ref=e22]:
+              - img [ref=e23]
+              - text: 会议室管理
+          - link "会议预约" [ref=e26] [cursor=pointer]:
+            - /url: /meeting/booking
+            - menuitem "会议预约" [ref=e27]:
+              - img [ref=e28]
+              - text: 会议预约
+          - link "会议审批" [ref=e31] [cursor=pointer]:
+            - /url: /meeting/approval
+            - menuitem "会议审批" [ref=e32]:
+              - img [ref=e33]
+              - text: 会议审批
+          - link "会议管理" [ref=e36] [cursor=pointer]:
+            - /url: /meeting/manage
+            - menuitem "会议管理" [ref=e37]:
+              - img [ref=e38]
+              - text: 会议管理
+          - link "使用状态总览" [ref=e41] [cursor=pointer]:
+            - /url: /meeting/status
+            - menuitem "使用状态总览" [ref=e42]:
+              - img [ref=e43]
+              - text: 使用状态总览
+  - generic [ref=e46]:
+    - generic [ref=e48]:
+      - img [ref=e50] [cursor=pointer]
+      - link " 返回首页" [ref=e52] [cursor=pointer]:
+        - /url: /index
+        - generic [ref=e53]: 
+        - generic [ref=e54]: 返回首页
+      - navigation "Breadcrumb" [ref=e55]:
+        - generic:
+          - generic [ref=e56]:
+            - link "首页" [ref=e57]
+            - text: /
+          - generic [ref=e58]:
+            - link "会议管理" [ref=e59]
+            - text: /
+          - link "使用状态总览" [ref=e61]
+      - generic [ref=e62]:
+        - generic [ref=e63] [cursor=pointer]:
+          - button "选择组织" [ref=e64]:
+            - img [ref=e65]
+            - generic [ref=e67]: 选择组织
+          - text: 
+        - img [ref=e69] [cursor=pointer]
+        - img [ref=e72] [cursor=pointer]
+        - button [ref=e75] [cursor=pointer]:
+          - img [ref=e76]
+        - button "孙扬" [ref=e79] [cursor=pointer]:
+          - img [ref=e80]
+          - text: 孙扬
+    - generic [ref=e82]:
+      - generic [ref=e83]:
+        - generic [ref=e86]:
+          - heading "会议室状态墙" [level=1] [ref=e87]
+          - paragraph [ref=e88]: MEETING ROOM STATUS
+        - generic [ref=e89]:
+          - generic [ref=e90]:
+            - text: 20:15:55
+            - generic [ref=e91]: 8月23日 · 星期日
+          - generic [ref=e92]:
+            - generic [ref=e93]: 更新 20:15:55
+            - button "刷新" [ref=e95] [cursor=pointer]
+      - region "会议室状态统计" [ref=e96]:
+        - generic [ref=e97]:
+          - generic [ref=e99]: "0"
+          - generic [ref=e100]: 使用中
+        - generic [ref=e101]:
+          - generic [ref=e103]: "0"
+          - generic [ref=e104]: 即将开始
+        - generic [ref=e105]:
+          - generic [ref=e107]: "11"
+          - generic [ref=e108]: 空闲
+        - generic [ref=e109]:
+          - generic [ref=e111]: "0"
+          - generic [ref=e112]: 停用
+      - main [ref=e113]:
+        - button "查看二楼会议室今日预约记录" [ref=e444] [cursor=pointer]:
+          - generic [ref=e445]:
+            - generic [ref=e447]:
+              - heading "二楼会议室" [level=2] [ref=e448]
+              - paragraph [ref=e449]: 3号楼2层 · 镭诺电子（宁波）有限公司
+            - generic [ref=e450]: 空闲
+          - generic [ref=e452]:
+            - generic [ref=e453]: 今日空闲
+            - generic [ref=e454]: —
+          - generic [ref=e455]:
+            - generic [ref=e456]:
+              - generic [ref=e457]: 08:00
+              - generic [ref=e458]: 12:00
+              - generic [ref=e459]: 16:00
+              - generic [ref=e460]: 20:00
+            - paragraph [ref=e462]: 今日预约 0 场
+        - button "查看三楼会议室今日预约记录" [ref=e463] [cursor=pointer]:
+          - generic [ref=e464]:
+            - generic [ref=e466]:
+              - heading "三楼会议室" [level=2] [ref=e467]
+              - paragraph [ref=e468]: 3号楼3层 · 镭诺电子（宁波）有限公司
+            - generic [ref=e469]: 空闲
+          - generic [ref=e471]:
+            - generic [ref=e472]: 今日空闲
+            - generic [ref=e473]: —
+          - generic [ref=e474]:
+            - generic [ref=e475]:
+              - generic [ref=e476]: 08:00
+              - generic [ref=e477]: 12:00
+              - generic [ref=e478]: 16:00
+              - generic [ref=e479]: 20:00
+            - paragraph [ref=e481]: 今日预约 0 场
+        - button "查看测试会议室今日预约记录" [ref=e482] [cursor=pointer]:
+          - generic [ref=e483]:
+            - generic [ref=e485]:
+              - heading "测试会议室" [level=2] [ref=e486]
+              - paragraph [ref=e487]: 3楼 · 生产部
+            - generic [ref=e488]: 空闲
+          - generic [ref=e490]:
+            - generic [ref=e491]: 今日空闲
+            - generic [ref=e492]: —
+          - generic [ref=e493]:
+            - generic [ref=e494]:
+              - generic [ref=e495]: 08:00
+              - generic [ref=e496]: 12:00
+              - generic [ref=e497]: 16:00
+              - generic [ref=e498]: 20:00
+            - paragraph [ref=e500]: 今日预约 0 场
+        - button "查看四楼会议室今日预约记录" [ref=e501] [cursor=pointer]:
+          - generic [ref=e502]:
+            - generic [ref=e504]:
+              - heading "四楼会议室" [level=2] [ref=e505]
+              - paragraph [ref=e506]: 3号楼4层东 · 镭诺电子（宁波）有限公司
+            - generic [ref=e507]: 空闲
+          - generic [ref=e509]:
+            - generic [ref=e510]: 今日空闲
+            - generic [ref=e511]: —
+          - generic [ref=e512]:
+            - generic [ref=e513]:
+              - generic [ref=e514]: 08:00
+              - generic [ref=e515]: 12:00
+              - generic [ref=e516]: 16:00
+              - generic [ref=e517]: 20:00
+            - paragraph [ref=e519]: 今日预约 0 场
+        - button "查看五楼会议室今日预约记录" [ref=e520] [cursor=pointer]:
+          - generic [ref=e521]:
+            - generic [ref=e523]:
+              - heading "五楼会议室" [level=2] [ref=e524]
+              - paragraph [ref=e525]: 3号楼5楼东 · 镭诺电子（宁波）有限公司
+            - generic [ref=e526]: 空闲
+          - generic [ref=e528]:
+            - generic [ref=e529]: 今日空闲
+            - generic [ref=e530]: —
+          - generic [ref=e531]:
+            - generic [ref=e532]:
+              - generic [ref=e533]: 08:00
+              - generic [ref=e534]: 12:00
+              - generic [ref=e535]: 16:00
+              - generic [ref=e536]: 20:00
+            - paragraph [ref=e538]: 今日预约 0 场
+        - button "查看8楼会议室今日预约记录" [ref=e539] [cursor=pointer]:
+          - generic [ref=e540]:
+            - generic [ref=e542]:
+              - heading "8楼会议室" [level=2] [ref=e543]
+              - paragraph [ref=e544]: 3号楼8楼西 · 镭诺电子（宁波）有限公司
+            - generic [ref=e545]: 空闲
+          - generic [ref=e547]:
+            - generic [ref=e548]: 今日空闲
+            - generic [ref=e549]: —
+          - generic [ref=e550]:
+            - generic [ref=e551]:
+              - generic [ref=e552]: 08:00
+              - generic [ref=e553]: 12:00
+              - generic [ref=e554]: 16:00
+              - generic [ref=e555]: 20:00
+            - paragraph [ref=e557]: 今日预约 0 场
+        - button "查看4号实验室今日预约记录" [ref=e558] [cursor=pointer]:
+          - generic [ref=e559]:
+            - generic [ref=e561]:
+              - heading "4号实验室" [level=2] [ref=e562]
+              - paragraph [ref=e563]: 4号楼3楼 · 镭诺电子（宁波）有限公司
+            - generic [ref=e564]: 空闲
+          - generic [ref=e566]:
+            - generic [ref=e567]: 今日空闲
+            - generic [ref=e568]: —
+          - generic [ref=e569]:
+            - generic [ref=e570]:
+              - generic [ref=e571]: 08:00
+              - generic [ref=e572]: 12:00
+              - generic [ref=e573]: 16:00
+              - generic [ref=e574]: 20:00
+            - paragraph [ref=e576]: 今日预约 0 场
+        - button "查看16号实验室今日预约记录" [ref=e577] [cursor=pointer]:
+          - generic [ref=e578]:
+            - generic [ref=e580]:
+              - heading "16号实验室" [level=2] [ref=e581]
+              - paragraph [ref=e582]: 5号楼12楼中间 · 镭诺电子（宁波）有限公司
+            - generic [ref=e583]: 空闲
+          - generic [ref=e585]:
+            - generic [ref=e586]: 今日空闲
+            - generic [ref=e587]: —
+          - generic [ref=e588]:
+            - generic [ref=e589]:
+              - generic [ref=e590]: 08:00
+              - generic [ref=e591]: 12:00
+              - generic [ref=e592]: 16:00
+              - generic [ref=e593]: 20:00
+            - paragraph [ref=e595]: 今日预约 0 场
+        - button "查看8号楼9楼小会议室今日预约记录" [ref=e596] [cursor=pointer]:
+          - generic [ref=e597]:
+            - generic [ref=e599]:
+              - heading "8号楼9楼小会议室" [level=2] [ref=e600]
+              - paragraph [ref=e601]: 8号楼9楼小会议室 · 镭诺电子（宁波）有限公司
+            - generic [ref=e602]: 空闲
+          - generic [ref=e604]:
+            - generic [ref=e605]: 今日空闲
+            - generic [ref=e606]: —
+          - generic [ref=e607]:
+            - generic [ref=e608]:
+              - generic [ref=e609]: 08:00
+              - generic [ref=e610]: 12:00
+              - generic [ref=e611]: 16:00
+              - generic [ref=e612]: 20:00
+            - paragraph [ref=e614]: 今日预约 0 场
+        - button "查看生产部2楼会议室今日预约记录" [ref=e615] [cursor=pointer]:
+          - generic [ref=e616]:
+            - generic [ref=e618]:
+              - heading "生产部2楼会议室" [level=2] [ref=e619]
+              - paragraph [ref=e620]: 生产部2楼会议室 · 镭诺电子（宁波）有限公司
+            - generic [ref=e621]: 空闲
+          - generic [ref=e623]:
+            - generic [ref=e624]: 今日空闲
+            - generic [ref=e625]: —
+          - generic [ref=e626]:
+            - generic [ref=e627]:
+              - generic [ref=e628]: 08:00
+              - generic [ref=e629]: 12:00
+              - generic [ref=e630]: 16:00
+              - generic [ref=e631]: 20:00
+            - paragraph [ref=e633]: 今日预约 0 场
+        - button "查看生产部第二支队2楼会议室今日预约记录" [ref=e634] [cursor=pointer]:
+          - generic [ref=e635]:
+            - generic [ref=e637]:
+              - heading "生产部第二支队2楼会议室" [level=2] [ref=e638]
+              - paragraph [ref=e639]: 生产部第二支队2楼会议室 · 生产部
+            - generic [ref=e640]: 空闲
+          - generic [ref=e642]:
+            - generic [ref=e643]: 今日空闲
+            - generic [ref=e644]: —
+          - generic [ref=e645]:
+            - generic [ref=e646]:
+              - generic [ref=e647]: 08:00
+              - generic [ref=e648]: 12:00
+              - generic [ref=e649]: 16:00
+              - generic [ref=e650]: 20:00
+            - paragraph [ref=e652]: 今日预约 0 场
+      - text: 

@@ -18,16 +18,31 @@
 <script>
 export default {
   name: 'QrCode',
+  props: {
+    // 二维码指向的登记地址（带部门登记码），不传则使用默认全园区登记页
+    url: {
+      type: String,
+      default: ''
+    }
+  },
   data() {
-    const base = window.location.origin
     return {
       visible: false,
-      registerUrl: base + '/h5-register',
-      qrUrl: 'https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=' + encodeURIComponent(base + '/h5-register')
+      curUrl: ''
+    }
+  },
+  computed: {
+    // 实际登记地址：优先 show() 时传入的动态地址，其次 props.url，最后默认全园区登记页
+    registerUrl() {
+      return this.curUrl || this.url || (window.location.origin + '/h5-register')
+    },
+    qrUrl() {
+      return 'https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=' + encodeURIComponent(this.registerUrl)
     }
   },
   methods: {
-    show() {
+    show(url) {
+      this.curUrl = url || ''
       this.visible = true
     },
     copyUrl() {

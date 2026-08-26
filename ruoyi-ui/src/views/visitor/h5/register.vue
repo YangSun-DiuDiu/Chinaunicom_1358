@@ -3,19 +3,27 @@
     <!-- 头部 -->
     <div class="header">
       <div class="header-icon">🏢</div>
-      <h1>智慧园区访客登记</h1>
-      <p>请填写以下信息完成来访登记</p>
+      <h1>{{ pageTitle }}</h1>
+      <p>{{ pageSubtitle }}</p>
     </div>
 
     <!-- 步骤条 -->
-    <div class="steps">
+    <div class="steps" v-if="!invalid">
       <div class="step active"><span class="dot">1</span>填写信息</div>
       <div class="line"></div>
       <div :class="['step', submitted ? 'active' : '']"><span class="dot">2</span>提交成功</div>
     </div>
 
+    <!-- 无效登记码提示 -->
+    <div class="form-card" v-if="invalid">
+      <div style="text-align:center;padding:40px 0;color:#ff4d4f;font-size:15px">
+        <div style="font-size:48px;margin-bottom:12px">⛔</div>
+        {{ invalidMsg }}
+      </div>
+    </div>
+
     <!-- 表单 -->
-    <div class="form-card" v-if="!submitted">
+    <div class="form-card" v-else-if="!submitted">
       <div class="section-title">访客信息</div>
       <div class="form-item">
         <label>姓名 <span class="required">*</span></label>
@@ -65,20 +73,21 @@
       </div>
       <div class="form-item">
         <label>被访人 <span class="required">*</span></label>
-        <input v-model="form.hostName" placeholder="请输入被访人姓名" maxlength="30" list="host-list" @focus="loadHosts" />
-        <datalist id="host-list">
-          <option v-for="h in hostList" :key="h.hostName" :value="h.hostName">
-            {{ h.hostName }} - {{ h.hostDept }}
+        <select v-model="selectedHostVal" class="host-select" @change="onHostChange" :disabled="hostList.length === 0">
+          <option value="" disabled>{{ hostList.length === 0 ? '暂无可用被访人' : '请选择被访人' }}</option>
+          <option v-for="h in hostList" :key="(h.hostAccount || h.hostName) + '-' + h.hostDept" :value="h.hostAccount || h.hostName">
+            {{ h.hostName }}（{{ h.hostDept }}）
           </option>
-        </datalist>
+        </select>
+        <div v-if="hostList.length === 0" class="host-empty">该部门暂无在职人员可预约</div>
       </div>
       <div class="form-item">
         <label>被访部门 <span class="required">*</span></label>
-        <input v-model="form.hostDept" placeholder="请输入被访部门" maxlength="50" />
+        <input v-model="form.hostDept" readonly placeholder="选择被访人后自动带出" />
       </div>
       <div class="form-item">
         <label>被访人电话</label>
-        <input v-model="form.hostPhone" type="tel" placeholder="请输入被访人电话（选填）" maxlength="11" />
+        <input v-model="form.hostPhone" readonly placeholder="选择被访人后自动带出" />
       </div>
 
       <div class="agreement">
@@ -130,12 +139,21 @@ export default {
   name: 'H5Register',
   data() {
     return {
+      // 部门登记码（URL 参数 code，created 中初始化）
+      code: '',
+      // 登记码是否无效/停用
+      invalid: false,
+      invalidMsg: '登记码无效或已停用，请联系管理员',
+      deptName: '',
+      pageTitle: '智慧园区访客登记',
+      pageSubtitle: '请填写以下信息完成来访登记',
       submitted: false,
       submitting: false,
       agreed: false,
       passCode: '',
       entryTime: '',
       hostList: [],
+      selectedHostVal: '',
       form: {
         visitorName: '',
         visitorPhone: '',
@@ -147,27 +165,74 @@ export default {
         hasGoods: '0',
         goodsDesc: '',
         hostName: '',
+        hostAccount: '',
         hostDept: '',
-        hostPhone: ''
+        hostPhone: '',
+        registerCode: ''
       }
     }
   },
+  created() {
+    // 从 URL 参数读取部门登记码
+    if (this.$route && this.$route.query && this.$route.query.code) {
+      this.code = this.$route.query.code
+    }
+    this.form.registerCode = this.code
+    if (this.code) {
+      this.loadDeptInfo()
+    } else {
+      // 旧版二维码：兼容全园区登记，加载历史被访人
+      this.loadHosts()
+    }
+  },
   methods: {
+    // 加载登记码对应部门信息，校验登记码有效性
+    loadDeptInfo() {
+      api.get('/visitor/h5/info/' + this.code).then(res => {
+        const data = res.data
+        if (data.code === 200 && data.data && data.data.deptId) {
+          this.deptName = data.data.deptName || ''
+          this.pageTitle = this.deptName ? this.deptName + '访客登记' : '访客登记'
+          this.pageSubtitle = '请填写以下信息，预约' + (this.deptName || '该部门') + '人员'
+          this.loadHosts()
+        } else {
+          this.invalid = true
+          this.invalidMsg = data.msg || '登记码无效或已停用，请联系管理员'
+        }
+      }).catch(() => {
+        this.invalid = true
+        this.invalidMsg = '网络错误，请稍后重试'
+      })
+    },
+    // 加载被访人列表（带 code 时按部门读取真实员工，否则读历史记录）
     loadHosts() {
-      if (this.hostList.length > 0) return
-      api.get('/visitor/h5/hosts').then(res => {
+      const params = {}
+      if (this.code) {
+        params.code = this.code
+      }
+      api.get('/visitor/h5/hosts', { params }).then(res => {
         if (res.data && res.data.data) {
           this.hostList = res.data.data
         }
       }).catch(() => {})
+    },
+    // 选择被访人后联动带出部门/电话/账号
+    onHostChange() {
+      const val = this.selectedHostVal
+      const host = this.hostList.find(h => (h.hostAccount || h.hostName) === val)
+      if (host) {
+        this.form.hostName = host.hostName || ''
+        this.form.hostAccount = host.hostAccount || ''
+        this.form.hostDept = host.hostDept || ''
+        this.form.hostPhone = host.hostPhone || ''
+      }
     },
     validate() {
       if (!this.form.visitorName.trim()) { this.toast('请输入姓名'); return false }
       if (!/^1[3-9]\d{9}$/.test(this.form.visitorPhone)) { this.toast('请输入正确的手机号码'); return false }
       if (this.form.visitorIdCard && !/(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/.test(this.form.visitorIdCard)) { this.toast('请输入正确的身份证号'); return false }
       if (!this.form.visitReason.trim()) { this.toast('请输入来访事由'); return false }
-      if (!this.form.hostName.trim()) { this.toast('请输入被访人姓名'); return false }
-      if (!this.form.hostDept.trim()) { this.toast('请输入被访部门'); return false }
+      if (!this.form.hostName.trim()) { this.toast('请选择被访人'); return false }
       if (this.form.hostPhone && !/^1[3-9]\d{9}$/.test(this.form.hostPhone)) { this.toast('请输入正确的被访人电话'); return false }
       return true
     },
@@ -202,9 +267,12 @@ export default {
         hasGoods: '0',
         goodsDesc: '',
         hostName: '',
+        hostAccount: '',
         hostDept: '',
-        hostPhone: ''
+        hostPhone: '',
+        registerCode: this.code
       }
+      this.selectedHostVal = ''
       this.agreed = false
     },
     toast(msg) {
@@ -243,11 +311,14 @@ export default {
 .form-item { margin-bottom: 14px; }
 .form-item label { display: block; font-size: 13px; color: #666; margin-bottom: 4px; }
 .form-item .required { color: #ff4d4f; }
-.form-item input {
+.form-item input, .host-select {
   width: 100%; height: 42px; border: 1px solid #e0e0e0; border-radius: 8px; padding: 0 12px;
-  font-size: 15px; color: #333; outline: none; transition: border-color .2s;
+  font-size: 15px; color: #333; outline: none; transition: border-color .2s; background: #fff;
 }
-.form-item input:focus { border-color: #1890ff; }
+.form-item input:focus, .host-select:focus { border-color: #1890ff; }
+.form-item input[readonly] { background: #f5f7fa; color: #909399; }
+.host-select { appearance: none; -webkit-appearance: none; }
+.host-empty { font-size: 12px; color: #999; margin-top: 4px; }
 .agreement { font-size: 12px; color: #999; margin: 16px 0; display: flex; align-items: center; }
 .agreement input[type=checkbox] { margin-right: 8px; width: 16px; height: 16px; }
 .submit-btn, .reset-btn {

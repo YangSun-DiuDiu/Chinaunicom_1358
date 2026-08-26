@@ -85,7 +85,7 @@
         <!-- 今日时间轴（签名元素）：预约色块 + 实时“现在”指针 -->
         <div class="timeline" :class="{ dim: stateKey(item) === 'disabled' }">
           <div class="axis-labels">
-            <span v-for="t in axisLabels" :key="t">{{ t }}</span>
+            <span v-for="(t, i) in axisLabels" :key="t" :style="labelStyle(i)">{{ t }}</span>
           </div>
           <div class="axis-track">
             <span
@@ -143,10 +143,9 @@
 <script>
 import { statusList } from '@/api/meeting/room'
 
-// 时间轴默认范围 08:00–20:00，仅当预约超出时扩展（稳定对齐，适合大屏常驻）
-const DEFAULT_AXIS = { start: 8 * 60, end: 20 * 60 }
-const AXIS_MIN = 6 * 60
-const AXIS_MAX = 22 * 60
+// 时间轴固定 0:00–24:00（全天），刻度固定 9 个整点平分长度
+const AXIS_START = 0
+const AXIS_END = 24 * 60
 
 // 每页最多会议室数量（超出自动分页，大屏轮播）
 const PAGE_SIZE = 16
@@ -191,30 +190,13 @@ export default {
         { key: 'disabled', label: '停用', count: m.disabled, color: '#6B7FA3' }
       ]
     },
-    /** 时间轴刻度（4 等分） */
+    /** 时间轴刻度：固定 0/3/6/9/12/15/18/21/24 点共 9 个整点，平分整条长度 */
     axisLabels() {
-      const lo = this.axisStart
-      const hi = this.axisEnd
-      const step = (hi - lo) / 3
-      return [0, 1, 2, 3].map(i => this.minToHm(lo + step * i))
+      return ['0:00', '3:00', '6:00', '9:00', '12:00', '15:00', '18:00', '21:00', '24:00']
     },
-    /** 今日时间轴起止（分钟），08:00–20:00 默认，预约超出则扩展 */
-    axisStart() {
-      let min = DEFAULT_AXIS.start
-      this.list.forEach(it => (it.todayBookings || []).forEach(b => {
-        const s = this.toDate(b.startTime)
-        if (s) min = Math.min(min, s.getHours() * 60 + s.getMinutes())
-      }))
-      return Math.max(AXIS_MIN, min)
-    },
-    axisEnd() {
-      let max = DEFAULT_AXIS.end
-      this.list.forEach(it => (it.todayBookings || []).forEach(b => {
-        const e = this.toDate(b.endTime)
-        if (e) max = Math.max(max, e.getHours() * 60 + e.getMinutes())
-      }))
-      return Math.min(AXIS_MAX, max)
-    },
+    /** 今日时间轴固定 0:00–24:00（分钟），刻度与色块/“现在”指针共用同一全天比例 */
+    axisStart() { return AXIS_START },
+    axisEnd() { return AXIS_END },
     /** 当前页可见会议室（分页切片，每页最多 PAGE_SIZE 个） */
     pagedList() {
       const start = (this.page - 1) * PAGE_SIZE
@@ -315,9 +297,6 @@ export default {
       if (!t) return null
       return new Date(String(t).replace('T', ' ').replace(/-/g, '/'))
     },
-    minToHm(min) {
-      return this.pad(Math.floor(min / 60)) + ':' + this.pad(min % 60)
-    },
     hm(d) {
       if (!d) return ''
       return this.pad(d.getHours()) + ':' + this.pad(d.getMinutes())
@@ -330,6 +309,10 @@ export default {
       return this.hm(s) + ' – ' + this.hm(e)
     },
     /* ---------- 时间轴几何 ---------- */
+    /** 刻度标签定位：i 为 0..8，按 3 小时一格精确落在 0/12.5/25/…/100% 处（中点对齐） */
+    labelStyle(i) {
+      return { left: (i / (this.axisLabels.length - 1) * 100) + '%' }
+    },
     /** 预约色块位置（相对轴起止百分比） */
     blockStyle(b) {
       const s = this.toDate(b.startTime)
@@ -595,11 +578,19 @@ export default {
 .timeline { padding-top: clamp(8px, 1vh, 14px); border-top: 1px solid rgba(43, 74, 140, 0.6); }
 .timeline.dim { opacity: 0.6; }
 .axis-labels {
-  display: flex; justify-content: space-between;
+  position: relative;
+  height: clamp(16px, 2vh, 24px);
   font-family: Consolas, "JetBrains Mono", monospace;
   font-size: clamp(10px, 1vw, 13px); color: var(--txt-lo);
   margin-bottom: 6px;
 }
+.axis-labels span {
+  position: absolute; top: 0;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+.axis-labels span:first-child { transform: translateX(0); }
+.axis-labels span:last-child { transform: translateX(-100%); }
 .axis-track {
   position: relative;
   height: clamp(14px, 2vh, 22px);

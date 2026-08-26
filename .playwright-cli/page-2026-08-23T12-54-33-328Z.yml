@@ -1,0 +1,53 @@
+- generic [ref=e46]:
+  - generic [ref=e48]:
+    - img [ref=e50] [cursor=pointer]
+    - navigation "Breadcrumb" [ref=e52]:
+      - link "首页" [ref=e54]
+    - generic [ref=e55]:
+      - generic [ref=e56] [cursor=pointer]:
+        - button "选择组织" [ref=e57]:
+          - img [ref=e58]
+          - generic [ref=e60]: 选择组织
+        - text: 
+      - img [ref=e62] [cursor=pointer]
+      - img [ref=e65] [cursor=pointer]
+      - button [ref=e68] [cursor=pointer]:
+        - img [ref=e69]
+      - button "孙扬" [ref=e72] [cursor=pointer]:
+        - img [ref=e73]
+        - text: 孙扬
+  - generic [ref=e75]:
+    - generic [ref=e76]:
+      - heading "SMART PARK" [level=2] [ref=e77]
+      - paragraph [ref=e78]: 智慧园区 · 综合管理平台
+    - generic [ref=e79]:
+      - generic [ref=e80] [cursor=pointer]:
+        - generic [ref=e82]: 系统管理
+        - generic [ref=e83]: 菜单 · 角色 · 用户 · 部门 · 岗位 · 参数
+      - generic [ref=e84] [cursor=pointer]:
+        - generic [ref=e86]: 设备管理
+        - generic [ref=e87]: IoT设备 · 拓扑 · 心跳 · 故障 · SNMP · 维修
+      - generic [ref=e88] [cursor=pointer]:
+        - generic [ref=e90]: 智能化管理
+        - generic [ref=e91]: 门禁 · 车行 · 视频监控
+      - generic [ref=e92] [cursor=pointer]:
+        - generic [ref=e94]: 访客管理
+        - generic [ref=e95]: 预约 · 审批 · 登记 · 记录
+      - generic [ref=e96] [cursor=pointer]:
+        - generic [ref=e98]: 考勤管理
+        - generic [ref=e99]: 数据对接 · 考勤统计
+      - generic [ref=e100] [cursor=pointer]:
+        - generic [ref=e102]: 系统监控
+        - generic [ref=e103]: 操作日志 · 登录日志 · 数据监控 · 缓存
+      - generic [ref=e104] [cursor=pointer]:
+        - generic [ref=e106]: 短信中台
+        - generic [ref=e107]: 渠道 · 模板 · 业务 · 黑名单 · 日志
+      - generic [ref=e108] [cursor=pointer]:
+        - generic [ref=e110]: 会议管理
+        - generic [ref=e111]: 会议室 · 预约 · 管理 · 审批
+      - generic [ref=e112] [cursor=pointer]:
+        - generic [ref=e114]: 公寓管理
+        - generic [ref=e115]: 房源 · 房间 · 卡片 · 租客
+      - generic [ref=e116] [cursor=pointer]:
+        - generic [ref=e118]: 通知公告
+        - generic [ref=e119]: 公告发布 · 消息推送

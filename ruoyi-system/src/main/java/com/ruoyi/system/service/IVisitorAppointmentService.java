@@ -108,4 +108,15 @@ public interface IVisitorAppointmentService
      * @return Map 包含 passCode、appointmentId、log
      */
     public java.util.Map<String, Object> registerWalkin(VisitorAppointment appointment, String createBy);
+
+    /**
+     * 访客自助登记（部门二维码模式）：在创建预约+来访记录前，校验被访人所在部门
+     * 是否在登记码限定的部门(含子部门)范围内
+     *
+     * @param appointment 预约信息
+     * @param createBy 创建者
+     * @param qrDeptId 登记码限定部门ID（null=不限部门，兼容旧版二维码）
+     * @return Map 包含 passCode、appointmentId、log
+     */
+    public java.util.Map<String, Object> registerWalkin(VisitorAppointment appointment, String createBy, Long qrDeptId);
 }
