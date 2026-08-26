@@ -72,7 +72,7 @@ export default {
       this.loading = true
       getAuthRole(userId).then((response) => {
         this.form = response.user
-        this.roles = response.roles
+        this.roles = this.filterAssignableRoles(response.roles)
         this.total = this.roles.length
         this.$nextTick(() => {
           this.roles.forEach((row) => {
@@ -103,6 +103,14 @@ export default {
     // 检查角色状态
     checkSelectable(row) {
       return row.status === "0" ? true : false
+    },
+    // 过滤当前账号可分配的角色（非admin不可分配 超级管理员/园区管理员，但目标用户已持有的该类角色保留展示）
+    filterAssignableRoles(roles) {
+      const isAdmin = this.$store.getters.permissions.includes('*:*:*')
+      if (isAdmin || !roles) {
+        return roles
+      }
+      return roles.filter(item => (item.roleId !== 1 && item.roleId !== 100) || item.flag)
     },
     /** 提交按钮 */
     submitForm() {

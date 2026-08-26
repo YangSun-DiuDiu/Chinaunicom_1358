@@ -190,20 +190,26 @@ public class SysRoleServiceImpl implements ISysRoleService
 
     /**
      * 校验角色是否有数据权限
-     * 
+     *
+     * 权限模型固定约束：本系统角色固定（设备/访客/会议管理员 + 超管/园区管理员），
+     * 模块角色均为部门隔离，不再按"角色在本部门是否有成员"过滤（否则园区管理员无法给本部门用户分配任何角色）。
+     * 改为仅校验角色存在；超级管理员(1)/园区管理员(100) 的授予限制由
+     * SysUserServiceImpl.validateRoleAssignment 在新增/编辑/分配角色链路统一兜底。
+     *
      * @param roleIds 角色id
      */
     @Override
     public void checkRoleDataScope(Long... roleIds)
     {
-        if (!SecurityUtils.isAdmin())
+        if (!SecurityUtils.isAdmin() && roleIds != null)
         {
             for (Long roleId : roleIds)
             {
-                SysRole role = new SysRole();
-                role.setRoleId(roleId);
-                List<SysRole> roles = SpringUtils.getAopProxy(this).selectRoleList(role);
-                if (StringUtils.isEmpty(roles))
+                if (roleId == null)
+                {
+                    continue;
+                }
+                if (roleMapper.selectRoleById(roleId) == null)
                 {
                     throw new ServiceException("没有权限访问角色数据！");
                 }

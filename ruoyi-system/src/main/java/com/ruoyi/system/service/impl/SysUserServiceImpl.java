@@ -261,6 +261,8 @@ public class SysUserServiceImpl implements ISysUserService
     @Transactional
     public int insertUser(SysUser user)
     {
+        // 权限模型固定约束：创建用户必须指定角色（新增账号无既有角色）
+        validateRoleAssignment(null, user.getRoleIds());
         // 新增用户信息
         int rows = userMapper.insertUser(user);
         // 新增用户岗位关联
@@ -293,6 +295,8 @@ public class SysUserServiceImpl implements ISysUserService
     public int updateUser(SysUser user)
     {
         Long userId = user.getUserId();
+        // 权限模型固定约束：编辑用户必须保留至少一个角色，非admin不得新增超管/园区管理员角色
+        validateRoleAssignment(userId, user.getRoleIds());
         // 删除用户与角色关联
         userRoleMapper.deleteUserRoleByUserId(userId);
         // 新增用户与角色管理
@@ -314,8 +318,43 @@ public class SysUserServiceImpl implements ISysUserService
     @Transactional
     public void insertUserAuth(Long userId, Long[] roleIds)
     {
+        // 权限模型固定约束：分配角色必须至少一个，非admin不得新增超管/园区管理员角色
+        validateRoleAssignment(userId, roleIds);
         userRoleMapper.deleteUserRoleByUserId(userId);
         insertUserRole(userId, roleIds);
+    }
+
+    /**
+     * 权限模型固定约束：校验用户角色分配
+     * 1. 必须至少指定一个角色（本系统所有账号必须挂固定角色，禁止无角色账号）
+     * 2. 非admin账号禁止将 超级管理员(1)/园区管理员(100) 角色授予他人；
+     *    但目标用户已持有的该类角色允许保留（防止园区管理员编辑本人资料时误报）
+     *
+     * @param targetUserId 目标用户ID，新增用户时为 null
+     * @param roleIds      本次待保存的角色ID数组
+     */
+    private void validateRoleAssignment(Long targetUserId, Long[] roleIds)
+    {
+        if (roleIds == null || roleIds.length == 0)
+        {
+            throw new ServiceException("请为该用户指定角色");
+        }
+        if (SecurityUtils.isAdmin())
+        {
+            return;
+        }
+        List<Long> existingRoleIds = new ArrayList<>();
+        if (targetUserId != null)
+        {
+            existingRoleIds = roleMapper.selectRoleListByUserId(targetUserId);
+        }
+        for (Long roleId : roleIds)
+        {
+            if (roleId != null && (roleId == 1L || roleId == 100L) && !existingRoleIds.contains(roleId))
+            {
+                throw new ServiceException("无权为用户分配超级管理员/园区管理员角色");
+            }
+        }
     }
 
     /**

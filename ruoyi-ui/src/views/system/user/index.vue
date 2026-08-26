@@ -185,7 +185,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="角色">
+            <el-form-item label="角色" prop="roleIds">
               <el-select v-model="form.roleIds" multiple placeholder="请选择角色">
                 <el-option v-for="item in roleOptions" :key="item.roleId" :label="item.roleName" :value="item.roleId" :disabled="item.status == 1"></el-option>
               </el-select>
@@ -468,6 +468,10 @@ export default {
             message: "请输入正确的手机号码",
             trigger: "blur"
           }
+        ],
+        // 权限模型固定约束：创建/编辑用户必须指定至少一个角色
+        roleIds: [
+          { required: true, message: "请为该用户指定角色", trigger: "change" }
         ]
       }
     }
@@ -498,6 +502,14 @@ export default {
         this.deptOptions = response.data
         this.enabledDeptOptions = this.filterDisabledDept(JSON.parse(JSON.stringify(response.data)))
       })
+    },
+    // 过滤当前账号可分配的角色（非admin不可见/不可分配 超级管理员、园区管理员）
+    filterAssignableRoles(roles) {
+      const isAdmin = this.$store.getters.permissions.includes('*:*:*')
+      if (isAdmin || !roles) {
+        return roles
+      }
+      return roles.filter(item => item.roleId !== 1 && item.roleId !== 100)
     },
     // 过滤禁用的部门
     filterDisabledDept(deptList) {
@@ -604,7 +616,7 @@ export default {
       this.reset()
       getUser().then(response => {
         this.postOptions = response.posts
-        this.roleOptions = response.roles
+        this.roleOptions = this.filterAssignableRoles(response.roles)
         this.open = true
         this.title = "添加用户"
         this.form.password = this.initPassword
@@ -617,7 +629,7 @@ export default {
       getUser(userId).then(response => {
         this.form = response.data
         this.postOptions = response.posts
-        this.roleOptions = response.roles
+        this.roleOptions = this.filterAssignableRoles(response.roles)
         this.$set(this.form, "postIds", response.postIds)
         this.$set(this.form, "roleIds", response.roleIds)
         this.open = true
