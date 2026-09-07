@@ -14,7 +14,6 @@ import com.ruoyi.common.core.domain.entity.SysRole;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
-import com.ruoyi.common.utils.spring.SpringUtils;
 import com.ruoyi.system.domain.SysRoleDept;
 import com.ruoyi.system.domain.SysRoleMenu;
 import com.ruoyi.system.domain.SysUserRole;
@@ -104,14 +103,19 @@ public class SysRoleServiceImpl implements ISysRoleService
     }
 
     /**
-     * 查询所有角色
-     * 
+     * 查询所有角色（角色下拉数据源）
+     *
+     * 说明：必须直接查 Mapper 全量，不能走 AOP 代理的 selectRoleList(@DataScope)，
+     * 否则非admin(如园区管理员)会被按"本部门及以下"数据范围过滤掉本部门无人持有的角色，
+     * 导致用户管理新增/编辑弹窗的角色下拉为空或缺少普通角色。
+     * 角色是否可分配统一由 SysUserServiceImpl.validateRoleAssignment 控制。
+     *
      * @return 角色列表
      */
     @Override
     public List<SysRole> selectRoleAll()
     {
-        return SpringUtils.getAopProxy(this).selectRoleList(new SysRole());
+        return roleMapper.selectRoleAll();
     }
 
     /**

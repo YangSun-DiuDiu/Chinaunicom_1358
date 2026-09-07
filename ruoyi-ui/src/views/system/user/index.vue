@@ -504,12 +504,16 @@ export default {
       })
     },
     // 过滤当前账号可分配的角色（非admin不可见/不可分配 超级管理员、园区管理员）
-    filterAssignableRoles(roles) {
+    // heldRoleIds：目标用户已持有的角色ID数组。已持有的 1/100 需保留展示，
+    // 否则编辑园区管理员/超管时 el-select 找不到匹配 option 而回显裸 ID(100)；
+    // 移除自持高权限角色由后端 validateRoleAssignment 拦截兜底。
+    filterAssignableRoles(roles, heldRoleIds) {
       const isAdmin = this.$store.getters.permissions.includes('*:*:*')
       if (isAdmin || !roles) {
         return roles
       }
-      return roles.filter(item => item.roleId !== 1 && item.roleId !== 100)
+      const held = heldRoleIds || []
+      return roles.filter(item => (item.roleId !== 1 && item.roleId !== 100) || held.includes(item.roleId))
     },
     // 过滤禁用的部门
     filterDisabledDept(deptList) {
@@ -616,7 +620,8 @@ export default {
       this.reset()
       getUser().then(response => {
         this.postOptions = response.posts
-        this.roleOptions = this.filterAssignableRoles(response.roles)
+        // 新增无已持有角色，仅展示可分配角色
+        this.roleOptions = this.filterAssignableRoles(response.roles, [])
         this.open = true
         this.title = "添加用户"
         this.form.password = this.initPassword
@@ -629,7 +634,8 @@ export default {
       getUser(userId).then(response => {
         this.form = response.data
         this.postOptions = response.posts
-        this.roleOptions = this.filterAssignableRoles(response.roles)
+        // 编辑需保留用户已持有的高权限角色(1/100)，避免回显裸ID
+        this.roleOptions = this.filterAssignableRoles(response.roles, response.roleIds)
         this.$set(this.form, "postIds", response.postIds)
         this.$set(this.form, "roleIds", response.roleIds)
         this.open = true

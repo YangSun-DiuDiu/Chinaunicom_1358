@@ -1,6 +1,7 @@
 package com.ruoyi.system.service.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -329,6 +330,7 @@ public class SysUserServiceImpl implements ISysUserService
      * 1. 必须至少指定一个角色（本系统所有账号必须挂固定角色，禁止无角色账号）
      * 2. 非admin账号禁止将 超级管理员(1)/园区管理员(100) 角色授予他人；
      *    但目标用户已持有的该类角色允许保留（防止园区管理员编辑本人资料时误报）
+     * 3. 园区管理员编辑自己时不得移除自身的园区管理员(100)角色（防自降级）
      *
      * @param targetUserId 目标用户ID，新增用户时为 null
      * @param roleIds      本次待保存的角色ID数组
@@ -354,6 +356,15 @@ public class SysUserServiceImpl implements ISysUserService
             {
                 throw new ServiceException("无权为用户分配超级管理员/园区管理员角色");
             }
+        }
+        // 园区管理员编辑自己时不得移除自身持有的园区管理员(100)角色
+        boolean isSelfEdit = targetUserId != null && targetUserId.equals(SecurityUtils.getUserId());
+        boolean removeSelfParkAdmin = isSelfEdit
+                && existingRoleIds.contains(100L)
+                && !Arrays.asList(roleIds).contains(100L);
+        if (removeSelfParkAdmin)
+        {
+            throw new ServiceException("不能移除自身的园区管理员角色");
         }
     }
 
