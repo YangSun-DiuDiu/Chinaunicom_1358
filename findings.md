@@ -295,3 +295,72 @@ PENDING/APPROVED → CANCELLED
 - **部门树选人含子部门**：`sys_dept.ancestors LIKE CONCAT('%,', #{deptId}, ',%')` 查本部门+全部子部门在职员工（`sys_user u LEFT JOIN sys_dept d`，u.del_flag='0' AND u.status='0' AND d.del_flag='0' AND d.status='0'）。
 - **URL 用 register_code 不用 deptId**：16 位大写 UUID 防暴露内部部门 ID；H5 匿名 `/info/{code}` 解析部门，`/submit` 用 `validateDeptScope` 后端强校验被访人必须属于扫码部门子树，防绕过。
 - **旧码兼容**：无 code 参数时 `/hosts` 退回原「全园区历史被访人」模式，`registerWalkin` 2 参重载委托 3 参传 null 跳过部门校验。
+
+## 权限模型重构（2026-08-26）
+
+### 调试坑 1：checkRoleDataScope 部门过滤阻塞园区管理员分配角色
+- **症状**：园区管理员(100)给本部门用户分配任意模块角色(3/4/5)都报「没有权限访问角色数据！」；空角色报 NPE「Cannot read the array length because <local2> is null」。
+- **根因**：`SysRoleServiceImpl.checkRoleDataScope` 原实现遍历 roleIds，每个用 `selectRoleList(role)` 校验，而 `selectRoleList` 带 `@DataScope(deptAlias="d")` → DataScopeAspect 按 `sys_role_dept` 过滤；固定角色模型下模块角色在本部门(dept216)无成员 → 查空 → 误判「无权限」。NPE 则是 for-each 遍历 null roleIds。
+- **修复**：放宽为「仅校验角色存在」——`if (!isAdmin && roleIds != null) { for (Long roleId : roleIds) { if (roleId==null) continue; if (roleMapper.selectRoleById(roleId)==null) throw ... } }`。`selectRoleById` 不被部门过滤（`sys_role` 在 DeptScopeInterceptor 白名单）。admin/100 越权限制不在本方法，统一由 `SysUserServiceImpl.validateRoleAssignment` 兜底（否则会破坏园区管理员编辑自身时保留已持有角色 100 的路径）。
+- **教训**：固定/全局角色的存在性校验不能用带 `@DataScope` 的列表查询；「角色是否可被当前用户操作」与「角色是否存在」是两个概念，数据权限过滤和存在性校验要分开。
+
+### 调试坑 2：前端 updateAuthRole 用 query string 绑定 Long[] roleIds
+- **症状**：分配角色接口 `PUT /system/user/authRole` 传 JSON body `{userId, roleIds:[3]}` 时后端 roleIds=null。
+- **根因**：`api/system/user.js` 的 `updateAuthRole(data)` 用 `request({ url, method:'put', params: data })` —— **params 走 query string**，Spring 对 `Long[] roleIds` 用 `@RequestParam` 从 query string 按 `roleIds=3,5` 逗号分隔绑定；JSON body（`data: data`）绑不到 `Long[]`（若依 insertUserAuth 的 roleIds 是 `@RequestBody SysUser` 里的字段，但 authRole 接口签名是 `(Long userId, Long[] roleIds)` 裸参数，只能 query string 绑定）。
+- **教训**：若依「授权角色」接口是裸参数绑定（非 @RequestBody），调用/测试必须用 query string（`?userId=X&roleIds=3,5`），不能发 JSON body。
+
+### 调试坑 3：paramiko Transport 直连认证失败，SSHClient 正常
+- **症状**：`paramiko.Transport((host,22))` + `transport.connect(username,password)` 报 `AuthenticationException: Authentication failed`；但同一密码用 `SSHClient().connect()` 成功。
+- **根因**：目标服务器认证协商下 `Transport` 直连与 `SSHClient` 走的安全认证路径有差异（具体为 server 多密码认证策略 + Transport 未触发相同的 auth 协商）。
+- **修复**：统一改用 `SSHClient` 建立会话后用 `client.open_sftp()` 上传（复用已认证通道），不再单独 `Transport`。
+- **教训**：生产 paramiko 上传/执行统一走 `SSHClient`，SFTP 用 `open_sftp()`；避免混用 `Transport` 直连。
+
+### 关键机制：本项目是静态路由 + meta.permissions 过滤（非 DB 动态路由）
+- `permission.js` 的 `GenerateRoutes` → `filterStaticRoutes`，按前端静态路由的 `meta.permissions` 与用户 `permissions` 集合过滤，**不是** `getRouters` 动态路由。
+- `/system` 父级无 permissions，子菜单(用户100/部门103/角色/菜单管理)逐个按 `meta.permissions`(如 system:user:list)过滤，父菜单子项全被过滤则自动隐藏。
+- DB `sys_role_menu` 只驱动后端 `@PreAuthorize` 权限字符串(`selectMenuPermsByUserId`)和前端 `v-hasPermi`，**不驱动路由/侧边栏**。侧边栏可见性由前端静态路由 meta 决定。
+- 因此「收敛系统管理权限」= 改 `sys_role_menu`(后端接口 403) + 前端静态路由已用 `meta.permissions` 过滤(侧边栏自动隐藏)，无需改 router/index.js。
+
+### 关键机制：多角色 data_scope 取并集 + 数据隔离职责分工
+- **多角色 data_scope 合并规则**（`DataScopeAspect.dataScopeFilter`）：遍历用户所有角色，按 data_scope 类型去重后 **OR 拼接 = 取并集**；任一角色 data_scope=1(全部) 短路放行全量。不是「以某个角色为准」。
+- **5 固定角色实际值**（生产 sys_role）：admin(1)=**1**(全部)；设备(3)/访客(4)/会议(5)/园区(100)=**4**(本部门及以下)。故多角色用户(如 zhaojg=3+5)去重后恒为「本部门及以下」，无冲突。
+- **职责分工**：**业务表**(device/visitor/meeting/tenant) → `DeptScopeInterceptor`(不看 data_scope，非 admin 强制 `dept_id IN(本部门+子部门)`，按主表白名单判定)；**框架性数据**(组织架构 sys_dept、组织树 treeselect、系统表查询 selectRoleList/selectUserList) → `DataScopeAspect`(依赖 sys_role.data_scope)。两套范围计算一致(本部门+子部门)，自洽不打架。
+- **约束**：新增角色 data_scope 一律保持 `4`，禁用 `2`(自定义)——否则需维护 sys_role_dept，且会被拦截器「本部门及以下」收窄，与固定角色模型冲突。
+
+## 访客管理三需求（2026-08-28）
+
+### 需求1：园区管理员看本部门及以下（数据范围）
+- **隔离已有，只需放开**：`DeptScopeInterceptor` 已对 visitor_appointment/visitor_log 做「本部门+子部门」过滤，园区管理员(100)数据范围本来就是本部门及以下。真正卡住的是 **Controller 层的 approverId/hostName 硬限制**（非 admin 只能查自己审批/被访的）。修复：新增 `isParkAdmin()` = `SecurityUtils.hasRole("smartparkAdmin")`，`VisitorAppointmentController`/`VisitorLogController` 的 list/pending/export/getInfo 4 处 `!isAdmin(...)` 改为 `!isAdmin && !isParkAdmin`。
+- **hasRole 匹配**：`SecurityUtils.hasRole("smartparkAdmin")` 按 `sys_role.role_key` 大小写敏感精确匹配（PatternMatchUtils），与若依 `@PreAuthorize("@ss.hasRole(...)")` 同机制，勿写错大小写。
+
+### 需求2：登记二维码完整 URL
+- **新端点**：`GET /visitor/deptQrcode/current`（权限 visitor:qrcode:list）返回当前用户所属部门的启用登记码，优先读 Redis `dept:context:<userId>`（切换上下文）再退 `SecurityUtils.getDeptId()`；无配置返回 null → 前端兜底 `origin + '/h5-register'`。
+- **QrCode 组件相对路径**：编码时对以 `/` 开头的相对 URL 自动拼接 `window.location.origin`，否则扫码为相对路径无效。
+- **坑：/current 首次返回已删除配置**：`selectDeptQrcodeByDeptId` mapper 无 del_flag 过滤 → 返回 delFlag=2 的旧配置。修复：mapper 补 `AND v.del_flag='0'` + 前端 `enabled==='1'` 双保险（注意 /current 与 selectByCode 不同——后者本就带 enabled+del_flag 过滤）。
+- **部署一致性验证**：前端产物部署后 `md5sum` 比对本地 vs 生产 chunk，确保 Nginx 加载的就是新 bundle（本会话 chunk-576c223c.155ca453.js 两侧一致）。
+
+### 需求3：H5 被访人脱敏（仅前端展示层）
+- maskName：姓名只留首字 `charAt(0)`，其余 `*`.repeat；maskPhone：`*`.repeat(len-4) + `slice(-4)` 末4位（len≤4 全 `*`）；maskHost：`maskName +（部门）+ 手机号脱敏`，无手机号不拼手机号。
+- 下拉选项/被访人电话框/成功页全用 mask 后值展示，提交仍传全量 hostName/hostPhone（后端校验不受影响）。
+- H5 hosts 接口返回全量真实手机号（sunyang 15657477316），**脱敏纯前端**，接口层未动——若需接口层脱敏须另加字段控制（本次用户明确仅前端）。
+
+### 测试账号创建经验
+- 验证必须新建各权限账号（用户要求）。创建时手机号必须唯一：13977775555 冲突报「手机号码已存在」→ 换唯一号重试。园区管理员角色 role_key=smartparkAdmin(100)，访客管理员 visitorAdmin(4)。
+
+## 园区管理员角色下拉修复（2026-09-07）
+
+### 调试坑 1：selectRoleAll 走 AOP 代理触发 @DataScope 部门过滤 → 角色下拉空
+- **症状**：cenmt(园区管理员 100, dept215) 用户管理**新增弹窗角色下拉为空**；**编辑弹窗角色下拉显示 raw id `100`** 而非角色名「园区管理员」。
+- **根因**（两层）：
+  1. **新增下拉空**：`SysRoleServiceImpl.selectRoleAll()` 原实现 `return SpringUtils.getAopProxy(this).selectRoleList(new SysRole());` —— 经 AOP 代理调用 `selectRoleList`，触发方法上 `@DataScope(deptAlias="d")`。DataScopeAspect 按 `sys_role.data_scope`(=4 本部门及以下)过滤，SQL 经 `selectRoleVo` 的 `LEFT JOIN sys_user_role/sys_user/sys_dept d` 注入 `d.dept_id ∈ 可见部门`。固定角色模型下普通角色 3/4/5 **在 dept215 无任何持有者** → 被 SQL 过滤掉 → 新增下拉只剩 100(甚至空)。
+  2. **编辑显示裸 id**：编辑 cenmt 自身时 100 已在可见集合返回，但前端 `filterAssignableRoles` 把 1/100 一律滤掉 → roleId 有值、roleName 词条被滤 → `el-select` 找不到匹配 label 直接显示 `100`。
+- **修复**（4 文件）：
+  1. `SysRoleServiceImpl.selectRoleAll()` 改**直查 `roleMapper.selectRoleAll()`**（不再走 AOP 代理，去掉 @DataScope 副作用），删 `SpringUtils` import，补 Javadoc 说明。`selectRolesByUserId` 内部调 `selectRoleAll` 同样受益（授权页 authRole）。
+  2. `SysRoleMapper.xml` `selectRoleAll` 补 `WHERE r.del_flag='0'`（直查全量时过滤逻辑删角色）。
+  3. `SysUserServiceImpl.validateRoleAssignment` 追加**防自降级**：`isSelfEdit(targetUserId==当前用户) && existingRoleIds.contains(100) && 本次roleIds不含100 → 抛「不能移除自身的园区管理员角色」`。用 `Arrays.asList(roleIds).contains(100L)` 判断（需 import java.util.Arrays）。
+  4. 前端 `user/index.vue` `filterAssignableRoles(roles, heldRoleIds)` 增加已持有参数：`roles.filter(r => (r.roleId!==1 && r.roleId!==100) || held.includes(r.roleId))`；`handleAdd` 传 `[]`、`handleUpdate` 传 `response.roleIds`（编辑必须保留已持有的 1/100 才不裸 id）。
+- **权限边界不回归**：园区可授 3/4/5；授 100/1 仍被 `validateRoleAssignment` 首段校验拦截（已持有保留防误报）；admin 走 `SecurityUtils.isAdmin()` 短路不受限。admin 新增下拉不含 admin 角色 1 是 getInfo 原生过滤行为，未改动。
+- **教训**：**角色下拉数据源（全局角色清单）不能带 @DataScope**——「角色可分配性」与「角色全量可见」是两回事。列表页部门过滤是特性，但下拉/树/字典这类**元数据源必须全量**；谁可分配由业务校验层统一兜底，勿让数据范围切面悄悄吞掉下拉选项。
+
+### 调试坑 2：编辑弹窗 roleId 裸显示 vs 授权页 authRole 写法差异
+- `authRole.vue` 早有 `|| item.flag` 保留已持有角色逻辑（授权页参考正确）；但 `user/index.vue` 的 `filterAssignableRoles` 漏了等价保留 → 编辑自己显示裸 id。**同一「保留已持有高权限角色」规则需在 index.vue handleUpdate 与 authRole 两处一致**。index.vue 场景经 handleUpdate 已有 `response.roleIds`（后端 getInfo 返回 `roleIds:[100]`），不必像 authRole 靠 item.flag 标记，直接以 roleIds 为 heldRoleIds 传入即可。
