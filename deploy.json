@@ -20,7 +20,8 @@
         "jarName": "ruoyi-admin.jar",
         "port": 8090,
         "buildCmd": "mvn clean package -DskipTests -q",
-        "buildOutput": "ruoyi-admin/target/ruoyi-admin.jar"
+        "buildOutput": "ruoyi-admin/target/ruoyi-admin.jar",
+        "startCmd": "bash start-topo.sh"
       },
 
       "nginx": {

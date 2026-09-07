@@ -364,3 +364,26 @@ PENDING/APPROVED → CANCELLED
 
 ### 调试坑 2：编辑弹窗 roleId 裸显示 vs 授权页 authRole 写法差异
 - `authRole.vue` 早有 `|| item.flag` 保留已持有角色逻辑（授权页参考正确）；但 `user/index.vue` 的 `filterAssignableRoles` 漏了等价保留 → 编辑自己显示裸 id。**同一「保留已持有高权限角色」规则需在 index.vue handleUpdate 与 authRole 两处一致**。index.vue 场景经 handleUpdate 已有 `response.roleIds`（后端 getInfo 返回 `roleIds:[100]`），不必像 authRole 靠 item.flag 标记，直接以 roleIds 为 heldRoleIds 传入即可。
+
+## 部署脚本固化进 Skill（2026-09-07）
+
+### 经验：业务 Skill 可内嵌 scripts/ 子目录 + 可执行脚本（首个先例）
+- 之前 7 个 zhihuiyuanqu-* skill 全是纯 SKILL.md 文档；本次为 zhihuiyuanqu-deploy 引入首个 `scripts/deploy.py`。Skill 的 SKILL.md 负责「何时用、怎么指挥、模式判断、验证、总结」，真正易出错的执行逻辑下沉到可复用脚本。**纯文档 skill 教的命令若与项目强制规范冲突（本场景：CLAUDE.md 要求 paramiko，SKILL.md 却写 scp/ssh），必然导致每次现场重写脚本——脚本必须与规范一致并随 skill 固话。**
+- 脚本定位为「纯上传 + 远端执行」（用户确认），本地构建（mvn/npm）留在外部由 skill 引导先执行 → 脚本不耦合 Windows 构建环境，产物缺失时明确报错引导。脚本读 `deploy.json` 驱动 + `--project` 覆盖 → 跨若依项目复用，不硬编码 IP/密码/路径。
+
+### 调试坑 1：Windows 控制台 GBK 无法打印非 ASCII 符号
+- **症状**：deploy.py 全部部署成功（HTTP 200+PID 正常），但收尾 `log("部署完成 ✅")` 抛 `UnicodeEncodeError: 'gbk' codec can't encode character '✅'`（Windows stdout 默认 GBK）。
+- **根因**：print 含 ✅ 等非 GBK 字符 → 控制台编码崩。`encode/decode` sanitize 是 no-op，真正解法是重配置 stdout。
+- **修复**：脚本顶部 `sys.stdout.reconfigure(encoding="utf-8", errors="replace")`（try 包住，Python3.7+），此后中文/✅ 正常打印。同场景也常见于 mysql/curl 输出拉取（见会话多次 GBK 乱码），统一在打印前 reconfigure 或 `decode(...,'replace')`。
+
+### 调试坑 2：curl `-w '%{http_code}'` 的 `%{}` 撞 python `%` 格式化
+- **症状**：`"...%{http_code}...http://localhost:%s/" % port` 抛 `ValueError: unsupported format character '{'`。
+- **根因**：curl 的格式占位 `%{http_code}` 里裸 `{`，被 python `%` 运算符当格式字符解析。
+- **修复**：该字符串不用 `%` 格式化，改字符串拼接 `"...http://localhost:" + str(port) + "/..."`；或对要传给 python 的写 `%%{http_code}`（转义后 python 输出单 `%`）。注意验证 curl 只在 shell 层（远端命令字符串）则无碍。
+
+### 调试坑 3：paramiko exec_command 后台进程阻塞 read（CLAUDE.md 已知坑，脚本内置防护）
+- deploy.py 执行 `startCmd`（start-topo.sh 内 `setsid nohup java ... </dev/null > app.log 2>&1 &`）时，后台 java 持有 SSH 通道 fd → `stdout.read()` 阻塞。脚本用 `exec_command(cmd, timeout=10)` + 捕获 `socket.timeout` 视为「已启动不失败」+ 独立轮询 `curl localhost:8090` 与 `ps aux | grep jar` 验证（最多 30×2s）。实际生产验证第 10 次探测（~20s）才就绪 → 后端启动需 ~20s，轮询上限合理。
+
+### 部署产物正确性校验
+- 前端 dist 解压到 nginxDir 后顶层含 `board.html/.gz/html/pass/robots.txt/index.html.gz` 等——这些**都在本地 `ruoyi-ui/dist/` 中**（阶段 24/38 等手动放入的平板页/静态页），解压后结构与本地一致，非误清服务器文件。校验方法：对比本地 dist 顶层与远端解压后顶层。
+- 后端上传前先 `cp jar jar.bak`（保留回滚底），full 流程 jar 与 .bak 同尺寸（106MB）确认生效。
