@@ -2,21 +2,11 @@
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="80px">
       <el-form-item label="部门名称" prop="deptName">
-        <el-input
-          v-model="queryParams.deptName"
-          placeholder="请输入部门名称"
-          clearable
-          style="width: 200px"
-          @keyup.enter.native="handleQuery"
-        />
+        <el-input v-model="queryParams.deptName" placeholder="请输入部门名称" clearable style="width: 200px"
+          @keyup.enter.native="handleQuery" />
       </el-form-item>
       <el-form-item label="是否启用" prop="enabled">
-        <el-select
-          v-model="queryParams.enabled"
-          placeholder="请选择状态"
-          clearable
-          style="width: 200px"
-        >
+        <el-select v-model="queryParams.enabled" placeholder="请选择状态" clearable style="width: 200px">
           <el-option label="启用" value="1" />
           <el-option label="停用" value="0" />
         </el-select>
@@ -29,100 +19,59 @@
 
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['visitor:qrcode:add']"
-        >新增</el-button>
+        <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd"
+          v-hasPermi="['visitor:qrcode:add']">新增</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button
-          type="success"
-          plain
-          icon="el-icon-download"
-          size="mini"
-          @click="handleInit"
-          v-hasPermi="['visitor:qrcode:add']"
-        >批量初始化</el-button>
+        <el-button type="success" plain icon="el-icon-download" size="mini" @click="handleInit"
+          v-hasPermi="['visitor:qrcode:add']">批量初始化</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="el-icon-delete"
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['visitor:qrcode:remove']"
-        >删除</el-button>
+        <el-button type="danger" plain icon="el-icon-delete" size="mini" :disabled="multiple" @click="handleDelete"
+          v-hasPermi="['visitor:qrcode:remove']">删除</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
     <el-table v-loading="loading" :data="qrcodeList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="部门名称" align="center" key="deptName" prop="deptName" width="220" :show-overflow-tooltip="true" />
-      <el-table-column label="登记码" align="center" key="registerCode" prop="registerCode" width="180">
+      <el-table-column label="部门名称" align="center" key="deptName" prop="deptName" width="250"
+        :show-overflow-tooltip="true" />
+      <el-table-column label="登记码" align="center" key="registerCode" prop="registerCode" width="250">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.registerCode" size="small">{{ scope.row.registerCode }}</el-tag>
           <span v-else style="color:#c0c4cc">-</span>
         </template>
       </el-table-column>
-      <el-table-column label="登记地址" align="center" key="registerUrl" width="300">
+      <el-table-column label="登记地址" align="center" key="registerUrl" width="550">
         <template slot-scope="scope">
           <span style="color:#409eff">{{ getRegisterUrl(scope.row) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="是否启用" align="center" key="enabled" width="100">
+      <el-table-column label="是否启用" align="center" key="enabled" width="180">
         <template slot-scope="scope">
-          <el-switch
-            :value="scope.row.enabled === '1'"
-            @change="handleEnabledChange(scope.row, $event)"
-            v-hasPermi="['visitor:qrcode:edit']"
-          ></el-switch>
+          <el-switch :value="scope.row.enabled === '1'" @change="handleEnabledChange(scope.row, $event)"
+            v-hasPermi="['visitor:qrcode:edit']"></el-switch>
         </template>
       </el-table-column>
-      <el-table-column label="创建时间" align="center" key="createTime" width="180">
+      <el-table-column label="创建时间" align="center" key="createTime" width="220">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="220" class-name="small-padding fixed-width" fixed="right">
+      <el-table-column label="操作" align="center" width="220" class-name="small-padding fixed-width" >
         <template slot-scope="scope">
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-qr-code"
-            @click="showQrCode(scope.row)"
-          >二维码</el-button>
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-edit"
-            @click="handleUpdate(scope.row)"
-            v-hasPermi="['visitor:qrcode:edit']"
-          >修改</el-button>
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-delete"
-            @click="handleDelete(scope.row)"
-            v-hasPermi="['visitor:qrcode:remove']"
-          >删除</el-button>
+          <el-button size="mini" type="text" icon="el-icon-qr-code" @click="showQrCode(scope.row)">二维码</el-button>
+          <el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdate(scope.row)"
+            v-hasPermi="['visitor:qrcode:edit']">修改</el-button>
+          <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)"
+            v-hasPermi="['visitor:qrcode:remove']">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
 
-    <pagination
-      v-show="total > 0"
-      :total="total"
-      :page.sync="queryParams.pageNum"
-      :limit.sync="queryParams.pageSize"
-      @pagination="getList"
-    />
+    <pagination v-show="total > 0" :total="total" :page.sync="queryParams.pageNum" :limit.sync="queryParams.pageSize"
+      @pagination="getList" />
 
     <!-- 二维码弹窗 -->
     <qr-code ref="qrcode" />
@@ -131,7 +80,8 @@
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="90px">
         <el-form-item label="部门" prop="deptId">
-          <treeselect v-model="form.deptId" :options="enabledDeptOptions" :show-count="true" :disabled="form.id != undefined" style="width: 100%" placeholder="请选择部门" />
+          <treeselect v-model="form.deptId" :options="enabledDeptOptions" :show-count="true"
+            :disabled="form.id != undefined" style="width: 100%" placeholder="请选择部门" />
         </el-form-item>
         <el-form-item label="是否启用" prop="enabled">
           <el-radio-group v-model="form.enabled">
@@ -246,9 +196,9 @@ export default {
     getRegisterUrl(row) {
       return window.location.origin + '/h5-register?code=' + (row.registerCode || '')
     },
-    /** 显示二维码 */
+    /** 显示二维码（传完整登记地址，确保二维码编码完整 URL） */
     showQrCode(row) {
-      this.$refs.qrcode.show('/h5-register?code=' + row.registerCode)
+      this.$refs.qrcode.show(window.location.origin + '/h5-register?code=' + row.registerCode)
     },
     /** 启用/停用切换 */
     handleEnabledChange(row, val) {
@@ -268,7 +218,7 @@ export default {
       }).then(res => {
         this.$modal.msgSuccess('批量初始化成功，本次生成 ' + (res.data || 0) + ' 个')
         this.getList()
-      }).catch(() => {})
+      }).catch(() => { })
     },
     /** 新增按钮操作 */
     handleAdd() {
@@ -332,12 +282,12 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids.join(",")
-      this.$modal.confirm('是否确认删除选中的部门登记二维码配置？删除后该部门二维码将失效。').then(function() {
+      this.$modal.confirm('是否确认删除选中的部门登记二维码配置？删除后该部门二维码将失效。').then(function () {
         return delDeptQrcode(ids)
       }).then(() => {
         this.getList()
         this.$modal.msgSuccess("删除成功")
-      }).catch(() => {})
+      }).catch(() => { })
     }
   }
 }

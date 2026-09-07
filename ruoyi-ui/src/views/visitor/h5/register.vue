@@ -76,7 +76,7 @@
         <select v-model="selectedHostVal" class="host-select" @change="onHostChange" :disabled="hostList.length === 0">
           <option value="" disabled>{{ hostList.length === 0 ? '暂无可用被访人' : '请选择被访人' }}</option>
           <option v-for="h in hostList" :key="(h.hostAccount || h.hostName) + '-' + h.hostDept" :value="h.hostAccount || h.hostName">
-            {{ h.hostName }}（{{ h.hostDept }}）
+            {{ maskHost(h) }}
           </option>
         </select>
         <div v-if="hostList.length === 0" class="host-empty">该部门暂无在职人员可预约</div>
@@ -87,7 +87,7 @@
       </div>
       <div class="form-item">
         <label>被访人电话</label>
-        <input v-model="form.hostPhone" readonly placeholder="选择被访人后自动带出" />
+        <input :value="form.hostPhone ? maskPhone(form.hostPhone) : ''" readonly placeholder="选择被访人后自动带出" />
       </div>
 
       <div class="agreement">
@@ -114,7 +114,7 @@
       <div class="detail-list">
         <div class="detail-item"><span>姓名</span><strong>{{ form.visitorName }}</strong></div>
         <div class="detail-item"><span>手机</span><strong>{{ form.visitorPhone }}</strong></div>
-        <div class="detail-item"><span>被访人</span><strong>{{ form.hostName }}</strong></div>
+        <div class="detail-item"><span>被访人</span><strong>{{ form.hostName ? maskName(form.hostName) : '' }}</strong></div>
         <div class="detail-item"><span>登记时间</span><strong>{{ entryTime }}</strong></div>
       </div>
       <button class="reset-btn" @click="resetForm">继续登记</button>
@@ -186,6 +186,27 @@ export default {
     }
   },
   methods: {
+    // 姓名脱敏：仅保留姓（首字），其余打*
+    maskName(name) {
+      if (!name) return ''
+      if (name.length <= 1) return name
+      return name.charAt(0) + '*'.repeat(name.length - 1)
+    },
+    // 手机号脱敏：仅保留末4位，其余打*
+    maskPhone(phone) {
+      if (!phone) return ''
+      const p = String(phone)
+      if (p.length <= 4) return '*'.repeat(p.length)
+      return '*'.repeat(p.length - 4) + p.slice(-4)
+    },
+    // 被访人下拉显示文案：脱敏姓名（部门）+ 脱敏手机号（无手机号则不显示手机段）
+    maskHost(h) {
+      let label = this.maskName(h.hostName) + '（' + (h.hostDept || '') + '）'
+      if (h.hostPhone) {
+        label += ' ' + this.maskPhone(h.hostPhone)
+      }
+      return label
+    },
     // 加载登记码对应部门信息，校验登记码有效性
     loadDeptInfo() {
       api.get('/visitor/h5/info/' + this.code).then(res => {

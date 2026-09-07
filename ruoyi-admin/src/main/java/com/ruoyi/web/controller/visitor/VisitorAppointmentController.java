@@ -37,16 +37,26 @@ public class VisitorAppointmentController extends BaseController
     private IVisitorAppointmentService visitorAppointmentService;
 
     /**
+     * 园区管理员（roleKey=smartparkAdmin）：可见本部门及以下全部访客数据。
+     * 部门范围由 DeptScopeInterceptor 统一强制（本部门+子部门），
+     * 此处仅对园区管理员放开「仅本人审批人」的限制。
+     */
+    private boolean isParkAdmin()
+    {
+        return SecurityUtils.hasRole("smartparkAdmin");
+    }
+
+    /**
      * 获取预约列表（分页）
-     * 非管理员仅返回本人为审批人的预约记录
+     * 非管理员（园区管理员除外）仅返回本人为审批人的预约记录
      */
     @PreAuthorize("@ss.hasPermi('visitor:appointment:list')")
     @GetMapping("/list")
     public TableDataInfo list(VisitorAppointment appointment)
     {
         startPage();
-        // 非管理员只能查看自己是审批人（被访人）的预约
-        if (!SecurityUtils.isAdmin(SecurityUtils.getUserId()))
+        // 非管理员（园区管理员除外）只能查看自己是审批人（被访人）的预约
+        if (!SecurityUtils.isAdmin(SecurityUtils.getUserId()) && !isParkAdmin())
         {
             appointment.setApproverId(SecurityUtils.getUserId());
         }
@@ -63,8 +73,8 @@ public class VisitorAppointmentController extends BaseController
     public AjaxResult pending()
     {
         Long approverId = null;
-        // 非admin角色按审批人过滤
-        if (!SecurityUtils.isAdmin(SecurityUtils.getUserId()))
+        // 非admin角色（园区管理员除外）按审批人过滤
+        if (!SecurityUtils.isAdmin(SecurityUtils.getUserId()) && !isParkAdmin())
         {
             approverId = SecurityUtils.getUserId();
         }
@@ -85,8 +95,8 @@ public class VisitorAppointmentController extends BaseController
         {
             return error("预约信息不存在");
         }
-        // 非管理员校验：只能查看自己是审批人的预约
-        if (!SecurityUtils.isAdmin(SecurityUtils.getUserId())
+        // 非管理员校验：园区管理员可按部门范围查看本部门及以下预约，其余只能查看自己是审批人的预约
+        if (!SecurityUtils.isAdmin(SecurityUtils.getUserId()) && !isParkAdmin()
                 && (info.getApproverId() == null || !info.getApproverId().equals(SecurityUtils.getUserId())))
         {
             return error("无权查看该预约");
@@ -189,8 +199,8 @@ public class VisitorAppointmentController extends BaseController
     @PostMapping("/export")
     public void export(HttpServletResponse response, VisitorAppointment appointment)
     {
-        // 非管理员只能导出本人为审批人的预约
-        if (!SecurityUtils.isAdmin(SecurityUtils.getUserId()))
+        // 非管理员（园区管理员除外）只能导出本人为审批人的预约
+        if (!SecurityUtils.isAdmin(SecurityUtils.getUserId()) && !isParkAdmin())
         {
             appointment.setApproverId(SecurityUtils.getUserId());
         }

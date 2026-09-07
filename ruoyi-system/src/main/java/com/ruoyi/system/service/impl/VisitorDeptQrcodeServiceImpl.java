@@ -66,6 +66,19 @@ public class VisitorDeptQrcodeServiceImpl implements IVisitorDeptQrcodeService
     }
 
     /**
+     * 通过部门ID查询配置（含未启用/已删除，供当前部门登记码查询）
+     */
+    @Override
+    public VisitorDeptQrcode selectDeptQrcodeByDeptId(Long deptId)
+    {
+        if (deptId == null)
+        {
+            return null;
+        }
+        return deptQrcodeMapper.selectDeptQrcodeByDeptId(deptId);
+    }
+
+    /**
      * 新增配置：自动生成登记码，校验部门唯一
      */
     @Override

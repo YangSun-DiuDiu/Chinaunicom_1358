@@ -36,6 +36,14 @@ public interface IVisitorDeptQrcodeService
     public VisitorDeptQrcode selectByCode(String registerCode);
 
     /**
+     * 通过部门ID查询配置（含未启用/已删除，用于部门唯一性校验与当前部门登记码查询）
+     *
+     * @param deptId 部门ID
+     * @return 配置信息，不存在返回null
+     */
+    public VisitorDeptQrcode selectDeptQrcodeByDeptId(Long deptId);
+
+    /**
      * 新增配置（自动生成登记码，校验部门唯一）
      *
      * @param qrcode 配置信息

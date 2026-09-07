@@ -142,6 +142,14 @@ export function getDeptQrcode(id) {
   })
 }
 
+// 获取当前登录人所属部门的登记二维码配置（访客预约页登记二维码用）
+export function getCurrentDeptQrcode() {
+  return request({
+    url: '/visitor/deptQrcode/current',
+    method: 'get'
+  })
+}
+
 // 新增部门登记二维码配置
 export function addDeptQrcode(data) {
   return request({

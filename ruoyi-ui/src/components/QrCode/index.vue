@@ -32,9 +32,14 @@ export default {
     }
   },
   computed: {
-    // 实际登记地址：优先 show() 时传入的动态地址，其次 props.url，最后默认全园区登记页
+    // 实际登记地址：优先 show() 时传入的动态地址，其次 props.url，最后默认全园区登记页。
+    // 传入相对路径（如 /h5-register?code=XXX）时自动补全 origin，确保二维码编码的是可扫描的完整 URL。
     registerUrl() {
-      return this.curUrl || this.url || (window.location.origin + '/h5-register')
+      const url = this.curUrl || this.url || (window.location.origin + '/h5-register')
+      if (url && url.indexOf('/') === 0) {
+        return window.location.origin + url
+      }
+      return url
     },
     qrUrl() {
       return 'https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=' + encodeURIComponent(this.registerUrl)

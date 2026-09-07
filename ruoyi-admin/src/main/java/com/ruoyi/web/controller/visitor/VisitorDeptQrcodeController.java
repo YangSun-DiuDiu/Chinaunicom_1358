@@ -13,9 +13,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.ruoyi.common.annotation.Log;
+import com.ruoyi.common.constant.CacheConstants;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
+import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.system.domain.VisitorDeptQrcode;
@@ -32,6 +34,9 @@ public class VisitorDeptQrcodeController extends BaseController
 {
     @Autowired
     private IVisitorDeptQrcodeService visitorDeptQrcodeService;
+
+    @Autowired
+    private RedisCache redisCache;
 
     /**
      * 获取部门登记二维码配置列表
@@ -105,5 +110,48 @@ public class VisitorDeptQrcodeController extends BaseController
         }
         int count = visitorDeptQrcodeService.initAllDepts();
         return success(count);
+    }
+
+    /**
+     * 获取当前登录人所属部门的登记二维码配置
+     * 供「访客预约」页登记二维码按当前部门生成完整登记地址
+     *
+     * @return 当前有效部门（优先 Redis 部门切换上下文，否则用户所属部门）的登记码配置；未配置返回 null
+     */
+    @PreAuthorize("@ss.hasPermi('visitor:qrcode:list')")
+    @GetMapping("/current")
+    public AjaxResult current()
+    {
+        Long deptId = getEffectiveDeptId();
+        if (deptId == null)
+        {
+            return success(null);
+        }
+        return success(visitorDeptQrcodeService.selectDeptQrcodeByDeptId(deptId));
+    }
+
+    /**
+     * 当前有效部门ID：优先读取 Redis 部门切换上下文，否则使用用户所属部门
+     * 与 DeptScopeInterceptor.getCurrentDeptId() 保持一致，避免「切换部门」后登记码取错部门
+     */
+    private Long getEffectiveDeptId()
+    {
+        try
+        {
+            Long userId = SecurityUtils.getUserId();
+            if (userId != null)
+            {
+                Long switchedDeptId = redisCache.getCacheObject(CacheConstants.DEPT_CONTEXT_KEY + userId);
+                if (switchedDeptId != null)
+                {
+                    return switchedDeptId;
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            // Redis 异常时回退用户所属部门
+        }
+        return SecurityUtils.getDeptId();
     }
 }

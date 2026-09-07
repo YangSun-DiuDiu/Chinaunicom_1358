@@ -309,7 +309,7 @@
 </template>
 
 <script>
-import { listAppointment, getAppointment, delAppointment, addAppointment, updateAppointment, cancelAppointment, completeAppointment } from "@/api/visitor/visitor"
+import { listAppointment, getAppointment, delAppointment, addAppointment, updateAppointment, cancelAppointment, completeAppointment, getCurrentDeptQrcode } from "@/api/visitor/visitor"
 import QrCode from '@/components/QrCode'
 
 export default {
@@ -530,9 +530,16 @@ export default {
         ...this.addDateRange(this.queryParams, this.dateRange)
       }, `appointment_${new Date().getTime()}.xlsx`)
     },
-    /** 显示登记二维码 */
+    /** 显示登记二维码：按当前登录人所属部门的登记地址生成（无有效配置则回退全园区登记页） */
     showQrCode() {
-      this.$refs.qrcode.show()
+      getCurrentDeptQrcode().then(response => {
+        const data = response.data
+        // 仅使用有效(未删除且启用)的部门登记码，避免失效码导致扫码失败
+        const code = data && data.registerCode && data.enabled === '1' ? data.registerCode : ''
+        this.$refs.qrcode.show(window.location.origin + '/h5-register' + (code ? '?code=' + code : ''))
+      }).catch(() => {
+        this.$refs.qrcode.show(window.location.origin + '/h5-register')
+      })
     }
   }
 }
