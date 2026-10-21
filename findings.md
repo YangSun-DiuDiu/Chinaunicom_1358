@@ -170,7 +170,7 @@ PENDING/APPROVED → CANCELLED
 |----|-----|
 | 提供商 | DeepSeek |
 | baseUrl | https://api.deepseek.com/anthropic |
-| API Key | sk-ae962dffc574492fb81bf9378f200437 |
+| API Key | （已脱敏，见本地配置文件） |
 | 模型名 | deepseek-v4-flash |
 | 接口协议 | Anthropic 兼容(/anthropic 后缀) |
 

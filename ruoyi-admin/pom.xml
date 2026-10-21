@@ -24,12 +24,6 @@
             <optional>true</optional> <!-- 表示依赖不会传递 -->
         </dependency>
 
-        <!-- spring-boot-starter-websocket 考勤实时推送 -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-websocket</artifactId>
-        </dependency>
-
         <!-- spring-doc -->
         <dependency>
             <groupId>org.springdoc</groupId>
@@ -46,12 +40,6 @@
         <dependency>
             <groupId>com.ruoyi</groupId>
             <artifactId>ruoyi-framework</artifactId>
-        </dependency>
-
-        <!-- 定时任务-->
-        <dependency>
-            <groupId>com.ruoyi</groupId>
-            <artifactId>ruoyi-quartz</artifactId>
         </dependency>
 
     </dependencies>

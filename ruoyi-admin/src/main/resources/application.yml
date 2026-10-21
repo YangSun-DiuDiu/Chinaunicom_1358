@@ -13,7 +13,7 @@ ruoyi:
   # 验证码类型 math 数字计算 char 字符验证
   captchaType: math
   # 首页驾驶舱模式: device(设备管理驾驶舱) / visitor(访客管理驾驶舱)
-  dashboardMode: device
+  dashboardMode: visitor
 
 # 开发环境配置
 server:
@@ -112,20 +112,6 @@ mybatis:
   # 加载全局的配置文件
   configLocation: classpath:mybatis/mybatis-config.xml
 
-# SNMP配置
-snmp:
-  # snmpwalk可执行文件路径（支持绝对路径或PATH中的命令名）
-  # Windows示例: C:/net-snmp/bin/snmpwalk.exe 或 snmpwalk
-  # 留空则自动检测系统PATH中的snmpwalk
-  walk-path: snmpwalk
-  # 命令超时秒数
-  walk-timeout: 4
-  # 是否启用Java原生SNMP回退（snmpwalk不可用时自动切换）
-  native-fallback: true
-  # Prometheus 地址（设备指标查询 + AI报告数据源）
-  prometheus:
-    url: http://115.159.194.149:9090
-
 # PageHelper分页插件
 pagehelper:
   helperDialect: mysql
@@ -155,12 +141,4 @@ referer:
 xss:
   enabled: true
   excludes: /system/notice
-  urlPatterns: /system/*,/device/*,/visitor/*,/dashboard/*
-
-# AI大模型配置（网络报告用）
-ai:
-  deepseek:
-    base-url: https://api.deepseek.com/anthropic
-    api-key: sk-ae962dffc574492fb81bf9378f200437
-    model: deepseek-v4-flash
-    timeout: 60000
+  urlPatterns: /system/*,/visitor/*

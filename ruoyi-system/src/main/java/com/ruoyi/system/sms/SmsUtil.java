@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import com.ruoyi.common.utils.StringUtils;
-import com.ruoyi.system.domain.Device;
 import com.ruoyi.system.domain.VisitorAppointment;
 
 /**
@@ -513,39 +512,6 @@ public class SmsUtil
     {
         String params = "{\"content\":\"" + escapeJson(content) + "\"}";
         sendSms(bizType, phoneNumber, params, 1, null);
-    }
-
-    /**
-     * 发送设备离线告警短信
-     */
-    public void sendDeviceOfflineAlert(Device device)
-    {
-        String content = "设备离线告警：设备「" + safeStr(device.getDeviceName()) + "」（IP: " + safeStr(device.getIpAddress())
-                + "，位置: " + safeStr(device.getLocation()) + "）已离线，请及时排查处理。";
-        sendSms(device.getResponsible(), device.getResponsiblePhone(), content,
-                "DEVICE_OFFLINE", device.getDeviceId());
-    }
-
-    /**
-     * 发送设备上线恢复短信
-     */
-    public void sendDeviceOnlineAlert(Device device)
-    {
-        String content = "设备上线通知：设备「" + safeStr(device.getDeviceName()) + "」（IP: " + safeStr(device.getIpAddress())
-                + "，位置: " + safeStr(device.getLocation()) + "）已恢复正常在线状态。";
-        sendSms(device.getResponsible(), device.getResponsiblePhone(), content,
-                "DEVICE_ONLINE", device.getDeviceId());
-    }
-
-    /**
-     * 发送设备维修通知短信
-     */
-    public void sendRepairAlert(Device device)
-    {
-        String content = "设备离线告警，设备：" + safeStr(device.getDeviceName())
-                + "，已离线，请及时处理。";
-        sendSms(device.getResponsible(), device.getResponsiblePhone(), content,
-                "REPAIR", device.getDeviceId());
     }
 
     /**

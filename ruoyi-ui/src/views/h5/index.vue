@@ -11,20 +11,14 @@
       <div class="h5-card" @click="$router.push('/visitor/approval')">
         <span class="icon">✅</span><span class="label">访客审批</span>
       </div>
-      <div class="h5-card" @click="$router.push('/h5/meeting')">
-        <span class="icon">📅</span><span class="label">会议预约</span>
-      </div>
-      <div class="h5-card" @click="$router.push('/meeting/booking')">
-        <span class="icon">👍</span><span class="label">会议审批</span>
-      </div>
-      <div class="h5-card" @click="$router.push('/h5/device')">
-        <span class="icon">🖥</span><span class="label">设备状态</span>
+      <div class="h5-card" @click="$router.push('/h5/visitor/pass')">
+        <span class="icon">🎫</span><span class="label">通行码</span>
       </div>
       <div class="h5-card" @click="$router.push('/h5/guard')">
         <span class="icon">🔒</span><span class="label">保安核验</span>
       </div>
-      <div class="h5-card" @click="$router.push('/repair-complete')">
-        <span class="icon">🔧</span><span class="label">报修确认</span>
+      <div class="h5-card" @click="$router.push('/visitor/register')">
+        <span class="icon">📝</span><span class="label">现场登记</span>
       </div>
     </div>
   </div>
