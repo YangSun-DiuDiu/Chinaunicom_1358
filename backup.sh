@@ -86,7 +86,7 @@ if $DO_DB; then
 
   # 从 application-druid.yml 读取配置
   DRUID_YML="${SCRIPT_DIR}/ruoyi-admin/src/main/resources/application-druid.yml"
-  DB_HOST="1.94.26.126"
+  DB_HOST="192.168.1.55"
   DB_PORT="3306"
   DB_NAME="ry101"
   DB_USER="root"
@@ -122,7 +122,8 @@ if $DO_DB; then
     SVR_IP=$(grep -o '"ip": *"[^"]*"' "${DEPLOY_JSON}" | head -1 | sed 's/.*"\(.*\)"/\1/')
     SVR_USER=$(grep -o '"user": *"[^"]*"' "${DEPLOY_JSON}" | head -1 | sed 's/.*"\(.*\)"/\1/')
     if [[ -n "$SVR_IP" ]]; then
-      ssh "${SVR_USER}@${SVR_IP}" "mysqldump -h127.0.0.1 -u${DB_USER} -p'${DB_PASS}' \
+      # MySQL 已独立部署到 192.168.1.55（非应用服务器本地），远程 dump 需指向数据库服务器
+      ssh "${SVR_USER}@${SVR_IP}" "mysqldump -h${DB_HOST} -u${DB_USER} -p'${DB_PASS}' \
         --single-transaction --routines --triggers --events \
         --add-drop-table --default-character-set=utf8mb4 \
         '${DB_NAME}' | gzip" > "${DB_FILE}" 2>/dev/null

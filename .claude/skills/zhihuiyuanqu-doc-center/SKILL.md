@@ -11,7 +11,7 @@ description: |
 
 ## 概述
 
-文档中心（http://1.94.26.126/doc）是一个**动态文档系统**，不是静态 Markdown 文件托管。核心机制：
+文档中心（http://192.168.1.60/doc）是一个**动态文档系统**，不是静态 Markdown 文件托管。核心机制：
 
 ```
 源码目录 (ruoyi-system/src, ruoyi-ui/src/views, sql/)
@@ -99,7 +99,7 @@ updatedAt: 2026-08-09
 
 2. **方式 A** — 调用后端同步 API 自动生成骨架：
    ```bash
-   curl -X POST http://1.94.26.126:8090/doc/sync
+   curl -X POST http://192.168.1.60:8080/doc/sync
    ```
    这会触发 `DocServiceImpl.syncAll()`，扫描所有源码目录并创建骨架 .md。
 
@@ -133,15 +133,15 @@ tar -czf docs.tar.gz docs/
 # 2. 通过 paramiko 上传并解压（遵循 CLAUDE.md 服务器连接规范）
 python << 'PYEOF'
 import paramiko
-host, user, pwd = "1.94.26.126", "root", "Zhihui@2026!"
+host, user, pwd = "192.168.1.60", "root", "Chinaunicom@1358"
 c = paramiko.SSHClient()
 c.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 c.connect(host, username=user, password=pwd, timeout=15)
 sftp = c.open_sftp()
-sftp.put("docs.tar.gz", "/root/zhihuiyuanqu20260625/docs.tar.gz")
+sftp.put("docs.tar.gz", "/home/zhihuiyuanqu20260907/docs.tar.gz")
 sftp.close()
 stdin, stdout, stderr = c.exec_command(
-    "cd /root/zhihuiyuanqu20260625 && tar -xzf docs.tar.gz && rm docs.tar.gz && echo OK"
+    "cd /home/zhihuiyuanqu20260907 && tar -xzf docs.tar.gz && rm docs.tar.gz && echo OK"
 )
 print(stdout.read().decode().strip())
 err = stderr.read().decode().strip()
@@ -151,7 +151,7 @@ PYEOF
 
 # 3. 验证部署（以 AlertWebhookController.md 为例）
 curl -s -w "\nHTTP:%{http_code}" \
-  "http://1.94.26.126:8090/doc/content?path=docs/01-%E8%AE%BE%E5%A4%87%E7%AE%A1%E7%90%86/%E5%90%8E%E7%AB%AF/AlertWebhookController.md" \
+  "http://192.168.1.60:8080/doc/content?path=docs/01-%E8%AE%BE%E5%A4%87%E7%AE%A1%E7%90%86/%E5%90%8E%E7%AB%AF/AlertWebhookController.md" \
   | tail -3
 
 # 4. 清理本地临时文件
@@ -170,7 +170,7 @@ rm docs.tar.gz
 ### 场景 5：强制触发服务器端同步
 
 ```bash
-curl -X POST http://1.94.26.126:8090/doc/sync
+curl -X POST http://192.168.1.60:8080/doc/sync
 ```
 
 或在管理后台 → 定时任务 → 手动执行 `docSyncJob`。
@@ -309,22 +309,22 @@ curl -X POST http://1.94.26.126:8090/doc/sync
 
 | 项目 | 路径 |
 |------|------|
-| 后端 JAR | `/root/zhihuiyuanqu20260625/ruoyi-admin.jar` |
-| 文档目录 | `/root/zhihuiyuanqu20260625/docs/` |
-| 后端端口 | 8090 |
+| 后端 JAR | `/home/zhihuiyuanqu20260907/ruoyi-admin.jar` |
+| 文档目录 | `/home/zhihuiyuanqu20260907/docs/` |
+| 后端端口 | 8080 |
 | 前端 Nginx | `/usr/share/nginx/ruoyi/dist/` |
 
 ### 6. 文档同步状态检查
 
 ```bash
 # 查看文档树结构
-curl -s http://1.94.26.126:8090/doc/tree | python -m json.tool | head -50
+curl -s http://192.168.1.60:8080/doc/tree | python -m json.tool | head -50
 
 # 查看同步状态
-curl -s http://1.94.26.126:8090/doc/status
+curl -s http://192.168.1.60:8080/doc/status
 
 # 查看同步日志（服务器上，需用 paramiko）
-python -c "import paramiko; c = paramiko.SSHClient(); c.set_missing_host_key_policy(paramiko.AutoAddPolicy()); c.connect('1.94.26.126', username='root', password='Zhihui@2026!', timeout=10); stdin, stdout, stderr = c.exec_command('tail -50 /root/zhihuiyuanqu20260625/app.log | grep -i doc'); print(stdout.read().decode()); c.close()"
+python -c "import paramiko; c = paramiko.SSHClient(); c.set_missing_host_key_policy(paramiko.AutoAddPolicy()); c.connect('192.168.1.60', username='root', password='Chinaunicom@1358', timeout=10); stdin, stdout, stderr = c.exec_command('tail -50 /home/zhihuiyuanqu20260907/app.log | grep -i doc'); print(stdout.read().decode()); c.close()"
 ```
 
 ### 7. 批量编写文档最佳实践
@@ -348,5 +348,5 @@ python -c "import paramiko; c = paramiko.SSHClient(); c.set_missing_host_key_pol
 | 批量更新模块文档 | 先写 README → 补充子文档 → 统一 frontmatter → tar + paramiko 上传 → curl 验证 → 清理 tar |
 | 同步到服务器 | tar + paramiko 上传解压 → curl 验证 HTTP 200 → 清理 tar，无需重启 |
 | 后端扫描逻辑改了 | mvn package → scp JAR → kill → 重启 |
-| 查看文档中心 | http://1.94.26.126/doc（匿名可访问） |
+| 查看文档中心 | http://192.168.1.60/doc（匿名可访问） |
 | 验证部署结果 | `curl /doc/tree` 检查树结构 + `curl /doc/content?path=...` 检查文件内容 |

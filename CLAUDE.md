@@ -505,10 +505,11 @@ AI 开发一个新业务模块时，**一次性完整交付**：
 
 | 服务器 | IP | 用户 | 密码 | 用途 |
 |--------|-----|------|------|------|
-| 生产应用服务器 | 1.94.26.126 | root | Zhihui@2026! | Java后端(8090)+Nginx(80)+MySQL+Redis |
+| 生产应用服务器 | 192.168.1.60 | root | Chinaunicom@1358 | Java后端(8080)+Nginx(80) |
+| MySQL/Redis 服务器 | 192.168.1.55 | root | Chinaunicom@1358 | MySQL(3306)+Redis(6379) |
 | 监控服务器 | 115.159.194.149 | root | Chinaunicom@1358 | Prometheus(9090)+AlertManager(9093)+SNMP Exporter(9116) |
 
-> 注：上述两个密码在两台服务器上均可登录（服务器已配置多密码认证），任选其一即可。
+> 注：上述密码以 `deploy.json` 为准（生产应用服务器 192.168.1.60 部署账号：Chinaunicom@1358）；两枚密码（Zhihui@2026! / Chinaunicom@1358）在服务器上均可登录，任选其一即可。
 
 ## 系统登录账号（业务账号）
 
@@ -537,14 +538,14 @@ client.close()
 ## 常用命令示例
 
 ```bash
-# 检查服务状态
-python -c "import paramiko; c = paramiko.SSHClient(); c.set_missing_host_key_policy(paramiko.AutoAddPolicy()); c.connect('1.94.26.126', username='root', password='Zhihui@2026!', timeout=10); stdin, stdout, stderr = c.exec_command('systemctl status nginx | head -5'); print(stdout.read().decode()); c.close()"
+# 检查服务状态（生产应用服务器）
+python -c "import paramiko; c = paramiko.SSHClient(); c.set_missing_host_key_policy(paramiko.AutoAddPolicy()); c.connect('192.168.1.60', username='root', password='Chinaunicom@1358', timeout=10); stdin, stdout, stderr = c.exec_command('systemctl status nginx | head -5'); print(stdout.read().decode()); c.close()"
 
-# MySQL查询
-python -c "import paramiko; c = paramiko.SSHClient(); c.set_missing_host_key_policy(paramiko.AutoAddPolicy()); c.connect('1.94.26.126', username='root', password='Zhihui@2026!', timeout=10); stdin, stdout, stderr = c.exec_command(\"mysql -uroot -p'Zhihui@2026!' ry101 -e 'SELECT * FROM sys_job WHERE status=0'\") ; print(stdout.read().decode()); c.close()"
+# MySQL查询（MySQL/Redis 服务器 192.168.1.55）
+python -c "import paramiko; c = paramiko.SSHClient(); c.set_missing_host_key_policy(paramiko.AutoAddPolicy()); c.connect('192.168.1.55', username='root', password='Chinaunicom@1358', timeout=10); stdin, stdout, stderr = c.exec_command(\"mysql -uroot -p'Chinaunicom@1358' ry101 -e 'SELECT * FROM sys_job WHERE status=0'\") ; print(stdout.read().decode()); c.close()"
 
-# 查看日志
-python -c "import paramiko; c = paramiko.SSHClient(); c.set_missing_host_key_policy(paramiko.AutoAddPolicy()); c.connect('1.94.26.126', username='root', password='Zhihui@2026!', timeout=10); stdin, stdout, stderr = c.exec_command('tail -50 /root/zhihuiyuanqu20260625/app.log'); print(stdout.read().decode()); c.close()"
+# 查看日志（生产应用服务器）
+python -c "import paramiko; c = paramiko.SSHClient(); c.set_missing_host_key_policy(paramiko.AutoAddPolicy()); c.connect('192.168.1.60', username='root', password='Chinaunicom@1358', timeout=10); stdin, stdout, stderr = c.exec_command('tail -50 /home/zhihuiyuanqu20260907/app.log'); print(stdout.read().decode()); c.close()"
 ```
 
 # 部署规范（强制）：必须加载 zhihuiyuanqu-deploy Skill
@@ -553,15 +554,15 @@ python -c "import paramiko; c = paramiko.SSHClient(); c.set_missing_host_key_pol
 
 ## 执行要点
 
-1. 触发前先读取项目根目录 `deploy.json`，获取目标服务器、构建命令、上传路径（生产：1.94.26.126；前端 `/usr/share/nginx/zhihuiyuanqu/dist/`，后端 `/root/zhihuiyuanqu20260625/`）。
+1. 触发前先读取项目根目录 `deploy.json`，获取目标服务器、构建命令、上传路径（生产：192.168.1.60；前端 `/usr/share/nginx/zhihuiyuanqu/dist/`，后端 `/home/zhihuiyuanqu20260907/`）。
 2. 按改动范围选择模式：全量部署 / 仅前端 / 仅后端 / 仅重启。
 3. 服务器连接统一使用 paramiko（见上文「服务器连接规范」），禁止 ssh / sshpass。
-4. 后端启动必须使用服务器官方脚本：`bash /root/zhihuiyuanqu20260625/start-topo.sh`（内含 `setsid nohup java </dev/null > app.log 2>&1`）。
-   - ⚠️ **paramiko 后台进程坑**：`exec_command` 执行 `nohup ... &` 时，后台 java 进程持有 SSH 通道 fd，导致 `stdout.read()` 阻塞超时——这是**正常现象**，进程实际已启动。处理方式：启动命令用「读超时保护」（`so.channel.settimeout(n)` 捕获超时），再用独立命令轮询 `ps aux | grep ruoyi-admin.jar` 与 `curl localhost:8090` 验证，不要误判为启动失败。
+4. 后端启动必须使用服务器官方脚本：`bash /home/zhihuiyuanqu20260907/start-topo.sh`（内含 `setsid nohup java </dev/null > app.log 2>&1`）。
+   - ⚠️ **paramiko 后台进程坑**：`exec_command` 执行 `nohup ... &` 时，后台 java 进程持有 SSH 通道 fd，导致 `stdout.read()` 阻塞超时——这是**正常现象**，进程实际已启动。处理方式：启动命令用「读超时保护」（`so.channel.settimeout(n)` 捕获超时），再用独立命令轮询 `ps aux | grep ruoyi-admin.jar` 与 `curl localhost:8080` 验证，不要误判为启动失败。
 
 ## 部署后验证
 
-1. 后端：`curl http://localhost:8090/` 返回非 000；`app.log` 无异常堆栈。
+1. 后端：`curl http://localhost:8080/` 返回非 000；`app.log` 无异常堆栈。
 2. 前端：`curl http://localhost:80/` 返回 200。
 3. 关键功能改动需在浏览器人工验证。
 

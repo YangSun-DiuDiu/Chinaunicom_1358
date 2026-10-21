@@ -88,7 +88,10 @@
       "Bash(bash \"C:\\\\Users\\\\Administrator\\\\.claude\\\\plugins\\\\cache\\\\superpowers-marketplace\\\\superpowers\\\\6.0.3\\\\skills\\\\subagent-driven-development\\\\scripts\\\\task-brief\" \"e:\\\\gitee\\\\production_release\\\\RuoYi-Vue-master2026-06-24\\\\docs\\\\superpowers\\\\plans\\\\2026-06-28-hostel-room-card-plan.md\" 2)",
       "Bash(bash \"C:\\\\Users\\\\Administrator\\\\.claude\\\\plugins\\\\cache\\\\superpowers-marketplace\\\\superpowers\\\\6.0.3\\\\skills\\\\subagent-driven-development\\\\scripts\\\\task-brief\" \"e:\\\\gitee\\\\production_release\\\\RuoYi-Vue-master2026-06-24\\\\docs\\\\superpowers\\\\plans\\\\2026-06-28-hostel-room-card-plan.md\" 3)",
       "Bash(bash \"C:\\\\Users\\\\Administrator\\\\.claude\\\\plugins\\\\cache\\\\superpowers-marketplace\\\\superpowers\\\\6.0.3\\\\skills\\\\subagent-driven-development\\\\scripts\\\\task-brief\" \"e:\\\\gitee\\\\production_release\\\\RuoYi-Vue-master2026-06-24\\\\docs\\\\superpowers\\\\plans\\\\2026-06-28-hostel-room-card-plan.md\" 4)",
-      "Bash(bash \"C:\\\\Users\\\\Administrator\\\\.claude\\\\plugins\\\\cache\\\\superpowers-marketplace\\\\superpowers\\\\6.0.3\\\\skills\\\\subagent-driven-development\\\\scripts\\\\task-brief\" \"e:\\\\gitee\\\\production_release\\\\RuoYi-Vue-master2026-06-24\\\\docs\\\\superpowers\\\\plans\\\\2026-06-28-hostel-room-card-plan.md\" 5)"
+      "Bash(bash \"C:\\\\Users\\\\Administrator\\\\.claude\\\\plugins\\\\cache\\\\superpowers-marketplace\\\\superpowers\\\\6.0.3\\\\skills\\\\subagent-driven-development\\\\scripts\\\\task-brief\" \"e:\\\\gitee\\\\production_release\\\\RuoYi-Vue-master2026-06-24\\\\docs\\\\superpowers\\\\plans\\\\2026-06-28-hostel-room-card-plan.md\" 5)",
+      "Read(//c/Users/Administrator/AppData/Local/Temp/claude/deploy_zhihuiyuanqu/**)",
+      "Bash(python redeploy_backend_fix.py)",
+      "Bash(python -c ' *)"
     ]
   },
   "skillOverrides": {
