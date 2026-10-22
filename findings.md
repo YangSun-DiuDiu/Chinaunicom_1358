@@ -404,3 +404,14 @@ PENDING/APPROVED → CANCELLED
 ### 调试坑 5：getRouters 500「No static resource」——本项目无此接口，属正常
 - 阶段45浏览器验证脚本误测 `/getRouters` 返回 500，一度怀疑裁剪删坏了登录链路。实查确认：本项目**前端为纯静态路由**（`permission.js` 的 `GenerateRoutes` 基于 `permissions` 过滤 `staticRoutes`，见 `store/modules/permission.js`），后端**本就没有** getRouters 接口（原版备份 4bfb6b5 也没有）——该 500 是验证脚本测了不存在的接口，非缺陷。
 - 浏览器级验证的正确做法：playwright 真实登录（placeholder 定位「账号/密码/验证码」+ Redis 取答案）→ 登录后 URL `/index` → 本定制版是**顶部导航布局**（非若依默认左侧 sidebar）→ 首页文本含「系统管理 菜单·角色·用户·部门·岗位·参数 / 访客管理 预约·审批·登记·记录」即菜单正常 → 点击访客管理进入 `/visitor/appointment`。
+
+## 现场登记页布局统一调整（2026-10-22）
+
+- **问题**：`visitor/register/index.vue` 输入表单卡被限宽 `max-width:960px`，当日记录卡全宽——两卡宽度不统一，输入区与记录区占比不协调。
+- **调整**（commit `72fc84e`，已部署 192.168.1.60，已 push GitHub master）：
+  1. 两卡统一 `max-width:1280px` 居中、`margin:0 auto 16px` 统一间距、`border-radius:8px`；
+  2. 表单卡 body padding 收紧（`20px 24px 8px`），记录卡 `12px 16px 16px`，按钮行贴齐表单底部；
+  3. 表格容器圆角 + `overflow:hidden` 延续 Notion 浅色/hairline 风格。
+- **验证**：playwright 截图（`https://aka.doubaocdn.com/s/fdicMsXavp`）确认两卡对齐、占比协调，用户确认满意后 commit+push。
+- **注意**：`register/index.vue` 表单「联系电话」字段校验为 11 位手机号格式（座机号会被拦截，部门新增时同样如此），业务需座机号须改校验规则。
+- 浏览器测试会话（Playwright 5 项 CRUD 测试 #25-#29）全部通过；测试数据已清理，现场登记保留记录 C935B53C（CRUD现场访客/13600001111/岑梦婷/综合管理部）。
