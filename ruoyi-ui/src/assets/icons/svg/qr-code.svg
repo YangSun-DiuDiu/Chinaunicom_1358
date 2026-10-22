@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 21 21">
+  <!-- 左上定位角 (Finder Pattern 1) -->
+  <rect x="0" y="0" width="7" height="7" fill="currentColor"/>
+  <rect x="1" y="1" width="5" height="5" fill="#fff"/>
+  <rect x="2" y="2" width="3" height="3" fill="currentColor"/>
+  <!-- 右上定位角 (Finder Pattern 2) -->
+  <rect x="14" y="0" width="7" height="7" fill="currentColor"/>
+  <rect x="15" y="1" width="5" height="5" fill="#fff"/>
+  <rect x="16" y="2" width="3" height="3" fill="currentColor"/>
+  <!-- 左下定位角 (Finder Pattern 3) -->
+  <rect x="0" y="14" width="7" height="7" fill="currentColor"/>
+  <rect x="1" y="15" width="5" height="5" fill="#fff"/>
+  <rect x="2" y="16" width="3" height="3" fill="currentColor"/>
+  <!-- 数据点 -->
+  <rect x="8" y="0" width="1" height="1" fill="currentColor"/>
+  <rect x="9" y="1" width="1" height="1" fill="currentColor"/>
+  <rect x="11" y="2" width="1" height="1" fill="currentColor"/>
+  <rect x="12" y="3" width="1" height="1" fill="currentColor"/>
+  <rect x="8" y="4" width="1" height="1" fill="currentColor"/>
+  <rect x="10" y="5" width="1" height="1" fill="currentColor"/>
+  <rect x="8" y="8" width="1" height="1" fill="currentColor"/>
+  <rect x="9" y="9" width="1" height="1" fill="currentColor"/>
+  <rect x="12" y="8" width="1" height="1" fill="currentColor"/>
+  <rect x="14" y="9" width="1" height="1" fill="currentColor"/>
+  <rect x="16" y="10" width="1" height="1" fill="currentColor"/>
+  <rect x="9" y="12" width="1" height="1" fill="currentColor"/>
+  <rect x="11" y="13" width="1" height="1" fill="currentColor"/>
+  <rect x="14" y="13" width="1" height="1" fill="currentColor"/>
+  <rect x="16" y="14" width="1" height="1" fill="currentColor"/>
+  <rect x="8" y="16" width="1" height="1" fill="currentColor"/>
+  <rect x="10" y="17" width="1" height="1" fill="currentColor"/>
+  <rect x="13" y="16" width="1" height="1" fill="currentColor"/>
+  <rect x="15" y="18" width="1" height="1" fill="currentColor"/>
+  <rect x="17" y="16" width="1" height="1" fill="currentColor"/>
+</svg>
