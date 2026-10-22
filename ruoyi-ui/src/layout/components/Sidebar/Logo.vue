@@ -2,11 +2,10 @@
   <div class="sidebar-logo-container" :class="{'collapse':collapse}" :style="{ backgroundColor: sideTheme === 'theme-dark' && navType !== 3 ? variables.menuBackground : variables.menuLightBackground }">
     <transition name="sidebarLogoFade">
       <router-link v-if="collapse" key="collapse" class="sidebar-logo-link" to="/">
-        <span class="sidebar-logo-emoji">🏢</span>
+        <img class="sidebar-logo-img" src="@/assets/logo/logo-icon.png" alt="智慧园区">
       </router-link>
       <router-link v-else key="expand" class="sidebar-logo-link" to="/">
-        <span class="sidebar-logo-dot"></span>
-        <span class="sidebar-logo-emoji">🏢</span>
+        <img class="sidebar-logo-img" src="@/assets/logo/logo-icon.png" alt="智慧园区">
         <span class="sidebar-logo-text">智慧园区</span>
       </router-link>
     </transition>
@@ -59,22 +58,16 @@ export default {
   & .sidebar-logo-link {
     height: 100%;
     width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-    & .sidebar-logo-dot {
+    & .sidebar-logo-img {
+      width: 30px;
+      height: 30px;
+      border-radius: 7px;
+      vertical-align: middle;
       display: inline-block;
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #5645D4;
-      box-shadow: 0 0 10px rgba(86, 69, 212, 0.5);
-      vertical-align: middle;
-      margin-right: 6px;
-      animation: led-pulse 2s ease-in-out infinite;
-    }
-
-    & .sidebar-logo-emoji {
-      font-size: 22px;
-      vertical-align: middle;
     }
 
     & .sidebar-logo-text {
@@ -86,7 +79,7 @@ export default {
       font-size: 16px;
       font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
       vertical-align: middle;
-      background: linear-gradient(90deg, #5645D4, #8B7CF6);
+      background: linear-gradient(90deg, #2F5B50, #5FA08F);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -94,15 +87,10 @@ export default {
   }
 
   &.collapse {
-    .sidebar-logo-emoji {
-      font-size: 24px;
+    .sidebar-logo-img {
+      width: 34px;
+      height: 34px;
     }
   }
 }
-
-@keyframes led-pulse {
-  0%, 100% { opacity: 1; box-shadow: 0 0 10px rgba(86, 69, 212, 0.5); }
-  50% { opacity: 0.5; box-shadow: 0 0 4px rgba(86, 69, 212, 0.25); }
-}
-
 </style>

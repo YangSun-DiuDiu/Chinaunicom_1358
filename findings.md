@@ -415,3 +415,19 @@ PENDING/APPROVED → CANCELLED
 - **验证**：playwright 截图（`https://aka.doubaocdn.com/s/fdicMsXavp`）确认两卡对齐、占比协调，用户确认满意后 commit+push。
 - **注意**：`register/index.vue` 表单「联系电话」字段校验为 11 位手机号格式（座机号会被拦截，部门新增时同样如此），业务需座机号须改校验规则。
 - 浏览器测试会话（Playwright 5 项 CRUD 测试 #25-#29）全部通过；测试数据已清理，现场登记保留记录 C935B53C（CRUD现场访客/13600001111/岑梦婷/综合管理部）。
+
+## Logo 更换为方案四「迎客通道」图形标（2026-10-22）
+
+- **背景**：用户对原 logo（🏢 emoji + 紫色渐变文字）不满意，要求简约、符合访客管理意境，经 doubao-creative-design 生成 6 个候选方案供挑选，用户选定**方案四**（两条相向弧线构成人形通道负空间、深青绿 `#2F5B50`、纯白底、扁平极简，见画布 `gfBfNJ6o-4NoDaNVPYg-0201`）。
+- **衍生资产**：基于方案四核心图 `image_edit` 生成方形图形标（无文字、1:1、2048×2048，画布 item `LnG3gMDE-4Nr3TsBr2A-0201`），存 `ruoyi-ui/src/assets/logo/logo-icon.png`；横版组合图存 `logo-horizontal.png`。
+- **改动文件**（commit 待本次提交）：
+  1. `src/layout/components/Sidebar/Logo.vue`：emoji 🏢 → `img logo-icon.png`（展开 30px/折叠 34px、圆角 7px）；「智慧园区」文字渐变改深青绿 `#2F5B50→#5FA08F`；删除 led-pulse 紫色动画。
+  2. `src/views/login.vue`：登录卡片顶部加横版 logo（170px，白底自然融合）。
+  3. `src/views/index.vue`：门户头部加横版 logo（190px）。
+  4. `public/favicon.ico`：由 logo-icon.png 经 Pillow 生成（64/32/16 多尺寸，4089B）。
+- **验证**（playwright，线上 http://192.168.1.60，截图见 `截图/login_now.png`、`截图/logo_home.png`、`截图/logo_sidebar.png`、`截图/logo_collapse.png`）：
+  - 登录页卡片顶部 logo ✅；首页门户 logo ✅；
+  - 侧边栏展开态（图形标+智慧园区文字）✅；折叠态（34px 图形标）✅；
+  - favicon.ico 线上 `GET /favicon.ico` 200 / 4089B ✅；`img.sidebar-logo-img` 打包资源 `static/img/logo-icon.a2c1128b.png` 加载 2048×2048 ✅。
+- **部署**：`npm run build:prod`（exit 0）→ `deploy.py --mode frontend`（已生效）。
+- **注意**：本次 commit 只含 logo 相关文件；Navbar 精简+个人信息页改造（任务#31）已部署但**仍未 commit**，待用户确认满意后再单独提交。

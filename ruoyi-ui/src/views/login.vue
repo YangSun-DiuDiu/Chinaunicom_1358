@@ -24,6 +24,7 @@
     <!-- 右侧：白色卡片登录表单 -->
     <div class="login-right">
       <div class="login-card">
+        <img class="login-logo" src="@/assets/logo/logo-horizontal.png" alt="智慧园区">
         <h3 class="login-card-title">欢迎登录</h3>
         <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form">
           <el-form-item prop="username">
@@ -316,12 +317,19 @@ export default {
   margin-bottom: 20px;
 }
 
+.login-logo {
+  display: block;
+  width: 170px;
+  margin: 0 auto 18px;
+  border-radius: 8px;
+}
+
 .login-card-title {
   font-size: 22px;
   font-weight: 600;
   color: #37352F;
   text-align: center;
-  margin: 0 0 32px 0;
+  margin: 0 0 28px 0;
   letter-spacing: 1px;
 }
 
