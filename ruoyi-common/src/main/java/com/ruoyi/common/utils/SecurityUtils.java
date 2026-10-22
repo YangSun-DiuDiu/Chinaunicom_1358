@@ -10,6 +10,7 @@ import org.springframework.util.PatternMatchUtils;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.constant.HttpStatus;
 import com.ruoyi.common.core.domain.entity.SysRole;
+import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.core.domain.model.LoginUser;
 import com.ruoyi.common.exception.ServiceException;
 
@@ -132,7 +133,40 @@ public class SecurityUtils
      */
     public static boolean isAdmin(Long userId)
     {
-        return userId != null && 1L == userId;
+        // 内置超级管理员账户
+        if (userId != null && 1L == userId)
+        {
+            return true;
+        }
+        // 扩展：持有 admin 角色的用户（且为当前登录用户本人）同样视为管理员
+        try
+        {
+            LoginUser loginUser = getLoginUser();
+            if (loginUser == null || loginUser.getUser() == null)
+            {
+                return false;
+            }
+            SysUser user = loginUser.getUser();
+            if (user.getUserId() == null || !user.getUserId().equals(userId))
+            {
+                return false;
+            }
+            if (user.getRoles() != null)
+            {
+                for (SysRole role : user.getRoles())
+                {
+                    if (Constants.SUPER_ADMIN.equals(role.getRoleKey()))
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            // 无登录态等场景按非管理员处理
+        }
+        return false;
     }
 
     /**
