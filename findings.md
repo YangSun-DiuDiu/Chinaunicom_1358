@@ -441,3 +441,11 @@ PENDING/APPROVED → CANCELLED
   3. `src/views/system/user/profile/userInfo.vue` / `resetPwd.vue`：表单统一 8px 圆角、紫色 2px focus 描边；
   4. `src/views/system/user/profile/userAvatar.vue`：头像 96px + hover 紫色光圈。
 - **验证**：浏览器实测（playwright）截图 `截图/navbar_top.png`（首页右上角精简后仅剩「选择组织/系统管理员」）、`截图/profile_notion.png`（个人信息页新布局），已交付用户并获确认满意。
+
+## 门户页去 logo + 移除「返回首页」入口（2026-10-22）
+
+- **需求**：① /index 门户页的智慧园区横版 logo 不需要（登录后首页标题已足够）；② 左上角「返回首页」入口取消（与面包屑「首页」按钮功能重复）。
+- **改动**（commit 待提交，已部署 192.168.1.60）：
+  1. `src/views/index.vue`：删除 `portal-logo` img 与其样式，门户头部仅保留「智慧园区·综合管理平台」标题 + 英文副标题 + 紫色 accent 短线；
+  2. `src/layout/components/Navbar.vue`：删除「返回首页」router-link（含 `showBackHome` computed 与 `.back-home-link` 样式），保留汉堡按钮 + 面包屑。
+- **验证**：playwright 实测截图 `截图/portal_nologo.png`（门户无 logo）、`截图/navbar_noback.png`（访客页 navbar 无返回首页，面包屑「首页/访客管理/访客预约」可直达），已交付用户确认。

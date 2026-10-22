@@ -1,7 +1,6 @@
 <template>
   <div class="portal">
     <div class="portal-header">
-      <img class="portal-logo" src="@/assets/logo/logo-horizontal.png" alt="智慧园区">
       <h2>智慧园区 · 综合管理平台</h2>
       <p class="portal-sub">SMART PARK MANAGEMENT SYSTEM</p>
       <div class="portal-accent"></div>
@@ -53,12 +52,6 @@ export default {
 }
 
 .portal-header { text-align: center; margin-bottom: 40px; }
-.portal-logo {
-  display: block;
-  width: 190px;
-  margin: 0 auto 14px;
-  border-radius: 8px;
-}
 .portal-header h2 {
   font-size: 24px; font-weight: 600; color: #37352F;
   letter-spacing: 1px; margin: 0 0 8px;
