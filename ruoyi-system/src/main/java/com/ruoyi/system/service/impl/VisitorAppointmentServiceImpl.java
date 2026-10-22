@@ -146,6 +146,14 @@ public class VisitorAppointmentServiceImpl implements IVisitorAppointmentService
             throw new ServiceException("当前预约状态不允许审批，仅待审批状态可操作");
         }
 
+        // 审批人身份校验：仅被访人本人（预约审批人）可审批；超管(admin)与园区管理员(smartparkAdmin)不受限
+        Long currentUserId = SecurityUtils.getUserId();
+        boolean isParkAdmin = SecurityUtils.hasRole("smartparkAdmin");
+        if (currentUserId != null && !SecurityUtils.isAdmin(currentUserId) && !isParkAdmin
+                && (appointment.getApproverId() == null || !appointment.getApproverId().equals(currentUserId))) {
+            throw new ServiceException("无权审批该预约：仅被访人本人可审批");
+        }
+
         // 设置审批信息
         appointment.setStatus(status);
         appointment.setApproverId(SecurityUtils.getUserId());
