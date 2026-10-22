@@ -130,12 +130,18 @@ PENDING/APPROVED → CANCELLED
 
 | 配置项 | 值 |
 |--------|-----|
-| 后端端口 | 8090 |
-| 前端端口 | 80 (Nginx) |
-| 部署目录 | /root/zhihuiyuanqu20260625/ |
+| 后端端口 | 8080（生产 192.168.1.60） |
+| 前端端口 | 80 (Nginx, 192.168.1.60) |
+| 后端部署目录 | /home/zhihuiyuanqu20260907/（jar=ruoyi-admin.jar, 启动脚本 start-topo.sh, 日志 app.log） |
+| 前端部署目录 | /usr/share/nginx/zhihuiyuanqu/dist/ |
+| Nginx 站点配置 | /etc/nginx/conf.d/zhihuiyuanqu.conf（80 端口, /prod-api/→127.0.0.1:8080, try_files 回退 index.html） |
 | 上传目录 | /home/ruoyi/uploadPath/ |
-| 数据库 | 1.94.26.126:3306/ry101 (sadmin) |
-| GitHub | https://github.com/YangSun-DiuDiu/Chinaunicom_1358 |
+| 数据库（生产） | 192.168.1.55:3306/ry101-test (sadmin/Chinaunicom@1358)，已精简为 22 表（基础14+访客3+短信5） |
+| Redis（生产） | 192.168.1.55:6379 |
+| JDK（生产 1.60） | /opt/java21/bin/java（PATH 无 java，启动脚本内 export JAVA_HOME） |
+| GitHub | https://github.com/YangSun-DiuDiu/Chinaunicom_1358（master 分支；裁剪前备份 tag=backup-pre-filter-20261021, commit=4bfb6b5；裁剪后 commit=8f4f697） |
+
+> 注：CLAUDE.md「服务器清单」已更新为 192.168.1.60(应用)/192.168.1.55(数据库/Redis)；findings 早期章节引用的旧环境 1.94.26.126、115.159.194.149 为历史记录，当前生产以 192.168.1.60/1.55 为准。
 
 ## 监控体系基础设施（2026-07-12）
 
@@ -387,3 +393,14 @@ PENDING/APPROVED → CANCELLED
 ### 部署产物正确性校验
 - 前端 dist 解压到 nginxDir 后顶层含 `board.html/.gz/html/pass/robots.txt/index.html.gz` 等——这些**都在本地 `ruoyi-ui/dist/` 中**（阶段 24/38 等手动放入的平板页/静态页），解压后结构与本地一致，非误清服务器文件。校验方法：对比本地 dist 顶层与远端解压后顶层。
 - 后端上传前先 `cp jar jar.bak`（保留回滚底），full 流程 jar 与 .bak 同尺寸（106MB）确认生效。
+
+### 调试坑 4：精简 SQL 建表漏列 → 接口逐层报 Unknown column（阶段45）
+- **症状**：访客公开接口 `/visitor/h5/hosts` 报 `Unknown column 'a.dept_id'`；修复后完整登录报 `Unknown column 'u.job_number' in 'field list'`（SysUserMapper selectUserVo）。
+- **根因**：精简 SQL 是按若依标准表 + 访客核心列手写的，但项目 Mapper XML 是定制版——引用了超出标准表的列：visitor_appointment 需 dept_id/pass_code/has_car/car_plate/has_goods/goods_desc/del_flag；visitor_log 需 dept_id/pass_code/has_car/car_plate/has_goods/goods_desc；sys_user 需 job_number(工号, varchar50)/photo(人员照片路径, varchar200)。
+- **通用排查法**：写脚本解析全部 mapper XML 的 `alias.col` 引用（去掉 `<if>` 块避免噪声），与生产库 `information_schema.columns` 差集 → 一次性找全缺失列，避免逐个接口踩坑。
+- **修复**：生产库 ALTER 补列 + 本地精简 SQL 三表 DDL/INSERT 同步修正（`sql/zhihuiyuanqu_visitor_only_init.sql`）。原表定义可从全量备份 `/root/db_backup/ry101-test-full-20261022_042236.sql` awk 提取。
+- **经验**：验证码开启时登录脚本必须真实调用 `/captchaImage` 拿 uuid，再到 1.55 Redis `captcha_codes:{uuid}`（格式 `算式@答案`，取 `@` 后）取答案；否则 login 返回「验证码错误」无法区分是登录问题还是列缺失。
+
+### 调试坑 5：getRouters 500「No static resource」——本项目无此接口，属正常
+- 阶段45浏览器验证脚本误测 `/getRouters` 返回 500，一度怀疑裁剪删坏了登录链路。实查确认：本项目**前端为纯静态路由**（`permission.js` 的 `GenerateRoutes` 基于 `permissions` 过滤 `staticRoutes`，见 `store/modules/permission.js`），后端**本就没有** getRouters 接口（原版备份 4bfb6b5 也没有）——该 500 是验证脚本测了不存在的接口，非缺陷。
+- 浏览器级验证的正确做法：playwright 真实登录（placeholder 定位「账号/密码/验证码」+ Redis 取答案）→ 登录后 URL `/index` → 本定制版是**顶部导航布局**（非若依默认左侧 sidebar）→ 首页文本含「系统管理 菜单·角色·用户·部门·岗位·参数 / 访客管理 预约·审批·登记·记录」即菜单正常 → 点击访客管理进入 `/visitor/appointment`。

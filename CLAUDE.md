@@ -517,7 +517,20 @@ AI 开发一个新业务模块时，**一次性完整交付**：
 
 - 用于：登录后台、调用 `/login` 接口、接口联调测试。
 - 登录接口示例：`POST {base}/login` 传 `{"username":"admin","password":"admin123","code":"","uuid":""}`。
-- 若验证码功能开启，需先获取验证码；当前生产环境已关闭（`sys.account.captchaEnabled=false`）。
+- 若验证码功能开启，需先获取验证码；当前生产环境已开启（`sys.account.captchaEnabled=true`，登录前先 `GET /captchaImage` 取 code/uuid，再带验证码 POST /login）。
+
+## 项目现状（2026-10-22 裁剪改造后）
+
+**本仓库已裁剪为「仅访客管理」单模块**（PC 后台管理 + H5 移动端），其余业务模块（设备/考勤/公寓/会议/监控/短信中台等）的代码、菜单、数据库表已全部删除。保留范围：
+
+1. **系统管理（登录必需）**：用户/角色/菜单/部门/字典/参数；操作日志/登录日志后端保留、前端 monitor 页已删；通知公告已删。
+2. **访客管理**：访客预约/审批/现场登记/来访记录/部门登记二维码（PC 5 页 + H5 4 页）。
+3. **短信**：保留发送能力（SmsUtil+三驱动），管理页与短信中台菜单已删。
+4. 前端为**全静态路由**（`router/index.js` + `meta.permissions` 过滤），不再走 DB 动态路由。
+5. 生产部署：**192.168.1.60**（应用/nginx）+ **192.168.1.55**（MySQL 库 `ry101-test` 22 表/Redis）。
+6. 精简初始化脚本：`sql/zhihuiyuanqu_visitor_only_init.sql`（新环境重建直接执行，含基础14表+访客3表+短信5表+菜单48条+角色 admin/visitorAdmin/smartparkAdmin；**2026-10-22 已修正缺列**：sys_user 含 job_number/photo，visitor_appointment 含 dept_id/pass_code/has_car/car_plate/has_goods/goods_desc/del_flag，visitor_log 含 dept_id/pass_code/has_car/car_plate/has_goods/goods_desc；生产库 1.55 已同步 ALTER 补列，全链路验证通过）。
+
+> ⚠️ 历史 findings/progress 章节中的 1.94.26.126、8090 端口、旧库 ry101 均为历史记录，勿用于当前生产操作。
 
 ## 连接模板
 
@@ -541,8 +554,8 @@ client.close()
 # 检查服务状态（生产应用服务器）
 python -c "import paramiko; c = paramiko.SSHClient(); c.set_missing_host_key_policy(paramiko.AutoAddPolicy()); c.connect('192.168.1.60', username='root', password='Chinaunicom@1358', timeout=10); stdin, stdout, stderr = c.exec_command('systemctl status nginx | head -5'); print(stdout.read().decode()); c.close()"
 
-# MySQL查询（MySQL/Redis 服务器 192.168.1.55）
-python -c "import paramiko; c = paramiko.SSHClient(); c.set_missing_host_key_policy(paramiko.AutoAddPolicy()); c.connect('192.168.1.55', username='root', password='Chinaunicom@1358', timeout=10); stdin, stdout, stderr = c.exec_command(\"mysql -uroot -p'Chinaunicom@1358' ry101 -e 'SELECT * FROM sys_job WHERE status=0'\") ; print(stdout.read().decode()); c.close()"
+# MySQL查询（MySQL/Redis 服务器 192.168.1.55，生产库 ry101-test）
+python -c "import paramiko; c = paramiko.SSHClient(); c.set_missing_host_key_policy(paramiko.AutoAddPolicy()); c.connect('192.168.1.55', username='root', password='Chinaunicom@1358', timeout=10); stdin, stdout, stderr = c.exec_command(\"mysql -uroot -p'Chinaunicom@1358' 'ry101-test' -e 'SELECT * FROM sys_user WHERE user_name=\"admin\"'\") ; print(stdout.read().decode()); c.close()"
 
 # 查看日志（生产应用服务器）
 python -c "import paramiko; c = paramiko.SSHClient(); c.set_missing_host_key_policy(paramiko.AutoAddPolicy()); c.connect('192.168.1.60', username='root', password='Chinaunicom@1358', timeout=10); stdin, stdout, stderr = c.exec_command('tail -50 /home/zhihuiyuanqu20260907/app.log'); print(stdout.read().decode()); c.close()"

@@ -50,12 +50,14 @@ create table sys_user (
   user_id           bigint(20)      not null auto_increment    comment '用户ID',
   dept_id           bigint(20)      default null               comment '部门ID',
   user_name         varchar(30)     not null                   comment '用户账号',
+  job_number        varchar(50)     default ''                 comment '工号(钉钉job_number)',
   nick_name         varchar(30)     not null                   comment '用户昵称',
   user_type         varchar(2)      default '00'               comment '用户类型（00系统用户）',
   email             varchar(50)     default ''                 comment '用户邮箱',
   phonenumber       varchar(11)     default ''                 comment '手机号码',
   sex               char(1)         default '0'                comment '用户性别（0男 1女 2未知）',
   avatar            varchar(100)    default ''                 comment '头像地址',
+  photo             varchar(200)    default ''                 comment '人员照片路径',
   password          varchar(100)    default ''                 comment '密码',
   status            char(1)         default '0'                comment '账号状态（0正常 1停用）',
   del_flag          char(1)         default '0'                comment '删除标志（0代表存在 2代表删除）',
@@ -73,7 +75,7 @@ create table sys_user (
 -- ----------------------------
 -- 初始化-用户信息表数据（admin/admin123）
 -- ----------------------------
-insert into sys_user values(1,  100, 'admin', '系统管理员', '00', 'admin@zhihuiyuanqu.com', '15888888888', '0', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', '127.0.0.1', sysdate(), sysdate(), 'admin', sysdate(), '', null, '超级管理员');
+insert into sys_user values(1,  100, 'admin', '', '系统管理员', '00', 'admin@zhihuiyuanqu.com', '15888888888', '0', '', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', '127.0.0.1', sysdate(), sysdate(), 'admin', sysdate(), '', null, '超级管理员');
 
 
 -- ----------------------------
@@ -502,6 +504,7 @@ create table sys_logininfor (
 DROP TABLE IF EXISTS `visitor_appointment`;
 CREATE TABLE `visitor_appointment` (
   `appointment_id` bigint NOT NULL AUTO_INCREMENT COMMENT '预约ID',
+  `dept_id` bigint DEFAULT NULL COMMENT '所属组织ID',
   `visitor_name` varchar(50) NOT NULL COMMENT '访客姓名',
   `visitor_phone` varchar(20) NOT NULL COMMENT '访客电话',
   `visitor_id_card` varchar(20) DEFAULT '' COMMENT '访客身份证号(预留人脸识别)',
@@ -518,8 +521,14 @@ CREATE TABLE `visitor_appointment` (
   `approve_remark` varchar(500) DEFAULT '' COMMENT '审批备注',
   `sms_sent` char(1) DEFAULT 'N' COMMENT '是否发送短信(Y/N)',
   `sms_content` varchar(500) DEFAULT '' COMMENT '短信内容',
+  `pass_code` varchar(20) DEFAULT '' COMMENT '通行码',
+  `has_car` char(1) DEFAULT '0' COMMENT '是否开车(0=否 1=是)',
+  `car_plate` varchar(20) DEFAULT '' COMMENT '车牌号',
+  `has_goods` char(1) DEFAULT '0' COMMENT '是否携带物资(0=否 1=是)',
+  `goods_desc` varchar(200) DEFAULT '' COMMENT '携带物资说明',
   `tenant_id` bigint DEFAULT NULL COMMENT '租户ID',
   `remark` varchar(500) DEFAULT '' COMMENT '备注',
+  `del_flag` char(1) DEFAULT '0' COMMENT '删除标志(0存在 2删除)',
   `create_by` varchar(64) DEFAULT '' COMMENT '创建者',
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_by` varchar(64) DEFAULT '' COMMENT '更新者',
@@ -528,7 +537,8 @@ CREATE TABLE `visitor_appointment` (
   KEY `idx_visitor_phone` (`visitor_phone`),
   KEY `idx_status` (`status`),
   KEY `idx_visit_time` (`visit_time`),
-  KEY `idx_tenant_id` (`tenant_id`)
+  KEY `idx_tenant_id` (`tenant_id`),
+  KEY `idx_visitor_appointment_dept` (`dept_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='访客预约表';
 
 -- ----------------------------
@@ -537,6 +547,7 @@ CREATE TABLE `visitor_appointment` (
 DROP TABLE IF EXISTS `visitor_log`;
 CREATE TABLE `visitor_log` (
   `log_id` bigint NOT NULL AUTO_INCREMENT COMMENT '记录ID',
+  `dept_id` bigint DEFAULT NULL COMMENT '所属组织ID',
   `appointment_id` bigint DEFAULT NULL COMMENT '关联预约ID(现场登记为空)',
   `visitor_name` varchar(50) NOT NULL COMMENT '访客姓名',
   `visitor_phone` varchar(20) DEFAULT '' COMMENT '访客电话',
@@ -548,6 +559,11 @@ CREATE TABLE `visitor_log` (
   `entry_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '进入时间',
   `exit_time` datetime DEFAULT NULL COMMENT '离开时间',
   `register_type` varchar(20) DEFAULT 'WALKIN' COMMENT '登记类型(APPOINTMENT:预约,WALKIN:现场登记)',
+  `pass_code` varchar(20) DEFAULT '' COMMENT '通行码',
+  `has_car` char(1) DEFAULT '0' COMMENT '是否开车(0=否 1=是)',
+  `car_plate` varchar(20) DEFAULT '' COMMENT '车牌号',
+  `has_goods` char(1) DEFAULT '0' COMMENT '是否携带物资(0=否 1=是)',
+  `goods_desc` varchar(200) DEFAULT '' COMMENT '携带物资说明',
   `tenant_id` bigint DEFAULT NULL COMMENT '租户ID',
   `create_by` varchar(64) DEFAULT '' COMMENT '创建者',
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -558,7 +574,8 @@ CREATE TABLE `visitor_log` (
   KEY `idx_appointment_id` (`appointment_id`),
   KEY `idx_visitor_name` (`visitor_name`),
   KEY `idx_entry_time` (`entry_time`),
-  KEY `idx_tenant_id` (`tenant_id`)
+  KEY `idx_tenant_id` (`tenant_id`),
+  KEY `idx_visitor_log_dept` (`dept_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='来访记录表';
 
 -- ----------------------------
