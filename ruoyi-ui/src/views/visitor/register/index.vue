@@ -70,7 +70,7 @@
     </el-card>
 
     <!-- 当日登记记录 -->
-    <el-card >
+    <el-card class="list-card">
       <div slot="header">
         <span>当日登记记录</span>
         <el-button
@@ -253,12 +253,35 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+/* Notion 风格：输入区与记录区统一宽度、统一间距、统一视觉层级 */
+.register-card,
+.list-card {
+  max-width: 1280px;
+  margin: 0 auto 16px;
+  border-radius: 8px;
+}
+
 .register-card {
-  max-width: 960px;
+  ::v-deep .el-card__body {
+    padding: 20px 24px 8px;
+  }
 }
 
 .list-card {
-  max-width: 1200px;
+  ::v-deep .el-card__body {
+    padding: 12px 16px 16px;
+  }
+}
+
+/* 表单按钮行与内容对齐，避免悬空 */
+.register-card .el-form .el-row:last-child {
+  padding-bottom: 12px;
+}
+
+/* 表格容器留出呼吸空间 */
+.list-card ::v-deep .el-table {
+  border-radius: 6px;
+  overflow: hidden;
 }
 </style>
