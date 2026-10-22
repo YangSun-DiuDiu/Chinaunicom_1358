@@ -272,7 +272,7 @@ public class VisitorAppointmentServiceImpl implements IVisitorAppointmentService
             smsUtil.sendSms("visitor_approval", appointment.getVisitorPhone(),
                     "{\"visitor_name\":\"" + safeStr(appointment.getVisitorName())
                             + "\",\"host_name\":\"" + safeStr(appointment.getHostName())
-                            + "\",\"pass_code\":\"" + passCode + "\"}",
+                            + "\",\"passcode\":\"" + passCode + "\"}",
                     1, null);
 
             log.info("审批短信已发送 -> 手机号: {}, 预约ID: {}",
