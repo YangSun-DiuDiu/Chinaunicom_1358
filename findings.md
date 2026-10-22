@@ -467,3 +467,19 @@ PENDING/APPROVED → CANCELLED
   后端若依 ResourceConfig 映射 `/profile/** → /home/ruoyi/uploadPath/`，与上传目录一致。
 - **验证**：`nginx -t` 通过 + reload；`GET /profile/upload/2026/10/22/page-...png` 由 text/html → `200 image/png`（124138B）；浏览器「修改用户」弹窗 img `complete=true`、naturalW/H=1249×1221（原图正常加载）；截图 `截图/photo_thumb.png`。
 - **注意**：此修复在服务器 Nginx 上，不在代码仓库；后续后端若换端口需同步改此处。
+
+
+## 架构审查落地：状态机 + pass 端点读写分离 + SmsUtil 收敛（2026-10-22，任务#35）
+- **流程**：按 improve-codebase-architecture 技能完成架构走查（git 热点 = 前端 UI / 访客业务 / 多租户 / 短信），出 6 候选报告（临时目录 %TEMP%\architecture-review-20261022_191233.html，未入库），用户选定 Top recommendation（候选1+4+2，候选6并入候选1）。
+- **候选1 预约状态机**（新文件 `ruoyi-system/.../domain/VisitorAppointmentState.java`）：PENDING/APPROVED/REJECTED/CANCELLED/VISITING/COMPLETED + Event(APPROVE/REJECT/CANCEL/CHECKIN/COMPLETE)，`can()/transition()` 唯一权威。Service 各方法删除手写状态判断（approve/cancel/complete/checkIn 全部改为状态机校验+转移）。状态转移矩阵：APPROVE/REJECT←PENDING；CANCEL←PENDING/APPROVED；CHECKIN←PENDING/APPROVED；COMPLETE←VISITING/APPROVED。
+- **候选6 记录工厂**（新文件 `domain/VisitorLogFactory.java`）：`from(appointment, registerType, entryTime)` 统一 appointment→log 字段映射，消除 approve/registerWalkin 两处 20+ 字段手写拷贝。
+- **候选4 pass 端点读写分离**（`VisitorPassController.java` 重写 + 新 `domain/vo/PassInfoDTO.java`）：
+  - `GET /pass/{code}` 纯读（PassInfoDTO，两来源归一，不改变状态）；
+  - `POST /pass/{code}/checkin` 显式到访确认（→VISITING）。
+  - 前端：`h5/guard.vue` GET 成功后追加 POST checkin（扫码即确认行为不变）；`h5/visitor-pass.vue` 纯读 + created 支持 `?code=` 带参自动查询；`visitor/appointment/index.vue` openPassPage 由 `window.open('/pass/'+code)`（Nginx 无此反代，实为打开 SPA 空白页的既有缺陷）改为 `window.open('/h5/visitor/pass?code=...')`。
+- **候选2 SmsUtil 收敛**（新 `sms/SmsPlan.java` + `sms/SmsResolver.java`）：biz→签名模板→渠道→驱动 4 段查询链收敛到 `SmsResolver.resolve(bizCode)`，sendSms/executeScheduledTasks/retry 三路径共用（原三处重复代码删除）；驱动解析+缓存移入 SmsResolver；**删除含旧环境 URL（1.94.26.126:3000）的 sendVisitorApprovalSms 桥接**（无调用方）；sendTestSms/5参桥接保留（SmsConfigController 测试入口，已加注释）。SmsUtil 507→约330行。
+- **验证**（mvn clean package EXIT=0 + npm build:prod 两次；deploy.py full + frontend 至 192.168.1.60 均成功，后端 PID=100735 HTTP 200）：
+  1. 冒烟脚本（/prod-api 前缀）：GET C935B53C 两次状态保持 PENDING（纯读）→ POST checkin 变 VISITING ✓；无效码返回"通行码无效或已过期" ✓；APPROVED→VISITING ✓。
+  2. 浏览器（Playwright）：H5 通行页 `?code=C0DB503A` 自动查询显示"✅ 通行有效"（纯读）；guard 核验页手动输入 C0DB503A → "✅ 通行有效 · 已到访"（GET+POST 联动）；库确认 9073 PENDING→VISITING，其余未受影响 ✓。截图 `截图/arch_guard_checkin.png`。
+  3. 发现并确认：Nginx 无 `/pass/` 反代（直接访问返回 SPA HTML），前端实际走 `/prod-api/pass/`；旧 `window.open('/pass/…')` 为空白页缺陷，本次已修复为 H5 页。
+- **注意**：appointment 表 del_flag='1' 的记录通行码会显示"无效"（正常业务行为，selectAppointmentByPassCode 带 del_flag='0'）。DeptScopeInterceptor 白名单判断基于主表，公开 /pass 接口 deptId=null 时跳过过滤，不受影响。

@@ -1,21 +1,25 @@
 package com.ruoyi.web.controller.visitor;
 
-import java.util.HashMap;
-import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.system.domain.VisitorAppointment;
 import com.ruoyi.system.domain.VisitorLog;
+import com.ruoyi.system.domain.vo.PassInfoDTO;
 import com.ruoyi.system.service.IVisitorAppointmentService;
 import com.ruoyi.system.service.IVisitorLogService;
 
 /**
  * 访客通行码公开访问 Controller（无需登录）
+ *
+ * <p>读写分离：
+ *   GET  /pass/{passCode}            —— 纯读，返回通行信息（不改变任何状态）
+ *   POST /pass/{passCode}/checkin    —— 显式到访确认（状态 → VISITING）</p>
  *
  * @author SmartIoT
  */
@@ -30,48 +34,85 @@ public class VisitorPassController extends BaseController
     private IVisitorLogService visitorLogService;
 
     /**
-     * 根据通行码获取访客通行信息（公开接口，无需认证）
-     * 验证同时更新预约状态为 VISITING（到访确认）
+     * 根据通行码获取访客通行信息（公开接口，无需认证，纯读）
      */
     @GetMapping("/{passCode}")
     public AjaxResult getPassInfo(@PathVariable String passCode)
+    {
+        PassInfoDTO info = buildPassInfo(passCode);
+        if (info == null)
+        {
+            return error("通行码无效或已过期");
+        }
+        return success(info);
+    }
+
+    /**
+     * 到访确认（保安核验）：状态 → VISITING
+     */
+    @PostMapping("/{passCode}/checkin")
+    public AjaxResult checkIn(@PathVariable String passCode)
+    {
+        VisitorAppointment appointment = visitorAppointmentService.checkInVisitor(passCode);
+        if (appointment == null)
+        {
+            return error("通行码无效或已过期");
+        }
+        PassInfoDTO info = buildPassInfo(passCode);
+        if (info == null)
+        {
+            info = new PassInfoDTO();
+            info.setPassCode(passCode);
+            info.setVisitorName(appointment.getVisitorName());
+            info.setVisitorPhone(appointment.getVisitorPhone());
+            info.setVisitorCompany(appointment.getVisitorCompany());
+            info.setHostName(appointment.getHostName());
+            info.setHostDept(appointment.getHostDept());
+            info.setVisitTime(appointment.getVisitTime());
+        }
+        info.setStatus(appointment.getStatus());
+        return success(info);
+    }
+
+    /**
+     * 构建通行信息：预约表优先，其次来访记录表
+     */
+    private PassInfoDTO buildPassInfo(String passCode)
     {
         // 从预约表查找
         VisitorAppointment apt = visitorAppointmentService.selectAppointmentByPassCode(passCode);
         if (apt != null)
         {
-            Map<String, Object> info = new HashMap<>();
-            info.put("passCode", passCode);
-            info.put("visitorName", apt.getVisitorName());
-            info.put("visitorPhone", apt.getVisitorPhone());
-            info.put("visitorCompany", apt.getVisitorCompany());
-            info.put("hostName", apt.getHostName());
-            info.put("hostDept", apt.getHostDept());
-            info.put("visitTime", apt.getVisitTime());
-            info.put("status", apt.getStatus());
-
-            // 到访确认：更新状态为 VISITING
-            visitorAppointmentService.checkInVisitor(passCode);
-
-            return success(info);
+            PassInfoDTO info = new PassInfoDTO();
+            info.setPassCode(passCode);
+            info.setVisitorName(apt.getVisitorName());
+            info.setVisitorPhone(apt.getVisitorPhone());
+            info.setVisitorCompany(apt.getVisitorCompany());
+            info.setHostName(apt.getHostName());
+            info.setHostDept(apt.getHostDept());
+            info.setVisitTime(apt.getVisitTime());
+            info.setEntryTime(null);
+            info.setStatus(apt.getStatus());
+            return info;
         }
 
         // 从未访记录表查找
         VisitorLog log = visitorLogService.selectLogByPassCode(passCode);
         if (log != null)
         {
-            Map<String, Object> info = new HashMap<>();
-            info.put("passCode", passCode);
-            info.put("visitorName", log.getVisitorName());
-            info.put("visitorPhone", log.getVisitorPhone());
-            info.put("visitorCompany", log.getVisitorCompany());
-            info.put("hostName", log.getHostName());
-            info.put("hostDept", log.getHostDept());
-            info.put("entryTime", log.getEntryTime());
-            info.put("status", "VISITING");
-            return success(info);
+            PassInfoDTO info = new PassInfoDTO();
+            info.setPassCode(passCode);
+            info.setVisitorName(log.getVisitorName());
+            info.setVisitorPhone(log.getVisitorPhone());
+            info.setVisitorCompany(log.getVisitorCompany());
+            info.setHostName(log.getHostName());
+            info.setHostDept(log.getHostDept());
+            info.setVisitTime(null);
+            info.setEntryTime(log.getEntryTime());
+            info.setStatus(log.getExitTime() != null ? "COMPLETED" : "VISITING");
+            return info;
         }
 
-        return error("通行码无效或已过期");
+        return null;
     }
 }

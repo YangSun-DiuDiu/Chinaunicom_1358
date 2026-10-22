@@ -1,7 +1,5 @@
 package com.ruoyi.system.sms;
 
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
@@ -10,10 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import com.ruoyi.common.utils.StringUtils;
-import com.ruoyi.system.domain.VisitorAppointment;
 
 /**
  * 短信统一发送入口——五表驱动多厂商路由
+ *
+ * <p>解析链（biz → 签名模板 → 渠道 → 驱动）已收敛至 {@link SmsResolver}，
+ * 即时发送 / 定时任务 / 重发三条路径共用同一解析 seam。</p>
  *
  * @author ruoyi
  */
@@ -25,8 +25,8 @@ public class SmsUtil
     @Autowired
     private JdbcTemplate jdbc;
 
-    /** 驱动缓存（单例复用） */
-    private final Map<String, SmsDriver> driverCache = new HashMap<>();
+    @Autowired
+    private SmsResolver smsResolver;
 
     /**
      * 统一发送入口
@@ -46,40 +46,25 @@ public class SmsUtil
             return false;
         }
 
-        // 1. 查询业务绑定
-        Map<String, Object> biz = queryOne("SELECT * FROM sys_sms_biz WHERE biz_code=? AND status='0' AND del_flag='0'", bizCode);
-        if (biz == null)
+        // 1. 解析发送计划（业务绑定 + 签名模板 + 渠道 + 驱动）
+        SmsPlan plan = smsResolver.resolve(bizCode);
+        if (!plan.isOk())
         {
-            log.error("业务编码不存在或已禁用: bizCode={}", bizCode);
             return false;
         }
+        Map<String, Object> biz = plan.getBiz();
+        Map<String, Object> st = plan.getSt();
+        Map<String, Object> channel = plan.getChannel();
+        String channelType = plan.getChannelType();
 
-        // 2. 查询签名模板
-        Long stId = getLong(biz, "st_id");
-        Map<String, Object> st = queryOne("SELECT * FROM sys_sms_sign_template WHERE st_id=? AND status='0' AND del_flag='0'", stId);
-        if (st == null)
-        {
-            log.error("签名模板不存在或已禁用: st_id={}", stId);
-            return false;
-        }
-
-        // 3. 查询主渠道
-        Long channelId = getLong(st, "channel_id");
-        Map<String, Object> channel = queryOne("SELECT * FROM sys_sms_channel WHERE channel_id=? AND status='0' AND del_flag='0'", channelId);
-        if (channel == null)
-        {
-            log.error("短信渠道不存在或已禁用: channel_id={}", channelId);
-            return false;
-        }
-
-        // 4. 黑名单检查
+        // 2. 黑名单检查
         if (isBlacklisted(phone))
         {
             log.warn("手机号在黑名单中，拒绝发送: phone={}", phone);
             return false;
         }
 
-        // 5. 频率限制检查
+        // 3. 频率限制检查
         int minuteLimit = getInt(biz, "minute_limit", 5);
         int dayLimit = getInt(biz, "day_limit", 100);
         if (!checkRateLimit(phone, minuteLimit, dayLimit))
@@ -88,51 +73,33 @@ public class SmsUtil
             return false;
         }
 
-        // 6. 定时模式——仅入库
+        // 4. 定时模式——仅入库
         if (sendMode == 2)
         {
-            insertLog(bizCode, getString(channel, "channel_type"), phone,
+            insertLog(bizCode, channelType, phone,
                     getString(st, "template_code"), getString(st, "sign_name"),
                     params, sendMode, sendTime, "WAIT", 0, "");
             log.info("定时短信已入库: bizCode={}, phone={}, sendTime={}", bizCode, phone, sendTime);
             return true;
         }
 
-        // 7. 即时模式——路由驱动发送
-        String channelType = getString(channel, "channel_type");
-        SmsDriver driver = resolveDriver(channelType, channel);
-
-        if (driver == null)
-        {
-            log.error("无法解析短信驱动: channelType={}", channelType);
-            insertLog(bizCode, channelType, phone, getString(st, "template_code"),
-                    getString(st, "sign_name"), params, 1, null, "FAIL", 0,
-                    "无法解析驱动：" + channelType);
-            return false;
-        }
-
-        boolean success = sendWithRetry(driver, channel, st, phone, params,
+        // 5. 即时模式——路由驱动发送
+        boolean success = sendWithRetry(plan.getDriver(), channel, st, phone, params,
                 getInt(channel, "retry_count", 0));
 
-        // 8. 故障切换至备用渠道
+        // 6. 故障切换至备用渠道
         if (!success)
         {
-            Long backupChannelId = getLong(biz, "backup_channel_id");
-            if (backupChannelId != null && backupChannelId > 0)
+            Map<String, Object> backupChannel = smsResolver.resolveBackupChannel(plan);
+            if (backupChannel != null)
             {
-                Map<String, Object> backupChannel = queryOne(
-                        "SELECT * FROM sys_sms_channel WHERE channel_id=? AND status='0' AND del_flag='0'",
-                        backupChannelId);
-                if (backupChannel != null)
+                log.info("主渠道发送失败，切换至备用渠道: channel_id={}", getLong(backupChannel, "channel_id"));
+                SmsDriver backupDriver = smsResolver.resolveDriver(
+                        getString(backupChannel, "channel_type"), backupChannel);
+                if (backupDriver != null)
                 {
-                    log.info("主渠道发送失败，切换至备用渠道: channel_id={}", backupChannelId);
-                    SmsDriver backupDriver = resolveDriver(
-                            getString(backupChannel, "channel_type"), backupChannel);
-                    if (backupDriver != null)
-                    {
-                        success = sendWithRetry(backupDriver, backupChannel, st, phone, params,
-                                getInt(backupChannel, "retry_count", 0));
-                    }
+                    success = sendWithRetry(backupDriver, backupChannel, st, phone, params,
+                            getInt(backupChannel, "retry_count", 0));
                 }
             }
         }
@@ -164,42 +131,15 @@ public class SmsUtil
             String phone = getString(task, "phone");
             String params = getString(task, "param");
 
-            Map<String, Object> biz = queryOne(
-                    "SELECT * FROM sys_sms_biz WHERE biz_code=? AND status='0' AND del_flag='0'", bizCode);
-            if (biz == null)
+            SmsPlan plan = smsResolver.resolve(bizCode);
+            if (!plan.isOk())
             {
-                jdbc.update("UPDATE sys_sms_log SET task_status='FAIL', result_msg='业务编码已失效' WHERE log_id=?", logId);
+                jdbc.update("UPDATE sys_sms_log SET task_status='FAIL', result_msg=?, update_time=NOW() WHERE log_id=?",
+                        plan.getErrorMsg(), logId);
                 continue;
             }
 
-            Long stId = getLong(biz, "st_id");
-            Map<String, Object> st = queryOne(
-                    "SELECT * FROM sys_sms_sign_template WHERE st_id=? AND status='0' AND del_flag='0'", stId);
-            if (st == null)
-            {
-                jdbc.update("UPDATE sys_sms_log SET task_status='FAIL', result_msg='签名模板已失效' WHERE log_id=?", logId);
-                continue;
-            }
-
-            Long channelId = getLong(st, "channel_id");
-            Map<String, Object> channel = queryOne(
-                    "SELECT * FROM sys_sms_channel WHERE channel_id=? AND status='0' AND del_flag='0'", channelId);
-            if (channel == null)
-            {
-                jdbc.update("UPDATE sys_sms_log SET task_status='FAIL', result_msg='渠道已失效' WHERE log_id=?", logId);
-                continue;
-            }
-
-            String channelType = getString(channel, "channel_type");
-            SmsDriver driver = resolveDriver(channelType, channel);
-            if (driver == null)
-            {
-                jdbc.update("UPDATE sys_sms_log SET task_status='FAIL', result_msg=? WHERE log_id=?",
-                        "无法解析驱动：" + channelType, logId);
-                continue;
-            }
-
-            boolean success = driver.send(channel, st, phone, params);
+            boolean success = plan.getDriver().send(plan.getChannel(), plan.getSt(), phone, params);
             String taskStatus = success ? "SUCCESS" : "FAIL";
             String resultMsg = success ? "定时发送成功" : "定时发送失败";
             jdbc.update("UPDATE sys_sms_log SET task_status=?, result_msg=?, update_time=NOW() WHERE log_id=?",
@@ -250,43 +190,16 @@ public class SmsUtil
         String params = getString(logRow, "param");
         int retryCount = getInt(logRow, "retry_count", 0);
 
-        // 查询业务绑定获取模板和渠道
-        Map<String, Object> biz = queryOne(
-                "SELECT * FROM sys_sms_biz WHERE biz_code=? AND status='0' AND del_flag='0'", bizCode);
-        if (biz == null)
+        // 解析发送计划（业务绑定 + 模板 + 渠道 + 驱动）
+        SmsPlan plan = smsResolver.resolve(bizCode);
+        if (!plan.isOk())
         {
-            jdbc.update("UPDATE sys_sms_log SET task_status='FAIL', result_msg='业务编码已失效' WHERE log_id=?", logId);
+            jdbc.update("UPDATE sys_sms_log SET task_status='FAIL', result_msg=?, update_time=NOW() WHERE log_id=?",
+                    plan.getErrorMsg(), logId);
             return false;
         }
 
-        Long stId = getLong(biz, "st_id");
-        Map<String, Object> st = queryOne(
-                "SELECT * FROM sys_sms_sign_template WHERE st_id=? AND status='0' AND del_flag='0'", stId);
-        if (st == null)
-        {
-            jdbc.update("UPDATE sys_sms_log SET task_status='FAIL', result_msg='签名模板已失效' WHERE log_id=?", logId);
-            return false;
-        }
-
-        Long channelId = getLong(st, "channel_id");
-        Map<String, Object> channel = queryOne(
-                "SELECT * FROM sys_sms_channel WHERE channel_id=? AND status='0' AND del_flag='0'", channelId);
-        if (channel == null)
-        {
-            jdbc.update("UPDATE sys_sms_log SET task_status='FAIL', result_msg='渠道已失效' WHERE log_id=?", logId);
-            return false;
-        }
-
-        String channelType = getString(channel, "channel_type");
-        SmsDriver driver = resolveDriver(channelType, channel);
-        if (driver == null)
-        {
-            jdbc.update("UPDATE sys_sms_log SET task_status='FAIL', result_msg=? WHERE log_id=?",
-                    "无法解析驱动：" + channelType, logId);
-            return false;
-        }
-
-        boolean success = driver.send(channel, st, phone, params);
+        boolean success = plan.getDriver().send(plan.getChannel(), plan.getSt(), phone, params);
         int newRetryCount = retryCount + 1;
         String taskStatus = success ? "SUCCESS" : "FAIL";
         String resultMsg = success ? "重发成功" : "重发失败";
@@ -302,7 +215,7 @@ public class SmsUtil
     public boolean sendByChannel(Map<String, Object> channel, Map<String, Object> template, String phone, String params)
     {
         String channelType = getString(channel, "channel_type");
-        SmsDriver driver = resolveDriver(channelType, channel);
+        SmsDriver driver = smsResolver.resolveDriver(channelType, channel);
         if (driver == null)
         {
             log.error("未知渠道类型: {}", channelType);
@@ -317,43 +230,6 @@ public class SmsUtil
             log.error("测试发送失败: channel={}, phone={}", channelType, phone, e);
             return false;
         }
-    }
-
-    /**
-     * 根据渠道类型解析驱动实例
-     */
-    private SmsDriver resolveDriver(String channelType, Map<String, Object> channel)
-    {
-        if (StringUtils.isEmpty(channelType))
-        {
-            return null;
-        }
-        String key = channelType.toUpperCase();
-        SmsDriver cached = driverCache.get(key);
-        if (cached != null)
-        {
-            return cached;
-        }
-        SmsDriver driver;
-        switch (key)
-        {
-            case "ALIYUN":
-                String ak = getString(channel, "access_key_id");
-                String sk = getString(channel, "access_key_secret");
-                driver = new AliyunSmsDriver(ak, sk);
-                break;
-            case "TENCENT":
-                driver = new TencentSmsDriver();
-                break;
-            case "API":
-                driver = new GenericHttpDriver();
-                break;
-            default:
-                log.error("不支持的渠道类型: {}", channelType);
-                return null;
-        }
-        driverCache.put(key, driver);
-        return driver;
     }
 
     /**
@@ -506,7 +382,10 @@ public class SmsUtil
     // ============ 兼容旧调用方的桥接方法 ============
 
     /**
-     * 兼容旧版 sendSms(recipient, phoneNumber, content, bizType, bizId) 调用
+     * 兼容旧版 sendSms(recipient, phoneNumber, content, bizType, bizId) 调用。
+     *
+     * <p>仅保留给测试入口（{@link #sendTestSms}）使用；生产链路请使用
+     * {@link #sendSms(String, String, String, int, String)}（bizCode 模板驱动）。</p>
      */
     public void sendSms(String recipient, String phoneNumber, String content, String bizType, Long bizId)
     {
@@ -515,22 +394,7 @@ public class SmsUtil
     }
 
     /**
-     * 发送访客审批通过短信
-     */
-    public void sendVisitorApprovalSms(VisitorAppointment appointment)
-    {
-        String passCode = appointment.getPassCode() != null ? appointment.getPassCode() : "";
-        String content = "访客审批通知：" + safeStr(appointment.getVisitorName()) + "您好，欢迎来访！"
-                + "被访人：" + safeStr(appointment.getHostName())
-                + "（" + safeStr(appointment.getHostDept()) + "），"
-                + "通行码：" + passCode
-                + "，通行链接：http://1.94.26.126:3000/pass/" + passCode;
-        sendSms(appointment.getVisitorName(), appointment.getVisitorPhone(), content,
-                "VISITOR_APPROVE", appointment.getAppointmentId());
-    }
-
-    /**
-     * 发送测试短信
+     * 发送测试短信（管理端「短信配置-测试发送」入口）
      */
     public void sendTestSms(String phoneNumber)
     {
@@ -547,10 +411,5 @@ public class SmsUtil
                 .replace("\n", "\\n")
                 .replace("\r", "\\r")
                 .replace("\t", "\\t");
-    }
-
-    private String safeStr(String str)
-    {
-        return str != null ? str : "未知";
     }
 }

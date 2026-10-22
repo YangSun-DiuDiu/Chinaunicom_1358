@@ -16,7 +16,9 @@ import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.core.domain.entity.SysDept;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.system.domain.VisitorAppointment;
+import com.ruoyi.system.domain.VisitorAppointmentState;
 import com.ruoyi.system.domain.VisitorLog;
+import com.ruoyi.system.domain.VisitorLogFactory;
 import com.ruoyi.system.mapper.VisitorAppointmentMapper;
 import com.ruoyi.system.service.ISysDeptService;
 import com.ruoyi.system.service.ISysUserService;
@@ -33,14 +35,6 @@ import com.ruoyi.system.sms.SmsUtil;
 @Service
 public class VisitorAppointmentServiceImpl implements IVisitorAppointmentService {
     private static final Logger log = LoggerFactory.getLogger(VisitorAppointmentServiceImpl.class);
-
-    /** 预约状态 */
-    private static final String STATUS_PENDING = "PENDING";
-    private static final String STATUS_APPROVED = "APPROVED";
-    private static final String STATUS_REJECTED = "REJECTED";
-    private static final String STATUS_CANCELLED = "CANCELLED";
-    private static final String STATUS_VISITING = "VISITING";
-    private static final String STATUS_COMPLETED = "COMPLETED";
 
     @Autowired
     private VisitorAppointmentMapper appointmentMapper;
@@ -91,9 +85,23 @@ public class VisitorAppointmentServiceImpl implements IVisitorAppointmentService
      */
     @Override
     public int insertAppointment(VisitorAppointment appointment) {
-        appointment.setStatus(STATUS_PENDING);
+        return insertAppointment(appointment, true);
+    }
+
+    /**
+     * 新增预约（内部创建路径共用）
+     *
+     * @param appointment  预约信息
+     * @param forceAssign  是否强制匹配被访人（审批人+部门）。普通预约入口传 true；
+     *                     registerWalkin 已在创建前完成匹配与校验，传 false 避免重复执行
+     * @return 结果
+     */
+    public int insertAppointment(VisitorAppointment appointment, boolean forceAssign) {
+        appointment.setStatus(VisitorAppointmentState.PENDING);
         // 强制匹配被访人：设置审批人 + 部门数据范围，匹配失败直接抛异常
-        assignApproverAndDept(appointment);
+        if (forceAssign) {
+            assignApproverAndDept(appointment);
+        }
         int rows = appointmentMapper.insertAppointment(appointment);
         // 通知被访人（审批人）有新的访客预约
         notifyApprover(appointment);
@@ -142,7 +150,8 @@ public class VisitorAppointmentServiceImpl implements IVisitorAppointmentService
         if (appointment == null) {
             throw new ServiceException("预约信息不存在");
         }
-        if (!STATUS_PENDING.equals(appointment.getStatus())) {
+        if (!VisitorAppointmentState.can(appointment.getStatus(), VisitorAppointmentState.Event.APPROVE)
+                && !VisitorAppointmentState.can(appointment.getStatus(), VisitorAppointmentState.Event.REJECT)) {
             throw new ServiceException("当前预约状态不允许审批，仅待审批状态可操作");
         }
 
@@ -154,8 +163,11 @@ public class VisitorAppointmentServiceImpl implements IVisitorAppointmentService
             throw new ServiceException("无权审批该预约：仅被访人本人可审批");
         }
 
-        // 设置审批信息
-        appointment.setStatus(status);
+        // 设置审批信息（目标状态由状态机决定）
+        appointment.setStatus(VisitorAppointmentState.transition(appointment.getStatus(),
+                status.equals(VisitorAppointmentState.REJECTED)
+                        ? VisitorAppointmentState.Event.REJECT
+                        : VisitorAppointmentState.Event.APPROVE));
         appointment.setApproverId(SecurityUtils.getUserId());
         appointment.setApproveTime(new Date());
         appointment.setApproveRemark(remark);
@@ -163,7 +175,7 @@ public class VisitorAppointmentServiceImpl implements IVisitorAppointmentService
         int result = appointmentMapper.updateAppointment(appointment);
 
         // 审批通过后的连锁操作：创建来访记录 + 发送短信
-        if (result > 0 && STATUS_APPROVED.equals(status)) {
+        if (result > 0 && VisitorAppointmentState.APPROVED.equals(appointment.getStatus())) {
             // 确保通行码存在
             String passCode = appointment.getPassCode();
             if (passCode == null || passCode.isEmpty()) {
@@ -177,27 +189,7 @@ public class VisitorAppointmentServiceImpl implements IVisitorAppointmentService
             existLog.setAppointmentId(appointmentId);
             List<VisitorLog> existLogs = visitorLogService.selectLogList(existLog);
             if (existLogs == null || existLogs.isEmpty()) {
-                VisitorLog log = new VisitorLog();
-                log.setAppointmentId(appointmentId);
-                log.setPassCode(passCode);
-                log.setVisitorName(appointment.getVisitorName());
-                log.setVisitorPhone(appointment.getVisitorPhone());
-                log.setVisitorIdCard(appointment.getVisitorIdCard());
-                log.setVisitorCompany(appointment.getVisitorCompany());
-                log.setVisitReason(appointment.getVisitReason());
-                log.setHostName(appointment.getHostName());
-                log.setHostDept(appointment.getHostDept());
-                log.setHasCar(appointment.getHasCar());
-                log.setCarPlate(appointment.getCarPlate());
-                log.setHasGoods(appointment.getHasGoods());
-                log.setGoodsDesc(appointment.getGoodsDesc());
-                log.setDeptId(appointment.getDeptId());
-                log.setEntryTime(appointment.getVisitTime());
-                log.setRegisterType("APPOINTMENT");
-                if (appointment.getCreateBy() != null) {
-                    log.setCreateBy(appointment.getCreateBy());
-                }
-                visitorLogService.insertLog(log);
+                visitorLogService.insertLog(VisitorLogFactory.from(appointment, "APPOINTMENT", null));
             }
 
             // 发送短信通知（仅一次，通过模板）
@@ -219,11 +211,12 @@ public class VisitorAppointmentServiceImpl implements IVisitorAppointmentService
         if (appointment == null) {
             throw new ServiceException("预约信息不存在");
         }
-        if (!STATUS_PENDING.equals(appointment.getStatus()) && !STATUS_APPROVED.equals(appointment.getStatus())) {
+        if (!VisitorAppointmentState.can(appointment.getStatus(), VisitorAppointmentState.Event.CANCEL)) {
             throw new ServiceException("当前预约状态不允许取消");
         }
 
-        appointment.setStatus(STATUS_CANCELLED);
+        appointment.setStatus(VisitorAppointmentState.transition(appointment.getStatus(),
+                VisitorAppointmentState.Event.CANCEL));
         return appointmentMapper.updateAppointment(appointment);
     }
 
@@ -239,11 +232,12 @@ public class VisitorAppointmentServiceImpl implements IVisitorAppointmentService
         if (appointment == null) {
             throw new ServiceException("预约信息不存在");
         }
-        if (!STATUS_VISITING.equals(appointment.getStatus()) && !STATUS_APPROVED.equals(appointment.getStatus())) {
+        if (!VisitorAppointmentState.can(appointment.getStatus(), VisitorAppointmentState.Event.COMPLETE)) {
             throw new ServiceException("当前预约状态不允许完成操作");
         }
 
-        appointment.setStatus(STATUS_COMPLETED);
+        appointment.setStatus(VisitorAppointmentState.transition(appointment.getStatus(),
+                VisitorAppointmentState.Event.COMPLETE));
         appointment.setLeaveTime(new Date());
         return appointmentMapper.updateAppointment(appointment);
     }
@@ -315,9 +309,10 @@ public class VisitorAppointmentServiceImpl implements IVisitorAppointmentService
         if (appointment == null) {
             return null;
         }
-        // 只有 APPROVED 或 PENDING 状态的才更新为 VISITING
-        if (STATUS_APPROVED.equals(appointment.getStatus()) || STATUS_PENDING.equals(appointment.getStatus())) {
-            appointment.setStatus(STATUS_VISITING);
+        // 仅 APPROVED / PENDING 状态可转为 VISITING（状态机校验）
+        if (VisitorAppointmentState.can(appointment.getStatus(), VisitorAppointmentState.Event.CHECKIN)) {
+            appointment.setStatus(VisitorAppointmentState.transition(appointment.getStatus(),
+                    VisitorAppointmentState.Event.CHECKIN));
             appointmentMapper.updateAppointment(appointment);
         }
         return appointment;
@@ -351,34 +346,17 @@ public class VisitorAppointmentServiceImpl implements IVisitorAppointmentService
         // 3. 生成通行码
         String passCode = java.util.UUID.randomUUID().toString().substring(0, 8).toUpperCase();
 
-        // 4. 创建预约记录（insertAppointment 内部会再次 assignApproverAndDept，幂等）
+        // 4. 创建预约记录（宿主匹配已在步骤1完成，forceAssign=false 避免重复执行）
         appointment.setPassCode(passCode);
-        appointment.setStatus(STATUS_PENDING);
+        appointment.setStatus(VisitorAppointmentState.PENDING);
         appointment.setCreateBy(createBy);
         if (appointment.getVisitTime() == null) {
             appointment.setVisitTime(new Date());
         }
-        this.insertAppointment(appointment);
+        this.insertAppointment(appointment, false);
 
         // 5. 同时创建来访记录
-        VisitorLog log = new VisitorLog();
-        log.setAppointmentId(appointment.getAppointmentId());
-        log.setPassCode(passCode);
-        log.setVisitorName(appointment.getVisitorName());
-        log.setVisitorPhone(appointment.getVisitorPhone());
-        log.setVisitorIdCard(appointment.getVisitorIdCard());
-        log.setVisitorCompany(appointment.getVisitorCompany());
-        log.setVisitReason(appointment.getVisitReason());
-        log.setHostName(appointment.getHostName());
-        log.setHostDept(appointment.getHostDept());
-        log.setHasCar(appointment.getHasCar());
-        log.setCarPlate(appointment.getCarPlate());
-        log.setHasGoods(appointment.getHasGoods());
-        log.setGoodsDesc(appointment.getGoodsDesc());
-        log.setEntryTime(new Date());
-        log.setRegisterType("WALKIN");
-        log.setCreateBy(createBy);
-        log.setDeptId(appointment.getDeptId());
+        VisitorLog log = VisitorLogFactory.from(appointment, "WALKIN", new Date());
         visitorLogService.insertLog(log);
 
         Map<String, Object> result = new HashMap<>();

@@ -86,6 +86,13 @@ export default {
         const d = res.data || res
         if (d.visitorName) {
           this.result = { valid: true, ...d }
+          // 到访确认（写操作走独立 POST；GET 为纯读）
+          request({ url: '/pass/' + encodeURIComponent(code) + '/checkin', method: 'post' }).then(res2 => {
+            const d2 = res2.data || res2
+            if (d2.visitorName) {
+              this.result = { valid: true, ...d2 }
+            }
+          }).catch(() => {})
         } else {
           this.result = { valid: false }
         }

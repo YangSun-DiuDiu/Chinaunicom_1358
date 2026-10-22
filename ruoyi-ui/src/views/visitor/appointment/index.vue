@@ -440,9 +440,9 @@ export default {
       this.multiple = !selection.length
     },
     // 更多操作触发
-    /** 打开访客通行码页面 */
+    /** 打开访客通行码页面（H5 通行查询页，纯读展示） */
     openPassPage(row) {
-      window.open('/pass/' + row.passCode, '_blank')
+      window.open('/h5/visitor/pass?code=' + encodeURIComponent(row.passCode), '_blank')
     },
     handleCommand(command, row) {
       switch (command) {

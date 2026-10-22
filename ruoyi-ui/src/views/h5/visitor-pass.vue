@@ -22,6 +22,14 @@ import request from '@/utils/request'
 
 export default {
   data() { return { code: '', loading: false, result: null } },
+  created() {
+    // 支持从预约列表「通行码」入口带入 code 自动查询（URL 参数方式，纯读展示）
+    const q = this.$route.query.code
+    if (q) {
+      this.code = q
+      this.search()
+    }
+  },
   methods: {
     search() {
       if (!this.code) return
