@@ -120,8 +120,8 @@
           content: '';
           position: absolute;
           inset: 0;
-          background-color: var(--current-color-dark-bg, rgba(0, 212, 255, 0.12));
-          border-left: 3px solid #00D4FF;
+          background-color: var(--current-color-dark-bg, rgba(86, 69, 212, 0.10));
+          border-left: 3px solid #5645D4;
           pointer-events: none;
           z-index: 1;
         }
@@ -320,12 +320,13 @@
   }
 }
 
-// ============ 科技风 sub-sidebar 样式 ============
-.sub-sidebar { background: rgba(10,22,40,0.97) !important; backdrop-filter: blur(12px); }
+// ============ Notion 风格 sub-sidebar 样式 ============
+.sub-sidebar { background: rgba(255,255,255,0.98) !important; backdrop-filter: blur(12px); box-shadow: none; }
 .sub-sidebar .el-menu { background: transparent; border: none; }
-.sub-sidebar .el-menu-item { border-radius: 8px; margin: 2px 8px; color: #A0B4C8; }
-.sub-sidebar .el-menu-item:hover { background: rgba(0,212,255,0.08); color: #00D4FF; }
+.sub-sidebar .el-menu-item { border-radius: 6px; margin: 2px 8px; color: #5D5B54; }
+.sub-sidebar .el-menu-item:hover { background: rgba(86,69,212,0.06); color: #37352F; }
 .sub-sidebar .el-menu-item.is-active {
-  background: linear-gradient(90deg, rgba(0,212,255,0.15), transparent);
-  border-left: 3px solid #00D4FF; color: #00D4FF;
+  background: rgba(86,69,212,0.08);
+  border-left: 3px solid #5645D4; color: #5645D4;
+  font-weight: 500;
 }

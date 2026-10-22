@@ -223,13 +223,13 @@ export default {
     gap: 4px;
     height: 100%;
     padding: 0 14px;
-    color: #00D4FF;
+    color: #5645D4;
     font-size: 13px;
     text-decoration: none;
     transition: background .3s;
     border-right: 1px solid #eef0f3;
 
-    &:hover { background: rgba(0, 212, 255, 0.06); }
+    &:hover { background: rgba(86, 69, 212, 0.06); }
 
     i { font-size: 15px; }
   }

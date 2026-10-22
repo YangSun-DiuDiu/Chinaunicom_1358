@@ -36,17 +36,18 @@ export default {
 </script>
 
 <style scoped>
-.h5-page { min-height:100vh; background:#0a1a2e; color:#bcc9d4; padding:16px; }
+.h5-page { min-height:100vh; background:linear-gradient(135deg, #0A1530 0%, #1A2A52 60%, #5645D4 100%); padding:16px; }
 .h5-nav { margin-bottom:8px; }
 .h5-page h3 { color:#fff; margin:0 0 20px; }
-.result-card { margin-top:24px; border-radius:8px; padding:20px; text-align:center; }
-.result-card.success { background:rgba(0,230,118,0.1); border:1px solid rgba(0,230,118,0.3); }
-.result-card.fail { background:rgba(255,82,82,0.1); border:1px solid rgba(255,82,82,0.3); }
+.result-card { margin-top:24px; border-radius:12px; padding:20px; text-align:center; background:#fff; box-shadow: rgba(15,15,15,0.08) 0px 4px 12px 0px; }
+.result-card.success { border:1px solid rgba(26,174,57,0.4); }
+.result-card.fail { border:1px solid rgba(224,49,49,0.4); }
 .result-title { font-size:18px; font-weight:700; margin-bottom:12px; }
-.result-card.success .result-title { color:#00e676; }
-.result-card.fail .result-title { color:#ff5252; }
+.result-card.success .result-title { color:#1AAE39; }
+.result-card.fail .result-title { color:#E03131; }
 .info-grid { text-align:left; }
-.info-grid div { margin:6px 0; font-size:14px; color:#bcc9d4; }
-.info-label { color:#8899aa; font-size:12px; margin-right:8px; }
-.h5-page >>> .el-input__inner { background:rgba(0,0,0,0.3); border-color:rgba(0,180,255,0.2); color:#fff; }
+.info-grid div { margin:6px 0; font-size:14px; color:#37352F; }
+.info-label { color:#787671; font-size:12px; margin-right:8px; }
+.h5-page >>> .el-input__inner { background:#fff; border-color:#C8C4BE; color:#37352F; }
+.h5-page >>> .el-input-group__append { background:#5645D4; border-color:#5645D4; color:#fff; }
 </style>

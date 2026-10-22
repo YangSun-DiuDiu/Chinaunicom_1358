@@ -45,7 +45,7 @@
       </el-table-column>
       <el-table-column label="登记地址" align="center" key="registerUrl" width="550">
         <template slot-scope="scope">
-          <span style="color:#409eff">{{ getRegisterUrl(scope.row) }}</span>
+          <span style="color:#5645D4">{{ getRegisterUrl(scope.row) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="是否启用" align="center" key="enabled" width="180">

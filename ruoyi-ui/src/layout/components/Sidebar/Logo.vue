@@ -65,8 +65,8 @@ export default {
       width: 8px;
       height: 8px;
       border-radius: 50%;
-      background: #00D4FF;
-      box-shadow: 0 0 10px rgba(0, 212, 255, 0.6);
+      background: #5645D4;
+      box-shadow: 0 0 10px rgba(86, 69, 212, 0.5);
       vertical-align: middle;
       margin-right: 6px;
       animation: led-pulse 2s ease-in-out infinite;
@@ -84,9 +84,9 @@ export default {
       font-weight: 700;
       line-height: 50px;
       font-size: 16px;
-      font-family: Avenir, Helvetica Neue, Arial, Helvetica, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
       vertical-align: middle;
-      background: linear-gradient(90deg, #00D4FF, #00B894);
+      background: linear-gradient(90deg, #5645D4, #8B7CF6);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -101,8 +101,8 @@ export default {
 }
 
 @keyframes led-pulse {
-  0%, 100% { opacity: 1; box-shadow: 0 0 10px rgba(0, 212, 255, 0.6); }
-  50% { opacity: 0.5; box-shadow: 0 0 4px rgba(0, 212, 255, 0.3); }
+  0%, 100% { opacity: 1; box-shadow: 0 0 10px rgba(86, 69, 212, 0.5); }
+  50% { opacity: 0.5; box-shadow: 0 0 4px rgba(86, 69, 212, 0.25); }
 }
 
 </style>

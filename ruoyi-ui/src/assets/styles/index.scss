@@ -11,7 +11,9 @@ body {
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', Helvetica, Arial, sans-serif;
+  color: #37352F;
+  background-color: #F6F5F4;
 }
 
 label {
@@ -142,7 +144,7 @@ aside {
   text-align: right;
   padding-right: 20px;
   transition: 600ms ease position;
-  background: linear-gradient(90deg, rgba(0, 212, 255, 1) 0%, rgba(0, 180, 219, 1) 100%);
+  background: linear-gradient(90deg, rgba(86, 69, 212, 1) 0%, rgba(69, 52, 179, 1) 100%);
 
   .subtitle {
     font-size: 20px;

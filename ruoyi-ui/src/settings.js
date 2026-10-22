@@ -6,8 +6,9 @@ module.exports = {
 
   /**
    * 侧边栏主题 深色主题theme-dark，浅色主题theme-light
+   * Notion 风格：浅色侧边栏
    */
-  sideTheme: 'theme-dark',
+  sideTheme: 'theme-light',
 
   /**
    * 系统布局配置

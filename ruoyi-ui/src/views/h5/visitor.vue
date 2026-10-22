@@ -47,12 +47,13 @@ export default {
 </script>
 
 <style scoped>
-.h5-page { min-height:100vh; background:#0a1a2e; color:#bcc9d4; padding:16px; }
+.h5-page { min-height:100vh; background:linear-gradient(135deg, #0A1530 0%, #1A2A52 60%, #5645D4 100%); padding:16px; }
 .h5-nav { margin-bottom:8px; }
 .h5-page h3 { color:#fff; margin:0 0 20px; }
-.result-card { margin-top:20px; background:rgba(0,230,118,0.1); border:1px solid rgba(0,230,118,0.3);
-  border-radius:8px; padding:16px; text-align:center; }
-.result-title { font-size:16px; color:#00e676; margin-bottom:8px; }
-.h5-page >>> .el-input__inner, .h5-page >>> .el-textarea__inner { background:rgba(0,0,0,0.3); border-color:rgba(0,180,255,0.2); color:#fff; }
-.h5-page >>> .el-form-item__label { color:#8899aa; }
+.result-card { margin-top:20px; background:#fff; border:1px solid rgba(26,174,57,0.4);
+  border-radius:12px; padding:16px; text-align:center; box-shadow: rgba(15,15,15,0.08) 0px 4px 12px 0px; }
+.result-title { font-size:16px; color:#1AAE39; font-weight:700; margin-bottom:8px; }
+.h5-page >>> .el-input__inner, .h5-page >>> .el-textarea__inner { background:#fff; border-color:#C8C4BE; color:#37352F; }
+.h5-page >>> .el-form-item__label { color:#5D5B54; }
+.h5-page >>> .el-button--primary { background:#5645D4; border-color:#5645D4; }
 </style>

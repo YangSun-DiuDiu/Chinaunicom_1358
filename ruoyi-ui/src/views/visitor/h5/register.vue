@@ -312,7 +312,7 @@ export default {
 * { box-sizing: border-box; margin: 0; padding: 0; }
 .h5-register-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #1890ff 0%, #36cfc9 100%);
+  background: linear-gradient(135deg, #0A1530 0%, #1A2A52 60%, #5645D4 100%);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   padding-bottom: 40px;
 }
@@ -324,9 +324,9 @@ export default {
 .step { display: flex; align-items: center; gap: 6px; font-size: 13px; color: rgba(255,255,255,0.6); }
 .step.active { color: #fff; font-weight: 600; }
 .step .dot { width: 22px; height: 22px; border-radius: 50%; background: rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; font-size: 12px; }
-.step.active .dot { background: #fff; color: #1890ff; }
+.step.active .dot { background: #fff; color: #5645D4; }
 .line { flex: 1; height: 2px; background: rgba(255,255,255,0.3); margin: 0 12px; max-width: 60px; }
-.form-card, .success-card { background: #fff; margin: 0 16px; border-radius: 12px; padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+.form-card, .success-card { background: #fff; margin: 0 16px; border-radius: 12px; padding: 20px; border: 1px solid #E5E3DF; box-shadow: rgba(15,15,15,0.08) 0px 4px 12px 0px; }
 .section-title { font-size: 15px; font-weight: 600; color: #333; margin: 0 0 12px; padding-bottom: 8px; border-bottom: 1px solid #f0f0f0; }
 .section-title + .section-title { margin-top: 20px; }
 .form-item { margin-bottom: 14px; }
@@ -336,7 +336,7 @@ export default {
   width: 100%; height: 42px; border: 1px solid #e0e0e0; border-radius: 8px; padding: 0 12px;
   font-size: 15px; color: #333; outline: none; transition: border-color .2s; background: #fff;
 }
-.form-item input:focus, .host-select:focus { border-color: #1890ff; }
+.form-item input:focus, .host-select:focus { border-color: #5645D4; }
 .form-item input[readonly] { background: #f5f7fa; color: #909399; }
 .host-select { appearance: none; -webkit-appearance: none; }
 .host-empty { font-size: 12px; color: #999; margin-top: 4px; }
@@ -346,7 +346,7 @@ export default {
   width: 100%; height: 46px; border: none; border-radius: 23px; font-size: 17px; font-weight: 600;
   cursor: pointer; transition: all .2s;
 }
-.submit-btn { background: linear-gradient(135deg, #1890ff, #36cfc9); color: #fff; margin-top: 8px; }
+.submit-btn { background: linear-gradient(135deg, #5645D4, #4534B3); color: #fff; margin-top: 8px; }
 .submit-btn:disabled { background: #ccc; cursor: not-allowed; }
 .reset-btn { background: #f0f0f0; color: #333; margin-top: 16px; }
 .success-card { text-align: center; }
@@ -363,7 +363,7 @@ export default {
 .radio-row { display: flex; align-items: center; margin-bottom: 10px; font-size: 13px; color: #666; }
 .radio-group { display: flex; gap: 16px; }
 .radio-label { display: flex; align-items: center; gap: 4px; cursor: pointer; color: #333; }
-.radio-label input[type=radio] { width: 16px; height: 16px; accent-color: #1890ff; }
+.radio-label input[type=radio] { width: 16px; height: 16px; accent-color: #5645D4; }
 .footer { text-align: center; padding: 20px; color: rgba(255,255,255,0.6); font-size: 12px; }
 </style>
 <style>

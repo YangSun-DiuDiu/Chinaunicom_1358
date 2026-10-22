@@ -209,10 +209,10 @@ export default {
   overflow: hidden;
 }
 
-/* ========== 左侧：科技渐变背景 + CSS 粒子 ========== */
+/* ========== 左侧：Notion 深蓝品牌带 + 紫色点缀粒子 ========== */
 .login-left {
   flex: 1;
-  background: linear-gradient(135deg, #0A1628 0%, #0D2B4E 50%, #00D4FF 100%);
+  background: linear-gradient(135deg, #0A1530 0%, #1A2A52 50%, #5645D4 100%);
   position: relative;
   overflow: hidden;
   display: flex;
@@ -263,12 +263,12 @@ export default {
 
 .system-title {
   font-size: 42px;
-  font-weight: 700;
+  font-weight: 600;
   color: #FFFFFF;
   margin: 0 0 16px 0;
-  letter-spacing: 4px;
-  text-shadow: 0 2px 12px rgba(0, 212, 255, 0.5);
-  font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+  letter-spacing: 2px;
+  text-shadow: 0 2px 12px rgba(86, 69, 212, 0.5);
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
 }
 
 .system-subtitle {
@@ -281,10 +281,10 @@ export default {
 
 .tech-line {
   width: 80px;
-  height: 3px;
-  background: linear-gradient(90deg, #00D4FF, #00A8CC);
+  height: 4px;
+  background: linear-gradient(90deg, #5645D4, #8B7CF6);
   margin: 0 auto 24px;
-  border-radius: 2px;
+  border-radius: 9999px;
 }
 
 .tech-desc {
@@ -298,7 +298,7 @@ export default {
 .login-right {
   width: 480px;
   min-width: 480px;
-  background: #F0F2F5;
+  background: #F6F5F4;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -310,7 +310,8 @@ export default {
   width: 400px;
   background: #FFFFFF;
   border-radius: 12px;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  border: 1px solid #E5E3DF;
+  box-shadow: rgba(15, 15, 15, 0.08) 0px 4px 12px 0px;
   padding: 40px 36px 20px 36px;
   margin-bottom: 20px;
 }
@@ -318,10 +319,10 @@ export default {
 .login-card-title {
   font-size: 22px;
   font-weight: 600;
-  color: #1a1a2e;
+  color: #37352F;
   text-align: center;
   margin: 0 0 32px 0;
-  letter-spacing: 2px;
+  letter-spacing: 1px;
 }
 
 .login-form {
@@ -362,7 +363,7 @@ export default {
 }
 
 .link-type {
-  color: #409EFF;
+  color: #5645D4;
 }
 
 /* ========== 响应式：小屏幕时只显示右侧表单 ========== */

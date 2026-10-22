@@ -100,28 +100,30 @@ export default {
 </script>
 
 <style scoped>
-.h5-page { min-height:100vh; background:#0a1a2e; color:#bcc9d4; padding:16px; }
+.h5-page { min-height:100vh; background:linear-gradient(135deg, #0A1530 0%, #1A2A52 60%, #5645D4 100%); padding:16px; }
 .h5-nav { margin-bottom:8px; }
 .h5-page h3 { color:#fff; margin:0 0 20px; }
 
 .scanner-box { text-align:center; margin-bottom:20px; }
-.scanner-view { width:100%; max-width:320px; margin:0 auto 12px; border-radius:10px; overflow:hidden; }
-.scanner-tip { font-size:13px; color:#8899aa; margin-bottom:12px; }
+.scanner-view { width:100%; max-width:320px; margin:0 auto 12px; border-radius:12px; overflow:hidden; background:#fff; }
+.scanner-tip { font-size:13px; color:rgba(255,255,255,0.75); margin-bottom:12px; }
 
 .action-area { margin-bottom:20px; }
-.or-divider { text-align:center; padding:16px 0; color:#556677; font-size:13px; }
+.or-divider { text-align:center; padding:16px 0; color:rgba(255,255,255,0.6); font-size:13px; }
 
-.verify-result { margin-top:16px; border-radius:10px; padding:24px; text-align:center; }
-.verify-result.valid { background:rgba(0,230,118,0.1); border:1px solid rgba(0,230,118,0.3); }
-.verify-result.invalid { background:rgba(255,82,82,0.1); border:1px solid rgba(255,82,82,0.3); }
+.verify-result { margin-top:16px; border-radius:12px; padding:24px; text-align:center; background:#fff; box-shadow: rgba(15,15,15,0.08) 0px 4px 12px 0px; }
+.verify-result.valid { border:1px solid rgba(26,174,57,0.4); }
+.verify-result.invalid { border:1px solid rgba(224,49,49,0.4); }
 .verify-title { font-size:20px; font-weight:700; margin-bottom:16px; }
-.valid .verify-title { color:#00e676; }
-.invalid .verify-title { color:#ff5252; }
+.valid .verify-title { color:#1AAE39; }
+.invalid .verify-title { color:#E03131; }
 .verify-grid { text-align:left; }
-.verify-row { display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid rgba(0,180,255,0.06); font-size:14px; }
-.verify-row span { color:#8899aa; }
-.verify-row b { color:#fff; }
-.verify-time { margin-top:16px; color:#556677; font-size:12px; }
+.verify-row { display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #EDE9E4; font-size:14px; color:#37352F; }
+.verify-row span { color:#787671; }
+.verify-row b { color:#37352F; }
+.verify-time { margin-top:16px; color:#A4A097; font-size:12px; }
 
-.h5-page >>> .el-input__inner { background:rgba(0,0,0,0.3); border-color:rgba(0,180,255,0.2); color:#fff; }
+.h5-page >>> .el-input__inner { background:#fff; border-color:#C8C4BE; color:#37352F; }
+.h5-page >>> .el-input-group__append { background:#5645D4; border-color:#5645D4; color:#fff; }
+.h5-page >>> .el-button--primary { background:#5645D4; border-color:#5645D4; }
 </style>

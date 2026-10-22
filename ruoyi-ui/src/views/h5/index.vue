@@ -42,14 +42,14 @@ export default {
 </script>
 
 <style scoped>
-.h5-home { min-height:100vh; background:#0a1a2e; color:#bcc9d4; padding:16px; }
+.h5-home { min-height:100vh; background:linear-gradient(135deg, #0A1530 0%, #1A2A52 60%, #5645D4 100%); padding:16px; }
 .h5-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; }
 .h5-user { font-size:16px; color:#fff; }
 .h5-cards { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; }
 .h5-card .icon { font-size:28px; display:block; margin-bottom:6px; }
-.h5-card { background:rgba(13,33,55,0.9); border:1px solid rgba(0,180,255,0.12); border-radius:10px;
+.h5-card { background:rgba(255,255,255,0.98); border:1px solid rgba(255,255,255,0.35); border-radius:12px;
   padding:28px 16px; text-align:center; cursor:pointer; transition:all .3s; }
-.h5-card:active { background:rgba(0,180,255,0.12); }
+.h5-card:active { background:rgba(86,69,212,0.12); }
 .h5-card .icon { font-size:32px; display:block; margin-bottom:8px; }
-.h5-card .label { font-size:13px; color:#8899aa; }
+.h5-card .label { font-size:13px; color:#5D5B54; }
 </style>

@@ -1,25 +1,25 @@
-// base color - 科技风配色
-$blue:#00D4FF;
-$light-blue:#00B8E0;
-$red:#E17055;
-$pink: #E65D6E;
-$green: #00B894;
-$tiffany: #4AB7BD;
-$yellow:#FDCB6E;
-$panGreen: #00B894;
+// Notion 风格基础色 —— 基于 awesome-design-md/notion/DESIGN.md
+$blue: #5645D4;            // primary purple
+$light-blue: #4534B3;      // primary-pressed
+$red: #E03131;             // semantic-error
+$pink: #FF64C8;            // brand-pink
+$green: #1AAE39;           // semantic-success
+$tiffany: #2A9D99;         // brand-teal
+$yellow: #F5D75E;          // brand-yellow
+$panGreen: #1AAE39;
 
-// 默认菜单主题风格 - 科技风深空蓝
-$base-menu-color: #A0B4C8;
-$base-menu-color-active: #00D4FF;
-$base-menu-background: #1a2332;
-$base-logo-title-color: #00D4FF;
+// 默认菜单主题风格 - Notion 浅色侧边栏
+$base-menu-color: #37352F;              // charcoal
+$base-menu-color-active: #5645D4;       // primary purple
+$base-menu-background: #FFFFFF;         // canvas
+$base-logo-title-color: #5645D4;        // primary purple
 
 $base-menu-light-color:rgba(0,0,0,.70);
 $base-menu-light-background:#ffffff;
-$base-logo-light-title-color: #001529;
+$base-logo-light-title-color: #37352F;
 
-$base-sub-menu-background: #080E1A;
-$base-sub-menu-hover: rgba(0,212,255,0.1);
+$base-sub-menu-background: #F6F5F4;     // surface
+$base-sub-menu-hover: rgba(86,69,212,0.06);
 
 $base-sidebar-width: 200px;
 

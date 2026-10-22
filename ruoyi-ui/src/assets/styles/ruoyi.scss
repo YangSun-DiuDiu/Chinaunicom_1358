@@ -483,14 +483,28 @@
   float: right;
 }
 
-// ============ 科技风主题全局覆盖 ============
+// ============ Notion 风格全局覆盖 ============
 // 全局卡片样式
-.el-card { border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+.el-card { border-radius: 12px; border: 1px solid #E5E3DF; box-shadow: 0 1px 3px rgba(15,15,15,0.04); }
 .el-table { border-radius: 8px; overflow: hidden; }
-.el-button--primary { background: #00D4FF; border-color: #00D4FF; }
-.el-button--primary:hover { background: #00B8E0; border-color: #00B8E0; }
-.el-pagination button:hover, .el-pagination .el-pager li:hover { color: #00D4FF; }
+.el-button--primary { background: #5645D4; border-color: #5645D4; }
+.el-button--primary:hover { background: #4534B3; border-color: #4534B3; }
+.el-button--primary:active { background: #3A2A99; border-color: #3A2A99; }
+.el-button--primary.is-plain { color: #5645D4; background: #fff; border-color: #5645D4; }
+.el-pagination button:hover, .el-pagination .el-pager li:hover { color: #5645D4; }
+.el-pagination .el-pager li.active { color: #5645D4; }
 
 // 表格悬停
-.el-table--striped .el-table__body tr.el-table__row--striped td { background: #F8FAFC; }
-.el-table tbody tr:hover > td { background: rgba(0,212,255,0.03) !important; }
+.el-table--striped .el-table__body tr.el-table__row--striped td { background: #FAF9F8; }
+.el-table tbody tr:hover > td { background: rgba(86,69,212,0.03) !important; }
+
+// 链接
+.el-link--primary { color: #5645D4; }
+.el-breadcrumb__inner a, .el-breadcrumb__inner.is-link { color: #5645D4; }
+
+// 输入框聚焦边框
+.el-input.is-active .el-input__inner, .el-input__inner:focus { border-color: #5645D4; }
+
+// 弹窗/抽屉
+.el-dialog { border-radius: 12px; }
+.el-dialog__title { font-weight: 600; color: #37352F; }
