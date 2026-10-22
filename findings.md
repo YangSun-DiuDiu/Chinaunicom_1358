@@ -449,3 +449,21 @@ PENDING/APPROVED → CANCELLED
   1. `src/views/index.vue`：删除 `portal-logo` img 与其样式，门户头部仅保留「智慧园区·综合管理平台」标题 + 英文副标题 + 紫色 accent 短线；
   2. `src/layout/components/Navbar.vue`：删除「返回首页」router-link（含 `showBackHome` computed 与 `.back-home-link` 样式），保留汉堡按钮 + 面包屑。
 - **验证**：playwright 实测截图 `截图/portal_nologo.png`（门户无 logo）、`截图/navbar_noback.png`（访客页 navbar 无返回首页，面包屑「首页/访客管理/访客预约」可直达），已交付用户确认。
+
+## 照片无法预览修复：Nginx 补 /profile/ 反代（2026-10-22）
+
+- **症状**：人员照片上传成功（文件落盘 + `sys_user.photo` 写入 `http://192.168.1.60/profile/upload/...`），但「修改用户」弹窗内 60px 缩略图无法显示。
+- **根因**：Nginx `zhihuiyuanqu.conf` 只有 `location / { try_files ... /index.html }` 和 `location /prod-api/`，**缺少 `/profile/` 反代** → `/profile/upload/...` 被 try_files 兜底返回 SPA 的 index.html（`HTTP 200 text/html`，非图片）。
+- **修复**（192.168.1.60 `/etc/nginx/conf.d/zhihuiyuanqu.conf`，原配置已备份 `.bak-profilefix`）：
+  ```
+  location /profile/ {
+      proxy_pass http://127.0.0.1:8080;   # 无尾斜杠：保留 /profile/ 前缀
+      proxy_set_header Host $host;
+      proxy_set_header X-Real-IP $remote_addr;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      client_max_body_size 20m;
+  }
+  ```
+  后端若依 ResourceConfig 映射 `/profile/** → /home/ruoyi/uploadPath/`，与上传目录一致。
+- **验证**：`nginx -t` 通过 + reload；`GET /profile/upload/2026/10/22/page-...png` 由 text/html → `200 image/png`（124138B）；浏览器「修改用户」弹窗 img `complete=true`、naturalW/H=1249×1221（原图正常加载）；截图 `截图/photo_thumb.png`。
+- **注意**：此修复在服务器 Nginx 上，不在代码仓库；后续后端若换端口需同步改此处。
