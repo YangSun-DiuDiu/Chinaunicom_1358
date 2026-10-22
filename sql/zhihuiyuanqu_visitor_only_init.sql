@@ -35,11 +35,23 @@ create table sys_dept (
 -- ----------------------------
 -- 初始化-部门表数据
 -- ----------------------------
-insert into sys_dept values(100,  0,   '0',          '智慧园区',   0, '系统管理员', '15888888888', 'admin@zhihuiyuanqu.com', '0', '0', 'admin', sysdate(), '', null);
-insert into sys_dept values(101,  100, '0,100',      '行政部',     1, '', '', '', '0', '0', 'admin', sysdate(), '', null);
-insert into sys_dept values(102,  100, '0,100',      '保安部',     2, '', '', '', '0', '0', 'admin', sysdate(), '', null);
-insert into sys_dept values(103,  100, '0,100',      '工程部',     3, '', '', '', '0', '0', 'admin', sysdate(), '', null);
-insert into sys_dept values(104,  100, '0,100',      '物业部',     4, '', '', '', '0', '0', 'admin', sysdate(), '', null);
+-- 初始化-部门表数据（镭诺电子真实组织，2026.10 花名册重建）
+insert into sys_dept values(1, 0, '0', '镭诺电子（宁波）有限公司', 0, '刘健朝', '', '', '0', '0', 'admin', sysdate(), '', null);
+insert into sys_dept values(2, 1, '0,1', '慈溪总部', 1, null, '', '', '0', '0', 'admin', sysdate(), '', null);
+insert into sys_dept values(3, 1, '0,1', '北京分公司', 2, null, '', '', '0', '0', 'admin', sysdate(), '', null);
+insert into sys_dept values(4, 1, '0,1', '深圳分公司', 3, null, '', '', '0', '0', 'admin', sysdate(), '', null);
+insert into sys_dept values(5, 1, '0,1', '慈鸿', 4, null, '', '', '0', '0', 'admin', sysdate(), '', null);
+insert into sys_dept values(10, 2, '0,1,2', '公司领导', 1, '刘健朝', '', '', '0', '0', 'admin', sysdate(), '', null);
+insert into sys_dept values(11, 2, '0,1,2', '综合管理部', 2, '岑梦婷', '', '', '0', '0', 'admin', sysdate(), '', null);
+insert into sys_dept values(12, 2, '0,1,2', '工程技术部', 3, '王欢', '', '', '0', '0', 'admin', sysdate(), '', null);
+insert into sys_dept values(13, 2, '0,1,2', '市场营销部', 4, '徐少尉', '', '', '0', '0', 'admin', sysdate(), '', null);
+insert into sys_dept values(14, 2, '0,1,2', '项目管理部', 5, '陈寅', '', '', '0', '0', 'admin', sysdate(), '', null);
+insert into sys_dept values(15, 2, '0,1,2', '厂务办公室', 6, '高伟强', '', '', '0', '0', 'admin', sysdate(), '', null);
+insert into sys_dept values(16, 2, '0,1,2', '厂长办公室', 7, '施保球', '', '', '0', '0', 'admin', sysdate(), '', null);
+insert into sys_dept values(20, 3, '0,1,3', '总经办', 1, '岑烨', '', '', '0', '0', 'admin', sysdate(), '', null);
+insert into sys_dept values(21, 3, '0,1,3', '项目管理部', 2, '郭清梅', '', '', '0', '0', 'admin', sysdate(), '', null);
+insert into sys_dept values(30, 4, '0,1,4', '市场营销部', 1, '刘振州', '', '', '0', '0', 'admin', sysdate(), '', null);
+insert into sys_dept values(40, 5, '0,1,5', '工地管理部', 1, '陈曙光', '', '', '0', '0', 'admin', sysdate(), '', null);
 
 
 -- ----------------------------
@@ -75,7 +87,56 @@ create table sys_user (
 -- ----------------------------
 -- 初始化-用户信息表数据（admin/admin123）
 -- ----------------------------
-insert into sys_user values(1,  100, 'admin', '', '系统管理员', '00', 'admin@zhihuiyuanqu.com', '15888888888', '0', '', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', '127.0.0.1', sysdate(), sysdate(), 'admin', sysdate(), '', null, '超级管理员');
+insert into sys_user values(1,  1, 'admin', '', '系统管理员', '00', 'admin@zhihuiyuanqu.com', '15888888888', '0', '', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', '127.0.0.1', sysdate(), sysdate(), 'admin', sysdate(), '', null, '超级管理员');
+-- 初始化-花名册员工用户（2026.10，角色4=访客管理员，密码 admin123）
+insert into sys_user (user_id, dept_id, user_name, nick_name, email, phonenumber, sex, avatar, password, status, del_flag, create_by, create_time, update_by, update_time, remark) values (2, 10, 'liujianchao', '刘健朝', '', '18600669024', '0', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', 'admin', sysdate(), 'admin', sysdate(), '花名册2026.10');
+insert into sys_user (user_id, dept_id, user_name, nick_name, email, phonenumber, sex, avatar, password, status, del_flag, create_by, create_time, update_by, update_time, remark) values (3, 20, 'cenye', '岑烨', '', '15210685008', '0', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', 'admin', sysdate(), 'admin', sysdate(), '花名册2026.10');
+insert into sys_user (user_id, dept_id, user_name, nick_name, email, phonenumber, sex, avatar, password, status, del_flag, create_by, create_time, update_by, update_time, remark) values (4, 11, 'cenmengting', '岑梦婷', '', '18217689986', '0', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', 'admin', sysdate(), 'admin', sysdate(), '花名册2026.10');
+insert into sys_user (user_id, dept_id, user_name, nick_name, email, phonenumber, sex, avatar, password, status, del_flag, create_by, create_time, update_by, update_time, remark) values (5, 11, 'cenchaochao', '岑超超', '', '15158322891', '0', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', 'admin', sysdate(), 'admin', sysdate(), '花名册2026.10');
+insert into sys_user (user_id, dept_id, user_name, nick_name, email, phonenumber, sex, avatar, password, status, del_flag, create_by, create_time, update_by, update_time, remark) values (6, 11, 'zhongchuqi', '钟楚琪', '', '15968025921', '0', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', 'admin', sysdate(), 'admin', sysdate(), '花名册2026.10');
+insert into sys_user (user_id, dept_id, user_name, nick_name, email, phonenumber, sex, avatar, password, status, del_flag, create_by, create_time, update_by, update_time, remark) values (7, 11, 'songxincheng', '宋鑫诚', '', '13685875881', '0', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', 'admin', sysdate(), 'admin', sysdate(), '花名册2026.10');
+insert into sys_user (user_id, dept_id, user_name, nick_name, email, phonenumber, sex, avatar, password, status, del_flag, create_by, create_time, update_by, update_time, remark) values (8, 11, 'liangwenna', '梁文娜', '', '18715135326', '0', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', 'admin', sysdate(), 'admin', sysdate(), '花名册2026.10');
+insert into sys_user (user_id, dept_id, user_name, nick_name, email, phonenumber, sex, avatar, password, status, del_flag, create_by, create_time, update_by, update_time, remark) values (9, 11, 'sujiafa', '苏家发', '', '13857804682', '0', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', 'admin', sysdate(), 'admin', sysdate(), '花名册2026.10');
+insert into sys_user (user_id, dept_id, user_name, nick_name, email, phonenumber, sex, avatar, password, status, del_flag, create_by, create_time, update_by, update_time, remark) values (10, 11, 'cenbaiqing', '岑柏庆', '', '15958827656', '0', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', 'admin', sysdate(), 'admin', sysdate(), '花名册2026.10');
+insert into sys_user (user_id, dept_id, user_name, nick_name, email, phonenumber, sex, avatar, password, status, del_flag, create_by, create_time, update_by, update_time, remark) values (11, 11, 'cenjianxue', '岑建学', '', '18094559052', '0', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', 'admin', sysdate(), 'admin', sysdate(), '花名册2026.10');
+insert into sys_user (user_id, dept_id, user_name, nick_name, email, phonenumber, sex, avatar, password, status, del_flag, create_by, create_time, update_by, update_time, remark) values (12, 11, 'zhujianli', '诸建立', '', '15658243913', '0', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', 'admin', sysdate(), 'admin', sysdate(), '花名册2026.10');
+insert into sys_user (user_id, dept_id, user_name, nick_name, email, phonenumber, sex, avatar, password, status, del_flag, create_by, create_time, update_by, update_time, remark) values (13, 11, 'wangjiong', '王炯', '', '13685733718', '0', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', 'admin', sysdate(), 'admin', sysdate(), '花名册2026.10');
+insert into sys_user (user_id, dept_id, user_name, nick_name, email, phonenumber, sex, avatar, password, status, del_flag, create_by, create_time, update_by, update_time, remark) values (14, 12, 'wanghuan', '王欢', '', '15560230695', '0', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', 'admin', sysdate(), 'admin', sysdate(), '花名册2026.10');
+insert into sys_user (user_id, dept_id, user_name, nick_name, email, phonenumber, sex, avatar, password, status, del_flag, create_by, create_time, update_by, update_time, remark) values (15, 12, 'zhoumengjiao', '周梦姣', '', '13685813690', '0', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', 'admin', sysdate(), 'admin', sysdate(), '花名册2026.10');
+insert into sys_user (user_id, dept_id, user_name, nick_name, email, phonenumber, sex, avatar, password, status, del_flag, create_by, create_time, update_by, update_time, remark) values (16, 12, 'sunbin', '孙斌', '', '13042998627', '0', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', 'admin', sysdate(), 'admin', sysdate(), '花名册2026.10');
+insert into sys_user (user_id, dept_id, user_name, nick_name, email, phonenumber, sex, avatar, password, status, del_flag, create_by, create_time, update_by, update_time, remark) values (17, 12, 'shiyali', '时雅丽', '', '19712528621', '0', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', 'admin', sysdate(), 'admin', sysdate(), '花名册2026.10');
+insert into sys_user (user_id, dept_id, user_name, nick_name, email, phonenumber, sex, avatar, password, status, del_flag, create_by, create_time, update_by, update_time, remark) values (18, 12, 'chendongyan', '陈董嫣', '', '18868020417', '0', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', 'admin', sysdate(), 'admin', sysdate(), '花名册2026.10');
+insert into sys_user (user_id, dept_id, user_name, nick_name, email, phonenumber, sex, avatar, password, status, del_flag, create_by, create_time, update_by, update_time, remark) values (19, 12, 'zhaoguangwei', '赵广威', '', '15058285046', '0', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', 'admin', sysdate(), 'admin', sysdate(), '花名册2026.10');
+insert into sys_user (user_id, dept_id, user_name, nick_name, email, phonenumber, sex, avatar, password, status, del_flag, create_by, create_time, update_by, update_time, remark) values (20, 12, 'zhanglingmin', '张灵敏', '', '18656847260', '0', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', 'admin', sysdate(), 'admin', sysdate(), '花名册2026.10');
+insert into sys_user (user_id, dept_id, user_name, nick_name, email, phonenumber, sex, avatar, password, status, del_flag, create_by, create_time, update_by, update_time, remark) values (21, 12, 'hujiaojiao', '胡娇娇', '', '15155444815', '0', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', 'admin', sysdate(), 'admin', sysdate(), '花名册2026.10');
+insert into sys_user (user_id, dept_id, user_name, nick_name, email, phonenumber, sex, avatar, password, status, del_flag, create_by, create_time, update_by, update_time, remark) values (22, 12, 'tongkejin', '童可金', '', '18358454581', '0', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', 'admin', sysdate(), 'admin', sysdate(), '花名册2026.10');
+insert into sys_user (user_id, dept_id, user_name, nick_name, email, phonenumber, sex, avatar, password, status, del_flag, create_by, create_time, update_by, update_time, remark) values (23, 12, 'zhangli', '张莉', '', '18790319091', '0', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', 'admin', sysdate(), 'admin', sysdate(), '花名册2026.10');
+insert into sys_user (user_id, dept_id, user_name, nick_name, email, phonenumber, sex, avatar, password, status, del_flag, create_by, create_time, update_by, update_time, remark) values (24, 12, 'zhangyutao', '张宇涛', '', '13677444730', '0', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', 'admin', sysdate(), 'admin', sysdate(), '花名册2026.10');
+insert into sys_user (user_id, dept_id, user_name, nick_name, email, phonenumber, sex, avatar, password, status, del_flag, create_by, create_time, update_by, update_time, remark) values (25, 12, 'zhangjiahong', '张佳红', '', '15258281145', '0', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', 'admin', sysdate(), 'admin', sysdate(), '花名册2026.10');
+insert into sys_user (user_id, dept_id, user_name, nick_name, email, phonenumber, sex, avatar, password, status, del_flag, create_by, create_time, update_by, update_time, remark) values (26, 12, 'diaojixiang', '刁吉祥', '', '17816404683', '0', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', 'admin', sysdate(), 'admin', sysdate(), '花名册2026.10');
+insert into sys_user (user_id, dept_id, user_name, nick_name, email, phonenumber, sex, avatar, password, status, del_flag, create_by, create_time, update_by, update_time, remark) values (27, 12, 'huangjiazhou', '黄嘉洲', '', '18758346061', '0', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', 'admin', sysdate(), 'admin', sysdate(), '花名册2026.10');
+insert into sys_user (user_id, dept_id, user_name, nick_name, email, phonenumber, sex, avatar, password, status, del_flag, create_by, create_time, update_by, update_time, remark) values (28, 12, 'lijiahao', '李嘉豪', '', '15195860817', '0', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', 'admin', sysdate(), 'admin', sysdate(), '花名册2026.10');
+insert into sys_user (user_id, dept_id, user_name, nick_name, email, phonenumber, sex, avatar, password, status, del_flag, create_by, create_time, update_by, update_time, remark) values (29, 13, 'xushaowei', '徐少尉', '', '13777883940', '0', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', 'admin', sysdate(), 'admin', sysdate(), '花名册2026.10');
+insert into sys_user (user_id, dept_id, user_name, nick_name, email, phonenumber, sex, avatar, password, status, del_flag, create_by, create_time, update_by, update_time, remark) values (30, 13, 'wangshuai', '王帅', '', '13023195288', '0', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', 'admin', sysdate(), 'admin', sysdate(), '花名册2026.10');
+insert into sys_user (user_id, dept_id, user_name, nick_name, email, phonenumber, sex, avatar, password, status, del_flag, create_by, create_time, update_by, update_time, remark) values (31, 13, 'zhangyin', '张引', '', '13567499438', '0', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', 'admin', sysdate(), 'admin', sysdate(), '花名册2026.10');
+insert into sys_user (user_id, dept_id, user_name, nick_name, email, phonenumber, sex, avatar, password, status, del_flag, create_by, create_time, update_by, update_time, remark) values (32, 13, 'chenwenbo', '陈文博', '', '13065896060', '0', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', 'admin', sysdate(), 'admin', sysdate(), '花名册2026.10');
+insert into sys_user (user_id, dept_id, user_name, nick_name, email, phonenumber, sex, avatar, password, status, del_flag, create_by, create_time, update_by, update_time, remark) values (33, 13, 'chenyuwei', '陈榆威', '', '13857456603', '0', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', 'admin', sysdate(), 'admin', sysdate(), '花名册2026.10');
+insert into sys_user (user_id, dept_id, user_name, nick_name, email, phonenumber, sex, avatar, password, status, del_flag, create_by, create_time, update_by, update_time, remark) values (34, 13, 'xutianle', '徐天乐', '', '13967892214', '0', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', 'admin', sysdate(), 'admin', sysdate(), '花名册2026.10');
+insert into sys_user (user_id, dept_id, user_name, nick_name, email, phonenumber, sex, avatar, password, status, del_flag, create_by, create_time, update_by, update_time, remark) values (35, 30, 'liuzhenzhou', '刘振州', '', '19806699419', '0', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', 'admin', sysdate(), 'admin', sysdate(), '花名册2026.10');
+insert into sys_user (user_id, dept_id, user_name, nick_name, email, phonenumber, sex, avatar, password, status, del_flag, create_by, create_time, update_by, update_time, remark) values (36, 30, 'wangzhiyou', '王志有', '', '13410022243', '0', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', 'admin', sysdate(), 'admin', sysdate(), '花名册2026.10');
+insert into sys_user (user_id, dept_id, user_name, nick_name, email, phonenumber, sex, avatar, password, status, del_flag, create_by, create_time, update_by, update_time, remark) values (37, 30, 'guyuquan', '古玉全', '', '13040830374', '0', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', 'admin', sysdate(), 'admin', sysdate(), '花名册2026.10');
+insert into sys_user (user_id, dept_id, user_name, nick_name, email, phonenumber, sex, avatar, password, status, del_flag, create_by, create_time, update_by, update_time, remark) values (38, 30, 'fanwenlu', '范文禄', '', '13584940805', '0', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', 'admin', sysdate(), 'admin', sysdate(), '花名册2026.10');
+insert into sys_user (user_id, dept_id, user_name, nick_name, email, phonenumber, sex, avatar, password, status, del_flag, create_by, create_time, update_by, update_time, remark) values (39, 30, 'chencongqiong', '陈聪琼', '', '18620806038', '0', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', 'admin', sysdate(), 'admin', sysdate(), '花名册2026.10');
+insert into sys_user (user_id, dept_id, user_name, nick_name, email, phonenumber, sex, avatar, password, status, del_flag, create_by, create_time, update_by, update_time, remark) values (40, 30, 'wangnana', '王娜娜', '', '13502883189', '0', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', 'admin', sysdate(), 'admin', sysdate(), '花名册2026.10');
+insert into sys_user (user_id, dept_id, user_name, nick_name, email, phonenumber, sex, avatar, password, status, del_flag, create_by, create_time, update_by, update_time, remark) values (41, 21, 'guoqingmei', '郭清梅', '', '18613816308', '0', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', 'admin', sysdate(), 'admin', sysdate(), '花名册2026.10');
+insert into sys_user (user_id, dept_id, user_name, nick_name, email, phonenumber, sex, avatar, password, status, del_flag, create_by, create_time, update_by, update_time, remark) values (42, 21, 'guojiaqi', '郭家其', '', '18749302939', '0', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', 'admin', sysdate(), 'admin', sysdate(), '花名册2026.10');
+insert into sys_user (user_id, dept_id, user_name, nick_name, email, phonenumber, sex, avatar, password, status, del_flag, create_by, create_time, update_by, update_time, remark) values (43, 14, 'chenyin', '陈寅', '', '13095966710', '0', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', 'admin', sysdate(), 'admin', sysdate(), '花名册2026.10');
+insert into sys_user (user_id, dept_id, user_name, nick_name, email, phonenumber, sex, avatar, password, status, del_flag, create_by, create_time, update_by, update_time, remark) values (44, 14, 'dingqipei', '丁齐佩', '', '13732103775', '0', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', 'admin', sysdate(), 'admin', sysdate(), '花名册2026.10');
+insert into sys_user (user_id, dept_id, user_name, nick_name, email, phonenumber, sex, avatar, password, status, del_flag, create_by, create_time, update_by, update_time, remark) values (45, 15, 'gaoweiqiang', '高伟强', '', '18931069208', '0', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', 'admin', sysdate(), 'admin', sysdate(), '花名册2026.10');
+insert into sys_user (user_id, dept_id, user_name, nick_name, email, phonenumber, sex, avatar, password, status, del_flag, create_by, create_time, update_by, update_time, remark) values (46, 16, 'shibaoqiu', '施保球', '', '13418540069', '0', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', 'admin', sysdate(), 'admin', sysdate(), '花名册2026.10');
+insert into sys_user (user_id, dept_id, user_name, nick_name, email, phonenumber, sex, avatar, password, status, del_flag, create_by, create_time, update_by, update_time, remark) values (47, 16, 'chendingjian', '陈丁健', '', '18220392666', '0', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', 'admin', sysdate(), 'admin', sysdate(), '花名册2026.10');
+insert into sys_user (user_id, dept_id, user_name, nick_name, email, phonenumber, sex, avatar, password, status, del_flag, create_by, create_time, update_by, update_time, remark) values (48, 16, 'youzhengtian', '游政天', '', '16624771645', '0', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', 'admin', sysdate(), 'admin', sysdate(), '花名册2026.10');
+insert into sys_user (user_id, dept_id, user_name, nick_name, email, phonenumber, sex, avatar, password, status, del_flag, create_by, create_time, update_by, update_time, remark) values (49, 40, 'chenshuguang', '陈曙光', '', '15705846603', '0', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', 'admin', sysdate(), 'admin', sysdate(), '花名册2026.10');
 
 
 -- ----------------------------
@@ -242,6 +303,55 @@ create table sys_user_role (
 -- 初始化-用户和角色关联表数据
 -- ----------------------------
 insert into sys_user_role values ('1', '1');
+-- 初始化-花名册员工角色绑定（全部访客管理员）
+insert into sys_user_role values (2, '4');
+insert into sys_user_role values (3, '4');
+insert into sys_user_role values (4, '4');
+insert into sys_user_role values (5, '4');
+insert into sys_user_role values (6, '4');
+insert into sys_user_role values (7, '4');
+insert into sys_user_role values (8, '4');
+insert into sys_user_role values (9, '4');
+insert into sys_user_role values (10, '4');
+insert into sys_user_role values (11, '4');
+insert into sys_user_role values (12, '4');
+insert into sys_user_role values (13, '4');
+insert into sys_user_role values (14, '4');
+insert into sys_user_role values (15, '4');
+insert into sys_user_role values (16, '4');
+insert into sys_user_role values (17, '4');
+insert into sys_user_role values (18, '4');
+insert into sys_user_role values (19, '4');
+insert into sys_user_role values (20, '4');
+insert into sys_user_role values (21, '4');
+insert into sys_user_role values (22, '4');
+insert into sys_user_role values (23, '4');
+insert into sys_user_role values (24, '4');
+insert into sys_user_role values (25, '4');
+insert into sys_user_role values (26, '4');
+insert into sys_user_role values (27, '4');
+insert into sys_user_role values (28, '4');
+insert into sys_user_role values (29, '4');
+insert into sys_user_role values (30, '4');
+insert into sys_user_role values (31, '4');
+insert into sys_user_role values (32, '4');
+insert into sys_user_role values (33, '4');
+insert into sys_user_role values (34, '4');
+insert into sys_user_role values (35, '4');
+insert into sys_user_role values (36, '4');
+insert into sys_user_role values (37, '4');
+insert into sys_user_role values (38, '4');
+insert into sys_user_role values (39, '4');
+insert into sys_user_role values (40, '4');
+insert into sys_user_role values (41, '4');
+insert into sys_user_role values (42, '4');
+insert into sys_user_role values (43, '4');
+insert into sys_user_role values (44, '4');
+insert into sys_user_role values (45, '4');
+insert into sys_user_role values (46, '4');
+insert into sys_user_role values (47, '4');
+insert into sys_user_role values (48, '4');
+insert into sys_user_role values (49, '4');
 
 
 -- ----------------------------
@@ -321,7 +431,7 @@ create table sys_role_dept (
 -- ----------------------------
 -- 初始化-角色和部门关联表数据（园区管理员 data_scope=4，绑定根部门）
 -- ----------------------------
-insert into sys_role_dept values ('5', '100');
+insert into sys_role_dept values ('5', '1');
 
 
 -- ----------------------------
