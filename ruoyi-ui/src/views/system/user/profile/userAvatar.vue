@@ -161,7 +161,21 @@ export default {
 .user-info-head {
   position: relative;
   display: inline-block;
-  height: 120px;
+  height: 96px;
+}
+
+.user-info-head img {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 1px #e5e3df;
+  transition: box-shadow .2s ease;
+}
+
+.user-info-head:hover img {
+  box-shadow: 0 0 0 2px #5645d4;
 }
 
 .user-info-head:hover:after {
@@ -171,14 +185,14 @@ export default {
   right: 0;
   top: 0;
   bottom: 0;
-  color: #eee;
-  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  background: rgba(86, 69, 212, 0.55);
   font-size: 24px;
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   cursor: pointer;
-  line-height: 110px;
+  line-height: 92px;
   border-radius: 50%;
 }
 </style>

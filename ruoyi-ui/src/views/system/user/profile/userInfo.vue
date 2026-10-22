@@ -1,23 +1,23 @@
 <template>
-  <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+  <el-form ref="form" :model="form" :rules="rules" label-width="88px" class="notion-form">
     <el-form-item label="用户昵称" prop="nickName">
-      <el-input v-model="form.nickName" maxlength="30" />
-    </el-form-item> 
+      <el-input v-model="form.nickName" maxlength="30" placeholder="请输入昵称" />
+    </el-form-item>
     <el-form-item label="手机号码" prop="phonenumber">
-      <el-input v-model="form.phonenumber" maxlength="11" />
+      <el-input v-model="form.phonenumber" maxlength="11" placeholder="请输入手机号码" />
     </el-form-item>
     <el-form-item label="邮箱" prop="email">
-      <el-input v-model="form.email" maxlength="50" />
+      <el-input v-model="form.email" maxlength="50" placeholder="请输入邮箱地址" />
     </el-form-item>
     <el-form-item label="性别">
-      <el-radio-group v-model="form.sex">
+      <el-radio-group v-model="form.sex" class="notion-radio">
         <el-radio label="0">男</el-radio>
         <el-radio label="1">女</el-radio>
       </el-radio-group>
     </el-form-item>
     <el-form-item>
-      <el-button type="primary" size="mini" @click="submit">保存</el-button>
-      <el-button type="danger" size="mini" @click="close">关闭</el-button>
+      <el-button type="primary" @click="submit">保存修改</el-button>
+      <el-button plain @click="close">关闭</el-button>
     </el-form-item>
   </el-form>
 </template>
@@ -86,3 +86,61 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.notion-form {
+  max-width: 480px;
+
+  ::v-deep .el-form-item {
+    margin-bottom: 22px;
+  }
+
+  ::v-deep .el-form-item__label {
+    font-size: 13px;
+    color: #5d5b54;
+    line-height: 40px;
+  }
+
+  ::v-deep .el-input__inner {
+    height: 40px;
+    line-height: 40px;
+    border-radius: 8px;
+    border-color: #c8c4be;
+    color: #37352f;
+
+    &:hover {
+      border-color: #a4a097;
+    }
+
+    &:focus {
+      border-color: #5645d4;
+    }
+  }
+
+  ::v-deep .el-input__inner::placeholder {
+    color: #bbb8b1;
+  }
+
+  .notion-radio {
+    ::v-deep .el-radio__label {
+      color: #37352f;
+      font-size: 14px;
+    }
+  }
+
+  ::v-deep .el-button--primary {
+    border-radius: 8px;
+  }
+
+  ::v-deep .el-button--default {
+    border-radius: 8px;
+    border-color: #c8c4be;
+    color: #37352f;
+
+    &:hover {
+      border-color: #5645d4;
+      color: #5645d4;
+    }
+  }
+}
+</style>

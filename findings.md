@@ -430,4 +430,14 @@ PENDING/APPROVED → CANCELLED
   - 侧边栏展开态（图形标+智慧园区文字）✅；折叠态（34px 图形标）✅；
   - favicon.ico 线上 `GET /favicon.ico` 200 / 4089B ✅；`img.sidebar-logo-img` 打包资源 `static/img/logo-icon.a2c1128b.png` 加载 2048×2048 ✅。
 - **部署**：`npm run build:prod`（exit 0）→ `deploy.py --mode frontend`（已生效）。
-- **注意**：本次 commit 只含 logo 相关文件；Navbar 精简+个人信息页改造（任务#31）已部署但**仍未 commit**，待用户确认满意后再单独提交。
+- **注意**：本次 commit 只含 logo 相关文件；Navbar 精简+个人信息页改造（任务#31）见下节，用户确认满意后随本记录一并提交。
+
+## Navbar 图标精简 + 个人信息页 Notion 化改造（2026-10-22，任务#31）
+
+- **背景**：界面右上角图标堆叠太"若依"化，个人信息维护页同理，用户要求精简并改造成本项目自己的风格（Notion 基准）。
+- **改动文件**（commit 随本记录提交，已部署 192.168.1.60 生效）：
+  1. `src/layout/components/Navbar.vue`：删除右上角搜索 Search、全屏 Screenfull、布局大小 SizeSelect 三个图标（含 import 与模板）；头像下拉只保留「个人中心 / 退出登录」；删除 setLayout/lockScreen/setting 死代码；
+  2. `src/views/system/user/profile/index.vue`：重写为 Notion 卡片布局——左侧信息卡（96px 头像 + 昵称 + 紫色徽章 + 信息行），右侧「个人资料」下划线 tabs；
+  3. `src/views/system/user/profile/userInfo.vue` / `resetPwd.vue`：表单统一 8px 圆角、紫色 2px focus 描边；
+  4. `src/views/system/user/profile/userAvatar.vue`：头像 96px + hover 紫色光圈。
+- **验证**：浏览器实测（playwright）截图 `截图/navbar_top.png`（首页右上角精简后仅剩「选择组织/系统管理员」）、`截图/profile_notion.png`（个人信息页新布局），已交付用户并获确认满意。

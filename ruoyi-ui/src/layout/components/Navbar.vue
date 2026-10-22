@@ -28,14 +28,6 @@
           </el-dropdown-menu>
         </el-dropdown>
 
-        <search id="header-search" class="right-menu-item" />
-
-        <screenfull id="screenfull" class="right-menu-item hover-effect" />
-
-        <el-tooltip content="布局大小" effect="dark" placement="bottom">
-          <size-select id="size-select" class="right-menu-item hover-effect" />
-        </el-tooltip>
-
       </template>
 
       <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="hover">
@@ -47,12 +39,6 @@
           <router-link to="/user/profile">
             <el-dropdown-item>个人中心</el-dropdown-item>
           </router-link>
-          <el-dropdown-item @click.native="setLayout" v-if="setting">
-            <span>布局设置</span>
-          </el-dropdown-item>
-          <el-dropdown-item @click.native="lockScreen">
-            <span>锁定屏幕</span>
-          </el-dropdown-item>
           <el-dropdown-item divided @click.native="logout">
             <span>退出登录</span>
           </el-dropdown-item>
@@ -69,9 +55,6 @@ import TopNav from './TopNav'
 import TopBar from './TopBar'
 import Logo from './Sidebar/Logo'
 import Hamburger from '@/components/Hamburger'
-import Screenfull from '@/components/Screenfull'
-import SizeSelect from '@/components/SizeSelect'
-import Search from '@/components/HeaderSearch'
 import { switchDeptContext, clearDeptContext, deptTreeSelect } from '@/api/system/dept'
 
 export default {
@@ -80,10 +63,7 @@ export default {
     Logo,
     TopNav,
     TopBar,
-    Hamburger,
-    Screenfull,
-    SizeSelect,
-    Search
+    Hamburger
   },
   data() {
     return {
@@ -104,11 +84,6 @@ export default {
       const matched = this.$route.matched || []
       return matched.some(m => m.meta && m.meta.parentMenuId)
     },
-    setting: {
-      get() {
-        return this.$store.state.settings.showSettings
-      }
-    },
     navType: {
       get() {
         return this.$store.state.settings.navType
@@ -126,15 +101,6 @@ export default {
   methods: {
     toggleSideBar() {
       this.$store.dispatch('app/toggleSideBar')
-    },
-    setLayout(event) {
-      this.$emit('setLayout')
-    },
-    lockScreen() {
-      const currentPath = this.$route.fullPath
-      this.$store.dispatch('lock/lockScreen', currentPath).then(() => {
-        this.$router.push('/lock')
-      })
     },
     logout() {
       this.$confirm('确定注销并退出系统吗？', '提示', {

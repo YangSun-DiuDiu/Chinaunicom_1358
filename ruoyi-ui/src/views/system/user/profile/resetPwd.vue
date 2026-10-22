@@ -1,5 +1,5 @@
 <template>
-  <el-form ref="form" :model="user" :rules="formRules" label-width="80px">
+  <el-form ref="form" :model="user" :rules="formRules" label-width="88px" class="notion-form">
     <el-form-item label="旧密码" prop="oldPassword">
       <el-input v-model="user.oldPassword" placeholder="请输入旧密码" type="password" show-password/>
     </el-form-item>
@@ -10,8 +10,8 @@
       <el-input v-model="user.confirmPassword" placeholder="请确认新密码" type="password" show-password/>
     </el-form-item>
     <el-form-item>
-      <el-button type="primary" size="mini" @click="submit">保存</el-button>
-      <el-button type="danger" size="mini" @click="close">关闭</el-button>
+      <el-button type="primary" @click="submit">确认修改</el-button>
+      <el-button plain @click="close">关闭</el-button>
     </el-form-item>
   </el-form>
 </template>
@@ -68,3 +68,54 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.notion-form {
+  max-width: 480px;
+
+  ::v-deep .el-form-item {
+    margin-bottom: 22px;
+  }
+
+  ::v-deep .el-form-item__label {
+    font-size: 13px;
+    color: #5d5b54;
+    line-height: 40px;
+  }
+
+  ::v-deep .el-input__inner {
+    height: 40px;
+    line-height: 40px;
+    border-radius: 8px;
+    border-color: #c8c4be;
+    color: #37352f;
+
+    &:hover {
+      border-color: #a4a097;
+    }
+
+    &:focus {
+      border-color: #5645d4;
+    }
+  }
+
+  ::v-deep .el-input__inner::placeholder {
+    color: #bbb8b1;
+  }
+
+  ::v-deep .el-button--primary {
+    border-radius: 8px;
+  }
+
+  ::v-deep .el-button--default {
+    border-radius: 8px;
+    border-color: #c8c4be;
+    color: #37352f;
+
+    &:hover {
+      border-color: #5645d4;
+      color: #5645d4;
+    }
+  }
+}
+</style>
