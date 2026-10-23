@@ -191,6 +191,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where a.pass_code = #{passCode} AND a.del_flag = '0'
     </select>
 
+    <select id="selectAppointmentBriefByPhone" parameterType="String" resultType="com.ruoyi.system.domain.vo.AppointmentBriefDTO">
+        select a.appointment_id as appointmentId, a.pass_code as passCode, a.visitor_name as visitorName,
+               a.visitor_phone as visitorPhone, a.visitor_company as visitorCompany,
+               a.host_name as hostName, a.host_dept as hostDept, a.visit_time as visitTime, a.status
+        from visitor_appointment a
+        where a.visitor_phone = #{visitorPhone} AND a.del_flag = '0'
+        order by a.create_time desc
+    </select>
+
     <select id="selectUserIdByNickName" parameterType="String" resultType="Long">
         SELECT user_id FROM sys_user WHERE nick_name = #{nickName} AND del_flag = '0' LIMIT 1
     </select>

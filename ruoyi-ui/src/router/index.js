@@ -109,6 +109,12 @@ export const staticRoutes = [
     meta: { title: "通行码查询", permissions: ["visitor:appointment:list"] },
   },
   {
+    path: "/h5/appointments",
+    component: () => import("@/views/h5/appointments"),
+    hidden: true,
+    meta: { title: "我的预约" },
+  },
+  {
     path: "/h5/guard",
     component: () => import("@/views/h5/guard"),
     hidden: true,

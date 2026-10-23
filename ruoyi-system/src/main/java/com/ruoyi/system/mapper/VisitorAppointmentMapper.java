@@ -67,6 +67,14 @@ public interface VisitorAppointmentMapper
     public VisitorAppointment selectAppointmentByPassCode(String passCode);
 
     /**
+     * 通过访客手机号查询预约列表（公开查询用，按创建时间倒序）
+     *
+     * @param visitorPhone 访客手机号
+     * @return 预约概要列表
+     */
+    public java.util.List<com.ruoyi.system.domain.vo.AppointmentBriefDTO> selectAppointmentBriefByPhone(String visitorPhone);
+
+    /**
      * 通过昵称（nick_name）查询用户ID，用于被访人→审批人匹配
      *
      * @param nickName 用户昵称

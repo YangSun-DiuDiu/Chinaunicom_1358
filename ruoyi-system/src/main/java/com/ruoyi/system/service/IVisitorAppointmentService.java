@@ -93,6 +93,14 @@ public interface IVisitorAppointmentService
     public VisitorAppointment selectAppointmentByPassCode(String passCode);
 
     /**
+     * 通过访客手机号查询预约概要列表（公开查询，按创建时间倒序）
+     *
+     * @param visitorPhone 访客手机号
+     * @return 预约概要列表
+     */
+    public java.util.List<com.ruoyi.system.domain.vo.AppointmentBriefDTO> selectAppointmentBriefByPhone(String visitorPhone);
+
+    /**
      * 到访确认：通行码验证通过后将预约状态更新为 VISITING
      *
      * @param passCode 通行码

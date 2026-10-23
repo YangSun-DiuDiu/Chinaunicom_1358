@@ -48,6 +48,22 @@ public class VisitorPassController extends BaseController
     }
 
     /**
+     * 按访客手机号查询预约概要列表（公开接口，无需认证，纯读）
+     *
+     * <p>供访客在门卫处出示通行码：输入手机号 → 列出该手机号的预约 →
+     * 选择某条预约展示二维码。仅返回展示字段，不含证件信息。</p>
+     */
+    @GetMapping("/list")
+    public AjaxResult listByPhone(String phone)
+    {
+        if (phone == null || phone.trim().isEmpty())
+        {
+            return error("请输入访客手机号");
+        }
+        return success(visitorAppointmentService.selectAppointmentBriefByPhone(phone.trim()));
+    }
+
+    /**
      * 到访确认（保安核验）：状态 → VISITING
      */
     @PostMapping("/{passCode}/checkin")

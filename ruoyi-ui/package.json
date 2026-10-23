@@ -39,6 +39,7 @@
     "jsencrypt": "3.0.0-rc.1",
     "marked": "^4.3.0",
     "nprogress": "0.2.0",
+    "qrcodejs2": "^0.0.2",
     "quill": "2.0.2",
     "screenfull": "5.0.2",
     "sortablejs": "1.10.2",

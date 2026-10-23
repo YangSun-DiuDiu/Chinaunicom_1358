@@ -300,6 +300,14 @@ public class VisitorAppointmentServiceImpl implements IVisitorAppointmentService
     }
 
     /**
+     * 通过访客手机号查询预约概要列表（公开查询）
+     */
+    @Override
+    public java.util.List<com.ruoyi.system.domain.vo.AppointmentBriefDTO> selectAppointmentBriefByPhone(String visitorPhone) {
+        return appointmentMapper.selectAppointmentBriefByPhone(visitorPhone);
+    }
+
+    /**
      * 到访确认：通行码验证通过后更新状态为 VISITING
      */
     @Override

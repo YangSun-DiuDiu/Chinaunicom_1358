@@ -11,8 +11,8 @@
       <div class="h5-card" @click="$router.push('/visitor/approval')">
         <span class="icon">✅</span><span class="label">访客审批</span>
       </div>
-      <div class="h5-card" @click="$router.push('/h5/visitor/pass')">
-        <span class="icon">🎫</span><span class="label">通行码</span>
+      <div class="h5-card" @click="$router.push('/h5/appointments')">
+        <span class="icon">🎫</span><span class="label">我的预约</span>
       </div>
       <div class="h5-card" @click="$router.push('/h5/guard')">
         <span class="icon">🔒</span><span class="label">保安核验</span>

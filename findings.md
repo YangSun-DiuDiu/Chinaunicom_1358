@@ -522,3 +522,23 @@ pm run build:prod 成功 + deploy.py --mode frontend 部署 1.94.26.126 成功�
   4. 输入无效码 BADCODE01 → "❌ 无效通行码"（截图 guard_invalid.png）；
   5. 库确认：9091（A168A0DA）核验后 APPROVED→VISITING（checkin 写操作生效）；9090（54BA4A6E）同样变 VISITING。
 - **注意事项**：① 保安账号 guard01 登录入口 = H5 首页（/h5）「保安核验」卡片，或直输 /h5/guard（路由权限 visitor:guard:verify，侧边栏 hidden）；② H5 登录页现在与 PC 一致需验证码（生产 captchaEnabled=true 保持）；③ 验证码为数学算式，答案存 Redis key captcha_codes:{uuid}（测试调试可用，勿外传）。
+
+## 二维码出示通道：手机号公开查询 + 二维码大屏（2026-10-23）
+
+- **需求背景**：访客预约完成后缺"门卫处出示二维码"通道——访客通行码页只显示文字无二维码，保安摄像头无码可扫。用户拍板方案：**先做成输入访客手机号公开查询的公开接口**（免登录）。
+- **后端**（新增公开接口，已部署 1.94.26.126）：
+  1. `VisitorPassController` 新增 `GET /pass/list?phone=`（挂 /pass/**，SecurityConfig 已 permitAll，无需改鉴权；DeptScopeInterceptor 对匿名 deptId=null 跳过过滤）；
+  2. 新 DTO `domain/vo/AppointmentBriefDTO.java`（appointmentId/passCode/visitorName/visitorPhone/visitorCompany/hostName/hostDept/visitTime/status，**不含身份证**）；
+  3. Mapper/XML `selectAppointmentBriefByPhone`（visitor_phone 精确匹配 + del_flag='0' + create_time 倒序；**列别名驼峰**——项目未开 mapUnderscoreToCamelCase 全局映射，resultType DTO 必须 `as camelCase` 别名，否则字段全 null）。
+- **前端**：
+  1. 新页 `h5/appointments.vue`（我的预约：手机号→列表→「出示通行码」跳 /h5/visitor/pass?code=）；路由注册 `/h5/appointments`；
+  2. `h5/visitor-pass.vue` 升级为二维码出示大屏：新增依赖 `qrcodejs2`，查询有效后渲染二维码（内容=通行码）+ 访客信息卡 + 通行码文字兜底 + 复制按钮；
+  3. `permission.js` whiteList 新增 `/h5/appointments`、`/h5/visitor/pass`；
+  4. H5 首页「通行码」卡片改名「我的预约」跳 /h5/appointments。
+- **关键 Bug（白屏）与修复**：白名单公开页未登录访问白屏。根因：staticRoutes（动态路由）**只在登录后 GenerateRoutes 时 addRoutes**，未登录白名单页无 token 直接放行但路由从未注册 → `currentRoute.matched=[]` → 渲染空。修复 `permission.js`：新增 `ensureStaticRoutes()`（未登录也 addRoutes 一次），守卫顶部对白名单且 `to.matched` 为空时先注册再 `next({...to, replace:true})` 强制重新解析（**必须 replace，否则匹配不重算，仍白屏**；防循环靠 matched 判空）。
+- **实测（生产 HTTPS 1.94.26.126，真实 Chrome）**：
+  1. 免登录访问 /h5/appointments 正常渲染（白名单生效）；
+  2. 输入 15669267932 → 返回 3 条孙扬预约（已到访+2 已通过，含被访人岑梦婷/时间/状态）；
+  3. 点「出示通行码」→ /h5/visitor/pass?code=54BA4A6E → "✅ 通行有效"+二维码+复制按钮（截图 DHg1ttpVdz / 8EwMR6hhU5 / oEhTkzngim）。
+- **安全提示（已向用户说明）**：公开按手机号查询 = 通行码泄露面（知道手机号即可调出二维码进门），属用户拍板的既有方案；列表/出示页均只读不写状态，checkin 仍须保安端显式 POST。
+- **待办（用户未最终表态）**：短信直达链接（审批通过短信拼 `https://1.94.26.126/h5/visitor/pass?code=` 进 passcode 变量）——二维码页已在白名单，随时可加。
