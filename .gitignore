@@ -70,3 +70,7 @@ Thumbs.db
 # Python
 __pycache__/
 *.py[cod]
+
+# 域名证书（含私钥，不入库）
+fangke.netsightplus.cn_nginx/
+*.key

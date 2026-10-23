@@ -1,5 +1,10 @@
 <template>
   <div class="h5-register-page">
+    <!-- 返回导航 -->
+    <div class="h5-nav">
+      <el-button type="text" icon="el-icon-arrow-left" style="color:#fff" @click="goBack">返回</el-button>
+    </div>
+
     <!-- 头部 -->
     <div class="header">
       <div class="header-icon">🏢</div>
@@ -296,6 +301,13 @@ export default {
       this.selectedHostVal = ''
       this.agreed = false
     },
+    goBack() {
+      if (this.$route.query.from && this.$route.query.from === 'login') {
+        this.$router.push('/h5/login')
+      } else {
+        this.$router.back()
+      }
+    },
     toast(msg) {
       const el = document.createElement('div')
       el.className = 'toast-msg'
@@ -316,7 +328,8 @@ export default {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   padding-bottom: 40px;
 }
-.header { text-align: center; padding: 30px 20px 15px; color: #fff; }
+.h5-nav { padding: 12px 10px 0; }
+.header { text-align: center; padding: 8px 20px 15px; color: #fff; }
 .header-icon { font-size: 48px; margin-bottom: 8px; }
 .header h1 { font-size: 22px; font-weight: 600; }
 .header p { font-size: 13px; opacity: 0.85; margin-top: 4px; }

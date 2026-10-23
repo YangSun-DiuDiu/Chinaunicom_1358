@@ -569,3 +569,19 @@ pm run build:prod 成功 + deploy.py --mode frontend 部署 1.94.26.126 成功�
   5. `visitor/appointment/index.vue`（showQrCode 两处）、`visitor/qrcode/index.vue`（getRegisterUrl/showQrCode 两处）→ '/h5/register'。
 - **无需改**：后端 SecurityConfig 放行 `/visitor/h5/**`（接口路径与前端路由独立）；登记码二维码 = 前端运行时拼 URL 不存库（visitor_dept_qrcode 无 URL 列），无数据迁移。
 - **实测**：本地 SPA fallback（8181）① /h5/register 直达渲染「智慧园区访客预约」✓ ② /h5-register?code=TESTCODE → 自动跳 /h5/register?code=TESTCODE（query 保留）✓ ③ 入口页「新增预约」→ /h5/register ✓；生产 curl：/h5/register、/h5-register、/h5/entry 均 HTTP 200 ✓。
+## 员工密码统一重置为手机号后6位（2026-10-23）
+
+- **范围**：sys_user user_id 2~49（48 名员工，del_flag=0）；不动 admin(1)/guard01(905)/已删 crudtest01(904)。
+- **密码规则**：明文 = 手机号后 6 位；BCrypt（$2b$10$，成本10，与 guard01 同格式，Spring Security 兼容验证）。
+- **不提示首次改密码**：pwd_update_date 全部置为 NOW()（SysLoginController.initPasswordIsModify = initPasswordModify==1 && pwdUpdateDate==null，置非空即不触发）。
+- **执行方式**：mysqldump 备份 sys_user → /opt/leinuo/backup_sys_user_20261023.sql；本地 python bcrypt 批量生成 hash → UPDATE 48 行。
+- **验证**：库查 48/48 已更新且 has_date=48；真实登录接口 cenmengting/689986 → code 200 + JWT token ✅。
+- **注意**：bcrypt hash 含 $ 字符，远端 bash 双引号内会变量展开导致查询失败（用单引号或避开 $ 比较）；redis-cli GET captcha 答案带引号需 strip('"')。
+## 域名 HTTPS 受信证书部署（2026-10-23 腾讯云）
+
+- **目标**：fangke.netsightplus.cn 用受信证书（消除自签证书浏览器警告导致的"访问慢"）。
+- **证书**：用户腾讯云申请 TrustAsia DV 证书（nginx 包），本地验证 CN/SAN=fangke.netsightplus.cn、公私钥匹配、有效期 2026-10-23 ~ 2027-01-21（约 90 天，到期需重新申请替换）。
+- **部署**：证书+私钥上传 /etc/nginx/ssl/fangke_netsightplus.cn_bundle.crt|key；nginx 配置改为双 443 server（SNI 分流）：域名块挂腾讯证书、default_server 块挂原自签 leinuo 证书（保证 IP 直访保持自签、无 SNI 命中自签）；80 仍 301→https。原配置备份 leinuo.conf.bak_20261023。
+- **验证**：本地 openssl s_client：域名 SNI→CN=fangke.netsightplus.cn（腾讯证书）✓、无 SNI→CN=1.94.26.126（自签）✓、nginx -t/reload OK、服务器本地 curl 域名 200 ✓。
+- **阻塞（未备案拦截，技术无解）**：华为云按 SNI 拦截未备案域名——HTTP 返回「非法阻断2404」页面、HTTPS 直接 Connection reset（TCP 直连 IP+域名 SNI 也被 reset；同一 IP 不带域名 SNI 正常 200）。certbot/acme.sh 的 HTTP-01、TLS-ALPN-01 验证也全部被拦，DNS-01 因阿里云短信 key 无 DNS 权限失败。
+- **结论**：证书已就绪待域名备案。备案通过后（需华为云接入备案），域名 443 应恢复正常，绿锁生效、域名访问速度恢复正常。当前 H5/后台访问继续用 https://1.94.26.126（自签，浏览器需信任或 -k）。

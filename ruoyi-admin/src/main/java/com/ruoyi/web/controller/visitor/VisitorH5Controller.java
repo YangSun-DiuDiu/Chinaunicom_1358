@@ -18,6 +18,8 @@ import com.ruoyi.system.domain.VisitorAppointment;
 import com.ruoyi.system.domain.VisitorDeptQrcode;
 import com.ruoyi.system.service.IVisitorAppointmentService;
 import com.ruoyi.system.service.IVisitorDeptQrcodeService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 访客H5自助登记——公开访问，无需登录
@@ -28,6 +30,8 @@ import com.ruoyi.system.service.IVisitorDeptQrcodeService;
 @RequestMapping("/visitor/h5")
 public class VisitorH5Controller extends BaseController
 {
+    private static final Logger log = LoggerFactory.getLogger(VisitorH5Controller.class);
+
     @Autowired
     private IVisitorAppointmentService visitorAppointmentService;
 
@@ -99,8 +103,7 @@ public class VisitorH5Controller extends BaseController
     /**
      * 查询被访人列表（公开接口，供访客选择）
      * 带 code 时按部门返回真实员工；不带 code（旧版二维码）时按历史预约记录去重
-     */
-    @GetMapping("/hosts")
+     */    @GetMapping("/hosts")
     public AjaxResult hosts(@RequestParam(required = false) String keyword, @RequestParam(required = false) String code)
     {
         // 部门登记码模式：返回该部门(含子部门)的真实在职员工
@@ -139,5 +142,20 @@ public class VisitorH5Controller extends BaseController
             }
         }
         return success(hosts);
+    }
+
+    /**
+     * 保安核验摄像头扫码错误上报（公开接口，仅记录日志用于远程诊断）
+     */
+    @PostMapping("/camlog")
+    public AjaxResult camlog(@RequestBody Map<String, Object> body)
+    {
+        try
+        {
+            log.error("[CAM-ERR] ua={} name={} msg={} stack={}",
+                    body.get("ua"), body.get("name"), body.get("message"), body.get("stack"));
+        }
+        catch (Exception ignore) {}
+        return success();
     }
 }
