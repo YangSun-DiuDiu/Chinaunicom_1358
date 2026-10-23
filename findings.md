@@ -160,11 +160,12 @@ PENDING/APPROVED → CANCELLED
 |----|------|------|
 | AccessKey ID | LTAI5t63X****（历史，已失效） | LTAI5tA3S9t****（完整值见生产库 sys_sms_channel，勿写入文档） |
 | AccessKey Secret | QHezX9rB****（历史，已失效） | i25Ao2Xvay****（完整值见生产库 sys_sms_channel，勿写入文档） |
-| 签名 | 慈溪思刊信息技术有限公司 | 宁波镭诺 |
+| 签名 | 慈溪思刊信息技术有限公司 | 镭诺电子宁波 |
 | 审批环节-通知被访人模板（st_id=1，无变量） | SMS_512631808 | SMS_512631873 |
 | 审批通过-通知访客模板（st_id=2，变量 passcode） | SMS_512676790 | SMS_512676855 |
 
 - 备注：密钥明文存储于 sys_sms_channel（SmsResolver 直读，无加密）；驱动按 channel_type 单例缓存，改 AK/SK 后必须重启后端（`bash /opt/leinuo/start-topo.sh`）生效。
+- **签名调整（2026-10-23 二次修正）**：签名「宁波镭诺」→「镭诺电子宁波」（阿里云账号下原签名不存在，报 isv.SMS_SIGNATURE_ILLEGAL；改为已审核通过的「镭诺电子宁波」后全链路打通）。已更新 sys_sms_sign_template st_id=1/2 并重启后端（PID 2707218）。**验证通过**：真实链路（预约 9087 孙扬/15657477316→岑梦婷）审批后两条短信均 SUCCESS——log 153 visitor_pending_notify→18217689986(SMS_512631873)、log 154 visitor_approval→15657477316(SMS_512676855)，签名均显示「镭诺电子宁波」。
 
 ## 监控体系基础设施（2026-07-12）
 
