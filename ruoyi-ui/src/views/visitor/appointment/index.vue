@@ -536,9 +536,9 @@ export default {
         const data = response.data
         // 仅使用有效(未删除且启用)的部门登记码，避免失效码导致扫码失败
         const code = data && data.registerCode && data.enabled === '1' ? data.registerCode : ''
-        this.$refs.qrcode.show(window.location.origin + '/h5-register' + (code ? '?code=' + code : ''))
+        this.$refs.qrcode.show(window.location.origin + '/h5/register' + (code ? '?code=' + code : ''))
       }).catch(() => {
-        this.$refs.qrcode.show(window.location.origin + '/h5-register')
+        this.$refs.qrcode.show(window.location.origin + '/h5/register')
       })
     }
   }

@@ -36,7 +36,7 @@ export default {
       this.$router.push('/h5/appointments')
     },
     goRegister() {
-      this.$router.push('/h5-register')
+      this.$router.push('/h5/register')
     }
   }
 }

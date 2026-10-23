@@ -557,3 +557,15 @@ pm run build:prod 成功 + deploy.py --mode frontend 部署 1.94.26.126 成功�
   4. 接口级提交 `POST /prod-api/visitor/h5/submit`（Entry Test/15669267932/岑梦婷）：code 200 → appointmentId=9092、passCode=`0A7BA123`、status=PENDING、host_name 岑梦婷/综合管理部（库核对无乱码）✅。
 - **门卫入口二维码**：`门卫入口二维码.png`（项目根目录，qrcode box_size=16 border=6，内容 = https://1.94.26.126/h5/entry，3402B）——打印张贴即可。
 - **注意**：入口二维码内容固定 = /h5/entry 选择页 URL；新增预约提交后为 PENDING（被访人审批），审批通过后访客再扫码走「已有预约」出示通行码。bu 工具参数对中文不稳定（含中文 code 会报 Tool not found），浏览器自动化操作用 ASCII 或走 fill_input/接口通道。
+## /h5/register 路径统一（2026-10-23）
+
+- **需求**：`/h5-register` → `/h5/register`，与 /h5/login、/h5/entry、/h5/appointments 风格统一。
+- **兼容策略**：旧路径保留为 redirect（`/h5-register` → `/h5/register`，query 保留），已打印的部门登记码/老链接不失效；白名单同时保留两路径。
+- **改动文件**：
+  1. `router/index.js`：`/h5-register` 改为 redirect 路由 + 新增 `/h5/register`（同组件 register.vue）；
+  2. `permission.js`：whiteList 增 `/h5/register`（保留 `/h5-register` 供 redirect 首跳）；
+  3. `entry.vue`：goRegister → `/h5/register`；
+  4. `components/QrCode/index.vue`：默认登记地址 → origin + '/h5/register'；
+  5. `visitor/appointment/index.vue`（showQrCode 两处）、`visitor/qrcode/index.vue`（getRegisterUrl/showQrCode 两处）→ '/h5/register'。
+- **无需改**：后端 SecurityConfig 放行 `/visitor/h5/**`（接口路径与前端路由独立）；登记码二维码 = 前端运行时拼 URL 不存库（visitor_dept_qrcode 无 URL 列），无数据迁移。
+- **实测**：本地 SPA fallback（8181）① /h5/register 直达渲染「智慧园区访客预约」✓ ② /h5-register?code=TESTCODE → 自动跳 /h5/register?code=TESTCODE（query 保留）✓ ③ 入口页「新增预约」→ /h5/register ✓；生产 curl：/h5/register、/h5-register、/h5/entry 均 HTTP 200 ✓。

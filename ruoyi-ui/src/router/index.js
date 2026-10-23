@@ -54,6 +54,12 @@ export const constantRoutes = [
   },
   {
     path: "/h5-register",
+    redirect: "/h5/register",
+    hidden: true,
+    meta: { title: "访客自助登记" },
+  },
+  {
+    path: "/h5/register",
     component: () => import("@/views/visitor/h5/register"),
     hidden: true,
     meta: { title: "访客自助登记" },

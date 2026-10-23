@@ -194,11 +194,11 @@ export default {
     },
     /** 拼接部门登记二维码地址 */
     getRegisterUrl(row) {
-      return window.location.origin + '/h5-register?code=' + (row.registerCode || '')
+      return window.location.origin + '/h5/register?code=' + (row.registerCode || '')
     },
     /** 显示二维码（传完整登记地址，确保二维码编码完整 URL） */
     showQrCode(row) {
-      this.$refs.qrcode.show(window.location.origin + '/h5-register?code=' + row.registerCode)
+      this.$refs.qrcode.show(window.location.origin + '/h5/register?code=' + row.registerCode)
     },
     /** 启用/停用切换 */
     handleEnabledChange(row, val) {
