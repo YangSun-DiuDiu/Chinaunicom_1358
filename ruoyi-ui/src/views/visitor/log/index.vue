@@ -41,6 +41,15 @@
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
+          type="primary"
+          icon="el-icon-camera"
+          size="mini"
+          @click="openVerify()"
+          v-hasPermi="['visitor:log:exit']"
+        >二维码核验</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
           type="warning"
           plain
           icon="el-icon-download"
@@ -93,17 +102,8 @@
           <span v-else style="color: #999;">--</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="200" class-name="small-padding fixed-width" v-if="columns.operation.visible">
+      <el-table-column label="操作" align="center" width="120" class-name="small-padding fixed-width" v-if="columns.operation.visible">
         <template slot-scope="scope">
-          <el-button
-            v-if="!scope.row.exitTime"
-            size="mini"
-            type="success"
-            plain
-            icon="el-icon-camera"
-            @click="openVerify(scope.row)"
-            v-hasPermi="['visitor:log:exit']"
-          >二维码核验</el-button>
           <el-button
             v-if="!scope.row.exitTime"
             size="mini"
