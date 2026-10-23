@@ -78,6 +78,12 @@ public class VisitorLogServiceImpl implements IVisitorLogService
         return visitorLogMapper.updateLog(existingLog);
     }
 
+    @Override
+    public int syncPassCodeByAppointmentId(Long appointmentId, String passCode)
+    {
+        return visitorLogMapper.syncPassCodeByAppointmentId(appointmentId, passCode);
+    }
+
     /**
      * 通过通行码查询访客记录
      *

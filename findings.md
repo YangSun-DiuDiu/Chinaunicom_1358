@@ -603,3 +603,14 @@ pm run build:prod 成功 + deploy.py --mode frontend 部署 1.94.26.126 成功�
   - 审批通过链路（用户后台操作完成）：9093 补码 CDF66503 + sms_sent=Y（短信带码）→ GET /pass/CDF66503 200（VISITING）✅；VISITING 重复 checkin 被状态机拒 ✅；
   - 前端浏览器：我的预约页 15657477316 已通过/已到访显示按钮；15669267932 的 Entry Test（待审批）无按钮+等待提示 ✅（截图 docs/appt-status-ok.png）。
 - **注意**：历史 6 条 PENDING 测试预约（9068/9069/9070/9072/9084/9092）已带码，新逻辑下其码全部失效（读/核验均被拦），如需清理可删（预约 9093 码时机验证 VISITING 亦为测试数据）。
+
+## 来访记录通行码同步修复 + 离开功能分析（2026-10-23）
+
+- **问题**：访客管理-来访记录（visitor_log）通行码为空。根因：改造后预约提交不生成码（VisitorLogFactory.from 从预约同步 passCode → 提交时记录无码），审批通过补码只更新预约表（visitor_appointment），未同步来访记录表（visitor_log）——旧逻辑"创建即生成码"掩盖了这个缺口。
+- **修复**：approveAppointment 补码后调用新增 `visitorLogService.syncPassCodeByAppointmentId(appointmentId, passCode)`（Mapper `syncPassCodeByAppointmentId`：UPDATE visitor_log SET pass_code WHERE appointment_id）。存量数据一次性 SQL 同步（JOIN 预约表补齐 85 条，缺失=0）。
+- **验证**（生产实测）：① 存量 9093 → log 9189 pass_code=CDF66503（与预约一致）✅；② 新链路：提交 9095 无码 → admin 审批通过 → 预约 EEC836F3 且**记录 9191 同步 EEC836F3** ✅。
+- **离开功能分析**（来访记录操作栏"离开"，PUT /visitor/log/exit/{logId}）：
+  - 作用：访客离场时由门卫/管理员点击，只把该条来访记录 exit_time 置为当前时间；前端 exit_time 非空显示"已离开"。数据用于进出时间统计/在场判断；pass 查询（log 分支）据此判 status=COMPLETED。
+  - **与预约模块是两套独立结束路径**：预约模块另有"完成来访"（completeAppointment，预约 status→COMPLETED + leave_time）；"离开"不动预约表（status 仍 VISITING，预约列表仍显示"已到访"）→ 两表状态可能不一致。
+  - **权限码不一致**：前端按钮 v-hasPermi='visitor:log:exit'，后端接口 @PreAuthorize('visitor:log:edit') → 角色权限配置需两处都授（若只授 exit，按钮显示但点击 403）。
+  - 建议（待用户拍板）：① 离开时联动预约状态→COMPLETED；② 前后端权限码统一为 visitor:log:exit。

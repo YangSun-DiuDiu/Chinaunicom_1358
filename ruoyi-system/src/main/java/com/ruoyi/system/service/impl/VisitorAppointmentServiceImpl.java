@@ -183,6 +183,8 @@ public class VisitorAppointmentServiceImpl implements IVisitorAppointmentService
                 appointment.setPassCode(passCode);
                 appointmentMapper.updateAppointment(appointment);
             }
+            // 通行码同步到来访记录表（提交阶段记录已创建且无码，审批通过后补齐）
+            visitorLogService.syncPassCodeByAppointmentId(appointmentId, passCode);
 
             // 避免重复创建来访记录
             VisitorLog existLog = new VisitorLog();

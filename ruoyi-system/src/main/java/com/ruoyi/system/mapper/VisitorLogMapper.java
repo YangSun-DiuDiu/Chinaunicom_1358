@@ -1,6 +1,7 @@
 package com.ruoyi.system.mapper;
 
 import java.util.List;
+import org.apache.ibatis.annotations.Param;
 import com.ruoyi.system.domain.VisitorLog;
 
 /**
@@ -43,4 +44,13 @@ public interface VisitorLogMapper
     public int updateLog(VisitorLog log);
 
     public VisitorLog selectLogByPassCode(String passCode);
+
+    /**
+     * 按预约ID同步通行码到来访记录（审批通过补码后调用，保证记录表通行码与预约一致）
+     *
+     * @param appointmentId 预约ID
+     * @param passCode 通行码
+     * @return 结果
+     */
+    public int syncPassCodeByAppointmentId(@Param("appointmentId") Long appointmentId, @Param("passCode") String passCode);
 }

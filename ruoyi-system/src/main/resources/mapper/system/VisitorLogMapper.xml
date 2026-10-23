@@ -155,4 +155,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where l.pass_code = #{passCode}
     </select>
 
+    <update id="syncPassCodeByAppointmentId">
+        update visitor_log
+        set pass_code = #{passCode}, update_time = sysdate()
+        where appointment_id = #{appointmentId}
+    </update>
+
 </mapper>
