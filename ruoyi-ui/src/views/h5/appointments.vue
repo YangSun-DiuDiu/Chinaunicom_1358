@@ -26,8 +26,10 @@
           <div v-if="item.hostDept"><span class="info-label">被访部门</span>{{ item.hostDept }}</div>
           <div v-if="item.visitTime"><span class="info-label">来访时间</span>{{ item.visitTime }}</div>
         </div>
-        <div v-if="item.passCode" class="appt-foot">
-          <el-button type="primary" size="small" @click="showPass(item)">出示通行码</el-button>
+        <div class="appt-foot">
+          <span v-if="item.status === 'PENDING'" class="pass-pending-tip">审批通过后生成通行码，请耐心等待</span>
+          <el-button v-if="item.passCode && (item.status === 'APPROVED' || item.status === 'VISITING')"
+                     type="primary" size="small" @click="showPass(item)">出示通行码</el-button>
         </div>
       </div>
     </div>
@@ -110,5 +112,6 @@ export default {
 .info-grid div { margin:4px 0; }
 .info-label { color:#787671; font-size:12px; margin-right:8px; }
 .appt-foot { margin-top:12px; text-align:right; }
+.pass-pending-tip { font-size:12px; color:#E6A23C; margin-right:8px; }
 .empty { margin-top:40px; text-align:center; color:rgba(255,255,255,0.8); font-size:14px; }
 </style>

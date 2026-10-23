@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.system.domain.VisitorAppointment;
+import com.ruoyi.system.domain.VisitorAppointmentState;
 import com.ruoyi.system.domain.VisitorLog;
 import com.ruoyi.system.domain.vo.PassInfoDTO;
 import com.ruoyi.system.service.IVisitorAppointmentService;
@@ -99,6 +100,14 @@ public class VisitorPassController extends BaseController
         VisitorAppointment apt = visitorAppointmentService.selectAppointmentByPassCode(passCode);
         if (apt != null)
         {
+            // 预约类通行码仅审批通过/到访中/已完成有效；待审批/已拒绝/已取消一律视为无效
+            String st = apt.getStatus();
+            if (!VisitorAppointmentState.APPROVED.equals(st)
+                    && !VisitorAppointmentState.VISITING.equals(st)
+                    && !VisitorAppointmentState.COMPLETED.equals(st))
+            {
+                return null;
+            }
             PassInfoDTO info = new PassInfoDTO();
             info.setPassCode(passCode);
             info.setVisitorName(apt.getVisitorName());

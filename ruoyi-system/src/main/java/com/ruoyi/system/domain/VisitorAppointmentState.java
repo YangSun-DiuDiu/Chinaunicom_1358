@@ -37,7 +37,7 @@ public final class VisitorAppointmentState {
         REJECT,
         /** 取消预约（PENDING/APPROVED → CANCELLED） */
         CANCEL,
-        /** 到访确认（PENDING/APPROVED → VISITING） */
+        /** 到访确认（仅 APPROVED → VISITING；待审批无通行码，禁止直接入场核验） */
         CHECKIN,
         /** 完成离开（VISITING/APPROVED → COMPLETED） */
         COMPLETE
@@ -51,7 +51,7 @@ public final class VisitorAppointmentState {
         m.put(Event.APPROVE, setOf(PENDING));
         m.put(Event.REJECT, setOf(PENDING));
         m.put(Event.CANCEL, setOf(PENDING, APPROVED));
-        m.put(Event.CHECKIN, setOf(PENDING, APPROVED));
+        m.put(Event.CHECKIN, setOf(APPROVED));
         m.put(Event.COMPLETE, setOf(VISITING, APPROVED));
         ALLOWED = m;
     }

@@ -585,3 +585,21 @@ pm run build:prod 成功 + deploy.py --mode frontend 部署 1.94.26.126 成功�
 - **验证**：本地 openssl s_client：域名 SNI→CN=fangke.netsightplus.cn（腾讯证书）✓、无 SNI→CN=1.94.26.126（自签）✓、nginx -t/reload OK、服务器本地 curl 域名 200 ✓。
 - **阻塞（未备案拦截，技术无解）**：华为云按 SNI 拦截未备案域名——HTTP 返回「非法阻断2404」页面、HTTPS 直接 Connection reset（TCP 直连 IP+域名 SNI 也被 reset；同一 IP 不带域名 SNI 正常 200）。certbot/acme.sh 的 HTTP-01、TLS-ALPN-01 验证也全部被拦，DNS-01 因阿里云短信 key 无 DNS 权限失败。
 - **结论**：证书已就绪待域名备案。备案通过后（需华为云接入备案），域名 443 应恢复正常，绿锁生效、域名访问速度恢复正常。当前 H5/后台访问继续用 https://1.94.26.126（自签，浏览器需信任或 -k）。
+
+## 访客通行码生成时机改造（2026-10-23）
+
+- **需求**：预约提交后不再立即生成通行码，改为「提交 → 等待审批页 → 审批通过后才生成通行码/二维码」，符合"审批通过才具备入场资格"的业务逻辑；审批拒绝不短信通知（用户拍板）；短信中通行码维持现状（不拼链接，用户拍板）。
+- **后端改动**（通行码生成点收敛为唯一：审批通过补码）：
+  1. `VisitorAppointmentServiceImpl.registerWalkin`：去掉"生成通行码"步骤（H5 预约提交的预约 pass_code 置空、PENDING）；返回 passCode=""；
+  2. `VisitorAppointmentController.add`：去掉自动生成通行码（后台新增预约同样不预生成）；
+  3. `VisitorAppointmentState`：`Event.CHECKIN` 允许来源收紧为**仅 APPROVED**（原 PENDING/APPROVED）——堵"待审批也能核验入场"漏洞；
+  4. `VisitorAppointmentServiceImpl.checkInVisitor`：状态不允许时抛 ServiceException「预约尚未审批通过，无法核验入场」（原静默返回）；
+  5. `VisitorPassController.buildPassInfo`：预约类通行码仅 APPROVED/VISITING/COMPLETED 有效，PENDING/REJECTED/CANCELLED → "通行码无效或已过期"；来访记录（现场登记 WALKIN）分支不受影响。
+- **前端改动**：`register.vue` 成功页改为「等待审批」（⏳ + 不再显示通行码）；`appointments.vue` 出示通行码按钮仅 APPROVED/VISITING 显示，PENDING 行显示「审批通过后生成通行码，请耐心等待」。
+- **验证**（生产 1.94.26.126 实测）：
+  - H5 提交新预约 → 返回 passCode=""、库内 pass_code=NULL ✅；
+  - GET /pass/0A7BA123（历史 PENDING 码）→ "通行码无效或已过期" ✅；
+  - POST /pass/0A7BA123/checkin → "预约尚未审批通过，无法核验入场" ✅；
+  - 审批通过链路（用户后台操作完成）：9093 补码 CDF66503 + sms_sent=Y（短信带码）→ GET /pass/CDF66503 200（VISITING）✅；VISITING 重复 checkin 被状态机拒 ✅；
+  - 前端浏览器：我的预约页 15657477316 已通过/已到访显示按钮；15669267932 的 Entry Test（待审批）无按钮+等待提示 ✅（截图 docs/appt-status-ok.png）。
+- **注意**：历史 6 条 PENDING 测试预约（9068/9069/9070/9072/9084/9092）已带码，新逻辑下其码全部失效（读/核验均被拦），如需清理可删（预约 9093 码时机验证 VISITING 亦为测试数据）。

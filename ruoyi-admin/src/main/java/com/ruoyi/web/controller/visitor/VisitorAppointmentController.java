@@ -113,11 +113,7 @@ public class VisitorAppointmentController extends BaseController
     public AjaxResult add(@Validated @RequestBody VisitorAppointment appointment)
     {
         appointment.setCreateBy(getUsername());
-        // 自动生成通行码
-        if (appointment.getPassCode() == null || appointment.getPassCode().isEmpty())
-        {
-            appointment.setPassCode(java.util.UUID.randomUUID().toString().substring(0, 8).toUpperCase());
-        }
+        // 通行码不在新增时生成：预约提交后为待审批状态，审批通过时由 approveAppointment 统一生成
         return toAjax(visitorAppointmentService.insertAppointment(appointment));
     }
 

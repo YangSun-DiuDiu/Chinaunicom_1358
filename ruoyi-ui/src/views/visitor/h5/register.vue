@@ -16,7 +16,7 @@
     <div class="steps" v-if="!invalid">
       <div class="step active"><span class="dot">1</span>填写信息</div>
       <div class="line"></div>
-      <div :class="['step', submitted ? 'active' : '']"><span class="dot">2</span>提交成功</div>
+      <div :class="['step', submitted ? 'active' : '']"><span class="dot">2</span>等待审批</div>
     </div>
 
     <!-- 无效登记码提示 -->
@@ -107,14 +107,12 @@
       </button>
     </div>
 
-    <!-- 成功页 -->
+    <!-- 成功页（等待审批） -->
     <div class="success-card" v-else>
-      <div class="success-icon">✅</div>
-      <h2>预约提交成功</h2>
+      <div class="success-icon">⏳</div>
+      <h2>预约提交成功，等待审批</h2>
       <div class="pass-info">
-        <div class="pass-label">您的通行码</div>
-        <div class="pass-code">{{ passCode }}</div>
-        <div class="pass-tip">审批通过后，请向门卫出示此通行码</div>
+        <div class="pass-tip">您的预约已提交，被访人审批通过后将生成通行码，届时会通过短信通知您，可在『我的预约』中出示</div>
       </div>
       <div class="detail-list">
         <div class="detail-item"><span>姓名</span><strong>{{ form.visitorName }}</strong></div>

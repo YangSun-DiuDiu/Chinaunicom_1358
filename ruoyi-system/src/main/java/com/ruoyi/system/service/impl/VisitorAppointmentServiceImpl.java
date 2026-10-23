@@ -317,12 +317,13 @@ public class VisitorAppointmentServiceImpl implements IVisitorAppointmentService
         if (appointment == null) {
             return null;
         }
-        // 仅 APPROVED / PENDING 状态可转为 VISITING（状态机校验）
-        if (VisitorAppointmentState.can(appointment.getStatus(), VisitorAppointmentState.Event.CHECKIN)) {
-            appointment.setStatus(VisitorAppointmentState.transition(appointment.getStatus(),
-                    VisitorAppointmentState.Event.CHECKIN));
-            appointmentMapper.updateAppointment(appointment);
+        // 仅审批通过后的预约可核验入场（状态机校验：PENDING 无通行码，禁止直接入场）
+        if (!VisitorAppointmentState.can(appointment.getStatus(), VisitorAppointmentState.Event.CHECKIN)) {
+            throw new ServiceException("预约尚未审批通过，无法核验入场");
         }
+        appointment.setStatus(VisitorAppointmentState.transition(appointment.getStatus(),
+                VisitorAppointmentState.Event.CHECKIN));
+        appointmentMapper.updateAppointment(appointment);
         return appointment;
     }
 
@@ -351,11 +352,9 @@ public class VisitorAppointmentServiceImpl implements IVisitorAppointmentService
             validateDeptScope(appointment, qrDeptId);
         }
 
-        // 3. 生成通行码
-        String passCode = java.util.UUID.randomUUID().toString().substring(0, 8).toUpperCase();
-
-        // 4. 创建预约记录（宿主匹配已在步骤1完成，forceAssign=false 避免重复执行）
-        appointment.setPassCode(passCode);
+        // 3. 创建预约记录（宿主匹配已在步骤1完成，forceAssign=false 避免重复执行）
+        // 通行码不在预约提交阶段生成：审批通过后由 approveAppointment 统一生成，
+        // 避免审批前已存在可出示的通行凭证（业务逻辑：通过审批才具备入场资格）
         appointment.setStatus(VisitorAppointmentState.PENDING);
         appointment.setCreateBy(createBy);
         if (appointment.getVisitTime() == null) {
@@ -368,7 +367,8 @@ public class VisitorAppointmentServiceImpl implements IVisitorAppointmentService
         visitorLogService.insertLog(log);
 
         Map<String, Object> result = new HashMap<>();
-        result.put("passCode", passCode);
+        // 提交阶段无通行码（审批通过后生成），前端据此展示"等待审批"状态
+        result.put("passCode", "");
         result.put("appointmentId", appointment.getAppointmentId());
         result.put("log", log);
         return result;
