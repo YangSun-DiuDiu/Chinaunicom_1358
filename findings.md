@@ -614,3 +614,9 @@ pm run build:prod 成功 + deploy.py --mode frontend 部署 1.94.26.126 成功�
   - **与预约模块是两套独立结束路径**：预约模块另有"完成来访"（completeAppointment，预约 status→COMPLETED + leave_time）；"离开"不动预约表（status 仍 VISITING，预约列表仍显示"已到访"）→ 两表状态可能不一致。
   - **权限码不一致**：前端按钮 v-hasPermi='visitor:log:exit'，后端接口 @PreAuthorize('visitor:log:edit') → 角色权限配置需两处都授（若只授 exit，按钮显示但点击 403）。
   - 建议（待用户拍板）：① 离开时联动预约状态→COMPLETED；② 前后端权限码统一为 visitor:log:exit。
+
+## 离开功能收口：联动预约完成 + 权限统一（2026-10-23）
+
+- **联动**：`VisitorLogServiceImpl.updateLog`（离开接口）设置记录 exit_time 后，若记录有 appointmentId，走状态机 `Event.COMPLETE` 校验（VISITING/APPROVED → COMPLETED）将预约置为 COMPLETED 并写 leave_time；已结束的预约幂等跳过。
+- **权限统一**：`VisitorLogController.exit` 注解由 `visitor:log:edit` 改为 `visitor:log:exit`（与前端按钮一致）；数据库菜单（menu 2022）与角色授权（园区管理员/访客管理员均已含 visitor:log:exit）无需变更。
+- **验证**（生产实测）：exit 9189（预约 9093 VISITING）→ 记录 exit_time=2026-10-23 20:54:41、预约 status=COMPLETED + leave_time 同步；幂等重试状态不变 ✅。

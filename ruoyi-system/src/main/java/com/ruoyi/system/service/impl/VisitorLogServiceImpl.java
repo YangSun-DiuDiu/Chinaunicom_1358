@@ -7,7 +7,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.common.exception.ServiceException;
+import com.ruoyi.system.domain.VisitorAppointment;
+import com.ruoyi.system.domain.VisitorAppointmentState;
 import com.ruoyi.system.domain.VisitorLog;
+import com.ruoyi.system.mapper.VisitorAppointmentMapper;
 import com.ruoyi.system.mapper.VisitorLogMapper;
 import com.ruoyi.system.service.IVisitorLogService;
 
@@ -23,6 +26,9 @@ public class VisitorLogServiceImpl implements IVisitorLogService
 
     @Autowired
     private VisitorLogMapper visitorLogMapper;
+
+    @Autowired
+    private VisitorAppointmentMapper visitorAppointmentMapper;
 
     /**
      * 查询访客记录列表
@@ -75,7 +81,20 @@ public class VisitorLogServiceImpl implements IVisitorLogService
             throw new ServiceException("访客记录不存在");
         }
         existingLog.setExitTime(new Date());
-        return visitorLogMapper.updateLog(existingLog);
+        int result = visitorLogMapper.updateLog(existingLog);
+
+        // 联动预约状态：预约型记录离场 → 预约置为已完成（走状态机校验，已结束的预约幂等跳过）
+        if (existingLog.getAppointmentId() != null)
+        {
+            VisitorAppointment appointment = visitorAppointmentMapper.selectAppointmentById(existingLog.getAppointmentId());
+            if (appointment != null && VisitorAppointmentState.can(appointment.getStatus(), VisitorAppointmentState.Event.COMPLETE))
+            {
+                appointment.setStatus(VisitorAppointmentState.COMPLETED);
+                appointment.setLeaveTime(new Date());
+                visitorAppointmentMapper.updateAppointment(appointment);
+            }
+        }
+        return result;
     }
 
     @Override

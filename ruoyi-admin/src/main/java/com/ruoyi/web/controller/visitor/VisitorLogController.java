@@ -129,7 +129,7 @@ public class VisitorLogController extends BaseController
     /**
      * 记录访客离开时间
      */
-    @PreAuthorize("@ss.hasPermi('visitor:log:edit')")
+    @PreAuthorize("@ss.hasPermi('visitor:log:exit')")
     @Log(title = "访客记录", businessType = BusinessType.UPDATE)
     @PutMapping("/exit/{logId}")
     public AjaxResult exit(@PathVariable Long logId)
