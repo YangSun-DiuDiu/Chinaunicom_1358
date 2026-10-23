@@ -509,3 +509,16 @@ PENDING/APPROVED → CANCELLED
   2. 浏览器（Playwright）：H5 通行页 `?code=C0DB503A` 自动查询显示"✅ 通行有效"（纯读）；guard 核验页手动输入 C0DB503A → "✅ 通行有效 · 已到访"（GET+POST 联动）；库确认 9073 PENDING→VISITING，其余未受影响 ✓。截图 `截图/arch_guard_checkin.png`。
   3. 发现并确认：Nginx 无 `/pass/` 反代（直接访问返回 SPA HTML），前端实际走 `/prod-api/pass/`；旧 `window.open('/pass/…')` 为空白页缺陷，本次已修复为 H5 页。
 - **注意**：appointment 表 del_flag='1' 的记录通行码会显示"无效"（正常业务行为，selectAppointmentByPassCode 带 del_flag='0'）。DeptScopeInterceptor 白名单判断基于主表，公开 /pass 接口 deptId=null 时跳过过滤，不受影响。
+
+## 保安核验登录修复 + 生产验证（2026-10-23）
+- **需求背景**：用户问"保安核验登录页面是哪一个，我找不到"，要求提供可访问 /h5/guard 的账号；随后明确"需要"。
+- **问题1（补建保安权限）**：生产库原本没有 visitor:guard:verify 权限点、无保安角色。已补建：menu 2027「保安核验」F 权限（parent 2004）、role 101「保安」role_key=securityGuard、user 905 guard01（密码 Guard@2026，**注：初次生成的 bcrypt 哈希与密码不匹配已重生成**）、绑定 role_menu(101,2027) 与 user_role(905,101)。权限链路：905→101→2027 已查库确认。
+- **问题2（H5 登录系统性缺陷）**：后端 SysLoginService.validateCaptcha 在 sys.account.captchaEnabled=true 时强校验验证码，而 H5 登录页（src/views/h5/login.vue）原版无验证码输入框、传固定 code='h5' → **所有 H5 账号登录必失败"验证码已失效/用户不存在或密码错误"**（先报验证码失效被吞，实际先过 validateCaptcha）。修复：h5/login.vue 参照 PC 登录页增加验证码输入框+图片点击刷新（getCodeImg→captchaEnabled/img/uuid，login 传 code+uuid，失败自动刷新验证码），
+pm run build:prod 成功 + deploy.py --mode frontend 部署 1.94.26.126 成功。
+- **验证（Playwright 实机全链路）**：
+  1. /h5/login 刷新后验证码正常显示；guard01/Guard@2026 + 验证码（答案从 Redis captcha_codes:{uuid} 读取，如 "4"/"1"）→ 登录成功跳 /h5；
+  2. H5 首页显示 5 入口：访客登记/访客审批/通行码/保安核验/现场登记，点击进入 /h5/guard；
+  3. /h5/guard 手动输入有效通行码 54BA4A6E → "✅ 通行有效 · 已到访"，显示 孙扬/15669267932/被访人 岑梦婷（截图 guard_valid.png）；
+  4. 输入无效码 BADCODE01 → "❌ 无效通行码"（截图 guard_invalid.png）；
+  5. 库确认：9091（A168A0DA）核验后 APPROVED→VISITING（checkin 写操作生效）；9090（54BA4A6E）同样变 VISITING。
+- **注意事项**：① 保安账号 guard01 登录入口 = H5 首页（/h5）「保安核验」卡片，或直输 /h5/guard（路由权限 visitor:guard:verify，侧边栏 hidden）；② H5 登录页现在与 PC 一致需验证码（生产 captchaEnabled=true 保持）；③ 验证码为数学算式，答案存 Redis key captcha_codes:{uuid}（测试调试可用，勿外传）。

@@ -10,6 +10,12 @@
         <el-form-item prop="password">
           <el-input v-model="form.password" placeholder="密码" prefix-icon="el-icon-lock" type="password" size="large" show-password @keyup.enter.native="handleLogin" />
         </el-form-item>
+        <el-form-item prop="code" v-if="captchaEnabled">
+          <div class="code-row">
+            <el-input v-model="form.code" placeholder="验证码" size="large" class="code-input" @keyup.enter.native="handleLogin" />
+            <img v-if="codeUrl" :src="codeUrl" class="code-img" @click="getCode" title="点击刷新验证码" />
+          </div>
+        </el-form-item>
         <el-button type="primary" size="large" long :loading="loading" @click="handleLogin">登 录</el-button>
       </el-form>
       <div class="service-cards">
@@ -23,31 +29,51 @@
 </template>
 
 <script>
-import { login } from '@/api/login'
+import { login, getCodeImg } from '@/api/login'
 import { setToken } from '@/utils/auth'
 
 export default {
   name: 'H5Login',
   data() {
     return {
-      form: { username: '', password: '' },
+      form: { username: '', password: '', code: '' },
       rules: {
         username: [{ required: true, message: '请输入账号', trigger: 'blur' }],
-        password: [{ required: true, message: '请输入密码', trigger: 'blur' }]
+        password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
+        code: [{ required: true, message: '请输入验证码', trigger: 'blur' }]
       },
-      loading: false
+      loading: false,
+      captchaEnabled: true,
+      codeUrl: '',
+      uuid: ''
     }
   },
+  created() {
+    this.getCode()
+  },
   methods: {
+    getCode() {
+      getCodeImg().then(res => {
+        this.captchaEnabled = res.captchaEnabled === undefined ? true : res.captchaEnabled
+        if (this.captchaEnabled) {
+          this.codeUrl = 'data:image/gif;base64,' + res.img
+          this.uuid = res.uuid
+          this.form.code = ''
+        }
+      }).catch(() => {})
+    },
     handleLogin() {
       this.$refs.form.validate(valid => {
         if (!valid) return
         this.loading = true
-        login(this.form.username, this.form.password, 'h5').then(res => {
+        login(this.form.username, this.form.password, this.form.code, this.uuid).then(res => {
           setToken(res.token)
           this.$router.push(this.$route.query.redirect || '/h5')
         }).catch(() => {
           this.loading = false
+          if (this.captchaEnabled) {
+            this.getCode()
+          }
         })
       })
     }
@@ -66,6 +92,9 @@ export default {
 }
 .h5-login-card h2 { color: #37352F; margin: 0 0 4px; font-size: 22px; }
 .subtitle { color: #787671; margin: 0 0 24px; font-size: 13px; }
+.code-row { display: flex; align-items: center; gap: 10px; }
+.code-input { flex: 1; }
+.code-img { width: 110px; height: 40px; border-radius: 6px; cursor: pointer; border: 1px solid #E5E3DF; }
 .service-cards { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; justify-content: center; }
 .svc-item { background: rgba(86,69,212,0.08); color: #5D5B54; font-size: 12px; padding: 6px 12px; border-radius: 9999px; }
 .h5-login >>> .el-input__inner { background: #fff; border-color: #C8C4BE; color: #37352F; }
