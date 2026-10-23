@@ -4,19 +4,19 @@
   "servers": {
     "production": {
       "name": "生产环境",
-      "ip": "192.168.1.60",
+      "ip": "1.94.26.126",
       "user": "root",
       "password": "Chinaunicom@1358",
 
       "frontend": {
-        "remoteDir": "/home/zhihuiyuanqu20260907/dist/",
-        "nginxDir": "/usr/share/nginx/zhihuiyuanqu/dist/",
+        "remoteDir": "/opt/leinuo/dist/",
+        "nginxDir": "/usr/share/nginx/leinuo/",
         "buildCmd": "npm run build:prod",
         "buildDir": "ruoyi-ui"
       },
 
       "backend": {
-        "remoteDir": "/home/zhihuiyuanqu20260907/",
+        "remoteDir": "/opt/leinuo/",
         "jarName": "ruoyi-admin.jar",
         "port": 8080,
         "buildCmd": "mvn clean package -DskipTests -q",
@@ -25,10 +25,10 @@
       },
 
       "nginx": {
-        "configPath": "/etc/nginx/conf.d/zhihuiyuanqu.conf",
+        "configPath": "/etc/nginx/conf.d/leinuo.conf",
         "apiProxyPath": "/prod-api/",
         "apiProxyTarget": "http://127.0.0.1:8080/",
-        "rootPath": "/usr/share/nginx/zhihuiyuanqu/dist"
+        "rootPath": "/usr/share/nginx/leinuo"
       }
     },
 

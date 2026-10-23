@@ -6,8 +6,8 @@ spring:
         druid:
             # 主库数据源
             master:
-                url: jdbc:mysql://192.168.1.55:3306/ry101-test?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=GMT%2B8
-                username: sadmin
+                url: jdbc:mysql://127.0.0.1:3306/leinuo-fangke?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=GMT%2B8
+                username: leinuo
                 password: Chinaunicom@1358
             # 从库数据源
             slave:

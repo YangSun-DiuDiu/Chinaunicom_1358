@@ -130,18 +130,27 @@ PENDING/APPROVED → CANCELLED
 
 | 配置项 | 值 |
 |--------|-----|
-| 后端端口 | 8080（生产 192.168.1.60） |
-| 前端端口 | 80 (Nginx, 192.168.1.60) |
-| 后端部署目录 | /home/zhihuiyuanqu20260907/（jar=ruoyi-admin.jar, 启动脚本 start-topo.sh, 日志 app.log） |
-| 前端部署目录 | /usr/share/nginx/zhihuiyuanqu/dist/ |
-| Nginx 站点配置 | /etc/nginx/conf.d/zhihuiyuanqu.conf（80 端口, /prod-api/→127.0.0.1:8080, try_files 回退 index.html） |
-| 上传目录 | /home/ruoyi/uploadPath/ |
-| 数据库（生产） | 192.168.1.55:3306/ry101-test (sadmin/Chinaunicom@1358)，已精简为 22 表（基础14+访客3+短信5） |
-| Redis（生产） | 192.168.1.55:6379 |
-| JDK（生产 1.60） | /opt/java21/bin/java（PATH 无 java，启动脚本内 export JAVA_HOME） |
+| 后端端口 | 8080（生产 1.94.26.126） |
+| 前端端口 | 80 (Nginx, 1.94.26.126) |
+| 后端部署目录 | /opt/leinuo/（jar=ruoyi-admin.jar, 启动脚本 start-topo.sh, 日志 app.log） |
+| 前端部署目录 | /usr/share/nginx/leinuo/ |
+| Nginx 站点配置 | /etc/nginx/conf.d/leinuo.conf（80 端口, /prod-api/→127.0.0.1:8080, /profile/→127.0.0.1:8080, try_files 回退 index.html） |
+| 上传目录 | /opt/leinuo/uploadPath/ |
+| 数据库（生产） | 1.94.26.126:3306/leinuo-fangke (leinuo/Chinaunicom@1358)，22 表（基础14+访客3+短信5），已从 1.55/ry101-test 全量迁移（2026-10-23，用户50/部门17/角色4/预约77/日志76） |
+| Redis（生产） | 1.94.26.126:6379 |
+| 中间件收口 | MySQL(3306+33060) 与 Redis(6379) 均已 bind 127.0.0.1，仅本机可访问（2026-10-23 收口；配置备份 mysqld.cnf.bak-20261023 / redis.conf.bak-20261023） |
+| JDK（生产） | 系统 Java（Ubuntu 20.04 apt 安装，路径见 `which java`） |
 | GitHub | https://github.com/YangSun-DiuDiu/Chinaunicom_1358（master 分支；裁剪前备份 tag=backup-pre-filter-20261021, commit=4bfb6b5；裁剪后 commit=8f4f697） |
 
-> 注：CLAUDE.md「服务器清单」已更新为 192.168.1.60(应用)/192.168.1.55(数据库/Redis)；findings 早期章节引用的旧环境 1.94.26.126、115.159.194.149 为历史记录，当前生产以 192.168.1.60/1.55 为准。
+### 生产环境迁移（2026-10-23，commit 待提交）
+
+> 生产环境整体迁移到 1.94.26.126：应用 + MySQL/Redis 同机，中间件全部收口 127.0.0.1。旧生产 192.168.1.60(应用)/192.168.1.55(数据库/Redis) 已退役，数据已全量迁移，findings 早期章节中 1.94.26.126:8090、115.159.194.149 等为历史记录。
+
+- **数据库**：1.55/ry101-test（sadmin）全量导出（本地 mysqldump --result-file，219573B）→ 1.94 建库 `leinuo-fangke`（utf8mb4）+ 专用账号 `leinuo`@localhost/127.0.0.1（Chinaunicom@1358，仅该库权限）→ 导入，22 表数据完整。
+- **部署**：后端 /opt/leinuo/ruoyi-admin.jar（start-topo.sh，-Xms256m -Xmx512m，--spring.profiles.active=druid，HTTP 200 PID 2704935）；前端 /usr/share/nginx/leinuo/（Nginx 80，leinuo.conf 含 /prod-api/ 与 /profile/ 反代）。
+- **配置变更**：application.yml（redis host 127.0.0.1、ruoyi.profile /opt/leinuo/uploadPath）；application-druid.yml（jdbc 127.0.0.1:3306/leinuo-fangke、username leinuo）；deploy.json production → 1.94.26.126。
+- **遗留注意**：Redis 无 systemd 自启（手动 redis-server /etc/redis/redis.conf 启动，daemonize yes），服务器重启后需手动拉起；MySQL 内存紧张（1.7G，Swap 2.3G）。
+- **验证**：HTTP 200（首页）+ /prod-api/login 代理通（验证码逻辑正常）+ 浏览器登录成功（截图 `截图/194_login.png`、`截图/194_index.png`）。
 
 ## 监控体系基础设施（2026-07-12）
 
@@ -167,7 +176,7 @@ PENDING/APPROVED → CANCELLED
 
 | 服务器 | 用户 | 密码 | 用途 |
 |--------|------|------|------|
-| 1.94.26.126 | root | Chinaunicom@1358 | 业务后端(8090)+前端(80)+MySQL(ry101)+Redis |
+| 1.94.26.126 | root | Chinaunicom@1358 | 生产：访客系统后端(8080,/opt/leinuo)+Nginx80+MySQL(leinuo-fangke)+Redis(均127.0.0.1收口) |
 | 115.159.194.149 | root | Chinaunicom@1358 | Prometheus(9090)+Grafana(3000)+AlertManager(9093待部署)+Categraf |
 
 ## 大模型配置（AI报告用，2026-07-12）
