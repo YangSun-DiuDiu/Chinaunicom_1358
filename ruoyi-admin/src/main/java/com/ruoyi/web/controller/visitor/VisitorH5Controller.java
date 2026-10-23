@@ -74,8 +74,9 @@ public class VisitorH5Controller extends BaseController
         }
 
         // 委托 Service 完成登记（事务中创建预约+来访记录）
+        // H5 访客自主预约：来访记录登记类型=预约登记(APPOINTMENT)，与后台现场登记(WALKIN)区分
         Map<String, Object> resultMap = visitorAppointmentService.registerWalkin(
-                appointment, appointment.getVisitorName(), qrDeptId);
+                appointment, appointment.getVisitorName(), qrDeptId, "APPOINTMENT");
 
         AjaxResult result = success(resultMap.get("log"));
         result.put("passCode", resultMap.get("passCode"));

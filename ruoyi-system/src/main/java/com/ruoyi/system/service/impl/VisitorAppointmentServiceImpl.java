@@ -335,8 +335,8 @@ public class VisitorAppointmentServiceImpl implements IVisitorAppointmentService
     @Override
     @Transactional
     public Map<String, Object> registerWalkin(VisitorAppointment appointment, String createBy) {
-        // 旧版二维码/现场登记：不限定部门
-        return registerWalkin(appointment, createBy, null);
+        // 旧版二维码/现场登记：不限定部门，登记类型=现场登记
+        return registerWalkin(appointment, createBy, null, "WALKIN");
     }
 
     /**
@@ -346,6 +346,17 @@ public class VisitorAppointmentServiceImpl implements IVisitorAppointmentService
     @Override
     @Transactional
     public Map<String, Object> registerWalkin(VisitorAppointment appointment, String createBy, Long qrDeptId) {
+        // 后台现场登记：登记类型=现场登记
+        return registerWalkin(appointment, createBy, qrDeptId, "WALKIN");
+    }
+
+    /**
+     * 访客自助登记/现场登记：事务中创建预约(PENDING)+来访记录
+     * 登记类型由调用方指定：H5 访客预约传 APPOINTMENT，后台现场登记传 WALKIN
+     */
+    @Override
+    @Transactional
+    public Map<String, Object> registerWalkin(VisitorAppointment appointment, String createBy, Long qrDeptId, String registerType) {
         // 1. 强制匹配被访人为审批人，并得到被访人部门(dept_id)，匹配失败直接抛异常
         assignApproverAndDept(appointment);
 
@@ -364,8 +375,8 @@ public class VisitorAppointmentServiceImpl implements IVisitorAppointmentService
         }
         this.insertAppointment(appointment, false);
 
-        // 5. 同时创建来访记录
-        VisitorLog log = VisitorLogFactory.from(appointment, "WALKIN", new Date());
+        // 5. 同时创建来访记录（登记类型由调用方语义决定：预约登记/现场登记）
+        VisitorLog log = VisitorLogFactory.from(appointment, registerType, new Date());
         visitorLogService.insertLog(log);
 
         Map<String, Object> result = new HashMap<>();

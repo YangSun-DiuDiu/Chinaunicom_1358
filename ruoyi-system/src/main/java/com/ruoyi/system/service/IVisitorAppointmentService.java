@@ -127,4 +127,15 @@ public interface IVisitorAppointmentService
      * @return Map 包含 passCode、appointmentId、log
      */
     public java.util.Map<String, Object> registerWalkin(VisitorAppointment appointment, String createBy, Long qrDeptId);
+
+    /**
+     * 访客自助登记/现场登记：事务中创建预约+来访记录，可指定来访记录的登记类型
+     *
+     * @param appointment 预约信息
+     * @param createBy    创建者（H5 提交传访客姓名，后台现场登记传登录账号）
+     * @param qrDeptId    登记码限定部门ID（null=不限部门）
+     * @param registerType 来访记录登记类型：APPOINTMENT=预约登记（H5 访客预约），WALKIN=现场登记（后台）
+     * @return Map 包含 passCode、appointmentId、log
+     */
+    public java.util.Map<String, Object> registerWalkin(VisitorAppointment appointment, String createBy, Long qrDeptId, String registerType);
 }

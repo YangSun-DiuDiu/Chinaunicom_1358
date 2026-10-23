@@ -620,3 +620,9 @@ pm run build:prod 成功 + deploy.py --mode frontend 部署 1.94.26.126 成功�
 - **联动**：`VisitorLogServiceImpl.updateLog`（离开接口）设置记录 exit_time 后，若记录有 appointmentId，走状态机 `Event.COMPLETE` 校验（VISITING/APPROVED → COMPLETED）将预约置为 COMPLETED 并写 leave_time；已结束的预约幂等跳过。
 - **权限统一**：`VisitorLogController.exit` 注解由 `visitor:log:edit` 改为 `visitor:log:exit`（与前端按钮一致）；数据库菜单（menu 2022）与角色授权（园区管理员/访客管理员均已含 visitor:log:exit）无需变更。
 - **验证**（生产实测）：exit 9189（预约 9093 VISITING）→ 记录 exit_time=2026-10-23 20:54:41、预约 status=COMPLETED + leave_time 同步；幂等重试状态不变 ✅。
+
+## H5 预约登记类型修复（2026-10-23）
+
+- **问题**：H5 新增预约提交后，来访记录登记类型显示"现场登记"。根因：`/visitor/h5/submit` 复用 `registerWalkin`（后台现场登记服务方法），其创建记录时 register_type 写死 "WALKIN"；H5 访客预约也被标成现场登记。
+- **修复**：`registerWalkin` 新增 4 参重载（含 registerType）；H5 控制器传 "APPOINTMENT"（预约登记），后台现场登记保持 "WALKIN"。存量 81 条 H5 提交记录（判据 create_by=visitor_name AND appointment_id 非空）已修正为 APPOINTMENT。
+- **验证**（生产实测）：H5 提交 → log 9195 register_type=APPOINTMENT ✅；后台现场登记 → log 9194 register_type=WALKIN（create_by=admin）✅；存量修正后 APPOINTMENT=86、WALKIN=1 ✅。
