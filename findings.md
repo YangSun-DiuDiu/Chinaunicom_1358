@@ -152,6 +152,20 @@ PENDING/APPROVED → CANCELLED
 - **遗留注意**：Redis 无 systemd 自启（手动 redis-server /etc/redis/redis.conf 启动，daemonize yes），服务器重启后需手动拉起；MySQL 内存紧张（1.7G，Swap 2.3G）。
 - **验证**：HTTP 200（首页）+ /prod-api/login 代理通（验证码逻辑正常）+ 浏览器登录成功（截图 `截图/194_login.png`、`截图/194_index.png`）。
 
+### 短信参数更新（2026-10-23，宁波镭诺生产）
+
+> 生产环境短信配置切换为新阿里云账号（数据库 sys_sms_channel/sys_sms_sign_template 更新，改库后重启后端清驱动缓存生效，HTTP 200 PID 2705894）。
+
+| 项 | 旧值 | 新值 |
+|----|------|------|
+| AccessKey ID | LTAI5t63X****（历史，已失效） | LTAI5tA3S9t****（完整值见生产库 sys_sms_channel，勿写入文档） |
+| AccessKey Secret | QHezX9rB****（历史，已失效） | i25Ao2Xvay****（完整值见生产库 sys_sms_channel，勿写入文档） |
+| 签名 | 慈溪思刊信息技术有限公司 | 宁波镭诺 |
+| 审批环节-通知被访人模板（st_id=1，无变量） | SMS_512631808 | SMS_512631873 |
+| 审批通过-通知访客模板（st_id=2，变量 passcode） | SMS_512676790 | SMS_512676855 |
+
+- 备注：密钥明文存储于 sys_sms_channel（SmsResolver 直读，无加密）；驱动按 channel_type 单例缓存，改 AK/SK 后必须重启后端（`bash /opt/leinuo/start-topo.sh`）生效。
+
 ## 监控体系基础设施（2026-07-12）
 
 | 组件 | 地址 | 用途 |
