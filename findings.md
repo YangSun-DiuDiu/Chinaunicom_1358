@@ -542,3 +542,18 @@ pm run build:prod 成功 + deploy.py --mode frontend 部署 1.94.26.126 成功�
   3. 点「出示通行码」→ /h5/visitor/pass?code=54BA4A6E → "✅ 通行有效"+二维码+复制按钮（截图 DHg1ttpVdz / 8EwMR6hhU5 / oEhTkzngim）。
 - **安全提示（已向用户说明）**：公开按手机号查询 = 通行码泄露面（知道手机号即可调出二维码进门），属用户拍板的既有方案；列表/出示页均只读不写状态，checkin 仍须保安端显式 POST。
 - **待办（用户未最终表态）**：短信直达链接（审批通过短信拼 `https://1.94.26.126/h5/visitor/pass?code=` 进 passcode 变量）——二维码页已在白名单，随时可加。
+## 门卫扫码入口：统一「访客入场」选择页（2026-10-23）
+
+- **需求**：访客预约完成的出示通道统一走"扫描入口二维码"模式——门卫处张贴固定二维码（内容 = `https://1.94.26.126/h5/entry`），访客扫码落地选择页，二选一：已有预约 / 新增预约。
+- **改动**（commit 待本次提交，已部署 1.94.26.126 生效）：
+  1. 新页 `h5/entry.vue`（访客入场：hero + 两个大卡片——「已有预约」跳 `/h5/appointments`、「新增预约」跳 `/h5-register`；深蓝渐变风格与 H5 其他页统一）；
+  2. `router/index.js` constantRoutes 注册 `/h5/entry`（constantRoutes 免登录天然可访问，不依赖动态路由注册修复）；
+  3. `permission.js` whiteList 加 `/h5/entry`（否则无 token 会被拦到登录页）；
+  4. `visitor/h5/register.vue` 文案"登记"→"预约"语义：标题「智慧园区访客预约」/「XXX访客预约」、副标题「请填写以下信息提交预约申请」、按钮「提交预约」、成功页「预约提交成功」+ 提示「审批通过后，请向门卫出示此通行码」、按钮「继续填写」。
+- **实测（生产 HTTPS + 真实 Chrome + 接口级回归）**：
+  1. `/h5/entry` 免登录渲染：访客入场 / 已有预约（查询我的预约记录并出示通行码）/ 新增预约（填写来访信息提交预约申请）✅（截图 vP9Yku51NU）；
+  2. 点「已有预约」→ `/h5/appointments`（我的预约查询页）✅（截图 8rJAJmDV7r）；
+  3. 点「新增预约」→ `/h5-register`：标题「智慧园区访客预约」、被访人下拉为真实员工脱敏列表、按钮「提交预约」✅（截图 PKVVNnWiA1）；
+  4. 接口级提交 `POST /prod-api/visitor/h5/submit`（Entry Test/15669267932/岑梦婷）：code 200 → appointmentId=9092、passCode=`0A7BA123`、status=PENDING、host_name 岑梦婷/综合管理部（库核对无乱码）✅。
+- **门卫入口二维码**：`门卫入口二维码.png`（项目根目录，qrcode box_size=16 border=6，内容 = https://1.94.26.126/h5/entry，3402B）——打印张贴即可。
+- **注意**：入口二维码内容固定 = /h5/entry 选择页 URL；新增预约提交后为 PENDING（被访人审批），审批通过后访客再扫码走「已有预约」出示通行码。bu 工具参数对中文不稳定（含中文 code 会报 Tool not found），浏览器自动化操作用 ASCII 或走 fill_input/接口通道。

@@ -9,7 +9,7 @@ import { isRelogin } from '@/utils/request'
 
 NProgress.configure({ showSpinner: false })
 
-const whiteList = ['/login', '/h5/login', '/h5-register', '/pass', '/h5/appointments', '/h5/visitor/pass']
+const whiteList = ['/login', '/h5/login', '/h5-register', '/h5/entry', '/pass', '/h5/appointments', '/h5/visitor/pass']
 
 const isWhiteList = (path) => {
   return whiteList.some(pattern => isPathMatch(pattern, path))

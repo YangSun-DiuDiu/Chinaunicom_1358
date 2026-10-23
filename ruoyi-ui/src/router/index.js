@@ -59,6 +59,12 @@ export const constantRoutes = [
     meta: { title: "访客自助登记" },
   },
   {
+    path: "/h5/entry",
+    component: () => import("@/views/h5/entry"),
+    hidden: true,
+    meta: { title: "访客入场" },
+  },
+  {
     path: "/lock",
     component: () => import("@/views/lock"),
     hidden: true,

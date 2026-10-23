@@ -98,26 +98,26 @@
       </div>
 
       <button class="submit-btn" @click="handleSubmit" :disabled="submitting || !agreed">
-        {{ submitting ? '提交中...' : '提交登记' }}
+        {{ submitting ? '提交中...' : '提交预约' }}
       </button>
     </div>
 
     <!-- 成功页 -->
     <div class="success-card" v-else>
       <div class="success-icon">✅</div>
-      <h2>登记成功</h2>
+      <h2>预约提交成功</h2>
       <div class="pass-info">
         <div class="pass-label">您的通行码</div>
         <div class="pass-code">{{ passCode }}</div>
-        <div class="pass-tip">请向门卫出示此通行码</div>
+        <div class="pass-tip">审批通过后，请向门卫出示此通行码</div>
       </div>
       <div class="detail-list">
         <div class="detail-item"><span>姓名</span><strong>{{ form.visitorName }}</strong></div>
         <div class="detail-item"><span>手机</span><strong>{{ form.visitorPhone }}</strong></div>
         <div class="detail-item"><span>被访人</span><strong>{{ form.hostName ? maskName(form.hostName) : '' }}</strong></div>
-        <div class="detail-item"><span>登记时间</span><strong>{{ entryTime }}</strong></div>
+        <div class="detail-item"><span>提交时间</span><strong>{{ entryTime }}</strong></div>
       </div>
-      <button class="reset-btn" @click="resetForm">继续登记</button>
+      <button class="reset-btn" @click="resetForm">继续填写</button>
     </div>
 
     <!-- 底部 -->
@@ -145,8 +145,8 @@ export default {
       invalid: false,
       invalidMsg: '登记码无效或已停用，请联系管理员',
       deptName: '',
-      pageTitle: '智慧园区访客登记',
-      pageSubtitle: '请填写以下信息完成来访登记',
+      pageTitle: '智慧园区访客预约',
+      pageSubtitle: '请填写以下信息提交预约申请',
       submitted: false,
       submitting: false,
       agreed: false,
@@ -213,7 +213,7 @@ export default {
         const data = res.data
         if (data.code === 200 && data.data && data.data.deptId) {
           this.deptName = data.data.deptName || ''
-          this.pageTitle = this.deptName ? this.deptName + '访客登记' : '访客登记'
+          this.pageTitle = this.deptName ? this.deptName + '访客预约' : '访客预约'
           this.pageSubtitle = '请填写以下信息，预约' + (this.deptName || '该部门') + '人员'
           this.loadHosts()
         } else {
