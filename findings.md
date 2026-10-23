@@ -626,3 +626,15 @@ pm run build:prod 成功 + deploy.py --mode frontend 部署 1.94.26.126 成功�
 - **问题**：H5 新增预约提交后，来访记录登记类型显示"现场登记"。根因：`/visitor/h5/submit` 复用 `registerWalkin`（后台现场登记服务方法），其创建记录时 register_type 写死 "WALKIN"；H5 访客预约也被标成现场登记。
 - **修复**：`registerWalkin` 新增 4 参重载（含 registerType）；H5 控制器传 "APPOINTMENT"（预约登记），后台现场登记保持 "WALKIN"。存量 81 条 H5 提交记录（判据 create_by=visitor_name AND appointment_id 非空）已修正为 APPOINTMENT。
 - **验证**（生产实测）：H5 提交 → log 9195 register_type=APPOINTMENT ✅；后台现场登记 → log 9194 register_type=WALKIN（create_by=admin）✅；存量修正后 APPOINTMENT=86、WALKIN=1 ✅。
+
+## 来访记录页二维码核验 + 状态列 + 保安权限（2026-10-23）
+
+- **需求**：① 来访记录页增加"二维码核验"按钮，复用 H5 保安核验扫码逻辑（摄像头扫码/手动输入通行码），核验通过自动变更状态；② 保安账号授权后登录可看到"来访记录"模块；③ 增加与访客预约一致的"状态"列，状态显示中文（保安看不懂英文）。
+- **后端改动**：
+  - VisitorLog.java：新增只读字段 status（注释：联查 visitor_appointment，仅展示，非本表字段）。
+  - VisitorLogMapper.xml：resultMap 增加 status 映射；selectLogVo 增加 LEFT JOIN visitor_appointment a ON l.appointment_id=a.appointment_id，取 .status as status（该 SQL 同时被 list/ById/ByPassCode 复用，无副作用）。
+  - VisitorLogController.java：新增 canViewAllLogs()（admin / 园区管理员 smartparkAdmin / 保安 securityGuard 可见全部记录），list/getInfo/export 三处原"仅本人被访人"判断改为 !canViewAllLogs() —— 否则保安（非 admin 非园区管理员）只能看到自己是被访人的记录（0 条）。
+- **前端改动**（uoyi-ui/src/views/visitor/log/index.vue）：新增"状态"列（columns.status），statusText(row) 映射中文：WALKIN 按 exitTime 判 已到访/已完成；预约型按 PENDING待审批/APPROVED已通过/REJECTED已拒绝/CANCELLED已取消/VISITING已到访/COMPLETED已完成，el-tag 颜色随状态；操作列新增"二维码核验"按钮（v-hasPermi='visitor:log:exit'，无 exitTime 才显示）；核验弹窗复用 H5 guard.vue 逻辑（preflightCamera 降级 + Html5Qrcode + 中文错误映射 + 手动输入回车核验），先 GET /pass/{code} 纯读判有效 → POST /pass/{code}/checkin 变更状态 → 成功后提示并 getList() 自动刷新状态。
+- **数据库**：保安角色（role_id=101）授权菜单 2004 访客管理、2008 来访记录、2020 记录查询、2022 记录离开（2027 保安核验已有）；保安账号 guard01/保安一号（user_id=905）登录可见"访客管理→来访记录"。
+- **运维备注**：guard01 密码已重置为 guard01@2026（原哈希因远端 bash 展开 $ 损坏，已用 SQL 文件方式修复，$ 前缀正确）；pwd_update_date 已补齐避免"初始密码"提示弹窗。
+- **验证**（生产 1.94.26.126 实测）：① 保安 API 登录 + 注入 token → /visitor/log 显示共 90 条全量记录 ✅；② 状态列中文：已完成/已到访/已通过 ✅；③ 核验弹窗打开，手动输入 75AA3890（孙扬小儿 APPROVED）→ 弹窗"✅ 通行有效 · 已到访"，列表状态自动变"已到访" ✅；④ 无效码 BADCODE99 → "通行码无效或已过期" ✅；⑤ VISITING 重复核验 → "预约尚未审批通过，无法核验入场"（状态机收紧）✅。

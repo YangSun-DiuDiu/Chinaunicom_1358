@@ -70,6 +70,9 @@ public class VisitorLog extends BaseEntity
     /** 访客通行码 */
     private String passCode;
 
+    /** 预约状态（联查 visitor_appointment，仅展示；非本表字段） */
+    private String status;
+
     /** 是否开车（0=否 1=是） */
     private String hasCar;
 
@@ -208,6 +211,9 @@ public class VisitorLog extends BaseEntity
 
     public String getPassCode() { return passCode; }
     public void setPassCode(String passCode) { this.passCode = passCode; }
+
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
 
     public String getHasCar() { return hasCar; }
     public void setHasCar(String hasCar) { this.hasCar = hasCar; }

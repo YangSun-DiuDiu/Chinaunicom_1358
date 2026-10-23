@@ -19,6 +19,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="exitTime"        column="exit_time"         />
         <result property="registerType"    column="register_type"     />
         <result property="passCode"        column="pass_code"          />
+        <result property="status"          column="status"            />
         <result property="hasCar"          column="has_car"            />
         <result property="carPlate"        column="car_plate"          />
         <result property="hasGoods"        column="has_goods"          />
@@ -35,8 +36,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select l.log_id, l.dept_id, l.appointment_id, l.visitor_name, l.visitor_phone,
                l.visitor_id_card, l.visitor_company, l.visit_reason, l.host_name,
                l.host_dept, l.entry_time, l.exit_time, l.register_type, l.pass_code, l.has_car, l.car_plate, l.has_goods, l.goods_desc, l.tenant_id,
-               l.create_by, l.create_time, l.update_by, l.update_time, l.remark
+               l.create_by, l.create_time, l.update_by, l.update_time, l.remark,
+               a.status as status
         from visitor_log l
+        left join visitor_appointment a on l.appointment_id = a.appointment_id
     </sql>
 
     <select id="selectLogList" parameterType="VisitorLog" resultMap="VisitorLogResult">

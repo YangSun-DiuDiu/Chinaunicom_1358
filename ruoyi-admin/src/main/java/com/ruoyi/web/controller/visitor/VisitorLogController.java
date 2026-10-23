@@ -51,6 +51,20 @@ public class VisitorLogController extends BaseController
     }
 
     /**
+     * 保安（roleKey=securityGuard）：门卫核验需要查看全部访客记录，同样放开「仅本人被访人」限制。
+     */
+    private boolean isGuard()
+    {
+        return SecurityUtils.hasRole("securityGuard");
+    }
+
+    /** 是否可查看全部访客记录（admin / 园区管理员 / 保安） */
+    private boolean canViewAllLogs()
+    {
+        return SecurityUtils.isAdmin(SecurityUtils.getUserId()) || isParkAdmin() || isGuard();
+    }
+
+    /**
      * 现场登记：创建预约(PENDING)+来访记录(WALKIN)，含通行码
      * 业务逻辑已下沉至 ServiceImpl.registerWalkin()
      */
@@ -90,8 +104,8 @@ public class VisitorLogController extends BaseController
     public TableDataInfo list(VisitorLog log)
     {
         startPage();
-        // 非管理员（园区管理员除外）只能查看本人是被访人的记录
-        if (!SecurityUtils.isAdmin(SecurityUtils.getUserId()) && !isParkAdmin())
+        // 非管理员（园区管理员、保安除外）只能查看本人是被访人的记录
+        if (!canViewAllLogs())
         {
             String nickName = SecurityUtils.getLoginUser().getUser().getNickName();
             log.getParams().put("securityHostName", nickName != null ? nickName : SecurityUtils.getUsername());
@@ -113,8 +127,8 @@ public class VisitorLogController extends BaseController
         {
             return error("记录信息不存在");
         }
-        // 非管理员校验：园区管理员可按部门范围查看本部门及以下记录，其余只能查看本人是被访人的记录
-        if (!SecurityUtils.isAdmin(SecurityUtils.getUserId()) && !isParkAdmin())
+        // 非管理员校验：园区管理员、保安可按部门范围查看本部门及以下记录，其余只能查看本人是被访人的记录
+        if (!canViewAllLogs())
         {
             String nickName = SecurityUtils.getLoginUser().getUser().getNickName();
             String selfName = nickName != null ? nickName : SecurityUtils.getUsername();
@@ -148,8 +162,8 @@ public class VisitorLogController extends BaseController
     @PostMapping("/export")
     public void export(HttpServletResponse response, VisitorLog log)
     {
-        // 非管理员（园区管理员除外）只能导出本人是被访人的记录
-        if (!SecurityUtils.isAdmin(SecurityUtils.getUserId()) && !isParkAdmin())
+        // 非管理员（园区管理员、保安除外）只能导出本人是被访人的记录
+        if (!canViewAllLogs())
         {
             String nickName = SecurityUtils.getLoginUser().getUser().getNickName();
             log.getParams().put("securityHostName", nickName != null ? nickName : SecurityUtils.getUsername());
