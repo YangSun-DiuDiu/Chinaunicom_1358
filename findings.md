@@ -662,3 +662,10 @@ pm run build:prod 成功 + deploy.py --mode frontend 部署 1.94.26.126 成功�
 - **guard.vue（H5）重构**：改用 guardScan 全套能力，verifyCode checkin 失败加提示，容器 id 补齐。
 - **部署与验证**（生产 1.94.26.126）：mvn clean package -DskipTests ✅ + npm run build:prod ✅ → deploy.py --mode full --env production（后端 8080 HTTP 200 PID 2781033，前端 Nginx reload）→ 二次仅前端部署（漏注册修复）。浏览器实测（guard01 保安登录注入 token）：/visitor/log 90 条全量、状态列中文 ✅；顶部"二维码核验"按钮（新权限点）可见 ✅；弹窗打开（标题/输入框/扫码/核验按钮齐全）✅；手动输入 06ACD69D（COMPLETED）→ 结果卡"✅ 通行有效"完整渲染 + checkin 被状态机拒绝时明确提示"预约尚未审批通过…"+"到访状态变更失败"（不再静默）✅；摄像头路径沙箱无摄像头报 NotFoundError 中文文案 ✅（真机扫码需现场验证）。
 - **git**：commit 65c7854（"架构收敛+核验修复…"）已 push master（31a9733..65c7854）。
+
+## 访客预约状态列中文化（2026-10-24）
+
+- **需求**：访客预约页状态列此前只映射 PENDING/APPROVED/REJECTED 三个状态，CANCELLED/VISITING/COMPLETED 落回英文原值（用户肉眼可见英文状态），要求与来访记录页一致全部中文。
+- **改动**（ruoyi-ui/src/views/visitor/appointment/index.vue）：状态列补齐 6 状态中文映射 + 标签颜色，与来访记录 statusText 完全一致——PENDING待审批(warning)/APPROVED已通过(success)/REJECTED已拒绝(danger)/CANCELLED已取消(info)/VISITING已到访(success)/COMPLETED已完成(info)；状态筛选项 VISITING 文案"来访中"→"已到访"（与列及来访记录统一，避免筛选/列文案不一致）。
+- **验证**（生产 1.94.26.126 浏览器实测，cenmengting 超级管理员登录）：/visitor/appointment 状态列英文 0 个，全部中文（已完成/已通过/已到访等）✅，截图已确认视觉效果。
+- **git**：commit a165bbd 已 push master（f0d782d..a165bbd）。
