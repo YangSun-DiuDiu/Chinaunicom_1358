@@ -27,19 +27,22 @@ export default {
   name: 'PortalIndex',
   computed: {
     // 门户卡片按当前用户权限动态过滤：无权限的模块不显示，访客管理跳转到该用户有权限的首个菜单
+    // 超级管理员（admin 角色或通配权限 *:*:*）直接显示全部卡片
     cards() {
       const perms = this.$store.getters.permissions || []
+      const roles = this.$store.getters.roles || []
+      const isAdmin = roles.includes('admin') || perms.includes('*:*:*')
+      const hasAny = (arr) => isAdmin || arr.some((p) => perms.includes(p))
       const list = []
-      const hasAny = (arr) => arr.some((p) => perms.includes(p))
 
-      // 系统管理：任一系统管理列表权限即显示
+      // 系统管理：任一系统管理列表权限即显示（超管恒显示）
       if (hasAny(['system:user:list', 'system:role:list', 'system:dept:list'])) {
         list.push({ id: 1, name: '系统管理', path: '/system/user', pattern: 'p-admin', icon: '⚙', sub: '菜单 · 角色 · 用户 · 部门 · 岗位 · 参数' })
       }
 
-      // 访客管理：任一访客权限即显示，入口优先预约→来访记录→现场登记→二维码
+      // 访客管理：任一访客权限即显示，入口优先预约→来访记录→现场登记→二维码（超管默认预约）
       if (hasAny(['visitor:appointment:list', 'visitor:log:list', 'visitor:register:add', 'visitor:qrcode:list', 'visitor:approval:list'])) {
-        const path = perms.includes('visitor:appointment:list')
+        const path = isAdmin || perms.includes('visitor:appointment:list')
           ? '/visitor/appointment'
           : perms.includes('visitor:log:list')
             ? '/visitor/log'
