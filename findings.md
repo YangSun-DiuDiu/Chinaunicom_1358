@@ -644,3 +644,21 @@ pm run build:prod 成功 + deploy.py --mode frontend 部署 1.94.26.126 成功�
 - **需求**：二维码核验不放在操作列，整个页面只留一个核验入口——扫到哪个通行码，就把哪条通行记录的状态改过来。
 - **改动**（uoyi-ui/src/views/visitor/log/index.vue）：① 操作列删除"二维码核验"按钮（每行只保留"离开"），列宽 200→120；② 页面顶部工具栏新增唯一"二维码核验"入口（type=primary、el-icon-camera、v-hasPermi='visitor:log:exit'），点击打开核验弹窗。核验弹窗逻辑不变：先 GET /pass/{code} 纯读判定 → POST /pass/{code}/checkin 状态机变更（仅 APPROVED→VISITING）→ getList() 自动刷新，与行无关、按码定位记录。
 - **验证**（生产 1.94.26.126 实测）：保安登录 → 顶部唯一"二维码核验"入口可见，操作列每行仅"离开" ✓；顶部入口打开弹窗 → 手动输入 D838138F（类型验证H5·已通过）→ 弹窗"✅ 通行有效 · 已到访"，列表该行状态自动变"已到访" ✓。保安无导出权限（未授 2021），工具栏导出按钮对保安不显示（属正常权限差异）。
+
+## 架构审查落地：核验双份收敛 + ocr 审查修复（2026-10-24）
+
+- **双技能审查**：improve-codebase-architecture 扫描热点（30 次提交）产出 4 候选（HTML 报告已存档 %TEMP%\architecture-review-20261024.html），用户选定**候选1：核验前端双份收敛**；open-code-review（ocr v1.13.3 + DeepSeek OpenAI 兼容网关：base https://api.deepseek.com、model deepseek-flash、providers.deepseek.* 前缀配置，会话 823f5fc9）对 HEAD~2..HEAD 产出 8 条评论（1 high + 4 medium + 3 low），其中 high 级 bug 正是历史"无法打开摄像头（未知错误）"的根因。
+- **新增共享模块**（消除 guard.vue 与 log/index.vue 约 130 行重复）：
+  - ruoyi-ui/src/utils/guardScan.js：preflightCamera（environment→user 降级）、reportCameraError（camlog 上报）、getCameraErrorMessage（中文错误映射单一来源）、startScanner（Html5Qrcode 构造+降级启动）、stopScanner、releaseStream。
+  - ruoyi-ui/src/components/GuardVerifyDialog.vue：PC 核验弹窗深组件（props.visible + emits refresh/closed），内含扫码/手动输入/结果卡/GET→POST 核验流程，H5 与后台共用同一实现。
+- **修复（对应 ocr 评论逐条）**：
+  - [high] 两处扫码容器原来只有 ref="scanner" 缺 id="scanner"，Html5Qrcode('scanner') 内部 getElementById 必然抛错 → 之前"无法打开摄像头（未知错误）"根因；已统一补 id（guard.vue 与 GuardVerifyDialog）。
+  - [medium] 核验按钮 loading 误绑列表 loading（loadingVerify 死变量）→ 组件内改绑 loadingVerify。
+  - [medium] checkin POST 失败 .catch(()=>{}) 静默吞 → 两处均改为明确提示"到访状态变更失败" + 刷新（H5 与弹窗 @refresh）。
+  - [medium-security] 核验入口权限点 visitor:log:exit → visitor:guard:verify（保安已授 2027 菜单）。
+  - [medium] DeptScopeInterceptor 会对非 admin 追加 dept_id 部门过滤：核查生产 guard01 dept_id 为空不受拦截、实测 90 条全量可见；若未来保安挂叶子部门需显式豁免（已在 ocr 报告标注）。
+  - [low] VisitorLogMapper.xml LEFT JOIN 补 a.del_flag='0'，避免已删除预约状态被关联展示。
+- **log/index.vue 重构**：删除内嵌核验 data/methods（code/loadingVerify/scanning/scanner/result/resultTime/startScan/preflightCamera/showCameraError/stopScan/verifyManual/verifyCode），替换为 <guard-verify-dialog :visible.sync="verifyVisible" @refresh="getList" />；注意必须 components:{ GuardVerifyDialog } 注册（首次部署漏注册导致组件未编译，已修复并复验）。
+- **guard.vue（H5）重构**：改用 guardScan 全套能力，verifyCode checkin 失败加提示，容器 id 补齐。
+- **部署与验证**（生产 1.94.26.126）：mvn clean package -DskipTests ✅ + npm run build:prod ✅ → deploy.py --mode full --env production（后端 8080 HTTP 200 PID 2781033，前端 Nginx reload）→ 二次仅前端部署（漏注册修复）。浏览器实测（guard01 保安登录注入 token）：/visitor/log 90 条全量、状态列中文 ✅；顶部"二维码核验"按钮（新权限点）可见 ✅；弹窗打开（标题/输入框/扫码/核验按钮齐全）✅；手动输入 06ACD69D（COMPLETED）→ 结果卡"✅ 通行有效"完整渲染 + checkin 被状态机拒绝时明确提示"预约尚未审批通过…"+"到访状态变更失败"（不再静默）✅；摄像头路径沙箱无摄像头报 NotFoundError 中文文案 ✅（真机扫码需现场验证）。
+- **git**：commit 65c7854（"架构收敛+核验修复…"）已 push master（31a9733..65c7854）。
