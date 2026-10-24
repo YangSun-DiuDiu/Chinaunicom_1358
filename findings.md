@@ -688,3 +688,12 @@ pm run build:prod 成功 + deploy.py --mode frontend 部署 1.94.26.126 成功�
   - 验证（guard01/guard01@2026 真实登录链路）：首页仅显示"访客管理"卡片 ✅ → 点击直达 /visitor/log（不再 404）✅ → 表格 10 行数据 + "二维码核验"按钮 ✅ → 侧边栏"访客管理→来访记录" ✅。
 - **git**：commit 51d81c3 已 push master（603f61c..51d81c3），涵盖列宽改造 8 文件 + index.vue 门户修复。
 - **登录链路备忘**：guard01 密码 guard01@2026；生产登录脚本 api_captcha_guard01.py（取码存 capcha_guard01.png，uuid_guard01.txt）+ api_login_guard01.py（登录结果 login_result_guard01.txt，含明文密码勿提交）。
+
+## 门户卡片超管判定修复（2026-10-24，紧接上一小节）
+
+- **问题**：上一轮门户卡片按 `$store.getters.permissions` 精确 includes 过滤后，admin/超管登录首页**两张卡片全部消失**。根因：若依后端对超管（admin 角色 / userId=1）返回的 permissions 是通配符 `["*:*:*"]`，不是具体权限清单，`includes('system:user:list')` 等精确匹配全部落空 → 卡片被过滤光。
+- **修复**（ruoyi-ui/src/views/index.vue）：卡片 computed 增加超管判定 `isAdmin = roles.includes('admin') || perms.includes('*:*:*')`，超管恒显示全部卡片；访客管理入口超管默认跳 /visitor/appointment，普通用户仍按权限优先级（预约→来访记录→现场登记→二维码）。
+- **验证**（生产 1.94.26.126 浏览器实测）：
+  - 超管 cenmengting（admin 角色，密码=手机后6位 689986）：首页显示"系统管理+访客管理"两张卡片 ✅（截图 cmt-fixed-home.png）
+  - 保安 guard01（guard01@2026）：首页仍仅"访客管理"卡片 ✅（回归不回归）
+- **git**：commit db65f40 已 push master（059c735..db65f40）。
