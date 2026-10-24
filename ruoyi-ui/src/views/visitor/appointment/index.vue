@@ -30,7 +30,7 @@
           <el-option label="已通过" value="APPROVED" />
           <el-option label="已拒绝" value="REJECTED" />
           <el-option label="已取消" value="CANCELLED" />
-          <el-option label="来访中" value="VISITING" />
+          <el-option label="已到访" value="VISITING" />
           <el-option label="已完成" value="COMPLETED" />
         </el-select>
       </el-form-item>
@@ -151,6 +151,9 @@
           <el-tag v-if="scope.row.status==='PENDING'" type="warning" size="small">待审批</el-tag>
           <el-tag v-else-if="scope.row.status==='APPROVED'" type="success" size="small">已通过</el-tag>
           <el-tag v-else-if="scope.row.status==='REJECTED'" type="danger" size="small">已拒绝</el-tag>
+          <el-tag v-else-if="scope.row.status==='CANCELLED'" type="info" size="small">已取消</el-tag>
+          <el-tag v-else-if="scope.row.status==='VISITING'" type="success" size="small">已到访</el-tag>
+          <el-tag v-else-if="scope.row.status==='COMPLETED'" type="info" size="small">已完成</el-tag>
           <el-tag v-else type="info" size="small">{{scope.row.status}}</el-tag>
         </template>
       </el-table-column>
