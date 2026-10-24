@@ -669,3 +669,22 @@ pm run build:prod 成功 + deploy.py --mode frontend 部署 1.94.26.126 成功�
 - **改动**（ruoyi-ui/src/views/visitor/appointment/index.vue）：状态列补齐 6 状态中文映射 + 标签颜色，与来访记录 statusText 完全一致——PENDING待审批(warning)/APPROVED已通过(success)/REJECTED已拒绝(danger)/CANCELLED已取消(info)/VISITING已到访(success)/COMPLETED已完成(info)；状态筛选项 VISITING 文案"来访中"→"已到访"（与列及来访记录统一，避免筛选/列文案不一致）。
 - **验证**（生产 1.94.26.126 浏览器实测，cenmengting 超级管理员登录）：/visitor/appointment 状态列英文 0 个，全部中文（已完成/已通过/已到访等）✅，截图已确认视觉效果。
 - **git**：commit a165bbd 已 push master（f0d782d..a165bbd）。
+
+## 表格列宽/居中统一改造 + 门户卡片权限跳转修复（2026-10-24）
+
+- **需求**：参考 V1.4.1 三条硬约束（列宽总和=页面全宽、主表列全部 align=center、改完截图确认后部署），对 8 个后台列表页重排版；随后修复保安账号门户跳转 404。
+- **列宽配平（8 页全部 =1690px，1920×1080 主档内容区）**：
+  - 访客预约 50+130+130+145+190+130+155+220+105+85+350（选择/通行码/姓名/电话/单位/被访人/被访部门/来访时间/状态/短信/操作）
+  - 访客审批 120+120+140+160+180+100+130+170+170+400（通行码…创建时间/操作）
+  - 现场登记 160+150+150+210+180+250+135+155+210+90（无操作列）；**移除 .list-card max-width:1280px 限宽**（此前 10 列 1690 撑爆卡片导致横向滚动 444px）
+  - 来访记录 120+135+130+230+145+180+125+125+190+190+120
+  - 二维码（路由=/visitor/deptQrcode，菜单 path 定义如此）50+280+230+600+110+200+220
+  - 用户管理 50+60+170+90+95+95+230+150+170+80+240+80+180（默认隐藏 aliasName/telephone/email/orgEmail/workPlace/address/hireDate 7 列，列设置可恢复）
+  - 部门 450+190+170+180+100+100+230+270
+  - 角色 55+100+290+380+140+130+295+300，**并补齐前 4 列 align="center"**（角色编号/角色名称/权限字符/显示顺序此前缺居中）
+- **弹窗统一**：user/dept/role（含数据权限）弹窗 label-width 统一 90px，与访客模块一致。
+- **门户卡片权限跳转修复（bug）**：`ruoyi-ui/src/views/index.vue` 门户卡片此前硬编码跳 /visitor/appointment；guard01 保安只有 visitor:log:list 权限（无预约权限）→ 动态路由未注册该路径 → 点"访客管理→进入模块"跳 **404**（用户报"没有渲染出来访记录列表"）。
+  - 修复：卡片 computed 按 `$store.getters.permissions` 动态过滤——系统管理卡片需任一 system:user/role/dept:list 权限，访客管理卡片需任一 visitor 权限；访客管理入口按权限优先预约→来访记录→现场登记→二维码。
+  - 验证（guard01/guard01@2026 真实登录链路）：首页仅显示"访客管理"卡片 ✅ → 点击直达 /visitor/log（不再 404）✅ → 表格 10 行数据 + "二维码核验"按钮 ✅ → 侧边栏"访客管理→来访记录" ✅。
+- **git**：commit 51d81c3 已 push master（603f61c..51d81c3），涵盖列宽改造 8 文件 + index.vue 门户修复。
+- **登录链路备忘**：guard01 密码 guard01@2026；生产登录脚本 api_captcha_guard01.py（取码存 capcha_guard01.png，uuid_guard01.txt）+ api_login_guard01.py（登录结果 login_result_guard01.txt，含明文密码勿提交）。
