@@ -5,7 +5,7 @@
 
     <!-- 扫码区域 -->
     <div v-if="scanning" class="scanner-box">
-      <div ref="scanner" class="scanner-view"></div>
+      <div id="scanner" ref="scanner" class="scanner-view"></div>
       <div class="scanner-tip">将访客通行码对准框内扫码</div>
       <el-button size="small" type="info" plain @click="stopScan">关闭扫码</el-button>
     </div>
@@ -36,9 +36,9 @@
 </template>
 
 <script>
-import { Html5Qrcode } from 'html5-qrcode'
 import request from '@/utils/request'
 import { parseTime } from '@/utils/ruoyi'
+import { preflightCamera, startScanner, stopScanner, getCameraErrorMessage, releaseStream } from '@/utils/guardScan'
 
 export default {
   data() {
@@ -48,110 +48,37 @@ export default {
   methods: {
     async startScan() {
       this.result = null
+      let stream = null
       try {
-        // ① 先用原生 getUserMedia 探测摄像头（绕过 html5-qrcode 的异常包装，拿真实错误名）
-        const stream = await this.preflightCamera()
+        // ① 预检摄像头（绕过 html5-qrcode 异常包装，拿真实错误名）
+        stream = await preflightCamera()
         // 预检成功：释放探测流，交给 html5-qrcode 重新获取（权限已记住，不会再弹框）
-        stream.getTracks().forEach(t => t.stop())
-        // ② 渲染容器后再构造扫码器
+        releaseStream(stream)
+        // ② 渲染容器后再启动扫码器
         this.scanning = true
         await this.$nextTick()
-        this.scanner = new Html5Qrcode('scanner')
-        // 优先后置摄像头（environment），失败自动降级前置摄像头
-        const onSuccess = (decodedText) => {
-          this.code = decodedText
-          this.stopScan()
-          this.verifyCode(decodedText)
-        }
-        try {
-          await this.scanner.start(
-            { facingMode: 'environment' },
-            { fps: 10, qrbox: { width: 250, height: 250 } },
-            onSuccess,
-            () => {} // ignore scan errors
-          )
-        } catch (err1) {
-          try {
-            await this.scanner.start(
-              { facingMode: 'user' },
-              { fps: 10, qrbox: { width: 250, height: 250 } },
-              onSuccess,
-              () => {}
-            )
-          } catch (err2) {
+        this.scanner = await startScanner('scanner', {
+          onDecoded: (decodedText) => {
+            this.code = decodedText
+            this.stopScan()
+            this.verifyCode(decodedText)
+          },
+          onFail: (err) => {
             this.scanning = false
-            this.showCameraError(err2)
+            this.$message.error(getCameraErrorMessage(err))
           }
+        })
+        if (!this.scanner) {
+          this.scanning = false
         }
       } catch (e) {
+        releaseStream(stream)
         this.scanning = false
-        this.showCameraError(e)
-      }
-    },
-    async preflightCamera() {
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        const err = new Error('浏览器未提供摄像头接口（mediaDevices 不可用）')
-        err.name = 'NoMediaDevices'
-        throw err
-      }
-      try {
-        return await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
-      } catch (err1) {
-        // 后置摄像头失败 → 降级前置
-        try {
-          return await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } })
-        } catch (err2) {
-          this.reportCameraError(err2)
-          throw err2
-        }
-      }
-    },
-    reportCameraError(e) {
-      // 上报真实错误到服务器日志，用于远程诊断（应用内浏览器错误信息丢失时靠它定位）
-      try {
-        const d = {
-          name: (e && e.name) || '',
-          message: (e && e.message) || '',
-          stack: ((e && e.stack) || '').slice(0, 500),
-          ua: navigator.userAgent
-        }
-        fetch('/prod-api/visitor/h5/camlog', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(d)
-        }).catch(() => {})
-      } catch (ignore) {}
-    },
-    showCameraError(e) {
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        this.$message.error('当前环境不支持摄像头调用（浏览器未提供摄像头接口）：请改用系统浏览器（Chrome/Safari）打开本站')
-        return
-      }
-      const name = (e && e.name) || ''
-      const msg = (e && e.message) || ''
-      const msgMap = {
-        NoMediaDevices: '当前环境不支持摄像头调用（浏览器未提供摄像头接口）：请改用系统浏览器（Chrome/Safari）打开本站',
-        NotAllowedError: '浏览器拒绝了摄像头权限：请点击地址栏右侧摄像头图标，将本站权限设为「允许」后重试；或在手机设置中允许浏览器使用相机',
-        NotFoundError: '未检测到可用摄像头：请确认设备已接入摄像头，或改用手动输入通行码',
-        NotReadableError: '摄像头正被其他应用占用：请关闭其他占用相机的应用（如微信、钉钉）后重试',
-        NotSupportedError: '当前环境不支持摄像头调用：请使用手机系统浏览器（Chrome/Safari）打开本站重试',
-        SecurityError: '非安全环境无法调用摄像头：请通过 https:// 地址访问本站',
-        TypeError: '浏览器拒绝摄像头调用（可能是应用内浏览器限制）：请改用系统浏览器（Chrome/Safari）打开'
-      }
-      if (msgMap[name]) {
-        this.$message.error(msgMap[name])
-      } else if (msg && /not found|element/i.test(msg)) {
-        this.$message.error('页面组件未就绪：请刷新页面后重试打开摄像头')
-      } else {
-        this.$message.error('无法打开摄像头（' + (name || msg || '未知错误') + '）')
+        this.$message.error(getCameraErrorMessage(e))
       }
     },
     async stopScan() {
-      if (this.scanner) {
-        try { await this.scanner.stop() } catch (e) {}
-        try { this.scanner.clear() } catch (e) {}
-        this.scanner = null
-      }
+      this.scanner = await stopScanner(this.scanner)
       this.scanning = false
     },
     verifyManual() {
@@ -171,7 +98,10 @@ export default {
             if (d2.visitorName) {
               this.result = { valid: true, ...d2 }
             }
-          }).catch(() => {})
+          }).catch(() => {
+            // 状态机拒绝（重复核验/已完成等）或网络异常：状态未变，明确提示
+            this.$message.error('到访状态变更失败，请以实际状态为准')
+          })
         } else {
           this.result = { valid: false }
         }
