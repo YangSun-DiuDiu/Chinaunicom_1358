@@ -48,50 +48,50 @@
 
         <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="50" align="center" />
-          <el-table-column label="用户编号" align="center" key="userId" prop="userId" v-if="columns.userId.visible" min-width="70" />
-          <el-table-column label="用户名称" align="center" key="userName" v-if="columns.userName.visible" min-width="100" :show-overflow-tooltip="true">
+          <el-table-column label="用户编号" align="center" key="userId" prop="userId" v-if="columns.userId.visible" width="60" />
+          <el-table-column label="用户名称" align="center" key="userName" v-if="columns.userName.visible" width="170" :show-overflow-tooltip="true">
             <template slot-scope="scope">
               <span>{{ scope.row.userName }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="工号" align="center" key="jobNumber" prop="jobNumber" v-if="columns.jobNumber.visible" min-width="80" />
-          <el-table-column label="昵称" align="center" key="nickName" prop="nickName" v-if="columns.nickName.visible" min-width="80" :show-overflow-tooltip="true" />
-          <el-table-column label="别名" align="center" key="aliasName" prop="aliasName" v-if="columns.aliasName.visible" min-width="80" />
-          <el-table-column label="外部来源" align="center" key="externalSource" v-if="columns.externalSource.visible" min-width="90">
+          <el-table-column label="工号" align="center" key="jobNumber" prop="jobNumber" v-if="columns.jobNumber.visible" width="90" />
+          <el-table-column label="昵称" align="center" key="nickName" prop="nickName" v-if="columns.nickName.visible" width="95" :show-overflow-tooltip="true" />
+          <el-table-column label="别名" align="center" key="aliasName" prop="aliasName" v-if="columns.aliasName.visible" width="95" />
+          <el-table-column label="外部来源" align="center" key="externalSource" v-if="columns.externalSource.visible" width="95">
             <template slot-scope="scope">
               <el-tag v-if="scope.row.externalSource === 'DINGTALK'" type="primary" size="mini">钉钉</el-tag>
               <el-tag v-else-if="scope.row.externalSource === 'WECHAT'" type="success" size="mini">企微</el-tag>
               <span v-else style="color:#909399">手动</span>
             </template>
           </el-table-column>
-          <el-table-column label="部门" align="center" key="deptName" v-if="columns.deptName.visible" min-width="100" :show-overflow-tooltip="true">
+          <el-table-column label="部门" align="center" key="deptName" v-if="columns.deptName.visible" width="230" :show-overflow-tooltip="true">
             <template slot-scope="scope"><span>{{ scope.row.dept ? scope.row.dept.deptName : scope.row.deptName || '' }}</span></template>
           </el-table-column>
-          <el-table-column label="职位" align="center" key="position" prop="position" v-if="columns.position.visible" min-width="100" :show-overflow-tooltip="true" />
-          <el-table-column label="手机号" align="center" key="phonenumber" prop="phonenumber" v-if="columns.phonenumber.visible" min-width="110" />
-          <el-table-column label="座机" align="center" key="telephone" prop="telephone" v-if="columns.telephone.visible" min-width="110" />
-          <el-table-column label="邮箱" align="center" key="email" prop="email" v-if="columns.email.visible" min-width="140" :show-overflow-tooltip="true" />
-          <el-table-column label="企业邮箱" align="center" key="orgEmail" prop="orgEmail" v-if="columns.orgEmail.visible" min-width="140" :show-overflow-tooltip="true" />
-          <el-table-column label="工作地点" align="center" key="workPlace" prop="workPlace" v-if="columns.workPlace.visible" min-width="100" />
-          <el-table-column label="地址" align="center" key="address" prop="address" v-if="columns.address.visible" min-width="120" :show-overflow-tooltip="true" />
-          <el-table-column label="入职日期" align="center" key="hireDate" prop="hireDate" v-if="columns.hireDate.visible" min-width="100" />
-          <el-table-column label="状态" align="center" key="status" v-if="columns.status.visible" min-width="70">
+          <el-table-column label="职位" align="center" key="position" prop="position" v-if="columns.position.visible" width="150" :show-overflow-tooltip="true" />
+          <el-table-column label="手机号" align="center" key="phonenumber" prop="phonenumber" v-if="columns.phonenumber.visible" width="170" />
+          <el-table-column label="座机" align="center" key="telephone" prop="telephone" v-if="columns.telephone.visible" width="110" />
+          <el-table-column label="邮箱" align="center" key="email" prop="email" v-if="columns.email.visible" width="160" :show-overflow-tooltip="true" />
+          <el-table-column label="企业邮箱" align="center" key="orgEmail" prop="orgEmail" v-if="columns.orgEmail.visible" width="160" :show-overflow-tooltip="true" />
+          <el-table-column label="工作地点" align="center" key="workPlace" prop="workPlace" v-if="columns.workPlace.visible" width="110" />
+          <el-table-column label="地址" align="center" key="address" prop="address" v-if="columns.address.visible" width="150" :show-overflow-tooltip="true" />
+          <el-table-column label="入职日期" align="center" key="hireDate" prop="hireDate" v-if="columns.hireDate.visible" width="110" />
+          <el-table-column label="状态" align="center" key="status" v-if="columns.status.visible" width="80">
             <template slot-scope="scope">
               <el-switch v-model="scope.row.status" active-value="0" inactive-value="1" @change="handleStatusChange(scope.row)"></el-switch>
             </template>
           </el-table-column>
-          <el-table-column label="创建时间" align="center" prop="createTime" v-if="columns.createTime.visible" min-width="140">
+          <el-table-column label="创建时间" align="center" prop="createTime" v-if="columns.createTime.visible" width="240">
             <template slot-scope="scope">
               <span>{{ parseTime(scope.row.createTime) }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="照片" align="center" min-width="80">
+          <el-table-column label="照片" align="center" width="80">
             <template slot-scope="scope">
               <el-tag v-if="scope.row.photo" type="success" size="small">已上传</el-tag>
               <el-tag v-else type="info" size="small">未上传</el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="操作" align="center" min-width="180" class-name="small-padding fixed-width">
+          <el-table-column label="操作" align="center" width="180" class-name="small-padding fixed-width">
             <template slot-scope="scope" v-if="scope.row.userId !== 1">
               <el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdate(scope.row)" v-hasPermi="['system:user:edit']">修改</el-button>
               <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)" v-hasPermi="['system:user:remove']">删除</el-button>
@@ -111,7 +111,7 @@
 
     <!-- 添加或修改用户配置对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="form" :model="form" :rules="rules" label-width="90px">
         <el-row>
           <el-col :span="12">
             <el-form-item label="用户昵称" prop="nickName">

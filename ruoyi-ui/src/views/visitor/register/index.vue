@@ -87,14 +87,14 @@
             <span v-else style="color:#c0c4cc">-</span>
           </template>
         </el-table-column>
-        <el-table-column label="访客姓名" align="center" prop="visitorName" :show-overflow-tooltip="true" min-width="160" />
-        <el-table-column label="访客电话" align="center" prop="visitorPhone" width="160" />
-        <el-table-column label="身份证号" align="center" prop="visitorIdCard" width="160" />
-        <el-table-column label="访客单位" align="center" prop="visitorCompany" :show-overflow-tooltip="true" min-width="160" />
-        <el-table-column label="来访事由" align="center" prop="visitReason" :show-overflow-tooltip="true" min-width="160" />
-        <el-table-column label="被访人" align="center" prop="hostName" width="160" />
-        <el-table-column label="被访部门" align="center" prop="hostDept" :show-overflow-tooltip="true" min-width="160" />
-        <el-table-column label="登记时间" align="center" width="160">
+        <el-table-column label="访客姓名" align="center" prop="visitorName" :show-overflow-tooltip="true" width="150" />
+        <el-table-column label="访客电话" align="center" prop="visitorPhone" width="150" />
+        <el-table-column label="身份证号" align="center" prop="visitorIdCard" width="210" />
+        <el-table-column label="访客单位" align="center" prop="visitorCompany" :show-overflow-tooltip="true" width="180" />
+        <el-table-column label="来访事由" align="center" prop="visitReason" :show-overflow-tooltip="true" width="250" />
+        <el-table-column label="被访人" align="center" prop="hostName" width="135" />
+        <el-table-column label="被访部门" align="center" prop="hostDept" :show-overflow-tooltip="true" width="155" />
+        <el-table-column label="登记时间" align="center" width="210">
           <template slot-scope="scope">
             <span>{{ parseTime(scope.row.entryTime) }}</span>
           </template>
@@ -257,7 +257,6 @@ export default {
 /* Notion 风格：输入区与记录区统一宽度、统一间距、统一视觉层级 */
 .register-card,
 .list-card {
-  max-width: 1280px;
   margin: 0 auto 16px;
   border-radius: 8px;
 }

@@ -99,11 +99,11 @@
 
     <el-table v-loading="loading" :data="roleList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="角色编号" prop="roleId" width="120" />
-      <el-table-column label="角色名称" prop="roleName" :show-overflow-tooltip="true" width="150" />
-      <el-table-column label="权限字符" prop="roleKey" :show-overflow-tooltip="true" width="150" />
-      <el-table-column label="显示顺序" prop="roleSort" width="100" />
-      <el-table-column label="状态" align="center" width="100">
+      <el-table-column label="角色编号" align="center" prop="roleId" width="100" />
+      <el-table-column label="角色名称" align="center" prop="roleName" :show-overflow-tooltip="true" width="290" />
+      <el-table-column label="权限字符" align="center" prop="roleKey" :show-overflow-tooltip="true" width="380" />
+      <el-table-column label="显示顺序" align="center" prop="roleSort" width="140" />
+      <el-table-column label="状态" align="center" width="130">
         <template slot-scope="scope">
           <el-switch
             v-model="scope.row.status"
@@ -113,12 +113,12 @@
           ></el-switch>
         </template>
       </el-table-column>
-      <el-table-column label="创建时间" align="center" prop="createTime" width="180">
+      <el-table-column label="创建时间" align="center" prop="createTime" width="295">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="300" class-name="small-padding fixed-width">
         <template slot-scope="scope" v-if="scope.row.roleId !== 1">
           <el-button
             size="mini"
@@ -157,7 +157,7 @@
 
     <!-- 添加或修改角色配置对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="100px">
+      <el-form ref="form" :model="form" :rules="rules" label-width="90px">
         <el-form-item label="角色名称" prop="roleName">
           <el-input v-model="form.roleName" placeholder="请输入角色名称" />
         </el-form-item>
@@ -209,7 +209,7 @@
 
     <!-- 分配角色数据权限对话框 -->
     <el-dialog :title="title" :visible.sync="openDataScope" width="500px" append-to-body>
-      <el-form :model="form" label-width="80px">
+      <el-form :model="form" label-width="90px">
         <el-form-item label="角色名称">
           <el-input v-model="form.roleName" :disabled="true" />
         </el-form-item>

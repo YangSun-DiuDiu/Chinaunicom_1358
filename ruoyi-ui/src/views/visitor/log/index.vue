@@ -62,25 +62,25 @@
     </el-row>
 
     <el-table v-loading="loading" :data="logList" @selection-change="handleSelectionChange">
-      <el-table-column label="通行码" align="center" prop="passCode" width="90">
+      <el-table-column label="通行码" align="center" prop="passCode" width="120">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.passCode" type="primary" size="small">{{ scope.row.passCode }}</el-tag>
           <span v-else style="color:#c0c4cc">-</span>
         </template>
       </el-table-column>
-      <el-table-column label="访客姓名" align="center" key="visitorName" prop="visitorName" v-if="columns.visitorName.visible" :show-overflow-tooltip="true" min-width="100" />
+      <el-table-column label="访客姓名" align="center" key="visitorName" prop="visitorName" v-if="columns.visitorName.visible" :show-overflow-tooltip="true" width="135" />
       <el-table-column label="访客电话" align="center" key="visitorPhone" prop="visitorPhone" v-if="columns.visitorPhone.visible" width="130" />
-      <el-table-column label="访客单位" align="center" key="visitorCompany" prop="visitorCompany" v-if="columns.visitorCompany.visible" :show-overflow-tooltip="true" min-width="140" />
-      <el-table-column label="被访人" align="center" key="hostName" prop="hostName" v-if="columns.hostName.visible" width="100" />
-      <el-table-column label="被访部门" align="center" key="hostDept" prop="hostDept" v-if="columns.hostDept.visible" :show-overflow-tooltip="true" min-width="120" />
-      <el-table-column label="登记类型" align="center" key="registerType" v-if="columns.registerType.visible" width="100">
+      <el-table-column label="访客单位" align="center" key="visitorCompany" prop="visitorCompany" v-if="columns.visitorCompany.visible" :show-overflow-tooltip="true" width="230" />
+      <el-table-column label="被访人" align="center" key="hostName" prop="hostName" v-if="columns.hostName.visible" width="145" />
+      <el-table-column label="被访部门" align="center" key="hostDept" prop="hostDept" v-if="columns.hostDept.visible" :show-overflow-tooltip="true" width="180" />
+      <el-table-column label="登记类型" align="center" key="registerType" v-if="columns.registerType.visible" width="125">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.registerType === 'APPOINTMENT'" type="primary" size="small">预约来访</el-tag>
           <el-tag v-else-if="scope.row.registerType === 'WALKIN'" type="info" size="small">现场登记</el-tag>
           <span v-else>{{ scope.row.registerType }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="状态" align="center" key="status" v-if="columns.status.visible" width="100">
+      <el-table-column label="状态" align="center" key="status" v-if="columns.status.visible" width="125">
         <template slot-scope="scope">
           <el-tag v-if="statusText(scope.row) === '待审批'" type="warning" size="small">待审批</el-tag>
           <el-tag v-else-if="statusText(scope.row) === '已通过'" type="success" size="small">已通过</el-tag>
@@ -91,12 +91,12 @@
           <el-tag v-else type="info" size="small">{{ statusText(scope.row) }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="进入时间" align="center" key="entryTime" v-if="columns.entryTime.visible" width="160">
+      <el-table-column label="进入时间" align="center" key="entryTime" v-if="columns.entryTime.visible" width="190">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.entryTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="离开时间" align="center" key="exitTime" v-if="columns.exitTime.visible" width="160">
+      <el-table-column label="离开时间" align="center" key="exitTime" v-if="columns.exitTime.visible" width="190">
         <template slot-scope="scope">
           <span v-if="scope.row.exitTime">{{ parseTime(scope.row.exitTime) }}</span>
           <span v-else style="color: #999;">--</span>

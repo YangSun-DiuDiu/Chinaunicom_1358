@@ -25,12 +25,30 @@
 <script>
 export default {
   name: 'PortalIndex',
-  data() {
-    return {
-      cards: [
-        { id: 1,    name: '系统管理',   path: '/system/user',         pattern: 'p-admin',   icon: '⚙',   sub: '菜单 · 角色 · 用户 · 部门 · 岗位 · 参数' },
-        { id: 2004, name: '访客管理',   path: '/visitor/appointment', pattern: 'p-visitor', icon: '🏢', sub: '预约 · 审批 · 登记 · 记录' },
-      ]
+  computed: {
+    // 门户卡片按当前用户权限动态过滤：无权限的模块不显示，访客管理跳转到该用户有权限的首个菜单
+    cards() {
+      const perms = this.$store.getters.permissions || []
+      const list = []
+      const hasAny = (arr) => arr.some((p) => perms.includes(p))
+
+      // 系统管理：任一系统管理列表权限即显示
+      if (hasAny(['system:user:list', 'system:role:list', 'system:dept:list'])) {
+        list.push({ id: 1, name: '系统管理', path: '/system/user', pattern: 'p-admin', icon: '⚙', sub: '菜单 · 角色 · 用户 · 部门 · 岗位 · 参数' })
+      }
+
+      // 访客管理：任一访客权限即显示，入口优先预约→来访记录→现场登记→二维码
+      if (hasAny(['visitor:appointment:list', 'visitor:log:list', 'visitor:register:add', 'visitor:qrcode:list', 'visitor:approval:list'])) {
+        const path = perms.includes('visitor:appointment:list')
+          ? '/visitor/appointment'
+          : perms.includes('visitor:log:list')
+            ? '/visitor/log'
+            : perms.includes('visitor:register:add')
+              ? '/visitor/register'
+              : '/visitor/deptQrcode'
+        list.push({ id: 2004, name: '访客管理', path, pattern: 'p-visitor', icon: '🏢', sub: '预约 · 审批 · 登记 · 记录' })
+      }
+      return list
     }
   },
   methods: {

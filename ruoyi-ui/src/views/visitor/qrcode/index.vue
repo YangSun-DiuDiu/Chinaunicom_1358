@@ -34,27 +34,27 @@
     </el-row>
 
     <el-table v-loading="loading" :data="qrcodeList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="部门名称" align="center" key="deptName" prop="deptName" width="250"
+      <el-table-column type="selection" width="50" align="center" />
+      <el-table-column label="部门名称" align="center" key="deptName" prop="deptName" width="280"
         :show-overflow-tooltip="true" />
-      <el-table-column label="登记码" align="center" key="registerCode" prop="registerCode" width="250">
+      <el-table-column label="登记码" align="center" key="registerCode" prop="registerCode" width="230">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.registerCode" size="small">{{ scope.row.registerCode }}</el-tag>
           <span v-else style="color:#c0c4cc">-</span>
         </template>
       </el-table-column>
-      <el-table-column label="登记地址" align="center" key="registerUrl" width="550">
+      <el-table-column label="登记地址" align="center" key="registerUrl" width="600">
         <template slot-scope="scope">
           <span style="color:#5645D4">{{ getRegisterUrl(scope.row) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="是否启用" align="center" key="enabled" width="180">
+      <el-table-column label="是否启用" align="center" key="enabled" width="110">
         <template slot-scope="scope">
           <el-switch :value="scope.row.enabled === '1'" @change="handleEnabledChange(scope.row, $event)"
             v-hasPermi="['visitor:qrcode:edit']"></el-switch>
         </template>
       </el-table-column>
-      <el-table-column label="创建时间" align="center" key="createTime" width="220">
+      <el-table-column label="创建时间" align="center" key="createTime" width="200">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
