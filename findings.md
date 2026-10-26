@@ -720,3 +720,15 @@ pm run build:prod 成功 + deploy.py --mode frontend 部署 1.94.26.126 成功�
   - 终态 GET → COMPLETED ✅
 - **测试数据已清理**：预约 9106 + log 9202 已删除（left_appt=0 / left_log=0），未动 WALKIN 与真实数据。
 - **git**：commit 6ef5907 已 push master（7afc9fb..6ef5907），3 文件（ServiceImpl + GuardVerifyDialog + guard.vue）。
+
+## 核验弹窗二次打开失败修复（2026-10-26，紧接上一小节）
+
+- **问题**：来访记录页第一次点"二维码核验"弹窗正常，关闭后再点打不开；点其他按钮会"串出"核验弹窗，刷新才恢复。
+- **根因**：`GuardVerifyDialog.vue` 中 `<el-dialog :visible.sync="visible">` 的 `visible` 是**组件的 props**（父组件单向传入）。Vue 禁止修改 props：关闭弹窗时 el-dialog emit「update:visible=false」→ 子组件执行 `visible = false`（props 赋值无效，只发警告）→ 事件不跨组件冒泡，父组件 `verifyVisible` 保持 true → 第二次点击 `verifyVisible = true` 值无变化、Vue 不响应；el-dialog 内部显示状态与外部脱节 → 点其他按钮弹窗串台。
+- **修复**（ruoyi-ui/src/components/GuardVerifyDialog.vue，单文件最小改动）：
+  - 模板 `:visible.sync="visible"` → `:visible.sync="dialogVisible"`；
+  - 新增 computed `dialogVisible`：`get(){ return this.visible }`、`set(val){ this.$emit('update:visible', val) }`——el-dialog 的关闭意图经 setter 转发父组件，verifyVisible 同步为 false，链路闭合。
+  - 父组件 log/index.vue `:visible.sync="verifyVisible"` 无需改动（本就在监听 update:visible 事件）。
+- **部署与验证**（生产 1.94.26.126）：npm build:prod ✅ → deploy.py --mode frontend ✅。
+- **浏览器实测**（cenmengting 登录注入 Admin-Token）：开→关→开→关→再开 5 步全链路：step0 打开 True → step1 关闭 False → step2 再开 True → step3 再关 False → step4 三开 True ✅；截图 `fix_dialog_open1/3.png`。
+- **git**：commit（"修复核验弹窗二次打开失败：dialogVisible computed 代理 props 转发关闭事件"）已 push master。

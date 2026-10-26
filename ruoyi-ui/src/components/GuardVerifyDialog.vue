@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="访客二维码核验" :visible.sync="visible" width="420px" :close-on-click-modal="false" @closed="onClosed">
+  <el-dialog title="访客二维码核验" :visible.sync="dialogVisible" width="420px" :close-on-click-modal="false" @closed="onClosed">
     <div v-if="scanning" style="text-align:center;">
       <div id="scanner" ref="scanner" class="verify-scanner"></div>
       <p style="color:#999;font-size:13px;margin:8px 0;">将访客通行码对准框内扫码</p>
@@ -61,6 +61,13 @@ export default {
     }
   },
   computed: {
+    // 弹窗可见性代理：props visible 是单向数据（禁止直接改 props），
+    // 关闭弹窗（点X/ESC）时 el-dialog 的 update:visible 走 setter 转发给父组件，
+    // 父组件 verifyVisible 同步更新 → 再次点击可正常打开（修复二次打开失败/状态错乱）
+    dialogVisible: {
+      get() { return this.visible },
+      set(val) { this.$emit('update:visible', val) }
+    },
     // 核验结果卡标题：按返回状态区分入场/离场/无效
     resultTitle() {
       if (!this.result) return ''
