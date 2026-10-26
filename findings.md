@@ -731,4 +731,4 @@ pm run build:prod 成功 + deploy.py --mode frontend 部署 1.94.26.126 成功�
   - 父组件 log/index.vue `:visible.sync="verifyVisible"` 无需改动（本就在监听 update:visible 事件）。
 - **部署与验证**（生产 1.94.26.126）：npm build:prod ✅ → deploy.py --mode frontend ✅。
 - **浏览器实测**（cenmengting 登录注入 Admin-Token）：开→关→开→关→再开 5 步全链路：step0 打开 True → step1 关闭 False → step2 再开 True → step3 再关 False → step4 三开 True ✅；截图 `fix_dialog_open1/3.png`。
-- **git**：commit（"修复核验弹窗二次打开失败：dialogVisible computed 代理 props 转发关闭事件"）已 push master。
+- **git**：commit 5d37be7（"修复核验弹窗二次打开失败：dialogVisible computed 代理 props 转发关闭事件"）已 push master（7caf39d..5d37be7），2 文件（GuardVerifyDialog.vue + findings.md）。
