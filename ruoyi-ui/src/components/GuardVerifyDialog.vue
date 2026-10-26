@@ -6,6 +6,7 @@
       <el-button size="small" type="info" plain @click="stopScan">关闭扫码</el-button>
     </div>
     <div v-else>
+      <div style="text-align:center;color:#909399;padding:0 0 10px;font-size:12px;">进场扫码一次 → 已到访；离场再扫一次 → 自动完成</div>
       <el-button type="primary" size="medium" icon="el-icon-camera-solid" style="width:100%" @click="startScan">打开摄像头扫码</el-button>
       <div style="text-align:center;color:#999;padding:12px 0;font-size:13px;">或</div>
       <el-input v-model="code" placeholder="手动输入通行码（扫码枪扫描后自动核验）" size="medium" clearable @keyup.enter.native="verifyManual">
@@ -13,7 +14,7 @@
       </el-input>
     </div>
     <div v-if="result" class="verify-result" :class="result.valid?'valid':'invalid'">
-      <div class="verify-title">{{ result.valid ? '✅ 通行有效 · 已到访' : '❌ 无效通行码' }}</div>
+      <div class="verify-title">{{ resultTitle }}</div>
       <div class="verify-grid" v-if="result.valid">
         <div class="verify-row"><span>访客</span><b>{{ result.visitorName }}</b></div>
         <div class="verify-row"><span>电话</span><b>{{ result.visitorPhone }}</b></div>
@@ -57,6 +58,14 @@ export default {
         this.result = null
         this.code = ''
       }
+    }
+  },
+  computed: {
+    // 核验结果卡标题：按返回状态区分入场/离场/无效
+    resultTitle() {
+      if (!this.result) return ''
+      if (!this.result.valid) return '❌ 无效通行码'
+      return this.result.status === 'COMPLETED' ? '✅ 核验完成 · 访客已离开' : '✅ 通行有效 · 已到访'
     }
   },
   beforeDestroy() { this.stopScan() },
@@ -111,13 +120,24 @@ export default {
       request({ url: '/pass/' + encodeURIComponent(code), method: 'get' }).then(res => {
         const d = res.data || res
         if (d.visitorName) {
+          // 已完成码：幂等提示，不再触发写操作
+          if (d.status === 'COMPLETED') {
+            this.result = { valid: true, ...d }
+            this.$modal.msgWarning('该访客已完成拜访，无需重复核验')
+            return
+          }
           this.result = { valid: true, ...d }
-          // 到访确认（写操作走独立 POST；GET 为纯读），核验通过自动变更状态
+          // 到访确认 / 离场核验（写操作走独立 POST；GET 为纯读），按当前状态自动分派：
+          // APPROVED → VISITING（已到访）；VISITING → COMPLETED（已离开）
           request({ url: '/pass/' + encodeURIComponent(code) + '/checkin', method: 'post' }).then(res2 => {
             const d2 = res2.data || res2
             if (d2.visitorName) {
               this.result = { valid: true, ...d2 }
-              this.$modal.msgSuccess('核验通过，已自动变更状态为「已到访」')
+              if (d2.status === 'COMPLETED') {
+                this.$modal.msgSuccess('核验完成，访客已离开，拜访流程已闭环')
+              } else {
+                this.$modal.msgSuccess('核验通过，已自动变更状态为「已到访」')
+              }
               this.$emit('refresh')
             }
           }).catch(() => {

@@ -310,7 +310,13 @@ public class VisitorAppointmentServiceImpl implements IVisitorAppointmentService
     }
 
     /**
-     * 到访确认：通行码验证通过后更新状态为 VISITING
+     * 通行核验（二段式闭环）：按预约当前状态自动分派
+     * <p>同一通行码，进场扫一次、离场再扫一次，完成拜访闭环：</p>
+     * <ul>
+     *   <li>APPROVED → VISITING：第①次扫码入场核验（原有逻辑）</li>
+     *   <li>VISITING → COMPLETED：第②次扫码离场核验，联动写入来访记录 exit_time</li>
+     *   <li>COMPLETED：幂等提示，不重复变更</li>
+     * </ul>
      */
     @Override
     @Transactional
@@ -319,14 +325,33 @@ public class VisitorAppointmentServiceImpl implements IVisitorAppointmentService
         if (appointment == null) {
             return null;
         }
-        // 仅审批通过后的预约可核验入场（状态机校验：PENDING 无通行码，禁止直接入场）
-        if (!VisitorAppointmentState.can(appointment.getStatus(), VisitorAppointmentState.Event.CHECKIN)) {
-            throw new ServiceException("预约尚未审批通过，无法核验入场");
+        String st = appointment.getStatus();
+        // 第①次扫码：入场核验（仅审批通过后允许）
+        if (VisitorAppointmentState.APPROVED.equals(st)) {
+            appointment.setStatus(VisitorAppointmentState.transition(st, VisitorAppointmentState.Event.CHECKIN));
+            appointmentMapper.updateAppointment(appointment);
+            return appointment;
         }
-        appointment.setStatus(VisitorAppointmentState.transition(appointment.getStatus(),
-                VisitorAppointmentState.Event.CHECKIN));
-        appointmentMapper.updateAppointment(appointment);
-        return appointment;
+        // 第②次扫码：离场核验（已到访 → 已完成），联动写来访记录离开时间
+        if (VisitorAppointmentState.VISITING.equals(st)) {
+            appointment.setStatus(VisitorAppointmentState.transition(st, VisitorAppointmentState.Event.COMPLETE));
+            appointment.setLeaveTime(new Date());
+            appointmentMapper.updateAppointment(appointment);
+
+            // 联动：对应来访记录写 exit_time（updateLog 内部置当前时间；
+            // 预约已 COMPLETED，其内状态机联动幂等跳过，安全）
+            VisitorLog log = visitorLogService.selectLogByPassCode(passCode);
+            if (log != null) {
+                visitorLogService.updateLog(log);
+            }
+            return appointment;
+        }
+        // 已完成再扫：幂等提示
+        if (VisitorAppointmentState.COMPLETED.equals(st)) {
+            throw new ServiceException("该访客已完成拜访，无需重复核验");
+        }
+        // 其他状态（待审批/已拒绝/已取消）：不允许入场核验
+        throw new ServiceException("预约尚未审批通过，无法核验入场");
     }
 
     /**

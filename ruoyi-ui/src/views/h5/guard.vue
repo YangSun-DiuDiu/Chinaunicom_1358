@@ -23,7 +23,7 @@
 
     <!-- 核验结果 -->
     <div v-if="result" class="verify-result" :class="result.valid?'valid':'invalid'">
-      <div class="verify-title">{{ result.valid ? '✅ 通行有效 · 已到访' : '❌ 无效通行码' }}</div>
+      <div class="verify-title">{{ resultTitle }}</div>
       <div class="verify-grid" v-if="result.valid">
         <div class="verify-row"><span>访客</span><b>{{ result.visitorName }}</b></div>
         <div class="verify-row"><span>电话</span><b>{{ result.visitorPhone }}</b></div>
@@ -43,6 +43,14 @@ import { preflightCamera, startScanner, stopScanner, getCameraErrorMessage, rele
 export default {
   data() {
     return { code: '', loading: false, scanning: false, scanner: null, result: null, resultTime: '' }
+  },
+  computed: {
+    // 核验结果卡标题：按返回状态区分入场/离场/无效
+    resultTitle() {
+      if (!this.result) return ''
+      if (!this.result.valid) return '❌ 无效通行码'
+      return this.result.status === 'COMPLETED' ? '✅ 核验完成 · 访客已离开' : '✅ 通行有效 · 已到访'
+    }
   },
   beforeDestroy() { this.stopScan() },
   methods: {
@@ -91,17 +99,23 @@ export default {
       request({ url: '/pass/' + encodeURIComponent(code), method: 'get' }).then(res => {
         const d = res.data || res
         if (d.visitorName) {
-          this.result = { valid: true, ...d }
-          // 到访确认（写操作走独立 POST；GET 为纯读）
-          request({ url: '/pass/' + encodeURIComponent(code) + '/checkin', method: 'post' }).then(res2 => {
-            const d2 = res2.data || res2
-            if (d2.visitorName) {
-              this.result = { valid: true, ...d2 }
-            }
-          }).catch(() => {
-            // 状态机拒绝（重复核验/已完成等）或网络异常：状态未变，明确提示
-            this.$message.error('到访状态变更失败，请以实际状态为准')
-          })
+          // 已完成码：幂等提示，不再触发写操作
+          if (d.status === 'COMPLETED') {
+            this.result = { valid: true, ...d }
+            this.$message.warning('该访客已完成拜访，无需重复核验')
+          } else {
+            this.result = { valid: true, ...d }
+            // 到访确认 / 离场核验（写操作走独立 POST；GET 为纯读），按当前状态自动分派
+            request({ url: '/pass/' + encodeURIComponent(code) + '/checkin', method: 'post' }).then(res2 => {
+              const d2 = res2.data || res2
+              if (d2.visitorName) {
+                this.result = { valid: true, ...d2 }
+              }
+            }).catch(() => {
+              // 状态机拒绝（重复核验/已完成等）或网络异常：状态未变，明确提示
+              this.$message.error('到访状态变更失败，请以实际状态为准')
+            })
+          }
         } else {
           this.result = { valid: false }
         }
