@@ -697,3 +697,26 @@ pm run build:prod 成功 + deploy.py --mode frontend 部署 1.94.26.126 成功�
   - 超管 cenmengting（admin 角色，密码=手机后6位 689986）：首页显示"系统管理+访客管理"两张卡片 ✅（截图 cmt-fixed-home.png）
   - 保安 guard01（guard01@2026）：首页仍仅"访客管理"卡片 ✅（回归不回归）
 - **git**：commit db65f40 已 push master（059c735..db65f40）。
+
+## 预约型二扫闭环（2026-10-26）
+
+- **需求**：同一通行码完成拜访闭环——进场扫一次→「已到访」(VISITING)，离场再扫一次→「已完成」(COMPLETED)；WALKIN 现场登记保持现状不变。
+- **可行性结论**：状态机 `VisitorAppointmentState` 的 `COMPLETE` 事件原生允许 `VISITING→COMPLETED`，离场联动已有现成逻辑（`VisitorLogServiceImpl.updateLog` 写 log.exit_time + 联动预约 COMPLETED + leave_time，对已完成幂等安全）。方案=把 `checkInVisitor` 升级为按当前状态自动分派，前端结果卡按 status 区分文案。
+- **后端改动**（`ruoyi-system/.../service/impl/VisitorAppointmentServiceImpl.java` 的 checkInVisitor，URL 与参数零变化）：
+  - `APPROVED → VISITING`：第①次扫码入场（原逻辑）；
+  - `VISITING → COMPLETED`：第②次扫码离场，写 leave_time + `selectLogByPassCode` + `updateLog` 联动写 log.exit_time（预约已 COMPLETED，updateLog 内状态机联动幂等跳过）；
+  - `COMPLETED`：幂等抛 `ServiceException("该访客已完成拜访，无需重复核验")`（原逻辑 VISITING 重复扫会误报"预约尚未审批通过"，文案已修正）；
+  - 其他状态（PENDING/REJECTED/CANCELLED）仍拒绝入场。
+- **前端改动**（3 文件内 2 个）：
+  - `ruoyi-ui/src/components/GuardVerifyDialog.vue`：手动输入区上方加提示"进场扫码一次 → 已到访；离场再扫一次 → 自动完成"；新增 computed `resultTitle`（COMPLETED→"✅ 核验完成 · 访客已离开"/其他→"✅ 通行有效 · 已到访"）；`verifyCode` 中 GET 返回 `status==='COMPLETED'` 时不再调 checkin，直接 `msgWarning('该访客已完成拜访，无需重复核验')`；checkin 返回 COMPLETED 时 `msgSuccess('核验完成，访客已离开，拜访流程已闭环')`。
+  - `ruoyi-ui/src/views/h5/guard.vue`：同样加 resultTitle computed + COMPLETED 幂等分支（$message.warning）。
+- **构建坑（重要）**：mvn 首次失败——`ruoyi-framework/src/main/java/org/springframework/security/config/annotation/web/configurers/CsrfConfigurer.java` 是 **0 字节空文件且未被 git 跟踪**，遮蔽 jar 内真实类导致"无法访问 CsrfConfigurer"编译错误 → 删除后 mvn 恢复成功（已确认 ruoyi-framework/src/main/java/org 下无其它残留）。
+- **部署与验证**（生产 1.94.26.126）：mvn clean package ✅ + npm build:prod ✅ → deploy.py --mode full（后端 8080 HTTP 200 PID=2961192，前端 Nginx reload 21:23）。
+- **接口实测**（SQL 造 APPROVED 测试预约 9106 + 对应 visitor_log，pass_code=TC000088，未触发短信）：
+  - GET /pass/TC000088 → APPROVED ✅
+  - 第①次 POST /pass/TC000088/checkin → VISITING ✅
+  - 第②次 POST → COMPLETED ✅（库确认预约 leave_time 21:27:30、log 9202 exit_time 21:27:30 同步写入）
+  - 第③次 POST → 500 "该访客已完成拜访，无需重复核验"（幂等）✅
+  - 终态 GET → COMPLETED ✅
+- **测试数据已清理**：预约 9106 + log 9202 已删除（left_appt=0 / left_log=0），未动 WALKIN 与真实数据。
+- **git**：commit 6ef5907 已 push master（7afc9fb..6ef5907），3 文件（ServiceImpl + GuardVerifyDialog + guard.vue）。
