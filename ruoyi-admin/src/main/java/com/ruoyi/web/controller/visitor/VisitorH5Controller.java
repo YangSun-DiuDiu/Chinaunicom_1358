@@ -103,7 +103,7 @@ public class VisitorH5Controller extends BaseController
 
     /**
      * 查询被访人列表（公开接口，供访客选择）
-     * 带 code 时按部门返回真实员工；不带 code（旧版二维码）时按历史预约记录去重
+     * 带 code 时按部门返回真实员工；不带 code 时返回全部在职员工
      */    @GetMapping("/hosts")
     public AjaxResult hosts(@RequestParam(required = false) String keyword, @RequestParam(required = false) String code)
     {
@@ -119,30 +119,9 @@ public class VisitorH5Controller extends BaseController
             return success(users);
         }
 
-        // 兼容旧版二维码：从已有的预约记录中获取不同的被访人信息
-        VisitorAppointment query = new VisitorAppointment();
-        List<VisitorAppointment> list = visitorAppointmentService.selectAppointmentList(query);
-        // 去重后返回被访人列表
-        java.util.Set<String> seen = new java.util.HashSet<>();
-        java.util.List<java.util.Map<String, String>> hosts = new java.util.ArrayList<>();
-        if (list != null)
-        {
-            for (VisitorAppointment appt : list)
-            {
-                String key = (appt.getHostName() != null ? appt.getHostName() : "") + "|" +
-                            (appt.getHostDept() != null ? appt.getHostDept() : "");
-                if (!seen.contains(key) && StringUtils.isNotEmpty(appt.getHostName()))
-                {
-                    seen.add(key);
-                    java.util.Map<String, String> host = new java.util.HashMap<>();
-                    host.put("hostName", appt.getHostName());
-                    host.put("hostDept", appt.getHostDept() != null ? appt.getHostDept() : "");
-                    host.put("hostPhone", appt.getHostPhone() != null ? appt.getHostPhone() : "");
-                    hosts.add(host);
-                }
-            }
-        }
-        return success(hosts);
+        // 无 code（门卫入口二维码/直接访问）：返回全部在职员工
+        List<Map<String, Object>> users = visitorDeptQrcodeService.selectHostUsersByDept(null);
+        return success(users);
     }
 
     /**

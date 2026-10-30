@@ -112,7 +112,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         WHERE u.del_flag = '0' AND u.status = '0'
           AND d.del_flag = '0' AND d.status = '0'
           AND d.dept_id IS NOT NULL
+          <if test="deptId != null">
           AND (d.dept_id = #{deptId} OR d.ancestors LIKE CONCAT('%,', #{deptId}, ',%'))
+          </if>
         ORDER BY d.dept_name, u.nick_name
     </select>
 
