@@ -192,13 +192,13 @@ export default {
       this.single = selection.length !== 1
       this.multiple = !selection.length
     },
-    /** 拼接部门登记二维码地址 */
+    /** 拼接部门登记二维码地址（统一走 h5 入口，扫码后二选一） */
     getRegisterUrl(row) {
-      return window.location.origin + '/h5/register?code=' + (row.registerCode || '')
+      return window.location.origin + '/h5/entry'
     },
     /** 显示二维码（传完整登记地址，确保二维码编码完整 URL） */
     showQrCode(row) {
-      this.$refs.qrcode.show(window.location.origin + '/h5/register?code=' + row.registerCode)
+      this.$refs.qrcode.show(window.location.origin + '/h5/entry')
     },
     /** 启用/停用切换 */
     handleEnabledChange(row, val) {
