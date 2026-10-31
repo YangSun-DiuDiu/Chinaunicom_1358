@@ -91,6 +91,9 @@ public class VisitorAppointment extends BaseEntity
     /** 访客通行码 */
     private String passCode;
 
+    /** warm-flow 流程实例ID（审批流程发起时回填，非表原生列由 DDL 追加） */
+    private Long flowInstanceId;
+
     /** 是否开车（0=否 1=是） */
     @Excel(name = "是否开车", readConverterExp = "0=否,1=是")
     private String hasCar;
@@ -298,6 +301,16 @@ public class VisitorAppointment extends BaseEntity
     public void setPassCode(String passCode)
     {
         this.passCode = passCode;
+    }
+
+    public Long getFlowInstanceId()
+    {
+        return flowInstanceId;
+    }
+
+    public void setFlowInstanceId(Long flowInstanceId)
+    {
+        this.flowInstanceId = flowInstanceId;
     }
 
     public Long getTenantId()

@@ -49,6 +49,9 @@ user:
 
 # Spring配置
 spring:
+  main:
+    # Boot4 + warm-flow：FlowAutoConfig extends BeanConfig 存在 Bean 重名，必须允许覆盖
+    allow-bean-definition-overriding: true
   # 资源信息
   messages:
     # 国际化资源文件路径
@@ -142,3 +145,20 @@ xss:
   enabled: true
   excludes: /system/notice
   urlPatterns: /system/*,/visitor/*
+
+# warm-flow 工作流配置（1.8.8，审批替换自研状态机；官方 config.html 口径）
+warm-flow:
+  # 是否开启工作流，默认 true
+  enabled: true
+  # 是否显示banner图，默认 true
+  banner: false
+  # 是否开启设计器ui（本轮不接设计器，P2 再评估 warm-flow-plugin-ui-sb-web）
+  ui: false
+  # id生成器类型：不填默认为 orm 扩展自带生成器或 warm-flow 内置 19 位雪花
+  key-type: SnowId19
+  # mybatis 包：不同数据库 SQL 差异通过此配置兼容，默认 mysql
+  data-source-type: mysql
+  # 是否开启逻辑删除（orm 不支持逻辑删除时用此方式，del_flag：2 删除 / 0 存在）
+  logic-delete: true
+  logic-delete-value: 2
+  logic-not-delete-value: 0

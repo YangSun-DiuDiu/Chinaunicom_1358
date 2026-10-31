@@ -87,4 +87,15 @@ public interface VisitorAppointmentMapper
      * @return Map 包含 user_id, dept_id
      */
     public java.util.Map<String, Object> selectUserByNickName(String nickName);
+
+    /**
+     * warm-flow 代批认领：把指定待办任务的审批权限人(flow_user.processed_by)更新为当前操作人
+     * （引擎 skip/终止均按 flow_user.processed_by 校验 handler 权限，代批必须先认领）
+     *
+     * @param taskId   待办任务ID（flow_task.id = flow_user.associated）
+     * @param operator 当前操作人ID（字符串）
+     * @return 更新的行数
+     */
+    public int claimFlowUser(@org.apache.ibatis.annotations.Param("taskId") Long taskId,
+                             @org.apache.ibatis.annotations.Param("operator") String operator);
 }

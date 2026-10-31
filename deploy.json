@@ -34,30 +34,31 @@
 
     "test": {
       "name": "测试环境",
-      "ip": "",
+      "ip": "192.168.1.60",
       "user": "root",
-      "password": "",
+      "password": "Chinaunicom@1358",
 
       "frontend": {
-        "remoteDir": "",
-        "nginxDir": "",
+        "remoteDir": "/tmp",
+        "nginxDir": "/usr/share/nginx/zhihuiyuanqu/dist/",
         "buildCmd": "npm run build:prod",
         "buildDir": "ruoyi-ui"
       },
 
       "backend": {
-        "remoteDir": "",
+        "remoteDir": "/home/zhihuiyuanqu20260907/",
         "jarName": "ruoyi-admin.jar",
-        "port": 8090,
+        "port": 8080,
         "buildCmd": "mvn clean package -DskipTests -q",
-        "buildOutput": "ruoyi-admin/target/ruoyi-admin.jar"
+        "buildOutput": "ruoyi-admin/target/ruoyi-admin.jar",
+        "startCmd": "bash start-topo.sh"
       },
 
       "nginx": {
-        "configPath": "",
+        "configPath": "/etc/nginx/conf.d/zhihuiyuanqu.conf",
         "apiProxyPath": "/prod-api/",
-        "apiProxyTarget": "",
-        "rootPath": ""
+        "apiProxyTarget": "http://127.0.0.1:8080/",
+        "rootPath": "/usr/share/nginx/zhihuiyuanqu/dist"
       }
     }
   }

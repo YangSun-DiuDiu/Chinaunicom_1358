@@ -26,6 +26,14 @@ import com.ruoyi.system.service.IVisitorAppointmentService;
 import com.ruoyi.system.service.IVisitorDeptQrcodeService;
 import com.ruoyi.system.service.IVisitorLogService;
 import com.ruoyi.system.sms.SmsUtil;
+import com.ruoyi.system.config.WarmFlowInitializer;
+import org.dromara.warm.flow.core.FlowEngine;
+import org.dromara.warm.flow.core.dto.FlowParams;
+import org.dromara.warm.flow.core.entity.Instance;
+import org.dromara.warm.flow.core.entity.Task;
+import org.dromara.warm.flow.core.entity.User;
+import org.dromara.warm.flow.core.enums.SkipType;
+import org.dromara.warm.flow.core.enums.UserType;
 
 /**
  * 访客预约 服务层处理
@@ -96,6 +104,7 @@ public class VisitorAppointmentServiceImpl implements IVisitorAppointmentService
      *                     registerWalkin 已在创建前完成匹配与校验，传 false 避免重复执行
      * @return 结果
      */
+    @Transactional
     public int insertAppointment(VisitorAppointment appointment, boolean forceAssign) {
         appointment.setStatus(VisitorAppointmentState.PENDING);
         // 强制匹配被访人：设置审批人 + 部门数据范围，匹配失败直接抛异常
@@ -103,6 +112,8 @@ public class VisitorAppointmentServiceImpl implements IVisitorAppointmentService
             assignApproverAndDept(appointment);
         }
         int rows = appointmentMapper.insertAppointment(appointment);
+        // warm-flow：发起审批流程（业务ID=预约ID，下一办理人=被访人审批人），失败抛错回滚
+        startWarmFlow(appointment);
         // 通知被访人（审批人）有新的访客预约
         notifyApprover(appointment);
         return rows;
@@ -163,6 +174,15 @@ public class VisitorAppointmentServiceImpl implements IVisitorAppointmentService
             throw new ServiceException("无权审批该预约：仅被访人本人可审批");
         }
 
+        // warm-flow 审批联动：通过=skip(PASS)流转至结束；拒绝=terminationByInsId终止实例。
+        // 引擎操作失败抛异常，同事务回滚业务状态，保证业务状态与引擎实例一致。
+        Long operatorUserId = SecurityUtils.getUserId();
+        if (VisitorAppointmentState.REJECTED.equals(status)) {
+            terminationWarmFlow(appointment, operatorUserId, remark == null ? "拒绝" : remark);
+        } else {
+            skipWarmFlow(appointment, operatorUserId, remark == null ? "同意" : remark);
+        }
+
         // 设置审批信息（目标状态由状态机决定）
         appointment.setStatus(VisitorAppointmentState.transition(appointment.getStatus(),
                 status.equals(VisitorAppointmentState.REJECTED)
@@ -215,6 +235,28 @@ public class VisitorAppointmentServiceImpl implements IVisitorAppointmentService
         }
         if (!VisitorAppointmentState.can(appointment.getStatus(), VisitorAppointmentState.Event.CANCEL)) {
             throw new ServiceException("当前预约状态不允许取消");
+        }
+
+        // warm-flow 同步：取消预约时终止引擎实例（待审批/审批中实例可终止；
+        // 已结束实例（审批通过后取消）终止失败不阻断业务取消）
+        if (appointment.getFlowInstanceId() != null) {
+            try {
+                Long curUserId = SecurityUtils.getUserId();
+                String operator = curUserId != null ? String.valueOf(curUserId) : "SELF";
+                // 终止前认领当前待办为操作人并带 permissionFlag（引擎按 flow_user.processed_by 校验）
+                List<Task> tasks = FlowEngine.taskService().getByInsId(appointment.getFlowInstanceId());
+                if (tasks != null && !tasks.isEmpty()) {
+                    ensureFlowUser(tasks.get(0).getId(), curUserId);
+                }
+                FlowEngine.taskService().terminationByInsId(appointment.getFlowInstanceId(),
+                        FlowParams.build()
+                                .handler(operator)
+                                .permissionFlag(List.of(operator))
+                                .message("取消预约"));
+            } catch (Exception e) {
+                log.warn("warm-flow取消同步失败(不阻断业务取消): appointmentId={}, err={}",
+                        appointmentId, e.getMessage());
+            }
         }
 
         appointment.setStatus(VisitorAppointmentState.transition(appointment.getStatus(),
@@ -289,6 +331,144 @@ public class VisitorAppointmentServiceImpl implements IVisitorAppointmentService
     /** 安全字符串，避免null */
     private String safeStr(String s) {
         return s != null ? s : "";
+    }
+
+    // ========== warm-flow 审批流程联动 ==========
+
+    /**
+     * 发起 warm-flow 审批流程（预约创建后调用）
+     * <p>业务ID=预约ID；handler=发起人（无登录态用 createBy/兜底 SELF）；
+     * nextHandler=审批人（被访人），流程实例ID回填预约表。</p>
+     *
+     * @param appointment 预约信息（须已落库，appointmentId 可用）
+     */
+    private void startWarmFlow(VisitorAppointment appointment) {
+        Long approverId = appointment.getApproverId();
+        if (approverId == null) {
+            throw new ServiceException("审批人未匹配，无法发起审批流程");
+        }
+        Long currentUserId = SecurityUtils.getUserId();
+        String handler = currentUserId != null ? String.valueOf(currentUserId)
+                : (appointment.getCreateBy() != null && !appointment.getCreateBy().isEmpty()
+                        ? appointment.getCreateBy() : "SELF");
+        try {
+            Instance instance = FlowEngine.insService().start(String.valueOf(appointment.getAppointmentId()),
+                    FlowParams.build()
+                            .flowCode(WarmFlowInitializer.FLOW_CODE)
+                            .handler(handler)
+                            .nextHandler(String.valueOf(approverId))
+                            .variable(new HashMap<String, Object>() {{
+                                put("visitorName", appointment.getVisitorName());
+                                put("hostName", appointment.getHostName());
+                            }}));
+            if (instance != null && instance.getId() != null) {
+                appointment.setFlowInstanceId(instance.getId());
+                appointmentMapper.updateAppointment(appointment);
+            }
+            log.info("warm-flow流程发起成功: appointmentId={}, instanceId={}",
+                    appointment.getAppointmentId(), instance != null ? instance.getId() : null);
+        } catch (Exception e) {
+            log.error("warm-flow流程发起失败: appointmentId={}", appointment.getAppointmentId(), e);
+            throw new ServiceException("审批流程发起失败：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 审批通过：认领待办（代批场景）后 skip(PASS) 流转至结束
+     *
+     * @param appointment   预约信息
+     * @param operatorUserId 当前操作人ID
+     * @param message       审批意见
+     */
+    private void skipWarmFlow(VisitorAppointment appointment, Long operatorUserId, String message) {
+        Long instanceId = requireFlowInstanceId(appointment);
+        try {
+            List<Task> tasks = FlowEngine.taskService().getByInsId(instanceId);
+            if (tasks == null || tasks.isEmpty()) {
+                throw new ServiceException("未找到待办审批任务");
+            }
+            Task task = tasks.get(0);
+            // 代批认领：当前操作人非流程登记审批人时更新 flow_user.processed_by
+            ensureFlowUser(task.getId(), operatorUserId);
+            // 引擎 skip 权限校验：FlowParams.permissionFlag 须与 flow_user.processed_by 集合有交集
+            // （1.8.8 TaskServiceImpl 校验逻辑：permissionFlag 为空或与权限人无交集即抛"无法跳转"）
+            FlowEngine.taskService().skip(task.getId(),
+                    FlowParams.build()
+                            .skipType(SkipType.PASS.getKey())
+                            .handler(String.valueOf(operatorUserId))
+                            .permissionFlag(List.of(String.valueOf(operatorUserId)))
+                            .message(message)
+                            .ignoreCooperate(true));
+            log.info("warm-flow审批通过: appointmentId={}, taskId={}, operator={}",
+                    appointment.getAppointmentId(), task.getId(), operatorUserId);
+        } catch (ServiceException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("warm-flow审批通过失败: appointmentId={}", appointment.getAppointmentId(), e);
+            throw new ServiceException("审批流程执行失败：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 审批拒绝：终止流程实例（对齐 NetSight 集成模式，warm-flow 1.8.9 起禁止 REJECT 退回 START）
+     *
+     * @param appointment   预约信息
+     * @param operatorUserId 当前操作人ID
+     * @param message       审批意见
+     */
+    private void terminationWarmFlow(VisitorAppointment appointment, Long operatorUserId, String message) {
+        Long instanceId = requireFlowInstanceId(appointment);
+        try {
+            // 终止同样走引擎权限校验：先认领当前待办为操作人，再带 permissionFlag 终止
+            List<Task> tasks = FlowEngine.taskService().getByInsId(instanceId);
+            if (tasks != null && !tasks.isEmpty()) {
+                ensureFlowUser(tasks.get(0).getId(), operatorUserId);
+            }
+            FlowEngine.taskService().terminationByInsId(instanceId,
+                    FlowParams.build()
+                            .handler(String.valueOf(operatorUserId))
+                            .permissionFlag(List.of(String.valueOf(operatorUserId)))
+                            .message(message));
+            log.info("warm-flow审批拒绝(终止实例): appointmentId={}, instanceId={}, operator={}",
+                    appointment.getAppointmentId(), instanceId, operatorUserId);
+        } catch (ServiceException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("warm-flow审批拒绝失败: appointmentId={}", appointment.getAppointmentId(), e);
+            throw new ServiceException("审批流程执行失败：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 获取预约关联的流程实例ID，缺失则抛错（防止业务状态与引擎实例脱节）
+     */
+    private Long requireFlowInstanceId(VisitorAppointment appointment) {
+        Long instanceId = appointment.getFlowInstanceId();
+        if (instanceId == null) {
+            throw new ServiceException("预约未关联审批流程实例，无法审批");
+        }
+        return instanceId;
+    }
+
+    /**
+     * 代批认领：当前操作人非流程登记审批人时，把 flow_user.processed_by 更新为当前操作人
+     * （引擎 skip/终止按 flow_user.processed_by 校验 handler 权限；
+     *  1.8.8 的 UserService.updatePermission(associated, users, type, delFlag, operator)
+     *  第4参为 delFlag(是否先删旧权限)，传 false 仅追加不替换，故改用直接 SQL 认领）
+     *
+     * @param taskId        待办任务ID
+     * @param operatorUserId 当前操作人ID
+     */
+    private void ensureFlowUser(Long taskId, Long operatorUserId) {
+        try {
+            String operator = String.valueOf(operatorUserId);
+            int rows = appointmentMapper.claimFlowUser(taskId, operator);
+            if (rows > 0) {
+                log.info("warm-flow代批认领: taskId={}, operator={}, rows={}", taskId, operator, rows);
+            }
+        } catch (Exception e) {
+            log.warn("warm-flow审批人认领失败(继续按原权限审批): taskId={}, err={}", taskId, e.getMessage());
+        }
     }
 
     // ========== 以下为新增方法 ==========

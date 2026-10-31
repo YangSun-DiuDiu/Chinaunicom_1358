@@ -43,6 +43,13 @@
             <version>6.10.0.202406032230-r</version>
         </dependency>
 
+        <!-- warm-flow 工作流引擎（1.8.8，审批替换自研状态机；原生 MyBatis + Boot4 适配） -->
+        <dependency>
+            <groupId>org.dromara.warm</groupId>
+            <artifactId>warm-flow-mybatis-sb4-starter</artifactId>
+            <version>1.8.8</version>
+        </dependency>
+
     </dependencies>
 
 </project>

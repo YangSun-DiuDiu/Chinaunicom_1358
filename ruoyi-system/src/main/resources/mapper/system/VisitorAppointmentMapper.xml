@@ -24,6 +24,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="smsSent"           column="sms_sent"            />
         <result property="smsContent"        column="sms_content"         />
         <result property="passCode"          column="pass_code"           />
+        <result property="flowInstanceId"    column="flow_instance_id"    />
         <result property="hasCar"            column="has_car"             />
         <result property="carPlate"          column="car_plate"           />
         <result property="hasGoods"          column="has_goods"           />
@@ -41,7 +42,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select a.appointment_id, a.dept_id, a.visitor_name, a.visitor_phone, a.visitor_id_card,
                a.visitor_company, a.visit_reason, a.host_name, a.host_dept, a.host_phone,
                a.visit_time, a.leave_time, a.status, a.approver_id, a.approve_time,
-               a.approve_remark, a.sms_sent, a.sms_content, a.pass_code, a.has_car, a.car_plate, a.has_goods, a.goods_desc, a.tenant_id,
+               a.approve_remark, a.sms_sent, a.sms_content, a.pass_code, a.flow_instance_id, a.has_car, a.car_plate, a.has_goods, a.goods_desc, a.tenant_id,
                a.create_by, a.create_time, a.update_by, a.update_time, a.remark, a.del_flag
         from visitor_appointment a
     </sql>
@@ -112,6 +113,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="smsSent != null and smsSent != ''">sms_sent,</if>
             <if test="smsContent != null and smsContent != ''">sms_content,</if>
             <if test="passCode != null and passCode != ''">pass_code,</if>
+            <if test="flowInstanceId != null">flow_instance_id,</if>
             <if test="hasCar != null and hasCar != ''">has_car,</if>
             <if test="carPlate != null and carPlate != ''">car_plate,</if>
             <if test="hasGoods != null and hasGoods != ''">has_goods,</if>
@@ -139,6 +141,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="smsSent != null and smsSent != ''">#{smsSent},</if>
             <if test="smsContent != null and smsContent != ''">#{smsContent},</if>
             <if test="passCode != null and passCode != ''">#{passCode},</if>
+            <if test="flowInstanceId != null">#{flowInstanceId},</if>
             <if test="hasCar != null and hasCar != ''">#{hasCar},</if>
             <if test="carPlate != null and carPlate != ''">#{carPlate},</if>
             <if test="hasGoods != null and hasGoods != ''">#{hasGoods},</if>
@@ -170,6 +173,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="smsSent != null and smsSent != ''">sms_sent = #{smsSent},</if>
             <if test="smsContent != null">sms_content = #{smsContent},</if>
             <if test="passCode != null and passCode != ''">pass_code = #{passCode},</if>
+            <if test="flowInstanceId != null">flow_instance_id = #{flowInstanceId},</if>
             <if test="hasCar != null and hasCar != ''">has_car = #{hasCar},</if>
             <if test="carPlate != null">car_plate = #{carPlate},</if>
             <if test="hasGoods != null and hasGoods != ''">has_goods = #{hasGoods},</if>
@@ -208,5 +212,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         SELECT user_id AS userId, dept_id AS deptId, user_name AS userName, nick_name AS nickName
         FROM sys_user WHERE nick_name = #{nickName} AND del_flag = '0' LIMIT 1
     </select>
+
+    <!-- warm-flow 代批认领：更新待办任务的审批权限人为当前操作人（引擎按 processed_by 校验 handler 权限） -->
+    <update id="claimFlowUser">
+        UPDATE flow_user
+        SET processed_by = #{operator},
+            update_by = #{operator}
+        WHERE associated = #{taskId}
+          AND type = '1'
+          AND del_flag = '0'
+    </update>
 
 </mapper>
