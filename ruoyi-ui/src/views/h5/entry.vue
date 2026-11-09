@@ -20,6 +20,13 @@
         <div class="card-desc">填写来访信息<br/>提交预约申请</div>
         <div class="card-arrow">›</div>
       </div>
+
+      <div class="entry-card staff" @click="goApproval">
+        <div class="card-icon">🔑</div>
+        <div class="card-title">管理员审批</div>
+        <div class="card-desc">被访人 / 员工登录后<br/>在线审批来访申请</div>
+        <div class="card-arrow">›</div>
+      </div>
     </div>
 
     <div class="footer">
@@ -37,6 +44,9 @@ export default {
     },
     goRegister() {
       this.$router.push('/h5/register')
+    },
+    goApproval() {
+      this.$router.push('/h5/approval')
     }
   }
 }
@@ -126,6 +136,12 @@ export default {
   border: 1px solid rgba(86, 69, 212, 0.25);
 }
 .entry-card.alt .card-arrow {
+  color: #5645D4;
+}
+.entry-card.staff {
+  border: 1px solid rgba(86, 69, 212, 0.25);
+}
+.entry-card.staff .card-arrow {
   color: #5645D4;
 }
 .footer {

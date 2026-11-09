@@ -257,6 +257,20 @@ public class VisitorAppointmentServiceImpl implements IVisitorAppointmentService
     }
 
     /**
+     * 查询审批已办列表（当前用户审批通过的/拒绝的预约）
+     *
+     * @param approverId 审批人ID
+     * @return 已办预约集合
+     */
+    @Override
+    public List<VisitorAppointment> selectDoneList(Long approverId) {
+        if (approverId == null) {
+            return java.util.Collections.emptyList();
+        }
+        return appointmentMapper.selectDoneList(approverId);
+    }
+
+    /**
      * 发送审批结果短信通知（使用短信中台模板发送）
      *
      * @param appointment 预约信息

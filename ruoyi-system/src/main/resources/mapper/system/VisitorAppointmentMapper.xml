@@ -87,9 +87,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectAppointmentVo"/>
         where a.status = 'PENDING' AND a.del_flag = '0'
         <if test="approverId != null">
-            AND (a.approver_id = #{approverId} OR a.approver_id IS NULL)
+            AND a.approver_id = #{approverId}
         </if>
         order by a.create_time asc
+    </select>
+
+    <select id="selectDoneList" resultMap="VisitorAppointmentResult">
+        <include refid="selectAppointmentVo"/>
+        where a.del_flag = '0'
+          AND a.status IN ('APPROVED', 'REJECTED')
+          AND a.approve_time IS NOT NULL
+          AND a.approver_id = #{approverId}
+        order by a.approve_time desc
     </select>
 
     <insert id="insertAppointment" parameterType="VisitorAppointment" useGeneratedKeys="true" keyProperty="appointmentId">

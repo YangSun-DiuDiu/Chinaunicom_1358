@@ -78,6 +78,14 @@ export function pendingAppointment() {
   })
 }
 
+// 审批已办列表（当前用户审批通过的/拒绝的预约）
+export function doneAppointment() {
+  return request({
+    url: '/visitor/appointment/done',
+    method: 'get'
+  })
+}
+
 // ===== 来访记录 =====
 
 // 查询来访记录列表

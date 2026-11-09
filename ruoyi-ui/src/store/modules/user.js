@@ -81,14 +81,16 @@ const user = {
           commit('SET_NICK_NAME', user.nickName)
           commit('SET_AVATAR', avatar)
           cache.session.set('pwrChrtype', res.pwdChrtype)
+          /* H5 端不做改密强制跳转：员工从 H5 登录（如被访人自助审批）被踢到 PC 个人中心会中断业务流程 */
+          const inH5Page = window.location.pathname.indexOf('/h5') === 0
           /* 初始密码提示 */
-          if(res.isDefaultModifyPwd) {
+          if(res.isDefaultModifyPwd && !inH5Page) {
             MessageBox.confirm('您的密码还是初始密码，请修改密码！',  '安全提示', {  confirmButtonText: '确定',  cancelButtonText: '取消',  type: 'warning' }).then(() => {
               router.push({ name: 'Profile' })
             }).catch(() => { router.push({ name: 'Profile' }) })
           }
           /* 过期密码提示 */
-          if(!res.isDefaultModifyPwd && res.isPasswordExpired) {
+          if(!res.isDefaultModifyPwd && res.isPasswordExpired && !inH5Page) {
             MessageBox.confirm('您的密码已过期，请尽快修改密码！',  '安全提示', {  confirmButtonText: '确定',  cancelButtonText: '取消',  type: 'warning' }).then(() => {
               router.push({ name: 'Profile' })
             }).catch(() => { router.push({ name: 'Profile' }) })

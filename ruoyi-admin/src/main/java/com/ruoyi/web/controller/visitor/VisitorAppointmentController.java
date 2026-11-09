@@ -83,6 +83,20 @@ public class VisitorAppointmentController extends BaseController
     }
 
     /**
+     * 获取当前用户的审批已办列表（我审批通过的/拒绝的预约）
+     * 已办范围：仅 approver_id = 当前登录用户 且已完成审批的记录
+     *
+     * @return 已办预约集合
+     */
+    @PreAuthorize("@ss.hasPermi('visitor:approval:list')")
+    @GetMapping("/done")
+    public AjaxResult done()
+    {
+        List<VisitorAppointment> list = visitorAppointmentService.selectDoneList(SecurityUtils.getUserId());
+        return success(list);
+    }
+
+    /**
      * 根据预约ID获取详细信息
      * 非管理员仅能查看本人为审批人的预约
      */

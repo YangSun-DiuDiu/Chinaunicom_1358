@@ -8,8 +8,9 @@
       <div class="h5-card" @click="$router.push('/h5/visitor')">
         <span class="icon">👤</span><span class="label">访客登记</span>
       </div>
-      <div class="h5-card" @click="$router.push('/visitor/approval')">
+      <div class="h5-card" @click="$router.push('/h5/approval')">
         <span class="icon">✅</span><span class="label">访客审批</span>
+        <span v-if="pendingCount > 0" class="dot">{{ pendingCount > 99 ? '99+' : pendingCount }}</span>
       </div>
       <div class="h5-card" @click="$router.push('/h5/appointments')">
         <span class="icon">🎫</span><span class="label">我的预约</span>
@@ -25,15 +26,32 @@
 </template>
 
 <script>
+import { pendingAppointment } from '@/api/visitor/visitor'
+
 export default {
   name: 'H5Index',
   data() {
-    return { username: '' }
+    return { username: '', pendingCount: 0 }
   },
   created() {
     this.username = this.$store.state.user.name || '用户'
+    this.loadPendingCount()
   },
   methods: {
+    loadPendingCount() {
+      // 待审批角标：无审批权限或接口异常时静默，不影响门户展示
+      pendingAppointment()
+        .then(res => {
+          let list = (res && res.data) || []
+          if (!Array.isArray(list)) {
+            list = Array.isArray(list.rows) ? list.rows : []
+          }
+          this.pendingCount = list.length
+        })
+        .catch(() => {
+          this.pendingCount = 0
+        })
+    },
     logout() {
       this.$store.dispatch('LogOut').then(() => this.$router.push('/h5/login'))
     }
@@ -52,4 +70,7 @@ export default {
 .h5-card:active { background:rgba(86,69,212,0.12); }
 .h5-card .icon { font-size:32px; display:block; margin-bottom:8px; }
 .h5-card .label { font-size:13px; color:#5D5B54; }
+.h5-card { position:relative; }
+.h5-card .dot { position:absolute; top:6px; right:6px; min-width:18px; height:18px; line-height:18px;
+  padding:0 5px; box-sizing:border-box; border-radius:9px; background:#FF3B30; color:#fff; font-size:11px; }
 </style>

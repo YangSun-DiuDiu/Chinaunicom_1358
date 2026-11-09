@@ -85,6 +85,14 @@ public interface IVisitorAppointmentService
     public List<VisitorAppointment> selectPendingList(Long approverId);
 
     /**
+     * 查询审批已办列表（当前用户审批通过的/拒绝的预约）
+     *
+     * @param approverId 审批人ID
+     * @return 已办预约集合
+     */
+    public List<VisitorAppointment> selectDoneList(Long approverId);
+
+    /**
      * 通过通行码查询预约
      *
      * @param passCode 通行码
