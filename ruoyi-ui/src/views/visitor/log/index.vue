@@ -93,7 +93,8 @@
       </el-table-column>
       <el-table-column label="进入时间" align="center" key="entryTime" v-if="columns.entryTime.visible" width="190">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.entryTime) }}</span>
+          <span v-if="scope.row.entryTime">{{ parseTime(scope.row.entryTime) }}</span>
+          <span v-else style="color: #999;">未入园</span>
         </template>
       </el-table-column>
       <el-table-column label="离开时间" align="center" key="exitTime" v-if="columns.exitTime.visible" width="190">

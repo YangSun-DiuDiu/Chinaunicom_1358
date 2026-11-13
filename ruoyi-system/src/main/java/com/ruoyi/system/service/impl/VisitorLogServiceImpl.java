@@ -104,6 +104,19 @@ public class VisitorLogServiceImpl implements IVisitorLogService
     }
 
     /**
+     * 写入实际入园时间（门卫扫码入场核验时调用，幂等：已有值不覆盖）
+     */
+    @Override
+    public int markEntryTime(String passCode, Date entryTime)
+    {
+        if (passCode == null || passCode.isEmpty())
+        {
+            return 0;
+        }
+        return visitorLogMapper.markEntryTime(passCode, entryTime);
+    }
+
+    /**
      * 通过通行码查询访客记录
      *
      * @param passCode 通行码

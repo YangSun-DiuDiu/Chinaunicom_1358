@@ -69,11 +69,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="params.securityHostName != null and params.securityHostName != ''">
                 AND l.host_name = #{params.securityHostName}
             </if>
+            <!-- 日期区间按"记录创建时间"过滤：entry_time 已改为实际入园时间，
+                 预约型提交时为空，若仍按 entry_time 过滤会漏掉未入园记录 -->
             <if test="params.beginTime != null and params.beginTime != ''">
-                AND date_format(l.entry_time,'%Y%m%d') &gt;= date_format(#{params.beginTime},'%Y%m%d')
+                AND date_format(l.create_time,'%Y%m%d') &gt;= date_format(#{params.beginTime},'%Y%m%d')
             </if>
             <if test="params.endTime != null and params.endTime != ''">
-                AND date_format(l.entry_time,'%Y%m%d') &lt;= date_format(#{params.endTime},'%Y%m%d')
+                AND date_format(l.create_time,'%Y%m%d') &lt;= date_format(#{params.endTime},'%Y%m%d')
             </if>
         </where>
         order by l.create_time desc
@@ -95,7 +97,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="visitReason != null and visitReason != ''">visit_reason,</if>
             <if test="hostName != null and hostName != ''">host_name,</if>
             <if test="hostDept != null and hostDept != ''">host_dept,</if>
-            <if test="entryTime != null">entry_time,</if>
+            <!-- entry_time 必须显式写入（可为 NULL）：
+                 该列带 DEFAULT CURRENT_TIMESTAMP，若在此省略列，预约型记录会被数据库
+                 自动填成提交时刻，导致"进入时间"失去实际入园语义 -->
+            entry_time,
             <if test="exitTime != null">exit_time,</if>
             <if test="registerType != null and registerType != ''">register_type,</if>
             <if test="passCode != null and passCode != ''">pass_code,</if>
@@ -117,7 +122,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="visitReason != null and visitReason != ''">#{visitReason},</if>
             <if test="hostName != null and hostName != ''">#{hostName},</if>
             <if test="hostDept != null and hostDept != ''">#{hostDept},</if>
-            <if test="entryTime != null">#{entryTime},</if>
+            #{entryTime,jdbcType=TIMESTAMP},
             <if test="exitTime != null">#{exitTime},</if>
             <if test="registerType != null and registerType != ''">#{registerType},</if>
             <if test="passCode != null and passCode != ''">#{passCode},</if>
@@ -162,6 +167,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         update visitor_log
         set pass_code = #{passCode}, update_time = sysdate()
         where appointment_id = #{appointmentId}
+    </update>
+
+    <!-- 入场核验写入实际入园时间；entry_time 已存在则不覆盖（幂等，重复扫码不改变首次入园时间） -->
+    <update id="markEntryTime">
+        update visitor_log
+        set entry_time = #{entryTime}, update_time = sysdate()
+        where pass_code = #{passCode}
+          and entry_time is null
     </update>
 
 </mapper>

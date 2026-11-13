@@ -344,6 +344,9 @@ public class VisitorAppointmentServiceImpl implements IVisitorAppointmentService
         if (VisitorAppointmentState.APPROVED.equals(st)) {
             appointment.setStatus(VisitorAppointmentState.transition(st, VisitorAppointmentState.Event.CHECKIN));
             appointmentMapper.updateAppointment(appointment);
+            // 入场核验即"实际入园"时点：回写来访记录 entry_time（该记录在提交预约时为 null）
+            // 幂等：markEntryTime 仅在该记录 entry_time 为空时写入，重复核验不覆盖首次入园时间
+            visitorLogService.markEntryTime(passCode, new Date());
             return appointment;
         }
         // 第②次扫码：离场核验（已到访 → 已完成），联动写来访记录离开时间
@@ -415,7 +418,11 @@ public class VisitorAppointmentServiceImpl implements IVisitorAppointmentService
         this.insertAppointment(appointment, false);
 
         // 5. 同时创建来访记录（登记类型由调用方语义决定：预约登记/现场登记）
-        VisitorLog log = VisitorLogFactory.from(appointment, registerType, new Date());
+        // 进入时间只记"实际入园"时点：
+        //   预约型（APPOINTMENT）：提交时未知，置 null，待门卫扫码入场核验时由 checkInVisitor 回写
+        //   现场登记（WALKIN）：保安当场登记即视为已入园，记登记时间
+        Date actualEntryTime = "WALKIN".equals(registerType) ? new Date() : null;
+        VisitorLog log = VisitorLogFactory.from(appointment, registerType, actualEntryTime);
         visitorLogService.insertLog(log);
 
         Map<String, Object> result = new HashMap<>();

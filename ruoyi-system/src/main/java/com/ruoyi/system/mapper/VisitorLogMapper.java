@@ -1,5 +1,6 @@
 package com.ruoyi.system.mapper;
 
+import java.util.Date;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
 import com.ruoyi.system.domain.VisitorLog;
@@ -53,4 +54,13 @@ public interface VisitorLogMapper
      * @return 结果
      */
     public int syncPassCodeByAppointmentId(@Param("appointmentId") Long appointmentId, @Param("passCode") String passCode);
+
+    /**
+     * 写入实际入园时间（仅当该记录 entry_time 为空时写入，保证幂等）
+     *
+     * @param passCode  通行码
+     * @param entryTime 入园时间
+     * @return 更新条数
+     */
+    public int markEntryTime(@Param("passCode") String passCode, @Param("entryTime") Date entryTime);
 }

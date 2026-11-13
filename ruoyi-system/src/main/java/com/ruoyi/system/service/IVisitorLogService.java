@@ -1,5 +1,6 @@
 package com.ruoyi.system.service;
 
+import java.util.Date;
 import java.util.List;
 import com.ruoyi.system.domain.VisitorLog;
 
@@ -58,4 +59,15 @@ public interface IVisitorLogService
      * @return 结果
      */
     public int syncPassCodeByAppointmentId(Long appointmentId, String passCode);
+
+    /**
+     * 写入实际入园时间（门卫扫码入场核验时调用）
+     *
+     * <p>幂等：仅当该记录 entry_time 为空时写入，重复核验不覆盖首次入园时间。</p>
+     *
+     * @param passCode  通行码
+     * @param entryTime 入园时间
+     * @return 更新条数（0 表示记录不存在或已写过入园时间）
+     */
+    public int markEntryTime(String passCode, Date entryTime);
 }

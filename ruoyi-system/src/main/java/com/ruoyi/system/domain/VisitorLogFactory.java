@@ -18,7 +18,7 @@ public final class VisitorLogFactory {
      *
      * @param appointment  预约（须已生成 passCode）
      * @param registerType 登记类型：APPOINTMENT=预约 WALKIN=散客
-     * @param entryTime    进入时间；null 时取预约来访时间
+     * @param entryTime    实际入园时间；预约型提交时为 null（待入场核验回写），现场登记传登记时间
      * @return 来访记录（未落库）
      */
     public static VisitorLog from(VisitorAppointment appointment, String registerType, Date entryTime) {
@@ -38,7 +38,10 @@ public final class VisitorLogFactory {
         log.setGoodsDesc(appointment.getGoodsDesc());
         log.setDeptId(appointment.getDeptId());
         log.setRegisterType(registerType);
-        log.setEntryTime(entryTime != null ? entryTime : appointment.getVisitTime());
+        // 进入时间只记录"实际入园"时点：预约型提交时为 null，待入场核验回写；
+        // 现场登记（保安当场登记即入园）由调用方传入登记时间。
+        // 预约来访时间另存于 visitor_appointment.visit_time，不在此回填，避免两个语义混用。
+        log.setEntryTime(entryTime);
         if (appointment.getCreateBy() != null) {
             log.setCreateBy(appointment.getCreateBy());
         }
