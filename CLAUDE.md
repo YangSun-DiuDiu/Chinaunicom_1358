@@ -505,21 +505,24 @@ AI 开发一个新业务模块时，**一次性完整交付**：
 
 | 服务器 | IP | 用户 | 密码 | 用途 |
 |--------|-----|------|------|------|
-| 生产应用服务器 | 192.168.1.60 | root | Chinaunicom@1358 | Java后端(8080)+Nginx(80) |
-| MySQL/Redis 服务器 | 192.168.1.55 | root | Chinaunicom@1358 | MySQL(3306)+Redis(6379) |
-| 监控服务器 | 115.159.194.149 | root | Chinaunicom@1358 | Prometheus(9090)+AlertManager(9093)+SNMP Exporter(9116) |
+| **生产（访客系统，当前唯一生产）** | **1.94.26.126** | root | Chinaunicom@1358 | 访客后端(8080，/opt/leinuo/ruoyi-admin.jar)+Nginx(80，/usr/share/nginx/leinuo/)+MySQL(3306，库 leinuo-fangke)+Redis(6379)；中间件均收 127.0.0.1；HTTPS 域名 https://visitor.leinuosemi.com |
+| 监控服务器 | 115.159.194.149 | root | Chinaunicom@1358 | Prometheus(9090)+AlertManager(9093)+SNMP Exporter(9116)；同时承载 NetSight 生产（另一项目，与访客系统无关） |
+| 已退役 | 192.168.1.60（应用）/ 192.168.1.55（库） | root | — | 2026-10-22 及以前的旧生产，2026-10-23 数据已全量迁至 1.94.26.126，**勿再用于访客系统** |
 
-> 注：上述密码以 `deploy.json` 为准（生产应用服务器 192.168.1.60 部署账号：Chinaunicom@1358）；两枚密码（Zhihui@2026! / Chinaunicom@1358）在服务器上均可登录，任选其一即可。
+> 注：上述密码以 `deploy.json` 为准（生产 1.94.26.126 部署账号：Chinaunicom@1358）；数据库专用账号 `leinuo`/Chinaunicom@1358 仅拥有 leinuo-fangke 库权限。
 
-## 系统登录账号（业务账号）
+## 系统登录账号（生产 1.94.26.126）
 
-**系统内所有业务账号密码统一为 `admin123`**，包括：admin 超级管理员、zhaojg、各租户/部门测试账号等。仅系统管理员（admin）拥有全量数据权限，其余账号受部门数据隔离限制，只能看到本部门及子部门数据。
+| 账号 | 密码 | 权限/用途 |
+|------|------|-----------|
+| cenmengting | 689986 | 超级管理员（admin 角色），门户恒显全部卡片 |
+| guard01 | guard01@2026 | 保安：来访记录 + 二维码核验（visitor:log:list / visitor:guard:verify） |
 
-- 用于：登录后台、调用 `/login` 接口、接口联调测试。
-- 登录接口示例：`POST {base}/login` 传 `{"username":"admin","password":"admin123","code":"","uuid":""}`。
-- 若验证码功能开启，需先获取验证码；当前生产环境已开启（`sys.account.captchaEnabled=true`，登录前先 `GET /captchaImage` 取 code/uuid，再带验证码 POST /login）。
+- 旧环境（1.60/1.55）时期的统一密码 `admin123` 仅作历史参考，生产以库内实际账号为准。
+- 验证码：生产 `sys.account.captchaEnabled=true`。脚本化 API 登录需先 `GET /captchaImage` 取 uuid+code（图像识别是脚本的难点，**自动化测试优先走免登录白名单接口**：`/pass/**`、`/visitor/h5/**`、`/h5-register` 等 permitAll；浏览器人工登录不受影响）。
+- 登录接口示例：`POST /prod-api/login`，body `{"username":"...","password":"...","code":"...","uuid":"..."}`。
 
-## 项目现状（2026-10-22 裁剪改造后）
+## 项目现状（2026-10-22 裁剪改造后；生产环境部分已于 2026-11-14 按迁移结果更新）
 
 **本仓库已裁剪为「仅访客管理」单模块**（PC 后台管理 + H5 移动端），其余业务模块（设备/考勤/公寓/会议/监控/短信中台等）的代码、菜单、数据库表已全部删除。保留范围：
 
@@ -527,10 +530,10 @@ AI 开发一个新业务模块时，**一次性完整交付**：
 2. **访客管理**：访客预约/审批/现场登记/来访记录/部门登记二维码（PC 5 页 + H5 4 页）。
 3. **短信**：保留发送能力（SmsUtil+三驱动），管理页与短信中台菜单已删。
 4. 前端为**全静态路由**（`router/index.js` + `meta.permissions` 过滤），不再走 DB 动态路由。
-5. 生产部署：**192.168.1.60**（应用/nginx）+ **192.168.1.55**（MySQL 库 `ry101-test` 22 表/Redis）。
+5. 生产部署：**1.94.26.126**（应用 `/opt/leinuo` + Nginx `/usr/share/nginx/leinuo` + MySQL `leinuo-fangke` + Redis 全部同机，中间件收 127.0.0.1；2026-10-23 由 1.60/1.55 迁移而来），HTTPS 域名 `https://visitor.leinuosemi.com`。
 6. 精简初始化脚本：`sql/zhihuiyuanqu_visitor_only_init.sql`（新环境重建直接执行，含基础14表+访客3表+短信5表+菜单48条+角色 admin/visitorAdmin/smartparkAdmin；**2026-10-22 已修正缺列**：sys_user 含 job_number/photo，visitor_appointment 含 dept_id/pass_code/has_car/car_plate/has_goods/goods_desc/del_flag，visitor_log 含 dept_id/pass_code/has_car/car_plate/has_goods/goods_desc；生产库 1.55 已同步 ALTER 补列，全链路验证通过）。
 
-> ⚠️ 历史 findings/progress 章节中的 1.94.26.126、8090 端口、旧库 ry101 均为历史记录，勿用于当前生产操作。
+> ⚠️ 当前生产唯一是 **1.94.26.126**（HTTPS 域名 visitor.leinuosemi.com）。本文件 2026-10-22 版本里的 192.168.1.60 / 192.168.1.55 / ry101-test 均为迁移前历史，**勿再用于生产**；历史 findings/progress 里的 `1.94.26.126:8090` 指当年旧应用，端口已废弃，当前后端固定 8080。
 
 ## 连接模板
 
@@ -551,14 +554,14 @@ client.close()
 ## 常用命令示例
 
 ```bash
-# 检查服务状态（生产应用服务器）
-python -c "import paramiko; c = paramiko.SSHClient(); c.set_missing_host_key_policy(paramiko.AutoAddPolicy()); c.connect('192.168.1.60', username='root', password='Chinaunicom@1358', timeout=10); stdin, stdout, stderr = c.exec_command('systemctl status nginx | head -5'); print(stdout.read().decode()); c.close()"
+# 检查服务状态（生产 1.94.26.126）
+python -c "import paramiko; c = paramiko.SSHClient(); c.set_missing_host_key_policy(paramiko.AutoAddPolicy()); c.connect('1.94.26.126', username='root', password='Chinaunicom@1358', timeout=10); stdin, stdout, stderr = c.exec_command('systemctl status nginx | head -5; ps -eo pid,lstart,cmd | grep ruoyi-admin.jar | grep -v grep'); print(stdout.read().decode()); c.close()"
 
-# MySQL查询（MySQL/Redis 服务器 192.168.1.55，生产库 ry101-test）
-python -c "import paramiko; c = paramiko.SSHClient(); c.set_missing_host_key_policy(paramiko.AutoAddPolicy()); c.connect('192.168.1.55', username='root', password='Chinaunicom@1358', timeout=10); stdin, stdout, stderr = c.exec_command(\"mysql -uroot -p'Chinaunicom@1358' 'ry101-test' -e 'SELECT * FROM sys_user WHERE user_name=\"admin\"'\") ; print(stdout.read().decode()); c.close()"
+# MySQL 查询（同机 127.0.0.1:3306，库 leinuo-fangke，专用账号 leinuo）
+python -c "import paramiko; c = paramiko.SSHClient(); c.set_missing_host_key_policy(paramiko.AutoAddPolicy()); c.connect('1.94.26.126', username='root', password='Chinaunicom@1358', timeout=10); stdin, stdout, stderr = c.exec_command('mysql -uleinuo -pChinaunicom@1358 -N -B -e \"select user_name,nick_name from sys_user\" leinuo-fangke'); print(stdout.read().decode()); c.close()"
 
-# 查看日志（生产应用服务器）
-python -c "import paramiko; c = paramiko.SSHClient(); c.set_missing_host_key_policy(paramiko.AutoAddPolicy()); c.connect('192.168.1.60', username='root', password='Chinaunicom@1358', timeout=10); stdin, stdout, stderr = c.exec_command('tail -50 /home/zhihuiyuanqu20260907/app.log'); print(stdout.read().decode()); c.close()"
+# 查看后端日志（生产）
+python -c "import paramiko; c = paramiko.SSHClient(); c.set_missing_host_key_policy(paramiko.AutoAddPolicy()); c.connect('1.94.26.126', username='root', password='Chinaunicom@1358', timeout=10); stdin, stdout, stderr = c.exec_command('tail -80 /opt/leinuo/app.log'); print(stdout.read().decode()); c.close()"
 ```
 
 # 部署规范（强制）：必须加载 zhihuiyuanqu-deploy Skill
@@ -567,16 +570,17 @@ python -c "import paramiko; c = paramiko.SSHClient(); c.set_missing_host_key_pol
 
 ## 执行要点
 
-1. 触发前先读取项目根目录 `deploy.json`，获取目标服务器、构建命令、上传路径（生产：192.168.1.60；前端 `/usr/share/nginx/zhihuiyuanqu/dist/`，后端 `/home/zhihuiyuanqu20260907/`）。
+1. 触发前先读取项目根目录 `deploy.json`，获取目标服务器、构建命令、上传路径（生产：**1.94.26.126**；前端 `/usr/share/nginx/leinuo/`，后端 `/opt/leinuo/`）。
 2. 按改动范围选择模式：全量部署 / 仅前端 / 仅后端 / 仅重启。
 3. 服务器连接统一使用 paramiko（见上文「服务器连接规范」），禁止 ssh / sshpass。
-4. 后端启动必须使用服务器官方脚本：`bash /home/zhihuiyuanqu20260907/start-topo.sh`（内含 `setsid nohup java </dev/null > app.log 2>&1`）。
+4. 后端启动必须使用服务器官方脚本：`bash /opt/leinuo/start-topo.sh`（内含 `setsid nohup java -Xms256m -Xmx512m -jar /opt/leinuo/ruoyi-admin.jar --spring.profiles.active=druid </dev/null > app.log 2>&1`）。
    - ⚠️ **paramiko 后台进程坑**：`exec_command` 执行 `nohup ... &` 时，后台 java 进程持有 SSH 通道 fd，导致 `stdout.read()` 阻塞超时——这是**正常现象**，进程实际已启动。处理方式：启动命令用「读超时保护」（`so.channel.settimeout(n)` 捕获超时），再用独立命令轮询 `ps aux | grep ruoyi-admin.jar` 与 `curl localhost:8080` 验证，不要误判为启动失败。
 
 ## 部署后验证
 
-1. 后端：`curl http://localhost:8080/` 返回非 000；`app.log` 无异常堆栈。
-2. 前端：`curl http://localhost:80/` 返回 200。
-3. 关键功能改动需在浏览器人工验证。
+1. 后端：`curl http://127.0.0.1:8080/` 返回 HTTP 200；`/opt/leinuo/app.log` 无异常堆栈。
+2. 前端：`curl http://127.0.0.1:80/` 与 `https://visitor.leinuosemi.com/` 均返回 200。
+3. 关键功能改动需在浏览器人工验证，或走免登录白名单接口 + 数据库核对（见「系统登录账号」说明）。
+4. **部署成功后必须更新生产版本记录 `/opt/leinuo/VERSION`**：写入当前版本号（V日期.序号）、jar md5/大小/PID、前端入口与 index.html md5、来访记录页 chunk 文件名、分支与 commit、本次变更要点、验证结论、可回滚版本链；并在文件末尾「版本历史」追加一条。该文件是后期改动前后对照的唯一台账。
 
 

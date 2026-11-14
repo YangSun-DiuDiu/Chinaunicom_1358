@@ -134,6 +134,8 @@ PENDING/APPROVED → CANCELLED
 | 前端端口 | 80 (Nginx, 1.94.26.126) |
 | 后端部署目录 | /opt/leinuo/（jar=ruoyi-admin.jar, 启动脚本 start-topo.sh, 日志 app.log） |
 | 前端部署目录 | /usr/share/nginx/leinuo/ |
+| 对外访问域名 | https://visitor.leinuosemi.com（腾讯云 DigiCert 证书，SAN 含主域名+www，2027-01-25 到期）；旧域名 fangke.netsightplus.cn 已停用 |
+| 生产版本记录文件 | **/opt/leinuo/VERSION**（每次部署后更新：版本号 V日期.序号、jar md5/大小/mtime/PID、前端入口与 index.html md5、来访记录页 chunk、分支与 commit、变更要点、可回滚版本链、版本历史） |
 | Nginx 站点配置 | /etc/nginx/conf.d/leinuo.conf（80 端口, /prod-api/→127.0.0.1:8080, /profile/→127.0.0.1:8080, try_files 回退 index.html） |
 | 上传目录 | /opt/leinuo/uploadPath/ |
 | 数据库（生产） | 1.94.26.126:3306/leinuo-fangke (leinuo/Chinaunicom@1358)，22 表（基础14+访客3+短信5），已从 1.55/ry101-test 全量迁移（2026-10-23，用户50/部门17/角色4/预约77/日志76） |
@@ -141,6 +143,7 @@ PENDING/APPROVED → CANCELLED
 | 中间件收口 | MySQL(3306+33060) 与 Redis(6379) 均已 bind 127.0.0.1，仅本机可访问（2026-10-23 收口；配置备份 mysqld.cnf.bak-20261023 / redis.conf.bak-20261023） |
 | JDK（生产） | 系统 Java（Ubuntu 20.04 apt 安装，路径见 `which java`） |
 | GitHub | https://github.com/YangSun-DiuDiu/Chinaunicom_1358（master 分支；裁剪前备份 tag=backup-pre-filter-20261021, commit=4bfb6b5；裁剪后 commit=8f4f697） |
+| 分支台账（2026-11-13） | `h5-approval` 1f181ea（当前生产基线，含被访人自助审批+双 tab 审批页，2026-11-09 上线）/ `fix/entry-time` d23e26b（进入时间改造，基于 1f181ea，未合回未 push）/ `master` 44a980d / `feature` 7f230a5（含 warm-flow，**勿用于生产**）/ `worktree-doc-center` 60f0ef0 |
 
 ### 生产环境迁移（2026-10-23，commit 待提交）
 
@@ -732,3 +735,82 @@ pm run build:prod 成功 + deploy.py --mode frontend 部署 1.94.26.126 成功�
 - **部署与验证**（生产 1.94.26.126）：npm build:prod ✅ → deploy.py --mode frontend ✅。
 - **浏览器实测**（cenmengting 登录注入 Admin-Token）：开→关→开→关→再开 5 步全链路：step0 打开 True → step1 关闭 False → step2 再开 True → step3 再关 False → step4 三开 True ✅；截图 `fix_dialog_open1/3.png`。
 - **git**：commit 5d37be7（"修复核验弹窗二次打开失败：dialogVisible computed 代理 props 转发关闭事件"）已 push master（7caf39d..5d37be7），2 文件（GuardVerifyDialog.vue + findings.md）。
+
+## 进入时间改造：entry_time 改为实际入园时刻（2026-11-13，生产 V20261113.1）
+
+> 基线：本次改造基于 2026-11-09 上线的 `h5-approval` 分支 commit `1f181ea`（被访人自助审批 + 双 tab 审批页）。该次改造当时未单独记入 findings（本文件 mtime 早于该 commit），特此补记：**生产当前基线即 1f181ea 的内容**，本节所有对比均以它为起点。
+
+### 需求口径（用户三点确认）
+
+1. "刷卡进园" = **保安扫通行码核验**（方案 A，复用已有 `GET /pass/{code}` → `POST /pass/{code}/checkin` 闭环）；不做闸机 / 海康 ISC 对接。
+2. **现场登记（WALKIN）不改**：登记即入园，`entry_time` = 登记时间。
+3. **历史数据 `entry_time` 一律不动**（A1/A2 清空方案已否决）；其他代码不要动。
+
+| 入口 | 改造后 entry_time 语义 |
+|------|------------------------|
+| H5 / 后台预约提交 | `NULL`（未入园） |
+| 保安扫码核验 APPROVED→VISITING | 核验那一刻（服务器 `new Date()`） |
+| 现场登记 WALKIN | 登记时间（行为不变） |
+| 二扫离场 VISITING→COMPLETED | 不覆盖，保留首次入园时刻；`exit_time` 单独记录 |
+
+### 改造前根因（三个写入口都不对）
+
+- `VisitorLogFactory.from()`：`entryTime` 为空时回落到 `appointment.getVisitTime()` → 预约的"来访时间"被当成进入时间（实际 = 提交时刻）。
+- `registerWalkin()`：直接 `new Date()`，无状态机语义，靠 Factory 回落。
+- `checkInVisitor()` 的 APPROVED→VISITING 分支：**完全未写 entry_time**，入场后仍是提交时刻。
+
+### 代码改动（7 文件，commit d23e26b，67 insertions / 8 deletions，分支 fix/entry-time）
+
+| 文件 | 改动 |
+|------|------|
+| VisitorLogFactory.java | 直接 `log.setEntryTime(entryTime)`，删除 `!= null ? … : appointment.getVisitTime()` 回落 |
+| VisitorAppointmentServiceImpl.java | ①`registerWalkin()`：`Date actualEntryTime = "WALKIN".equals(registerType) ? new Date() : null;` 再交 Factory；②`checkInVisitor()` 入场分支在 `updateAppointment` 后追加 `visitorLogService.markEntryTime(passCode, new Date())` |
+| IVisitorLogService.java | 新增 `int markEntryTime(String passCode, Date entryTime)`（+ `import java.util.Date`） |
+| VisitorLogServiceImpl.java | 实现 markEntryTime（passCode 为空返回 0） |
+| VisitorLogMapper.java | 新增 `markEntryTime(@Param passCode, @Param entryTime)` |
+| VisitorLogMapper.xml | ①列表日期区间过滤 `l.entry_time` → `l.create_time`（避免未入园记录被日期筛选漏掉）；②末尾新增幂等 `<update id="markEntryTime"> … where pass_code=#{passCode} and entry_time is null`；③**修复**：insertLog 的 entry_time 由 `<if test="entryTime != null">` 改为固定列 `entry_time,` + `#{entryTime,jdbcType=TIMESTAMP}` |
+| ruoyi-ui/src/views/visitor/log/index.vue | 进入时间列：有值显示时间，否则灰色「未入园」 |
+
+### 测试暴露的真实缺陷（本次最有价值的发现）
+
+- **现象**：首次部署后严格复测，提交后 `entry_time` 不是 NULL，而是等于 `visit_time` = 提交时刻，改造等于无效。
+- **根因**：`visitor_log.entry_time` 列定义是 `datetime NULL DEFAULT CURRENT_TIMESTAMP`，而 insertLog 当时用 `<if test="entryTime != null">` **省略该列** → 数据库默认值补当前时间 → `markEntryTime` 的 `where entry_time is null` 永远不命中。
+- **修复**：改为显式固定列写值（业务层传 null 即写 NULL，由应用控制）→ 重建后端 → 重部署 → 三态验证通过。
+- **教训**：给已有列新增"必须为空"的语义前，必须先核对 DDL 默认值；`<if>` 条件插入 + `DEFAULT` 是隐性写值，接口返回和肉眼都看不出来。
+
+### 测试方法与结果（生产 1.94.26.126 实测，脚本 prod_test_entrytime2.py）
+
+- **关键方法**：submit 与 checkin 时刻相近会无法区分"提交时间 vs 核验时间"，脚本刻意 `time.sleep(20)` 拉开间隔。实测 `create_time=2026-11-13 18:54:13` / `entry_time=18:54:34`（差 21 秒），才构成有效证明。
+- **结果**：
+  1. 清理遗留 → 正式数据 6 条预约 / 6 条 log 为基准；
+  2. H5 `/visitor/h5/submit` → appointmentId=9113、logId=9209，DB `entry_time = NULL` ✓；
+  3. SQL 置 APPROVED + `pass_code=ETTEST02` → 仍 NULL ✓；
+  4. `POST /pass/ETTEST02/checkin` → HTTP 200 `status=VISITING`，DB `entry_time=18:54:34` ✓；
+  5. 二扫 → COMPLETED，`exit_time=18:54:35`、entry_time 不变 ✓；
+  6. 测试数据清理后 visitor_appointment 6 / visitor_log 6，与测试前一致 ✓。
+- **未覆盖**：WALKIN 现场登记未做端到端点击（生产 `sys.account.captchaEnabled=true` 挡住脚本登录），仅以代码路径确认行为未变。
+
+### 前端部署验证
+
+- 线上 `index.html` 与本地 `dist/index.html` 逐字节一致（md5 `463935b27dd5fa2d7b6dc813a4b0dc1b`）；
+- 含「未入园」的 `chunk-46202c54.f4c3d79e.js` 线上 HTTP 200 且与本地逐字节一致（md5 `fd754b3e040b47f7de9f9c6c2a5f2ca9`）；
+- 注意：chunk hash 映射写在 `index.html` inline 里，所以 app.js 中搜不到 `f4c3d79e`。
+
+### 部署、版本文件与回滚链
+
+- 第一次全量部署（未修复默认值问题）jar md5 `b75023af982ab28cbc1f3325f32e0c1e`、104,226,017 B、PID 3939413（18:46:22）；
+- 修复后重建重部署：jar `cfae40dca7cdebc94ce9f635ad8daf94`、104,226,185 B、mtime 18:53:39、PID **3940352**（start-topo.sh 启动 18:53:42）；前端 `/usr/share/nginx/leinuo/`。
+- 新建 **`/opt/leinuo/VERSION`**（4,491 B，md5 `689a9a7820bc05a814ede9841e78b79a`，root:root）：版本号 V20261113.1 + jar/前端全部指纹 + 7 条变更要点 + 验证结论 + 可回滚版本链 ①—⑥ + 回滚命令 + 版本历史两条。
+- **回滚链风险**：改造前生产 jar `b90fafe545ec3d11b95abb90648ccced` **在生产上已无副本**（deploy.py 第二次部署把 `.bak` 覆盖成 `b75023af`；本地 `prod-backup` 只有 10-29 版 `10b67cb0872d54bdd400a59849200057`）。当前可退层级 = 过渡版 `b75023af`（修复前）→ `backup/prod-20261109_205953/ruoyi-admin.jar`（10-29 版）→ 按 git 基线 `1f181ea` 重建。`bash /opt/leinuo/backup/prod-20261109_205953/rollback.sh [backend|frontend|all]` 恢复的是 11-09 前状态，**不等于上一个版本**。
+
+### 遗留（未改，按"其他代码不要动"）
+
+- `VisitorPassController.buildPassInfo` L119 硬编码 `info.setEntryTime(null)`：既有实现，前端无任何页面消费该字段，属既有不一致。
+- 列表日期区间筛选改走 `create_time` 后，"按进入时间筛选"与展示口径不再完全一致；如需严格按入园时间筛选，需另行评估。
+
+### git 与构建坑
+
+- commit `d23e26b659c76d770ac258e46b9d2d9eb83a0a2c`（"fix(visitor): 进入时间改为实际入园时刻"），7 files / 67+ / 8−，Fri Nov 13 18:55:49 2026 +0800；分支 `fix/entry-time`（基于 `1f181ea`），**未合回 `h5-approval`、未 push**。工作区仅保留历史 `M deploy.json` 与原有未跟踪文件。
+- `mvn` 不在 PATH → `D:\maven\apache-maven-3.6.3\bin\mvn.cmd`；`BUILD SUCCESS` 后命令仍 exit=1，是收尾 `'cmd' is not recognized` 噪声，判成功看日志 + 产物 mtime。
+- paramiko 缺失需 `python -m pip install paramiko`；deploy.py 反复部署会 `cp -f` 覆盖 `.bak`。
+- PowerShell 调 git 时提交信息里的中文引号会被当参数分隔 → `error: pathspec … did not match`，改用不含中文引号的文案。

@@ -81,14 +81,16 @@
 | 10-22 | 花名册建真实组织(47) | 需求:根据《镭诺电子（宁波）有限公司员工花名册-2026.10.xls》(48名员工)创建用户与部门列表。用户确认:①部门树重建真实组织树(替代测试树100-104)②48人全部给访客管理员。解析:xls汇总表48人×6列(序号/单位/部门/职务/姓名/电话),含慈溪总部/北京分公司/深圳分公司/慈鸿4分支,8部门(公司领导/总经办/综合管理部/工程技术部/市场营销部/项目管理部/厂务办公室/厂长办公室/工地管理部)。用户名=pypinyin全拼无重名(48唯一)。SQL:sql/zhihuiyuanqu_org_rebuild_20261022.sql(事务:admin迁新根dept1+role_dept(5→1)+清旧二维码+删旧部门100-104+插16部门+插48用户(user_id2-49,密码hash同admin123,remark花名册2026.10)+绑定role4)。执行:1.55备份org_rebuild_before_20261022.sql后执行EXEC_OK。验证:16部门树/49用户(admin+48)/48绑定visitorAdmin/admin.dept=1/role5→1/二维码init 16个enabled;端到端:4员工登录OK(岑梦婷dept11综合管理部roles=visitorAdmin);H5 hosts?code=综合管理部返回11人含hostAccount、深圳市场返回6人;dept list 16部门200。本地精简SQL同步(zhihuiyuanqu_visitor_only_init.sql:部门16/用户49/绑定49);清单docs/员工用户与部门创建清单-20261022.xlsx(48行×8列)。h5/hosts无code返回空=预约表空属预期(带code查真实员工);app.log「获取部门ID异常」WARN=DeptScopeInterceptor无token跳过属设计。commit c2efaf5(已推GitHub) |
 | 10-22 | 超管授权给岑梦婷(48) | 需求:把超级管理员权限给到岑梦婷(cenmengting,user_id=4)。排查:本项目超管判定`SecurityUtils.isAdmin(Long)=userId!=null&&1L==userId`(硬编码userId=1),且SysPermissionService对非userId=1用户跳过admin角色菜单权限收集→仅绑角色会权限残缺(系统管理菜单/全量数据不可用)。用户经确认选择「升级超管判定(推荐,完整)」:修改SecurityUtils.isAdmin(Long)——userId==1直接true;否则取当前登录用户,校验userId匹配本人后遍历roles,任一roleKey==Constants.SUPER_ADMIN("admin")即true;补import SysUser。影响面:getRolePermission/getMenuPermission(user.isAdmin())、DeptScopeInterceptor、TokenService、SysUserController授权下拉、validateRoleAssignment防越权、SensitiveJsonSerializer脱敏等全部自动兼容。执行:①mvn clean package(jar 104,215,044字节,9:09)→②DB绑定(DELETE+INSERT sys_user_role 4,1,岑梦婷现持admin+visitorAdmin双角色)→③deploy.py --mode backend部署1.60(start-topo.sh重启PID20047,HTTP200)。验证(API):岑梦婷getInfo roles=['admin']/permissions=['*:*:*']、用户列表total=49全量、部门列表16、角色列表3、查自己userId=4返回admin=True/roleIds=[1,4];admin对比一致。验证(浏览器):playwright真实登录→首页→系统管理全量菜单可见→/system/user渲染"共49条"全量。commit+push |
 
-## 当前状态
+## 当前状态（2026-11-14 更新，替代原 10-22 版本）
 
-- **服务器**: 192.168.1.60:80/8080（生产应用服务器，Nginx conf.d 站点 + 停用 default_server）
-- **MySQL/Redis**: 192.168.1.55:3306/6379（独立服务器；生产库 = **ry101-test**，已精简为 22 表：14 基础+访客 3+短信 5）
-- **业务范围**: 已裁剪为仅访客管理（PC 管理 + H5 移动端）；系统管理仅登录必需；短信仅保留发送能力
-- **登录**: admin/admin123；验证码开启（sys.account.captchaEnabled=true，登录需先取 /captchaImage）
-- **Git**: master 最新 = 待提交「超管授权升级(阶段48)」（SecurityUtils.isAdmin 支持 admin 角色；上阶段 c2efaf5 已推远端）；备份 tag backup-pre-filter-20261021 = 4bfb6b5
-- **缺列修复(10-22)**: 生产库 ALTER 补 visitor_appointment(7列+索引)/visitor_log(6列+索引)/sys_user(job_number,photo)；本地精简 SQL 三表 DDL 已同步修正并随 32e4ff2 提交
-- **验证状态(10-22)**: 阶段45 全链路验证通过（API+浏览器双轨）；阶段46 多租户隔离端到端测试全部通过（部门隔离/审批人过滤/园区管理员放权/组织切换/自动归属 5 类断言），测试数据已清扫，生产库恢复原始状态
-- **超管授权(10-22,阶段48)**: 岑梦婷(cenmengting,user_id=4,综合管理部)持 admin+visitorAdmin 双角色；SecurityUtils.isAdmin 升级为「userId==1 或当前登录用户本人持 admin 角色即超管」；API+浏览器双轨验证全通过（roles=['admin']、permissions=['*:*:*']、用户列表49全量、系统管理菜单全量可见）；1.60 后端 PID20047 HTTP200
-- **待处理**: 阶段11(样式优化剩余), 阶段13(公寓预付费后续) —— 注：以上为裁剪前遗留记录，当前业务范围已缩减至访客管理
+- **生产服务器**：**1.94.26.126**（应用 8080 `/opt/leinuo/ruoyi-admin.jar` + Nginx 80 `/usr/share/nginx/leinuo/` + MySQL 3306 库 `leinuo-fangke` + Redis 6379，全部同机，中间件收 127.0.0.1）；HTTPS 域名 `https://visitor.leinuosemi.com`
+- **已退役（历史）**：192.168.1.60（应用）/ 192.168.1.55（MySQL+Redis，库 ry101-test）——2026-10-23 数据全量迁至 1.94.26.126，下列阶段 44—48 中的 1.60/1.55 记录均为当时事实，不可用于当前生产
+- **当前生产版本**：**V20261113.1**（jar md5 `cfae40dca7cdebc94ce9f635ad8daf94`、104,226,185 字节、PID 3940352；前端 index.html md5 `463935b27dd5fa2d7b6dc813a4b0dc1b`、来访记录页 `chunk-46202c54.f4c3d79e.js`）；版本台账 = **`/opt/leinuo/VERSION`**
+- **代码基线**：`fix/entry-time` commit `d23e26b`（进入时间改造，基于 `h5-approval` `1f181ea`）；`1f181ea` = 2026-11-09 上线的被访人自助审批 + 双 tab 审批页；`master` 44a980d；`feature` 7f230a5 含 warm-flow **勿用于生产**
+- **业务范围**：仅访客管理（PC 管理 + H5 移动端）；系统管理仅登录必需；短信仅保留发送能力
+- **登录**：cenmengting / 689986（超级管理员，admin 角色）；guard01 / guard01@2026（保安）；验证码开启（`sys.account.captchaEnabled=true`）
+- **近期阶段**：10-23 生产迁移 1.94.26.126 → 10-23 短信参数/签名切换（镭诺电子宁波）→ 11-09 被访人自助审批（1f181ea）→ 11-13 进入时间改造上线（V20261113.1，详见 findings.md 同名章节）
+- **待处理**：①`fix/entry-time` 是否合回 `h5-approval` / 推送远端 ②改造前基线 jar `b90fafe5` 在生产已无副本（`.bak` 被覆盖），回滚只能到过渡版 `b75023af` 或 10-29 版 `10b67cb0` ③`VisitorPassController.buildPassInfo` L119 硬编码 `setEntryTime(null)` 是否后续优化 ④来访记录列表日期筛选已改走 `create_time`，"按进入时间筛选"口径需评
+- **缺列修复（10-22 历史）**：生产库 ALTER 补 visitor_appointment(7列+索引)/visitor_log(6列+索引)/sys_user(job_number,photo)；本地精简 SQL 三表 DDL 已同步修正并随 32e4ff2 提交
+- **历史验证（10-22）**：阶段45 全链路验证通过（API+浏览器双轨）；阶段46 多租户隔离端到端测试全部通过；阶段48 超管授权给岑梦婷（SecurityUtils.isAdmin 支持 admin 角色）
+- **裁剪前遗留**：阶段11(样式优化剩余)、阶段13(公寓预付费后续) —— 业务范围已缩减至访客管理，均不再执行
